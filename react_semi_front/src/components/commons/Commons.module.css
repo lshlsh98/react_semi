@@ -1,82 +1,163 @@
 .header {
-  background-color: white;
+  width: 100%;
+  background-color: var(--bg);
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: 1000; /* 나중에 이미지나 글목록, 지도파업등이 스크롤했을때 header위에 겹치지 않기 위해 필요한 코드(라네요?) */
 }
 
-.site_logo > a {
-  font-size: 40px;
-  font-weight: 800;
-  color: var(--line);
-}
-
-.main_header {
+.header_top {
   width: 1200px;
   margin: 0 auto;
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 30px;
+  padding: 24px 0;
+}
+
+.site_logo > a {
+  font-size: 34px;
+  font-weight: 800;
+  color: var(--primary);
+  text-decoration: none;
 }
 
 .member_link_zone {
   display: flex;
-  gap: 10px;
+  gap: 12px;
 }
 
-.member_link_zone > button {
-  font-weight: 700;
+.header_bottom {
+  width: 100%;
+  border-top: 1px solid var(--gray6); 
+  border-bottom: 1px solid var(--gray6);
+  background-color: var(--bg);
 }
 
 .nav {
+  width: 1200px;
+  margin: 0 auto;
+  height: 48px; 
   display: flex;
-  justify-content: center;
-  padding: 10px;
-  border-top: 1px solid var(--line);
-  border-bottom: 1px solid var(--line);
   align-items: center;
+  justify-content: center; 
 }
 
 .nav > ul {
-  list-style-type: none;
+  list-style: none;
   display: flex;
-  gap: 20px;
+  gap: 60px; 
+  height: 100%;
 }
 
-.nav > ul > a > li {
-  list-style-type: none;
+.nav > ul li {
+  height: 100%;
   display: flex;
-  padding: 5px;
-  gap: 5px;
-  border-bottom: 2px solid var(--line);
-  color: var(--line);
-  font-weight: 550;
-  font-size: 20px;
+  align-items: center;
 }
 
-.nav > ul > a :hover {
-  filter: brightness(1.6);
+.nav > ul li a {
+  font-size: 16px;
+  font-weight: 600;
+  color: var(--text1);
+  height: 100%;
+  display: flex;
+  align-items: center;
+  position: relative;
+  transition: color 0.2s ease;
+}
+
+.nav > ul li a:hover {
+  color: var(--primary);
+}
+
+.nav > ul li a::after {
+  content: "";
+  position: absolute;
+  bottom: -1px; 
+  left: 0;
+  width: 0%;
+  height: 3px;
+  background-color: var(--primary);
+  transition: width 0.3s ease; 
+}
+
+.nav > ul li a:hover::after {
+  width: 100%;
 }
 
 .footer {
+  width: 100%;
   background-color: var(--footer);
-  padding: 40px;
-  border-top: 1px solid var(--line);
+  border-top: 1px solid var(--gray6);
+  padding: 50px 0;
+  margin-top: auto; 
 }
 
-.footer > div {
+.footer_container {
   width: 1200px;
   margin: 0 auto;
   display: flex;
   justify-content: space-between;
-  align-items: center;
+  align-items: flex-start;
 }
 
-.footer > div > div > p {
-  padding: 8px 0px;
-  color: #344e41;
+.company_info {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
 }
 
-.sns > span {
+.footer_logo {
+  font-size: 28px;
+  font-weight: 800;
+  color: var(--gray5);
+}
+
+.info_text {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.info_text p {
+  font-size: 14px;
+  color: var(--text2);
+  margin: 0;
+}
+
+.info_text .copyright {
+  margin-top: 12px;
+  color: var(--gray4);
+}
+
+.sns_zone {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 12px;
+}
+
+.follow_text {
+  font-size: 16px;
+  font-weight: 700;
+  color: var(--text1);
+}
+
+.sns_icons {
+  display: flex;
+  gap: 16px;
+}
+
+.sns_icons > span {
   cursor: pointer;
-  font-size: 80px;
-  color: #344e41;
+  font-size: 36px; 
+  color: var(--gray4);
+  transition: all 0.2s ease;
+}
+
+.sns_icons > span:hover {
+  color: var(--primary);
+  transform: translateY(-3px);
 }

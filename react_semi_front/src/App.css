@@ -18,11 +18,7 @@
   --text1: #1e293b;
   --text2: #64748b;
 
-  --bg: #fefefe;
-  --text1: #1e293b;
-  --text2: #64748b;
-
-  --gray0: #000;
+  --gray0: #000000;
   --gray1: #222222;
   --gray2: #555555;
   --gray3: #717171;
@@ -45,6 +41,7 @@ a {
   min-height: 100vh;
   display: flex;
   flex-direction: column;
+  padding-top: 140px;
 }
 
 .main {
