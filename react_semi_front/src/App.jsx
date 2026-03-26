@@ -4,9 +4,9 @@ import Header from "./components/commons/Header";
 
 function App() {
   return (
-    <div>
+    <div className="wrap">
       <Header></Header>
-      <div className="wrap">
+      <div className="main">
         <h3>team4</h3>
       </div>
       <Footer></Footer>
