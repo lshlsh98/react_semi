@@ -11,6 +11,12 @@
   --accent: #60a5fa;
   --danger: #ff3d00;
   --border: #e2e8f0; */
+
+  --primary: #549849;
+  --danger: #d33c3c;
+  --footer: #fbfaf5;
+  --line: #216117;
+
   --bg: #f8faff;
   --text1: #1e293b;
   --text2: #64748b;
@@ -32,4 +38,8 @@ body {
 
 a {
   text-decoration: none;
+}
+
+.wrap {
+  min-height: 100vh;
 }

@@ -1,0 +1,82 @@
+.header {
+  background-color: white;
+}
+
+.site_logo > a {
+  font-size: 40px;
+  font-weight: 800;
+  color: var(--line);
+}
+
+.main_header {
+  width: 1200px;
+  margin: 0 auto;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 30px;
+}
+
+.member_link_zone {
+  display: flex;
+  gap: 10px;
+}
+
+.member_link_zone > button {
+  font-weight: 700;
+}
+
+.nav {
+  display: flex;
+  justify-content: center;
+  padding: 10px;
+  border-top: 1px solid var(--line);
+  border-bottom: 1px solid var(--line);
+  align-items: center;
+}
+
+.nav > ul {
+  list-style-type: none;
+  display: flex;
+  gap: 20px;
+}
+
+.nav > ul > a > li {
+  list-style-type: none;
+  display: flex;
+  padding: 5px;
+  gap: 5px;
+  border-bottom: 2px solid var(--line);
+  color: var(--line);
+  font-weight: 550;
+  font-size: 20px;
+}
+
+.nav > ul > a :hover {
+  filter: brightness(1.6);
+}
+
+.footer {
+  background-color: var(--footer);
+  padding: 40px;
+  border-top: 1px solid var(--line);
+}
+
+.footer > div {
+  width: 1200px;
+  margin: 0 auto;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.footer > div > div > p {
+  padding: 8px 0px;
+  color: #344e41;
+}
+
+.sns > span {
+  cursor: pointer;
+  font-size: 80px;
+  color: #344e41;
+}
