@@ -30,7 +30,7 @@
 
 .header_bottom {
   width: 100%;
-  border-top: 1px solid var(--gray6); 
+  border-top: 1px solid var(--gray6);
   border-bottom: 1px solid var(--gray6);
   background-color: var(--bg);
 }
@@ -38,16 +38,16 @@
 .nav {
   width: 1200px;
   margin: 0 auto;
-  height: 48px; 
+  height: 48px;
   display: flex;
   align-items: center;
-  justify-content: center; 
+  justify-content: center;
 }
 
 .nav > ul {
   list-style: none;
   display: flex;
-  gap: 60px; 
+  gap: 60px;
   height: 100%;
 }
 
@@ -62,7 +62,10 @@
   font-weight: 600;
   color: var(--text1);
   height: 100%;
+  width: 120px;
   display: flex;
+  justify-content: center;
+
   align-items: center;
   position: relative;
   transition: color 0.2s ease;
@@ -75,12 +78,12 @@
 .nav > ul li a::after {
   content: "";
   position: absolute;
-  bottom: -1px; 
+  bottom: -1px;
   left: 0;
   width: 0%;
   height: 3px;
   background-color: var(--primary);
-  transition: width 0.3s ease; 
+  transition: width 0.3s ease;
 }
 
 .nav > ul li a:hover::after {
@@ -92,7 +95,7 @@
   background-color: var(--footer);
   border-top: 1px solid var(--gray6);
   padding: 50px 0;
-  margin-top: auto; 
+  margin-top: auto;
 }
 
 .footer_container {
@@ -152,7 +155,7 @@
 
 .sns_icons > span {
   cursor: pointer;
-  font-size: 36px; 
+  font-size: 36px;
   color: var(--gray4);
   transition: all 0.2s ease;
 }
