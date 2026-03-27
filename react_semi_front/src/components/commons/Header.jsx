@@ -8,7 +8,9 @@ const Header = () => {
     <header className={styles.header}>
       <div className={styles.header_top}>
         <div className={styles.site_logo}>
-          <Link to="/">C2C</Link>
+          <Link to="/">
+            <img src="../../public/logo.png" className={styles.logo} />
+          </Link>
         </div>
         <div className={styles.member_link_zone}>
           <Button

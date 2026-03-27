@@ -17,10 +17,19 @@
 }
 
 .site_logo > a {
-  font-size: 34px;
-  font-weight: 800;
-  color: var(--primary);
+  display: flex;
+  align-items: center;
   text-decoration: none;
+}
+
+.logo {
+  height: 54px; /* 로고의 세로 길이를 고정! (이 숫자를 바꾸면 로고의 크기가 조절됩니다) 
+                   !주의점! -> 로고의 크기를 바꾸면 header의 height에도 변화가 생김
+                   즉 App.css의 .wrap의 padding-top값에 변화값만큼 바꿔줘야함!
+                   예 : height : 52 -> 54 이면 padding-top의 값에 + 2 해줘야함!!*/
+  width: auto;
+  object-fit: contain;
+  cursor: pointer;
 }
 
 .member_link_zone {
