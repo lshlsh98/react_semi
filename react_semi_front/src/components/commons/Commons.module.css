@@ -17,10 +17,19 @@
 }
 
 .site_logo > a {
-  font-size: 34px;
-  font-weight: 800;
-  color: var(--primary);
+  display: flex;
+  align-items: center;
   text-decoration: none;
+}
+
+.logo {
+  height: 54px; /* 로고의 세로 길이를 고정! (이 숫자를 바꾸면 로고의 크기가 조절됩니다) 
+                   !주의점! -> 로고의 크기를 바꾸면 header의 height에도 변화가 생김
+                   즉 App.css의 .wrap의 padding-top값에 변화값만큼 바꿔줘야함!
+                   예 : height : 52 -> 54 이면 padding-top의 값에 + 2 해줘야함!!*/
+  width: auto;
+  object-fit: contain;
+  cursor: pointer;
 }
 
 .member_link_zone {
@@ -30,7 +39,7 @@
 
 .header_bottom {
   width: 100%;
-  border-top: 1px solid var(--gray6); 
+  border-top: 1px solid var(--gray6);
   border-bottom: 1px solid var(--gray6);
   background-color: var(--bg);
 }
@@ -38,16 +47,16 @@
 .nav {
   width: 1200px;
   margin: 0 auto;
-  height: 48px; 
+  height: 48px;
   display: flex;
   align-items: center;
-  justify-content: center; 
+  justify-content: center;
 }
 
 .nav > ul {
   list-style: none;
   display: flex;
-  gap: 60px; 
+  gap: 60px;
   height: 100%;
 }
 
@@ -75,12 +84,12 @@
 .nav > ul li a::after {
   content: "";
   position: absolute;
-  bottom: -1px; 
+  bottom: -1px;
   left: 0;
   width: 0%;
   height: 3px;
   background-color: var(--primary);
-  transition: width 0.3s ease; 
+  transition: width 0.3s ease;
 }
 
 .nav > ul li a:hover::after {
@@ -92,7 +101,7 @@
   background-color: var(--footer);
   border-top: 1px solid var(--gray6);
   padding: 50px 0;
-  margin-top: auto; 
+  margin-top: auto;
 }
 
 .footer_container {
@@ -152,7 +161,7 @@
 
 .sns_icons > span {
   cursor: pointer;
-  font-size: 36px; 
+  font-size: 36px;
   color: var(--gray4);
   transition: all 0.2s ease;
 }

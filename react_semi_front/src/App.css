@@ -3,6 +3,7 @@
   padding: 0;
   box-sizing: border-box;
   color: var(--text1);
+  font-family: tr_r;
 }
 
 :root {
@@ -41,7 +42,7 @@ a {
   min-height: 100vh;
   display: flex;
   flex-direction: column;
-  padding-top: 140px;
+  padding-top: 146px;
 }
 
 .main {
