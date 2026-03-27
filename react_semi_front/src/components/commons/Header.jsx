@@ -12,7 +12,7 @@ const Header = () => {
         </div>
         <div className={styles.member_link_zone}>
           <Button
-            className="btn outline"
+            className="btn primary outline"
             onClick={() => navigate("/member/login")}
           >
             로그인
@@ -29,9 +29,15 @@ const Header = () => {
       <div className={styles.header_bottom}>
         <nav className={styles.nav}>
           <ul>
-            <li><Link to="/market">중고거래</Link></li>
-            <li><Link to="/community">커뮤니티</Link></li>
-            <li><Link to="/map">우리동네 에코맵</Link></li>
+            <li>
+              <Link to="/market">중고거래</Link>
+            </li>
+            <li>
+              <Link to="/community">커뮤니티</Link>
+            </li>
+            <li>
+              <Link to="/map">우리동네 에코맵</Link>
+            </li>
           </ul>
         </nav>
       </div>
