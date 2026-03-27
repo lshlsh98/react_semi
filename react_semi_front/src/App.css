@@ -42,7 +42,7 @@ a {
   min-height: 100vh;
   display: flex;
   flex-direction: column;
-  padding-top: 146px;
+  padding-top: 146px; /* logo에서 말한 부분으로 이 값을 적절히 수정하지 않으면 header 아래의 main-content들이 header에 가려짐!! 주의!!*/
 }
 
 .main {
