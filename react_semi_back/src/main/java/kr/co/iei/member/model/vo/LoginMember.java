@@ -8,10 +8,10 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @Data
 public class LoginMember {
-	
-	private String token;
-	private String memberId;
-	private Integer memberGrade;
-	private String memberThumb;
-	private Long endTime;
+    private String token;
+    private String memberId;
+    private Integer memberGrade;
+    private String memberThumb;
+    private Long endTime;
+    private String memberName; 
 }
