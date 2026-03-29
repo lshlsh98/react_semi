@@ -30,7 +30,6 @@ public class MemberService {
     }
 
     public Member selectOneMember(String memberId) {
-    	System.out.println("🚨 백엔드가 검색하려는 아이디: [" + memberId + "]");
         return memberDao.selectOneMember(memberId);
     }
     
