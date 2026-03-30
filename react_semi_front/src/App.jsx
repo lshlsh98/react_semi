@@ -1,5 +1,6 @@
 import { Route, Routes } from "react-router-dom";
 import "./App.css";
+import "./assets/font/font.css";
 import Footer from "./components/commons/Footer";
 import Header from "./components/commons/Header";
 import Join from "./pages/member/Join";

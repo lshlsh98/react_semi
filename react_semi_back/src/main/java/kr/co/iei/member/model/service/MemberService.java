@@ -45,4 +45,8 @@ public class MemberService {
         }
         return null; 
     }
+    
+    public String findId(Member member) {
+        return memberDao.findId(member);
+    }
 }
