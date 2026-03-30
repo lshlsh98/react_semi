@@ -15,21 +15,25 @@ const Header = () => {
       <div className={styles.header_top}>
         <div className={styles.site_logo}>
           <Link to="/">
-            <img src="../../public/logo.png" alt="C2C 로고" className={styles.logo} />
+            <img
+              src="../../public/logo.png"
+              alt="C2C 로고"
+              className={styles.logo}
+            />
           </Link>
         </div>
-        
+
         <div className={styles.member_link_zone}>
           {memberId ? (
             <>
               <Button
-                className="btn primary outline" 
+                className="btn primary outline"
                 onClick={() => navigate("/member/mypage")}
               >
                 마이페이지
               </Button>
               <Button
-                className="btn primary" 
+                className="btn primary"
                 onClick={() => {
                   useAuthStore.getState().logout();
                   delete axios.defaults.headers.common["Authorization"];
