@@ -1,6 +1,16 @@
 .mypage_wrap {
   width: 1200px;
   margin: 50px auto;
+  display: flex;
+  gap: 20px;
+}
+
+.content_wrap {
+  flex: 1;
+  padding: 32px;
+
+  border-radius: 8px;
+  border: 1px solid black;
 }
 
 .sidebar_wrap {

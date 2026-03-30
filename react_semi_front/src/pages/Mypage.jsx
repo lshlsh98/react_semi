@@ -1,6 +1,8 @@
 import { useState } from "react";
 import styles from "./Mypage.module.css";
 import { NavLink, Route, Routes } from "react-router-dom";
+import MyBoardPage from "../components/mypage/MyBoardPage";
+import AdminBoardPage from "../components/mypage/AdminBoardPage";
 
 const Mypage = () => {
   return (
@@ -8,8 +10,11 @@ const Mypage = () => {
       <div className={styles.sidebar_wrap}>
         <Profile></Profile>
         <SideBar></SideBar>
+      </div>
+      <div className={styles.content_wrap}>
         <Routes>
           <Route path="myinfo" element></Route>
+          <Route path="myboard" element={<AdminBoardPage />}></Route>
         </Routes>
       </div>
     </div>
@@ -20,7 +25,7 @@ const Profile = () => {
   return (
     <div className={styles.sidebar}>
       <div className={styles.profile_img}>
-        <span class="material-icons">account_circle</span>
+        <span className="material-icons">account_circle</span>
       </div>
       <div className={styles.profile_info}>
         <p>이름</p>
@@ -130,7 +135,7 @@ const SideBar = () => {
               }
               onClick={() => setSelectMenu("postManagement_trade")}
             >
-              거래
+              <NavLink to="/member/mypage/myboard">거래</NavLink>
             </li>
             <li
               className={
