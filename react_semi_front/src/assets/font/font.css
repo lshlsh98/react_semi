@@ -1,11 +1,11 @@
 @font-face {
-  font-family: 'tr_r';
+  font-family: "tr_r";
   /* 현재 CSS 파일 위치를 기준으로 폰트 폴더를 찾아가도록 점(.)을 사용. 그래야 집에서도 폰트 적용됨(뿐만 아니라 다른 환경에서 다 된다) */
-  src: url("./TmoneyRoundWindRegular.ttf") format("truetype");
+  src: url("./TmoneyRoundWindRegular.ttf");
 }
 
 @font-face {
-  font-family: 'tr_b';
+  font-family: "tr_b";
   /*위랑 같은 이유*/
-  src: url("./TmoneyRoundWindExtraBold.ttf") format("truetype");
+  src: url("./TmoneyRoundWindExtraBold.ttf");
 }
