@@ -6,6 +6,8 @@ import Header from "./components/commons/Header";
 import Join from "./pages/member/Join";
 import Login from "./pages/member/Login";
 import Mypage from "./pages/Mypage";
+import Find_id from "./pages/member/Find_id";
+import Find_pw from "./pages/member/Find_pw";
 
 function App() {
   return (
@@ -15,7 +17,9 @@ function App() {
         <Routes>
           <Route path="/member/join" element={<Join />} />
           <Route path="/member/login" element={<Login />} />
-          <Route path="/" />
+          <Route path="/member/find-id" element={<Find_id />} />
+          <Route path="/member/find-pw" element={<Find_pw />} />
+
           <Route path="/member/mypage/*" element={<Mypage />} />
         </Routes>
       </div>

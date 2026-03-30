@@ -1,36 +1,72 @@
 import { useState } from "react";
 import styles from "./Mypage.module.css";
-import { NavLink, Route, Routes } from "react-router-dom";
+import { NavLink, Route, Routes, useNavigate } from "react-router-dom";
+import useAuthStore from "../components/utils/useAuthStore";
+import MemberInfo from "../components/mypage/MemberInfo";
+import Swal from "sweetalert2";
 
 const Mypage = () => {
+  const navigate = useNavigate();
+  const { memberName, memberId, isReady } = useAuthStore();
+
+  console.log(useAuthStore());
+
+  if (isReady && memberId == null) {
+    Swal.fire({
+      title: "로그인 후 이용 가능합니다.",
+      icon: "warning",
+    }).then(() => {
+      navigate("/member/login");
+    });
+    return;
+  }
+
   return (
-    <div className={styles.mypage_wrap}>
-      <div className={styles.sidebar_wrap}>
-        <Profile></Profile>
-        <SideBar></SideBar>
-        <Routes>
-          <Route path="myinfo" element></Route>
-        </Routes>
+    memberId && (
+      <div className={styles.mypage_wrap}>
+        <div className={styles.sidebar_wrap}>
+          <Profile></Profile>
+          <SideBar></SideBar>
+        </div>
+        <div className={styles.mypage_content}>
+          <Routes>
+            <Route path="myinfo" element={<MemberInfo />} />
+          </Routes>
+        </div>
       </div>
-    </div>
+    )
   );
 };
 
 const Profile = () => {
+  const { memberId, memberName, memberThumb } = useAuthStore();
+
   return (
     <div className={styles.sidebar}>
-      <div className={styles.profile_img}>
-        <span class="material-icons">account_circle</span>
+      <div
+        className={
+          memberThumb ? styles.member_thumb_exists : styles.member_thumb
+        }
+      >
+        {memberThumb ? (
+          <img
+            src={`${import.meta.env.VITE_BACKSERVER}/member/thumb/${memberThumb}`}
+          />
+        ) : (
+          <span class="material-icons">account_circle</span>
+        )}
       </div>
       <div className={styles.profile_info}>
-        <p>이름</p>
-        <p>아이디</p>
+        <p>{memberName}</p>
+        <p>{memberId}</p>
       </div>
     </div>
   );
 };
 
 const SideBar = () => {
+  const { memberGrade } = useAuthStore();
+
   const [selectMenu, setSelectMenu] = useState(null);
   const [openMenu, setOpenMenu] = useState(null);
 
@@ -41,8 +77,7 @@ const SideBar = () => {
   return (
     <div className={styles.sidebar}>
       <ul>
-        {/* 링크 부분 수정 */}
-        <NavLink to="member/mypage/myinfo">
+        <NavLink to="/member/mypage/myinfo">
           <li
             className={selectMenu === "myinfo" ? styles.active : ""}
             onClick={() => setSelectMenu("myinfo")}
@@ -199,27 +234,40 @@ const SideBar = () => {
         </li>
       </ul>
 
-      <ul className={styles.management}>
-        <li>관리 페이지</li>
-        <li
-          onClick={() => {
-            toggleMenu("memberManagement");
-            setSelectMenu("memberManagement");
-          }}
-          className={selectMenu === "memberManagement" ? styles.active : ""}
-        >
-          회원 관리
-        </li>
-        <li
-          onClick={() => {
-            toggleMenu("postManage");
-            setSelectMenu("postManage");
-          }}
-          className={selectMenu === "postManage" ? styles.active : ""}
-        >
-          신고된 게시글 확인
-        </li>
-      </ul>
+      {memberGrade !== 3 && (
+        <ul className={styles.management}>
+          <li>관리 페이지</li>
+          <li
+            onClick={() => {
+              toggleMenu("memberManagement");
+              setSelectMenu("memberManagement");
+            }}
+            className={selectMenu === "memberManagement" ? styles.active : ""}
+          >
+            회원 관리
+          </li>
+          <li
+            onClick={() => {
+              toggleMenu("postManagement");
+              setSelectMenu("postManagement");
+            }}
+            className={selectMenu === "postManagement" ? styles.active : ""}
+          >
+            게시글 관리
+          </li>
+          <li
+            onClick={() => {
+              toggleMenu("reportedPostManagement");
+              setSelectMenu("reportedPostManagement");
+            }}
+            className={
+              selectMenu === "reportedPostManagement" ? styles.active : ""
+            }
+          >
+            신고된 게시글 확인
+          </li>
+        </ul>
+      )}
     </div>
   );
 };

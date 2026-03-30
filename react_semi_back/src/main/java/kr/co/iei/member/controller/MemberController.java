@@ -2,21 +2,29 @@ package kr.co.iei.member.controller;
 
 import java.util.Map;
 import java.util.Random;
+import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PatchMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MultipartFile;
 
 import kr.co.iei.member.model.service.MemberService;
 import kr.co.iei.member.model.vo.LoginMember;
 import kr.co.iei.member.model.vo.Member;
 import kr.co.iei.utils.EmailSender;
+import kr.co.iei.utils.FileUtils;
 
 @CrossOrigin(value="*")
 @RestController
@@ -28,6 +36,14 @@ public class MemberController {
     
     @Autowired
     private EmailSender sender;
+    
+    @Autowired
+    private BCryptPasswordEncoder passwordEncoder;	// BCryptPasswordEncoder는 내가 만든 class가 아님 spring에서 지원하는 이미 만들어져 있는 class를 받아옴
+
+    private FileUtils fileUtil;
+
+	@Value("${file.root}")
+	private String root;
     
     // 1. 회원가입
     @PostMapping
@@ -52,6 +68,7 @@ public class MemberController {
         
         Random r = new Random();
         StringBuffer sb = new StringBuffer();
+        
         for(int i=0; i<6; i++) {
         	//영어 대문자 / 영어 소문자 / 숫자 를 조합해서 6자리 랜덤코드 생성
 			//숫자(0~9) : r.nextInt(10);
@@ -88,4 +105,97 @@ public class MemberController {
             return ResponseEntity.ok(loginMember); 
         }
     }
+    
+    // 5. 아이디 찾기
+    @PostMapping(value="/find-id")
+    public ResponseEntity<?> findId(@RequestBody Member member) {
+        String memberId = memberService.findId(member);
+        
+        if (memberId == null) {
+            return ResponseEntity.status(404).build();
+        } else {
+            return ResponseEntity.ok(memberId);
+        }
+    }
+
+    // 6. 비밀번호 찾기 (임시 비밀번호 발급 및 메일 전송)
+    @PostMapping(value="/find-pw")
+    public ResponseEntity<?> findPw(@RequestBody Member member) {
+        
+    	// 3번 로직 그대로 사용
+        Random r = new Random();
+        StringBuffer sb = new StringBuffer();
+        
+        for(int i=0; i<8; i++) { 
+        	//영어 대문자 / 영어 소문자 / 숫자 를 조합해서 8자리 랜덤코드 생성
+			//숫자(0~9) : r.nextInt(10);
+			//대문자(A~Z) : r.nextInt(26) + 65;
+			//소문자(a~z) : r.nextInt(26) + 97; -> 유니코드 안외워지니 걍 구글에 유니코드 알파벳 몇번부터인지 체크 ㄱ
+        	
+            int flag = r.nextInt(3);    //0, 1, 2 -> 숫자, 대문자, 소문자 어떤걸 추출할지 랜덤으로 결정
+            if(flag == 0) {
+                sb.append(r.nextInt(10)); 
+            }else if(flag == 1) {
+                sb.append((char)(r.nextInt(26) + 65)); 
+            }else if(flag == 2) {
+                sb.append((char)(r.nextInt(26) + 97)); 
+            }
+        }
+        
+        String tempPw = sb.toString(); 
+        
+        member.setMemberPw(tempPw); 
+        
+        // DB 업데이트 (회원가입이랑 마찬가지로 여기서 MemberService가 알아서 암호화 한 뒤 DB를 update)
+        int result = memberService.updateTempPw(member);
+        
+        if (result > 0) { // 업데이트 성공시
+        	
+            String emailTitle = "[C2C] 임시 비밀번호 발급 안내";
+            String receiverEmail = member.getMemberEmail(); 
+            
+            String emailContent = "<h1>안녕하세요. C2C(Customer To Carbon) 입니다.</h1>"
+                                + "<h3>회원님의 임시 비밀번호는 [ <b style='color:red;'>" + tempPw + "</b> ] 입니다.</h3>"
+                                + "<h3>!!주의 꼭 읽어주세요!!</h3>"
+                                + "<h3>실제 당신의 기존 비밀번호가 임시비밀번호로 바뀐것 입니다!! </h3>"
+                                + "<h3>!!!로그인 후 반드시 비밀번호를 변경해 주세요!!!</h3>";
+            
+            sender.sendMail(emailTitle, receiverEmail, emailContent);
+
+            return ResponseEntity.ok(tempPw);
+        } else {
+            return ResponseEntity.status(404).build();
+        }
+    }
+    
+    //	정보 불러오기
+    @GetMapping(value="/{memberId}")
+    public ResponseEntity<?> memberInfo (@PathVariable String memberId){
+    	Member m = memberService.selectOneMember(memberId);
+        return ResponseEntity.ok(m);
+    }
+    
+    // 내 정보 비밀번호 인증
+    @PostMapping(value="/pw-auth")
+    public ResponseEntity<?> memberAuth (@RequestBody Member memberAuth){
+    	System.out.println(memberAuth);
+    	LoginMember member = memberService.login(memberAuth);
+    	if(member == null) {
+            return ResponseEntity.status(404).build();
+        }else {
+            return ResponseEntity.ok(member); 
+        }}
+
+    @PatchMapping(value = "/{memberId}/thumbnail")
+	public ResponseEntity<?> updateThumbnail(@PathVariable String memberId, @ModelAttribute MultipartFile file) {
+		String savepath = root + "member/";
+		String memberThumb = fileUtil.upload(savepath, file);
+		
+		Member m = new Member();
+		m.setMemberThumb(memberThumb);
+		m.setMemberId(memberId);
+		
+		int result = memberService.updateMemberThumb(m);
+		return ResponseEntity.ok(memberThumb);
+	}
 }
