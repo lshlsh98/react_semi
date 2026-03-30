@@ -1,31 +1,30 @@
 import { useRef, useState } from "react";
-import styles from "./Find_id.module.css";
+import styles from "./Find_pw.module.css";
 import { Input } from "../../components/ui/Form";
 import Button from "../../components/ui/Button";
 import axios from "axios";
 import Swal from "sweetalert2";
 import { useNavigate, Link } from "react-router-dom";
 
-const Find_id = () => {
+const Find_pw = () => {
   const navigate = useNavigate();
 
   const [member, setMember] = useState({
-    // 사용자가 입력한 member의 정보를 받을 state
-    memberName: "",
+    memberId: "",
     memberEmail: "",
   });
 
-  const [authCode, setAuthCode] = useState(""); // 서버에서 준 인증번호를 담는 용도의 state
+  const [authCode, setAuthCode] = useState(""); // 서버에서 준 인증번호 담기
 
-  const [inputCode, setInputCode] = useState(""); // 사용자가 입력한 인증번호를 담는 용도의 state
+  const [inputCode, setInputCode] = useState(""); // 사용자가 입력한 인증번호 담기
 
-  const [isSend, setIsSend] = useState(false); // 이메일 발송 여부 확인용 state (true일시 인증번호 input이 생김)
+  const [isSend, setIsSend] = useState(false); // 이메일 발송 여부 (true일시 인증번호 input이 생김)
 
-  const [isVerified, setIsVerified] = useState(false); // 인증 완료 여부 확인용 state (true일시 이메일과 인증번호 input을 disable함)
+  const [isVerified, setIsVerified] = useState(false); // 인증 완료 여부 (true일시 이메일과 인증번호 input을 disable함)
 
-  const [timeLeft, setTimeLeft] = useState(300); // 시간 300초로 설정
+  const [timeLeft, setTimeLeft] = useState(300); // 5분 타이머
 
-  const timerRef = useRef(null); // 시간을 state로만 관리하면 set으로 랜더링할때마다 시간이 깜빡깜빡하는데 화면 랜더링에 영향 없이 타이머(시간)를 담는 용도
+  const timerRef = useRef(null); // 타이머 스위치
 
   const inputChange = (e) => {
     // 이젠 너무 익숙한 value에 있는 값을 member에 넣는 방법
@@ -100,6 +99,7 @@ const Find_id = () => {
       });
   };
 
+  // 2. 인증번호 확인 (아이디 찾기와 동일)
   const verifyCode = () => {
     if (authCode === inputCode && inputCode !== "") {
       Swal.fire({
@@ -120,12 +120,12 @@ const Find_id = () => {
   };
 
   // 1. 위에서부터 순서대로 체크해서 sweetalert 띄우기
-  const findIdAction = () => {
-    if (member.memberName === "" || member.memberEmail === "") {
+  const findPwAction = () => {
+    if (member.memberId === "" || member.memberEmail === "") {
       Swal.fire({
         icon: "warning",
         title: "입력 오류",
-        text: "이름과 이메일을 모두 입력해주세요.",
+        text: "아이디와 이메일을 모두 입력해주세요.",
       });
       return;
     }
@@ -138,13 +138,20 @@ const Find_id = () => {
       return;
     }
 
+    Swal.fire({
+      title: "임시 비밀번호 생성 중...",
+      didOpen: () => Swal.showLoading(),
+    });
+
     axios
-      .post(`${import.meta.env.VITE_BACKSERVER}/members/find-id`, member)
+      .post(`${import.meta.env.VITE_BACKSERVER}/members/find-pw`, member)
       .then((res) => {
+        console.log("임시 비밀번호:", res.data); // 임시 비밀번호를 f12로 편하게 보는용 (나중에 지워야함.)
+        // 성공 시 팝업 띄우고 로그인 페이지로 이동
         Swal.fire({
           icon: "success",
-          title: "아이디 찾기 성공",
-          html: `회원님의 아이디는 <b>[ ${res.data} ]</b> 입니다.`,
+          title: "발송 완료",
+          html: "가입하신 이메일로 임시 비밀번호가 발송되었습니다. <br />로그인 후 비밀번호를 꼭 변경해주세요!!!",
           confirmButtonText: "로그인하러 가기",
         }).then((result) => {
           if (result.isConfirmed) navigate("/member/login");
@@ -179,30 +186,36 @@ const Find_id = () => {
           <h3 className={styles.page_title}>계정찾기</h3>
 
           <div className={styles.tab_menu}>
-            <div className={`${styles.tab_item} ${styles.active}`}>
+            <Link to="/member/find-id" className={styles.tab_item}>
               아이디 찾기
-            </div>
-            <Link to="/member/find-pw" className={styles.tab_item}>
-              비밀번호 찾기
             </Link>
+            <div className={`${styles.tab_item} ${styles.active}`}>
+              비밀번호 찾기
+            </div>
           </div>
+
+          <p className={styles.info_text}>
+            가입 시 등록한 아이디와 이메일을 입력하시면,
+            <br />
+            해당 이메일로 임시 비밀번호를 발송해 드립니다.
+          </p>
 
           <form
             onSubmit={(e) => {
               e.preventDefault();
-              findIdAction();
+              findPwAction();
             }}
           >
             <div className={styles.form_group}>
-              <label htmlFor="memberName" className={styles.label}>
-                이름
+              <label htmlFor="memberId" className={styles.label}>
+                아이디
               </label>
               <Input
                 type="text"
-                name="memberName"
-                id="memberName"
-                placeholder="가입하신 이름을 입력하세요."
-                value={member.memberName}
+                name="memberId"
+                id="memberId"
+                placeholder="가입하신 ID를 입력해주세요."
+                value={member.memberId}
                 onChange={inputChange}
               />
             </div>
@@ -220,14 +233,14 @@ const Find_id = () => {
                     placeholder="가입하신 이메일을 입력해주세요."
                     value={member.memberEmail}
                     onChange={inputChange}
-                    disabled={isSend || isVerified} // 전송되었거나 인증되었으면 disable
+                    disabled={isSend || isVerified}
                   />
                 </div>
                 <Button
                   type="button"
                   className="btn primary outline"
                   onClick={sendMail}
-                  disabled={isVerified} // 인증 성공했으면 버튼도 disable
+                  disabled={isVerified}
                 >
                   {isSend ? "재전송" : "인증번호 받기"}
                 </Button>
@@ -266,14 +279,16 @@ const Find_id = () => {
 
             <div className={styles.button_wrap}>
               <Button type="submit" className="btn primary lg">
-                아이디 찾기
+                임시 비밀번호 전송
               </Button>
             </div>
 
             <div className={styles.login_link_wrap}>
-              <span className={styles.helper_text}>기억나셨나요?</span>
+              <span className={styles.helper_text}>
+                비밀번호가 기억나셨나요?
+              </span>
               <Link to="/member/login" className={styles.login_link}>
-                로그인 하러가기
+                로그인하러가기
               </Link>
             </div>
           </form>
@@ -283,4 +298,4 @@ const Find_id = () => {
   );
 };
 
-export default Find_id;
+export default Find_pw;
