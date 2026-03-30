@@ -5,6 +5,7 @@ import Footer from "./components/commons/Footer";
 import Header from "./components/commons/Header";
 import Join from "./pages/member/Join";
 import Login from "./pages/member/Login";
+import Mypage from "./pages/Mypage";
 
 function App() {
   return (
@@ -14,6 +15,8 @@ function App() {
         <Routes>
           <Route path="/member/join" element={<Join />} />
           <Route path="/member/login" element={<Login />} />
+          <Route path="/" />
+          <Route path="/member/mypage/*" element={<Mypage />} />
         </Routes>
       </div>
       <Footer />

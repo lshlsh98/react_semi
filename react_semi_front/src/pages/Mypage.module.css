@@ -1,0 +1,99 @@
+.mypage_wrap {
+  width: 1200px;
+  margin: 50px auto;
+}
+
+.sidebar_wrap {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.sidebar {
+  width: 250px;
+  background-color: var(--bg);
+  border: 1px solid var(--gray6);
+  border-radius: 4px;
+  overflow: hidden;
+}
+
+.profile_img {
+  width: 250px;
+  height: 250px;
+  background-color: var(--gray6);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.profile_img > span {
+  color: var(--gray8);
+  font-size: 200px;
+}
+
+.profile_info {
+  padding: 10px;
+  text-align: center;
+}
+
+.profile_info > p {
+  padding: 5px;
+}
+
+.sidebar > ul {
+  margin-bottom: 50px;
+}
+
+.sidebar ul {
+  list-style-type: none;
+}
+
+.sidebar li {
+  padding: 10px 15px;
+  border-bottom: 1px solid var(--gray6);
+  color: var(--gray3);
+  cursor: pointer;
+}
+
+.sidebar li.active {
+  color: var(--primary);
+}
+
+.sidebar > ul > li > .menu_title {
+  color: var(--gray3);
+}
+
+.sidebar > ul > li.active > .menu_title {
+  color: var(--primary);
+}
+
+.sidebar ul ul {
+  max-height: 0;
+  overflow: hidden;
+  transition:
+    max-height 0.5s ease,
+    padding 0.5s ease;
+  padding-left: 15px;
+}
+
+.sidebar ul ul.open {
+  max-height: 200px;
+}
+
+.arrow {
+  display: inline-block;
+  transition: transform 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+  text-align: center;
+  font-size: 15px;
+  margin-right: 10px;
+  color: var(--gray3);
+}
+
+.rotate {
+  transform: rotate(90deg);
+}
+
+.management > li:first-child {
+  border-top: 1px solid var(--gray6);
+  color: var(--gray1);
+}
