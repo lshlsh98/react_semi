@@ -25,7 +25,6 @@ const MyBoardPage = () => {
         </div>
       </div>
       <div className={styles.myboard_list_content}>
-        {/* 일반 인원의 경우 보여지는 페이지와 관리자인 경우 보여지는 페이지를 나누어서 */}
         <MyBoardList />
       </div>
       <div className={styles.pagination_section}>

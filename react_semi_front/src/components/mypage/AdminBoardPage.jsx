@@ -28,6 +28,15 @@ const AdminBoardPage = () => {
               [2, "고급"],
             ]}
           />
+          <BasicSelect
+            state={order}
+            setState={setOrder}
+            list={[
+              [0, "기본"],
+              [1, "중급"],
+              [2, "고급"],
+            ]}
+          />
         </div>
       </div>
       <div className={styles.myboard_list_content}>

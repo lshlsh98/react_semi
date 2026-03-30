@@ -1,8 +1,9 @@
 import { useState } from "react";
 import styles from "./Mypage.module.css";
-import { NavLink, Route, Routes } from "react-router-dom";
+import { Link, NavLink, Route, Routes } from "react-router-dom";
 import MyBoardPage from "../components/mypage/MyBoardPage";
 import AdminBoardPage from "../components/mypage/AdminBoardPage";
+import MyCommentPage from "../components/mypage/MyCommentPage";
 
 const Mypage = () => {
   return (
@@ -14,7 +15,8 @@ const Mypage = () => {
       <div className={styles.content_wrap}>
         <Routes>
           <Route path="myinfo" element></Route>
-          <Route path="myboard" element={<AdminBoardPage />}></Route>
+          <Route path="board" element={<AdminBoardPage />}></Route>
+          <Route path="comment" element={<MyCommentPage />}></Route>
         </Routes>
       </div>
     </div>
@@ -135,7 +137,12 @@ const SideBar = () => {
               }
               onClick={() => setSelectMenu("postManagement_trade")}
             >
-              <NavLink to="/member/mypage/myboard">거래</NavLink>
+              <Link
+                to="/member/mypage/board"
+                style={{ textDecoration: "none", color: "inherit" }}
+              >
+                거래
+              </Link>
             </li>
             <li
               className={
@@ -179,7 +186,12 @@ const SideBar = () => {
               }
               onClick={() => setSelectMenu("commentManagement_trade")}
             >
-              거래
+              <Link
+                to="/member/mypage/comment"
+                style={{ textDecoration: "none", color: "inherit" }}
+              >
+                거래
+              </Link>
             </li>
             <li
               className={
@@ -222,7 +234,7 @@ const SideBar = () => {
           }}
           className={selectMenu === "postManage" ? styles.active : ""}
         >
-          신고된 게시글 확인
+          거래 현황
         </li>
       </ul>
     </div>
