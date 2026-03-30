@@ -273,7 +273,7 @@ const Find_id = () => {
             <div className={styles.login_link_wrap}>
               <span className={styles.helper_text}>기억나셨나요?</span>
               <Link to="/member/login" className={styles.login_link}>
-                로그인하러가기
+                로그인 하러가기
               </Link>
             </div>
           </form>
