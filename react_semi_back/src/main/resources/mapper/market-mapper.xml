@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="kr.co.iei.market.model.dao.MarketDao">
+	
+	<!--마켓 총게시물수 구하기 -->
+	<select id="selectMarketCount" resultType="Integer">
+	select count(*) from market_tbl where market_status = #{status}
+	</select>
+	
+	<!--마켓 리스트 객체 생성 -->
+	<select id="selectMarketList" resultType="market">
+	select
+		market_no,
+		market_title,
+		market_thumb,
+		to_char(market_date, 'yyyy-mm-dd') as market_date,
+		market_writer,
+		view_count,
+		sell_addr,
+		sell_price
+		from market_tbl
+		join member_tbl on (market_writer = member_id)
+		where market_status = #{status}
+		<if test="searchType==1">
+			and market_title like '%'||#{searchKeyword}||'%'
+		</if>
+		<if test="searchType==2">
+			and market_writer = #{searchKeyword}
+		</if>
+		<if test="order==0"> order by market_no desc</if>
+		<if test="order==1"> order by market_no asc</if>
+		<if test="order==2"> order by view_count desc </if>
+		<!-- 좋아요 높은순
+		<if test="order==3">order by </if>
+		-->
+		offset #{page}*#{size} rows fetch next #{size} rows only
+	</select>
+  
+</mapper>

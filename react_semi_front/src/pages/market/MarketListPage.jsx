@@ -2,44 +2,159 @@ import { useNavigate } from "react-router-dom";
 import useAuthStore from "../../components/utils/useAuthStore";
 import { useEffect, useState } from "react";
 import axios from "axios";
+import styles from "./MarketListPage.module.css";
+import Pagination from "../../components/ui/Pagination";
 
 const MarketListPage = () => {
   const navigate = useNavigate();
   const { memberId } = useAuthStore();
   const [marketList, setMarketList] = useState([]);
-  const [page, setPage] = useState(0);
-  const [size, setSize] = useState(0);
 
   /* 사이즈 셋팅 */
   const [totalPage, setTotalPage] = useState(null);
+  const [page, setPage] = useState(0);
+  const [size, setSize] = useState(8);
 
-  const [order, setOrder] = useState(0);
+  /* 공개상태 관리 스테이트 1 : 공개 2 : 비공개 */
+  const [status, setStatus] = useState(1);
+
   /* 정렬관리 스테이트 */
+  const [order, setOrder] = useState(0);
+  /*
+    0 : 최신순
+    1 : 오래된순
+    2 : 조회수 높은순
+    3 : 좋아요 많은순
+    4 : 금액 높은순
+  */
 
-  /* 페이지네이션 사용시 전달할 매개변수 page,setPage,totalPage,naviSize */
-  const [keyword, setKeyword] = useState(""); /* 화면표현용 스테이트 */
-  const [searchKeyword, setSearchKeyword] =
-    useState(""); /* 서버전송용 스테이트 */
+  /* 화면표현용 스테이트 */
+  const [keyword, setKeyword] = useState("");
+  const [type, setType] = useState(1); //1:제목 2: 작성자
 
-  const [loaction, setLocation] = useState(0);
-  /* 카테고리 관리 스테이트 */
+  /* 서버전송용 스테이트 */
+  const [searchKeyword, setSearchKeyword] = useState("");
+  const [searchType, setSearchType] = useState(1);
+
+  /* 지역 관리용 스테이트 0 : 강남구 1: 강동구 2: 강북구... */
+  const [location, setLocation] = useState(0);
 
   useEffect(() => {
     axios
-      .get()
+      .get(
+        `${import.meta.env.VITE_BACKSERVER}/markets?page=${page}&size=${size}&status=${status}&order=${order}&searchType=${searchType}&searchKeyword=${searchKeyword}&location=${location}`,
+      )
       .then((res) => {
-        console.log(res);
+        console.log(res.data.items);
+        setMarketList(res.data.items);
+        setTotalPage(res.data.totalPage);
       })
       .catch((err) => {
-        console.log(err);
+        console.log("에러발생");
+        console.log(err.data);
       });
-  }, []);
+  }, [page, size, status, order, searchType, searchKeyword, location]);
 
   return (
     <>
-      <hr />
-      <p>안녕</p>
+      <section className={styles.market_wrap}>
+        <div className={styles.market_searchbox}>
+          <form
+            onSubmit={(e) => {
+              e.preventDefault();
+              setSearchType(type);
+              setSearchKeyword(keyword);
+              setPage(0);
+            }}
+          >
+            <select
+              value={type}
+              onChange={(e) => {
+                setType(e.target.value);
+              }}
+            >
+              <option value={1}>제목</option>
+              <option value={2}>작성자</option>
+            </select>
+            <input
+              type="text"
+              value={keyword}
+              onChange={(e) => {
+                setKeyword(e.target.value);
+              }}
+            ></input>
+            <button type="submit">검색</button>
+            <select
+              value={size}
+              onChange={(e) => {
+                setSize(e.target.value);
+              }}
+            >
+              <option value={8}>8개씩보기</option>
+              <option value={16}>16개씩보기</option>
+              <option value={32}>32개씩보기</option>
+            </select>
+          </form>
+          <button
+            onClick={() => {
+              setPage(0);
+              setOrder(0);
+              setLocation(0);
+              setType(1);
+              setSize(8);
+            }}
+          >
+            초기화
+          </button>
+        </div>
+        <div className={styles.market_categoryAndlist}>
+          <div className={styles.market_category}>지역 카테고리</div>
+          <div className={styles.market_list_wrap}>
+            <MarketList marketList={marketList} />
+          </div>
+        </div>
+        <div className={styles.market_pagination}>
+          <Pagination
+            page={page}
+            totalPage={totalPage}
+            naviSize={5}
+            setPage={setPage}
+          ></Pagination>
+        </div>
+      </section>
     </>
   );
 };
 export default MarketListPage;
+
+const MarketList = ({ marketList }) => {
+  return (
+    <ul>
+      {marketList.map((market) => {
+        return (
+          <MarketItem key={`market-list-${market.marketNo}`} market={market} />
+        );
+      })}
+    </ul>
+  );
+};
+
+const MarketItem = ({ market }) => {
+  const navigate = useNavigate();
+  return (
+    <li
+      onClick={() => {
+        navigate(`/market/view/${market.marketNo}`);
+      }}
+    >
+      <p>번호 : {market.marketNo}</p>
+      <p>제목 : {market.marketTitle}</p>
+      <p>썸네일 : {market.marketThumb}</p>
+      <p>작성일 : {market.marketDate}</p>
+      <p>작성자 : {market.marketWriter}</p>
+      <p>조회수 : {market.viewCount}</p>
+      <p>판매지역 : {market.sellAddr}</p>
+      <p>판매금액 : {market.sellPrice}</p>
+    </li>
+  );
+};

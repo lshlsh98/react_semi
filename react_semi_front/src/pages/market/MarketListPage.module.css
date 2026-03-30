@@ -1,0 +1,36 @@
+/* 전체 랩*/
+.market_wrap {
+  width: 1200px;
+  margin: 0 auto;
+  border: 1px solid black;
+}
+
+/* 검색창 정렬박스 */
+.market_searchbox {
+  border: 1px solid black;
+  background-color: burlywood;
+}
+/* 카테고리 and 리스트*/
+.market_categoryAndlist {
+  display: flex;
+}
+.market_category {
+  width: 200px;
+  border: 1px solid chartreuse;
+}
+.market_list_wrap {
+  flex-grow: 1;
+  border: 1px solid chartreuse;
+}
+
+/*페이지네이션*/
+.market_pagination {
+  background-color: azure;
+}
+
+.market_list_wrap > ul {
+  display: flex;
+}
+.market_list_wrap > ul > li {
+  border: 1px solid sandybrown;
+}

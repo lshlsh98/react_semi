@@ -6,6 +6,7 @@ import Join from "./pages/member/Join";
 import Login from "./pages/member/Login";
 import Mypage from "./pages/Mypage";
 import Find_id from "./pages/member/Find_id";
+import MarketListPage from "./pages/market/MarketListPage";
 
 function App() {
   return (
@@ -16,6 +17,7 @@ function App() {
           <Route path="/member/join" element={<Join />} />
           <Route path="/member/login" element={<Login />} />
           <Route path="/member/find-id" element={<Find_id />} />
+          <Route path="/market" element={<MarketListPage />} />
 
           <Route path="/member/mypage/*" element={<Mypage />} />
         </Routes>
