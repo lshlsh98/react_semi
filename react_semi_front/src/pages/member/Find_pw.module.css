@@ -88,6 +88,13 @@
   margin-bottom: -2px;
 }
 
+.info_text {
+  font-size: 13px;
+  color: var(--text2);
+  margin-bottom: 20px;
+  line-height: 1.4;
+}
+
 .form_group {
   display: flex;
   flex-direction: column;
@@ -140,16 +147,6 @@
   padding: 0 4px;
 }
 
-.timer_text {
-  position: absolute;
-  right: 12px;
-  top: 50%;
-  transform: translateY(-50%);
-  color: var(--danger);
-  font-size: 13px;
-  font-weight: 600;
-}
-
 .helper_text {
   font-size: 13px;
   color: var(--text2);
@@ -165,6 +162,16 @@
 .login_link:hover {
   color: var(--line);
   text-decoration: underline;
+}
+
+.timer_text {
+  position: absolute;
+  right: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: var(--danger);
+  font-size: 13px;
+  font-weight: 600;
 }
 
 .form_group input::placeholder {

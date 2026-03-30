@@ -11,4 +11,6 @@ public interface MemberDao {
     Member selectOneMember(String memberId);
     
     String findId(Member member);
+    
+    int updateTempPw(Member member);
 }
