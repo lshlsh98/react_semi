@@ -15,8 +15,6 @@ function App() {
 
         <Route path="/" />
         <Route path="/member/mypage/*" element={<Mypage />} />
-
-        <Route path="/market" element={<MarketListPage />} />
       </Routes>
 
       <Footer></Footer>
