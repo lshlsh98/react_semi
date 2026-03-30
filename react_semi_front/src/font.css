@@ -1,0 +1,12 @@
+@font-face {
+  font-family: gs_m;
+  src: url(./assets/font/GmarketSansMedium.woff);
+}
+@font-face {
+  font-family: rb_b;
+  src: url(./assets/font/Roboto_Condensed-Bold.ttf);
+}
+@font-face {
+  font-family: gs_l;
+  src: url(./assets/font/GmarketSansLight.woff);
+}
