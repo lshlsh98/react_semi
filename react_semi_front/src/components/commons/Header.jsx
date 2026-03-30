@@ -3,7 +3,6 @@ import styles from "./Commons.module.css";
 import Button from "../ui/Button";
 import useAuthStore from "../utils/useAuthStore";
 import axios from "axios";
-import Swal from "sweetalert2";
 
 const Header = () => {
   const navigate = useNavigate();
@@ -36,11 +35,6 @@ const Header = () => {
               <Button
                 className="btn primary"
                 onClick={() => {
-                  Swal.fire({
-                    icon: "success",
-                    title: "로그인 성공!",
-                    text: `${res.data.memberName}님 환영합니다!`,
-                  });
                   useAuthStore.getState().logout();
                   delete axios.defaults.headers.common["Authorization"];
                   navigate("/");
