@@ -2,15 +2,15 @@ import { useNavigate } from "react-router-dom";
 import Button from "../../components/ui/Button";
 import { Input } from "../../components/ui/Form";
 import styles from "./Community.module.css";
+import { useState } from "react";
 
 const CommunityWritePage = () => {
   const navigate = useNavigate();
 
-  const registCommunity = () => {
-    if (community.communityTitle === "" || community.communityContent === "") {
-      return;
-    }
-  };
+  const [community, setCommunity] = useState({
+    communityTitle: "",
+    communityContent: "",
+  });
 
   return (
     <section className={styles.community_wrap}>
@@ -24,12 +24,13 @@ const CommunityWritePage = () => {
         ></Input>
 
         <label htmlFor="communityContent" />
-        <Input
+        <textarea
+          className={styles.content}
           type="text"
           name="communityContent"
           id="communityContent"
           placeholder="내용"
-        ></Input>
+        />
       </div>
 
       <form className={styles.btn_wrap}>

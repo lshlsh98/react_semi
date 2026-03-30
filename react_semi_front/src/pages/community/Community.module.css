@@ -4,3 +4,24 @@
   border-radius: 10px;
   padding: 32px;
 }
+
+.content {
+  margin-top: 30px;
+  width: 1000px;
+  height: 500px;
+  resize: none;
+}
+
+.btn_wrap {
+  display: flex;
+  justify-content: center;
+  gap: 45px;
+  margin-top: 30px;
+}
+
+.btn {
+  width: 80px;
+  height: 36px;
+  border: none;
+  cursor: pointer;
+}
