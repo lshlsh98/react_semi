@@ -13,4 +13,6 @@ public interface MemberDao {
     String findId(Member member);
     
     int updateTempPw(Member member);
+
+	int updateMemberThumb(Member m);
 }
