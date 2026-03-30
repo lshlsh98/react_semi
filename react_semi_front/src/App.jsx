@@ -6,6 +6,7 @@ import Header from "./components/commons/Header";
 import Join from "./pages/member/Join";
 import Login from "./pages/member/Login";
 import Mypage from "./pages/Mypage";
+import CommunityWritePage from "./pages/community/CommunityWritePage";
 
 function App() {
   return (
@@ -17,6 +18,7 @@ function App() {
           <Route path="/member/login" element={<Login />} />
           <Route path="/" />
           <Route path="/member/mypage/*" element={<Mypage />} />
+          <Route path="/community/write" element={<CommunityWritePage />} />
         </Routes>
       </div>
       <Footer />
