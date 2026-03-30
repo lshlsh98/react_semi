@@ -4,6 +4,7 @@
   padding: 8px 4px;
   border: 1px solid var(--gray5);
   border-radius: 8px;
+  padding-left: 16px;
 }
 .input:focus {
   border: 1px solid var(--primary);

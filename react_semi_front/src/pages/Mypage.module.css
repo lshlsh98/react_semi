@@ -1,6 +1,8 @@
 .mypage_wrap {
   width: 1200px;
   margin: 50px auto;
+  display: flex;
+  gap: 20px;
 }
 
 .sidebar_wrap {
@@ -17,7 +19,7 @@
   overflow: hidden;
 }
 
-.profile_img {
+.member_thumb {
   width: 250px;
   height: 250px;
   background-color: var(--gray6);
@@ -26,7 +28,7 @@
   align-items: center;
 }
 
-.profile_img > span {
+.member_thumb > span {
   color: var(--gray8);
   font-size: 200px;
 }
@@ -67,6 +69,10 @@
   color: var(--primary);
 }
 
+.open > li:nth-child(2) {
+  border: none;
+}
+
 .sidebar ul ul {
   max-height: 0;
   overflow: hidden;
@@ -94,6 +100,14 @@
 }
 
 .management > li:first-child {
+  cursor: default;
   border-top: 1px solid var(--gray6);
   color: var(--gray1);
+}
+
+.mypage_content {
+  background-color: var(--gray8);
+  border-radius: 4px;
+  border: 1px solid var(--gray6);
+  flex-grow: 1;
 }
