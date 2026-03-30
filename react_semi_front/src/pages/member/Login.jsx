@@ -1,5 +1,5 @@
 import { useState } from "react";
-import styles from "./Login.module.css"; 
+import styles from "./Login.module.css";
 import { Input } from "../../components/ui/Form";
 import Button from "../../components/ui/Button";
 import axios from "axios";
@@ -10,25 +10,30 @@ import useAuthStore from "../../components/utils/useAuthStore";
 const Login = () => {
   const navigate = useNavigate();
 
-  const [member, setMember] = useState({ memberId: "", memberPw: "" });
+  const [member, setMember] = useState({ memberId: "", memberPw: "" }); // member 정보를 담는 용도의 state
 
   const inputMember = (e) => {
+    // 이젠 너무 익숙한 value에 있는 값을 member에 넣는 방법
     setMember({ ...member, [e.target.name]: e.target.value });
   };
 
   const login = () => {
     if (member.memberId === "" || member.memberPw === "") {
-      alert("아이디와 비밀번호를 모두 입력해주세요.");
+      Swal.fire({
+        icon: "warning",
+        title: "입력 오류",
+        text: "아이디와 비밀번호를 모두 입력해주세요.",
+      });
       return;
     }
+
     axios
       .post(`${import.meta.env.VITE_BACKSERVER}/members/login`, member)
       .then((res) => {
         console.log(res);
         useAuthStore.getState().login(res.data);
-        
         axios.defaults.headers.common["Authorization"] = res.data.token;
-        
+
         Swal.fire({
           icon: "success",
           title: "로그인 성공!",
@@ -50,7 +55,7 @@ const Login = () => {
     <section className={styles.login_section}>
       <div className={styles.login_card}>
         <h3 className={styles.page_title}>로그인</h3>
-        
+
         <form
           onSubmit={(e) => {
             e.preventDefault();
@@ -59,7 +64,9 @@ const Login = () => {
           autoComplete="off"
         >
           <div className={styles.form_group}>
-            <label htmlFor="memberId" className={styles.label}>아이디</label>
+            <label htmlFor="memberId" className={styles.label}>
+              아이디
+            </label>
             <div className={styles.input_row}>
               <Input
                 type="text"
@@ -73,7 +80,9 @@ const Login = () => {
           </div>
 
           <div className={styles.form_group}>
-            <label htmlFor="memberPw" className={styles.label}>비밀번호</label>
+            <label htmlFor="memberPw" className={styles.label}>
+              비밀번호
+            </label>
             <div className={styles.input_row}>
               <Input
                 type="password"
@@ -95,10 +104,10 @@ const Login = () => {
             <Button className="btn primary lg" type="submit">
               로그인
             </Button>
-            <Button 
-              className="btn primary lg" 
-              type="button" 
-              onClick={() => navigate('/member/join')}
+            <Button
+              className="btn primary lg"
+              type="button"
+              onClick={() => navigate("/member/join")}
             >
               회원가입
             </Button>

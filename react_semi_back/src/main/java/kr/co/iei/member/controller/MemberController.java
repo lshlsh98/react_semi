@@ -88,4 +88,16 @@ public class MemberController {
             return ResponseEntity.ok(loginMember); 
         }
     }
+    
+    // 5. 아이디 찾기
+    @PostMapping(value="/find-id")
+    public ResponseEntity<?> findId(@RequestBody Member member) {
+        String memberId = memberService.findId(member);
+        
+        if (memberId == null) {
+            return ResponseEntity.status(404).build();
+        } else {
+            return ResponseEntity.ok(memberId);
+        }
+    }
 }
