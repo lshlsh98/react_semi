@@ -5,20 +5,26 @@ import java.util.Random;
 import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PatchMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MultipartFile;
 
 import kr.co.iei.member.model.service.MemberService;
 import kr.co.iei.member.model.vo.LoginMember;
 import kr.co.iei.member.model.vo.Member;
 import kr.co.iei.utils.EmailSender;
+import kr.co.iei.utils.FileUtils;
 
 @CrossOrigin(value="*")
 @RestController
@@ -33,6 +39,11 @@ public class MemberController {
     
     @Autowired
     private BCryptPasswordEncoder passwordEncoder;	// BCryptPasswordEncoder는 내가 만든 class가 아님 spring에서 지원하는 이미 만들어져 있는 class를 받아옴
+
+    private FileUtils fileUtil;
+
+	@Value("${file.root}")
+	private String root;
     
     // 1. 회원가입
     @PostMapping
@@ -156,4 +167,35 @@ public class MemberController {
             return ResponseEntity.status(404).build();
         }
     }
+    
+    //	정보 불러오기
+    @GetMapping(value="/{memberId}")
+    public ResponseEntity<?> memberInfo (@PathVariable String memberId){
+    	Member m = memberService.selectOneMember(memberId);
+        return ResponseEntity.ok(m);
+    }
+    
+    // 내 정보 비밀번호 인증
+    @PostMapping(value="/pw-auth")
+    public ResponseEntity<?> memberAuth (@RequestBody Member memberAuth){
+    	System.out.println(memberAuth);
+    	LoginMember member = memberService.login(memberAuth);
+    	if(member == null) {
+            return ResponseEntity.status(404).build();
+        }else {
+            return ResponseEntity.ok(member); 
+        }}
+
+    @PatchMapping(value = "/{memberId}/thumbnail")
+	public ResponseEntity<?> updateThumbnail(@PathVariable String memberId, @ModelAttribute MultipartFile file) {
+		String savepath = root + "member/";
+		String memberThumb = fileUtil.upload(savepath, file);
+		
+		Member m = new Member();
+		m.setMemberThumb(memberThumb);
+		m.setMemberId(memberId);
+		
+		int result = memberService.updateMemberThumb(m);
+		return ResponseEntity.ok(memberThumb);
+	}
 }

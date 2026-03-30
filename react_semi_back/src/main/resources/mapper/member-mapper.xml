@@ -21,4 +21,10 @@
         update member_tbl set member_pw = #{memberPw} where member_id = #{memberId} and member_email = #{memberEmail}
     </update>
 
+    <update id="updateMemberThumb">
+		update member_tbl set
+		member_thumb = #{memberThumb}
+		where member_id = #{memberId}
+	</update>
+
 </mapper>

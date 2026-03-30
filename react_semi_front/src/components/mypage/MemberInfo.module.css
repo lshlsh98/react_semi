@@ -1,0 +1,108 @@
+.member_info_wrap {
+  display: flex;
+  flex-direction: column;
+  gap: 50px;
+  justify-content: center;
+  align-items: center;
+  padding: 50px;
+  width: 100%;
+}
+
+.profile_info > form {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 20px;
+}
+
+.member_auth_pw {
+  display: flex;
+  align-items: center;
+  gap: 30px;
+  margin-bottom: 50px;
+}
+
+.member_auth_pw > input {
+  width: 200px;
+}
+
+.member_thumb_img_wrap {
+  width: 100%;
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  align-items: center;
+  align-items: end;
+  gap: 16px;
+}
+
+.member_thumb {
+  height: 200px;
+  width: 200px;
+  background-color: var(--gray6);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 4px;
+}
+
+.member_thumb > span {
+  font-size: 180px;
+  color: var(--gray8);
+}
+
+.profile_info_update {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.profile_info_update > form {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  align-items: center;
+  padding: 10px 50px;
+}
+
+.member_thumb_wrap {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.info_input_wrap {
+  list-style-type: none;
+  display: flex;
+  width: 100%;
+}
+
+.info_input_wrap > li:first-child {
+  width: 12%;
+  align-self: center;
+}
+
+.member_name > li:nth-child(2) {
+  width: 30%;
+}
+.member_id > li:nth-child(2) {
+  width: 30%;
+}
+.member_email > li:nth-child(2) {
+  width: 40%;
+}
+.member_postcode > li:nth-child(2) {
+  width: 10%;
+}
+.member_addr > li:nth-child(2) {
+  width: 55%;
+}
+.member_detail_addr > li:nth-child(2) {
+  width: 55%;
+}
+
+.profile_info_update > form > button {
+  margin-top: 50px;
+}
