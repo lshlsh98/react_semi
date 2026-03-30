@@ -26,11 +26,13 @@ public class MemberService {
         String encPw = bcrypt.encode(member.getMemberPw());
         member.setMemberPw(encPw);
         
-        return memberDao.insertMember(member);
+        int result = memberDao.insertMember(member);
+        return result;
     }
 
     public Member selectOneMember(String memberId) {
-        return memberDao.selectOneMember(memberId);
+    	Member m = memberDao.selectOneMember(memberId);
+        return m;
     }
     
     public LoginMember login(Member member) {
@@ -47,6 +49,17 @@ public class MemberService {
     }
     
     public String findId(Member member) {
-        return memberDao.findId(member);
+    	String memberId = memberDao.findId(member);
+        return memberId;
+    }
+    
+    @Transactional
+    public int updateTempPw(Member member) {
+        // 회원가입떄 했던 암호화 로직 그대로 쓰기
+        String encPw = bcrypt.encode(member.getMemberPw());
+        member.setMemberPw(encPw);
+        
+        int result = memberDao.updateTempPw(member); 
+        return result;
     }
 }

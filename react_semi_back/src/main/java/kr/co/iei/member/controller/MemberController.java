@@ -2,9 +2,11 @@ package kr.co.iei.member.controller;
 
 import java.util.Map;
 import java.util.Random;
+import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -29,6 +31,9 @@ public class MemberController {
     @Autowired
     private EmailSender sender;
     
+    @Autowired
+    private BCryptPasswordEncoder passwordEncoder;	// BCryptPasswordEncoder는 내가 만든 class가 아님 spring에서 지원하는 이미 만들어져 있는 class를 받아옴
+    
     // 1. 회원가입
     @PostMapping
     public ResponseEntity<?> joinMember(@RequestBody Member member){
@@ -52,6 +57,7 @@ public class MemberController {
         
         Random r = new Random();
         StringBuffer sb = new StringBuffer();
+        
         for(int i=0; i<6; i++) {
         	//영어 대문자 / 영어 소문자 / 숫자 를 조합해서 6자리 랜덤코드 생성
 			//숫자(0~9) : r.nextInt(10);
@@ -98,6 +104,56 @@ public class MemberController {
             return ResponseEntity.status(404).build();
         } else {
             return ResponseEntity.ok(memberId);
+        }
+    }
+
+    // 6. 비밀번호 찾기 (임시 비밀번호 발급 및 메일 전송)
+    @PostMapping(value="/find-pw")
+    public ResponseEntity<?> findPw(@RequestBody Member member) {
+        
+    	// 3번 로직 그대로 사용
+        Random r = new Random();
+        StringBuffer sb = new StringBuffer();
+        
+        for(int i=0; i<8; i++) { 
+        	//영어 대문자 / 영어 소문자 / 숫자 를 조합해서 8자리 랜덤코드 생성
+			//숫자(0~9) : r.nextInt(10);
+			//대문자(A~Z) : r.nextInt(26) + 65;
+			//소문자(a~z) : r.nextInt(26) + 97; -> 유니코드 안외워지니 걍 구글에 유니코드 알파벳 몇번부터인지 체크 ㄱ
+        	
+            int flag = r.nextInt(3);    //0, 1, 2 -> 숫자, 대문자, 소문자 어떤걸 추출할지 랜덤으로 결정
+            if(flag == 0) {
+                sb.append(r.nextInt(10)); 
+            }else if(flag == 1) {
+                sb.append((char)(r.nextInt(26) + 65)); 
+            }else if(flag == 2) {
+                sb.append((char)(r.nextInt(26) + 97)); 
+            }
+        }
+        
+        String tempPw = sb.toString(); 
+        
+        member.setMemberPw(tempPw); 
+        
+        // DB 업데이트 (회원가입이랑 마찬가지로 여기서 MemberService가 알아서 암호화 한 뒤 DB를 update)
+        int result = memberService.updateTempPw(member);
+        
+        if (result > 0) { // 업데이트 성공시
+        	
+            String emailTitle = "[C2C] 임시 비밀번호 발급 안내";
+            String receiverEmail = member.getMemberEmail(); 
+            
+            String emailContent = "<h1>안녕하세요. C2C(Customer To Carbon) 입니다.</h1>"
+                                + "<h3>회원님의 임시 비밀번호는 [ <b style='color:red;'>" + tempPw + "</b> ] 입니다.</h3>"
+                                + "<h3>!!주의 꼭 읽어주세요!!</h3>"
+                                + "<h3>실제 당신의 기존 비밀번호가 임시비밀번호로 바뀐것 입니다!! </h3>"
+                                + "<h3>!!!로그인 후 반드시 비밀번호를 변경해 주세요!!!</h3>";
+            
+            sender.sendMail(emailTitle, receiverEmail, emailContent);
+
+            return ResponseEntity.ok(tempPw);
+        } else {
+            return ResponseEntity.status(404).build();
         }
     }
 }
