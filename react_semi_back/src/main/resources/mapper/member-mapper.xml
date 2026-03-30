@@ -16,5 +16,9 @@
     <select id="findId" resultType="string">
         select member_id from member_tbl where member_name = #{memberName} and member_email = #{memberEmail}
     </select>
+    
+    <update id="updateTempPw">
+        update member_tbl set member_pw = #{memberPw} where member_id = #{memberId} and member_email = #{memberEmail}
+    </update>
 
 </mapper>
