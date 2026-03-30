@@ -12,5 +12,9 @@
     <select id="selectOneMember" resultType="member">
         select * from member_tbl where member_id = #{memberId}
     </select>
+    
+    <select id="findId" resultType="string">
+        select member_id from member_tbl where member_name = #{memberName} and member_email = #{memberEmail}
+    </select>
 
 </mapper>
