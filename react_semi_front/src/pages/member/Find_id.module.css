@@ -1,0 +1,180 @@
+/* =========================================
+   1. 전체 레이아웃
+   ========================================= */
+.find_section {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 60px 0 80px 0;
+}
+
+/* =========================================
+   2. 계정 찾기 카드 (2단 구조)
+   ========================================= */
+.find_card {
+  /* 💡 로그인, 회원가입 카드와 완벽하게 동일한 720px로 맞춤! */
+  width: 720px;
+  min-height: 500px;
+  display: flex;
+  background-color: var(--light);
+  border-radius: 16px;
+  overflow: hidden;
+  box-shadow: 0 12px 30px rgba(84, 152, 73, 0.08);
+}
+
+/* 2-1. 왼쪽 정보 패널 (초록색 영역) */
+.info_panel {
+  flex: 1;
+  background-color: var(--primary);
+  /* 💡 전체 글씨 색상을 완벽한 흰색으로 고정 */
+  color: #ffffff;
+  padding: 80px 40px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.welcome_title {
+  font-size: 24px;
+  font-weight: 500;
+  color: #ffffff; /* 💡 명시적으로 흰색 지정 */
+  margin-bottom: 10px;
+}
+
+.brand_title {
+  font-size: 56px;
+  font-weight: 800;
+  color: #ffffff; /* 💡 명시적으로 흰색 지정 */
+  margin-bottom: 20px;
+  font-family: "tr_b", sans-serif;
+}
+
+.sub_title {
+  font-size: 16px;
+  line-height: 1.6;
+  color: #ffffff; /* 💡 명시적으로 흰색 지정 */
+  opacity: 0.95; /* 글씨가 더 뚜렷하게 보이도록 투명도 상향 */
+}
+
+/* 2-2. 오른쪽 폼 패널 */
+.form_panel {
+  flex: 1;
+  /* 💡 전체 카드가 720px로 줄었으니, 내부가 답답하지 않게 여백 살짝 다이어트 */
+  padding: 50px 40px;
+  display: flex;
+  flex-direction: column;
+}
+
+.page_title {
+  font-size: 28px;
+  font-weight: 800;
+  color: var(--line);
+  margin-bottom: 30px;
+}
+
+/* =========================================
+   3. 탭 메뉴 (아이디 / 비밀번호 찾기)
+   ========================================= */
+.tab_menu {
+  display: flex;
+  border-bottom: 2px solid var(--soft);
+  margin-bottom: 40px;
+}
+
+.tab_item {
+  flex: 1;
+  text-align: center;
+  padding-bottom: 12px;
+  font-size: 16px;
+  font-weight: 600;
+  color: var(--text2);
+  cursor: pointer;
+  text-decoration: none;
+}
+
+.tab_item:hover {
+  color: var(--primary);
+}
+
+.tab_item.active {
+  color: var(--primary);
+  border-bottom: 3px solid var(--primary);
+  margin-bottom: -2px;
+}
+
+/* =========================================
+   4. 입력 폼 영역
+   ========================================= */
+.form_group {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-bottom: 24px;
+}
+
+.label {
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--primary);
+  padding-left: 4px;
+}
+
+/* 💡 추가된 부분: 입력창과 버튼을 가로로 예쁘게 배치 */
+.input_button_row {
+  display: flex;
+  gap: 10px;
+  width: 100%;
+}
+
+.input_box {
+  flex: 1; /* 인풋창이 남은 공간을 꽉 채우도록 */
+}
+
+.input_button_row > button {
+  width: 110px; /* 버튼 크기 고정 */
+  height: 48px; /* Input 높이와 맞춤 (Input 높이에 따라 조절하세요) */
+  flex-shrink: 0;
+  font-size: 14px;
+  white-space: nowrap; /* 글자 줄바꿈 방지 */
+}
+
+/* =========================================
+   5. 하단 버튼 & 링크
+   ========================================= */
+.button_wrap {
+  margin-top: 30px;
+  margin-bottom: 20px;
+}
+
+.button_wrap > button {
+  width: 100%;
+  height: 52px;
+  font-size: 16px;
+  /* 💡 버튼 글씨에 ExtraBold(tr_b) 폰트 빡! 적용 */
+  font-family: "tr_b", sans-serif;
+}
+
+.login_link_wrap {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0 4px;
+}
+
+.helper_text {
+  font-size: 13px;
+  color: var(--text2);
+}
+
+.login_link {
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--primary);
+  transition: all 0.2s;
+}
+
+.login_link:hover {
+  color: var(--line);
+  text-decoration: underline;
+}
