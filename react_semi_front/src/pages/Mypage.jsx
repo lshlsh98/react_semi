@@ -49,9 +49,7 @@ const Profile = () => {
         }
       >
         {memberThumb ? (
-          <img
-            src={`${import.meta.env.VITE_BACKSERVER}/member/thumb/${memberThumb}`}
-          />
+          <img src={`${import.meta.env.VITE_BACKSERVER}/semi/${memberThumb}`} />
         ) : (
           <span class="material-icons">account_circle</span>
         )}
