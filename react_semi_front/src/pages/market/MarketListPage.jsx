@@ -1,9 +1,10 @@
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import useAuthStore from "../../components/utils/useAuthStore";
 import { useEffect, useState } from "react";
 import axios from "axios";
 import styles from "./MarketListPage.module.css";
 import Pagination from "../../components/ui/Pagination";
+import Button from "../../components/ui/Button";
 
 const MarketListPage = () => {
   const navigate = useNavigate();
@@ -76,6 +77,7 @@ const MarketListPage = () => {
               <option value={1}>제목</option>
               <option value={2}>작성자</option>
             </select>
+
             <input
               type="text"
               value={keyword}
@@ -83,35 +85,64 @@ const MarketListPage = () => {
                 setKeyword(e.target.value);
               }}
             ></input>
-            <button type="submit">검색</button>
+
+            <Button className="btn primary.outline" type="submit">
+              검색
+            </Button>
+            <select
+              value={order}
+              onChange={(e) => {
+                setOrder(e.target.value);
+                setPage(0);
+              }}
+            >
+              <option value={0}>최신↓</option>
+              <option value={1}>오래된↓</option>
+              <option value={2}>조회수↓</option>
+              <option value={3}>좋아요↓</option>
+              <option value={4}>금액↓</option>
+            </select>
+
             <select
               value={size}
               onChange={(e) => {
                 setSize(e.target.value);
+                setPage(0);
               }}
             >
               <option value={8}>8개씩보기</option>
               <option value={16}>16개씩보기</option>
               <option value={32}>32개씩보기</option>
             </select>
+            <Button
+              className="btn primary danger"
+              onClick={() => {
+                setPage(0);
+                setOrder(0);
+                setLocation(0);
+                setType(1);
+                setSize(8);
+                setKeyword("");
+                setSearchKeyword("");
+              }}
+            >
+              초기화
+            </Button>
           </form>
-          <button
-            onClick={() => {
-              setPage(0);
-              setOrder(0);
-              setLocation(0);
-              setType(1);
-              setSize(8);
-            }}
-          >
-            초기화
-          </button>
         </div>
         <div className={styles.market_categoryAndlist}>
           <div className={styles.market_category}>지역 카테고리</div>
           <div className={styles.market_list_wrap}>
             <MarketList marketList={marketList} />
           </div>
+        </div>
+        {/* 로그인시 글쓰기 필드 */}
+        <div className={styles.market_writebox}>
+          {memberId && (
+            <Link to="/market/writeFrm">
+              <Button className="btn primary">글작성</Button>
+            </Link>
+          )}
         </div>
         <div className={styles.market_pagination}>
           <Pagination

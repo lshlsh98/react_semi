@@ -33,6 +33,9 @@
 		<!-- 좋아요 높은순
 		<if test="order==3">order by </if>
 		-->
+		
+		<if test="order==4">order by sell_price desc</if>
+		
 		offset #{page}*#{size} rows fetch next #{size} rows only
 	</select>
   
