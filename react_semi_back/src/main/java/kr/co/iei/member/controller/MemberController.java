@@ -2,12 +2,10 @@ package kr.co.iei.member.controller;
 
 import java.util.Map;
 import java.util.Random;
-import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
@@ -37,9 +35,6 @@ public class MemberController {
     @Autowired
     private EmailSender sender;
     
-    @Autowired
-    private BCryptPasswordEncoder passwordEncoder;	// BCryptPasswordEncoder는 내가 만든 class가 아님 spring에서 지원하는 이미 만들어져 있는 class를 받아옴
-
     @Autowired
     private FileUtils fileUtil;
 
