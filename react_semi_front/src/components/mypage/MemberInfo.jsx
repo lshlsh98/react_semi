@@ -89,7 +89,7 @@ const MemberInfo = () => {
       });
   };
 
-  const deleteThumb = () => {
+  const deleteThumb = (e) => {
     axios
       .patch(
         `${import.meta.env.VITE_BACKSERVER}/members/${memberId}/thumbnail/delete`,
@@ -125,6 +125,7 @@ const MemberInfo = () => {
       .then((res) => {
         Swal.fire({ title: "수정완료" });
         useAuthStore.getState().setName(res.data);
+        navigate("/member/mypage");
       })
       .catch((err) => {
         console.log(err);
@@ -163,6 +164,7 @@ const MemberInfo = () => {
                   )}
                 </div>
                 <Button
+                  type="button"
                   className="btn primary"
                   onClick={() => {
                     inputRef.current.click();
