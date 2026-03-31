@@ -1,8 +1,9 @@
+import { useState } from "react";
+import styles from "./Community.module.css";
+import CommunityFrm from "../../components/community/CommunityFrm";
 import { useNavigate } from "react-router-dom";
 import Button from "../../components/ui/Button";
 import { Input } from "../../components/ui/Form";
-import styles from "./Community.module.css";
-import { useState } from "react";
 import TextEditor from "../../components/ui/TextEditor";
 
 const CommunityWritePage = () => {
@@ -13,31 +14,54 @@ const CommunityWritePage = () => {
     communityContent: "",
   });
 
+  const [files, setFiles] = useState([]);
+  const addFiles = (fileList) => {
+    const newFiles = [...files, ...fileList];
+    setFiles(newFiles);
+  };
+  const deleteFile = (file) => {
+    const newFiles = files.filter((item) => {
+      return item !== file;
+    });
+    setFiles(newFiles);
+  };
+
+  const inputCommunity = (e) => {
+    const name = e.target.name;
+    const value = e.target.value;
+    const newCommunity = { ...community, [name]: value };
+    setCommunity(newCommunity);
+  };
+  const inputCommunityContent = (data) => {
+    setBoard({ ...community, communityContent: data });
+  };
+
+  const registCommunity = () => {
+    if (community.communityTitle === "" || community.communityContent === "") {
+      return;
+    }
+    const form = new FormData();
+    form.append("communityTitle", community.communityTitle);
+    form.append("communityContent", community.communityContent);
+    files.forEach((file) => {
+      form.append("files", file);
+    });
+  };
+
   const [member, setMember] = useState(3); // 1: 슈퍼 유저, 2: 관리자, 3: 일반
 
   return (
     <section className={styles.community_wrap}>
-      <div className={styles.communitywrite_card}>
-        <label htmlFor="communityTitle" />
-        <Input
-          type="text"
-          name="communityTitle"
-          id="communityTitle"
-          placeholder="제목"
-        ></Input>
+      <CommunityFrm
+        community={community}
+        inputCommunity={inputCommunity}
+        files={files}
+        addFiles={addFiles}
+        deleteFile={deleteFile}
+        inputCommunityContent={inputCommunityContent}
+      />
 
-        <label htmlFor="communityContent" />
-        <TextEditor className={styles.editor} />
-        <textarea
-          className={styles.content}
-          type="text"
-          name="communityContent"
-          id="communityContent"
-          placeholder="내용"
-        />
-      </div>
-
-      <form className={styles.btn_wrap}>
+      <div className={styles.btn_wrap}>
         <Button
           className="btn primary"
           onClick={() => {
@@ -51,13 +75,10 @@ const CommunityWritePage = () => {
         >
           등록
         </Button>
-        <Button
-          className="btn light outline"
-          onClick={() => navigate("/community/list")}
-        >
+        <Button className="btn light outline" onClick={registCommunity}>
           취소
         </Button>
-      </form>
+      </div>
     </section>
   );
 };

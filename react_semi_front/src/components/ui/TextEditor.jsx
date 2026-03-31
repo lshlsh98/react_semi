@@ -42,7 +42,10 @@ const MenuBar = ({ editor }) => {
   };
   return (
     <div className={styles.menu_bar}>
-      <button type="button">Image</button>
+      <button type="button" onClick={addImage}>
+        Image
+      </button>
+
       <button
         type="button"
         className={editor.isActive("bold") ? styles.active : ""}
@@ -52,6 +55,7 @@ const MenuBar = ({ editor }) => {
       >
         Bold
       </button>
+
       <button
         type="button"
         className={editor.isActive("italic") ? styles.active : ""}
@@ -61,6 +65,7 @@ const MenuBar = ({ editor }) => {
       >
         Italic
       </button>
+
       <button
         type="button"
         className={

@@ -1,6 +1,18 @@
 import { Input, TextArea } from "../ui/Form";
 import styles from "./Community.module.css";
-const CommunityFrm = ({ community, inputCommunity }) => {
+import InsertDriveFileIcon from "@mui/icons-material/InsertDriveFile";
+import ClearIcon from "@mui/icons-material/Clear";
+import TextEditor from "../ui/TextEditor";
+const CommunityFrm = ({
+  community,
+  inputCommunity,
+  files,
+  addFiles,
+  deleteFile,
+  inputCommunityContent,
+  addDeleteFileList,
+}) => {
+  console.log(files);
   return (
     <div className={styles.community_frm_wrap}>
       <div className={styles.input_wrap}>
@@ -15,24 +27,68 @@ const CommunityFrm = ({ community, inputCommunity }) => {
       </div>
 
       <div className={styles.input_wrap}>
-        <label htmlFor="files">첨부파일</label>
-        <label htmlFor="files" className={styles.file_btn}>
-          파일추가
-        </label>
-        <input type="file" id="files"></input>
-        <input type="submit" value="test"></input>
-      </div>
-
-      <div className={styles.input_wrap}>
         <label htmlFor="communityContent">내용</label>
-        <TextArea
-          name="communityContent"
-          id="communityContent"
-          value={community.communityContent}
-          onChange={inputCommunity}
-        ></TextArea>
+        <TextEditor
+          data={community.communityContent}
+          setData={inputCommunityContent}
+        ></TextEditor>
+      </div>
+      <div className={styles.input_wrap}>
+        <input
+          type="file"
+          id="files"
+          onChange={(e) => {
+            const fileList = Array.from(e.target.files);
+            addFiles(fileList);
+          }}
+          multiple
+          style={{ display: "none" }}
+        ></input>
+
+        <div className={styles.file_wrap}>
+          {community.fileList &&
+            community.fileList.map((file, index) => {
+              return (
+                <FileItem
+                  key={"old-file-item-" + index}
+                  file={file}
+                  deleteFile={addDeleteFileList}
+                ></FileItem>
+              );
+            })}
+          {files.map((file, index) => {
+            return (
+              <FileItem
+                key={"file-item-" + index}
+                file={file}
+                deleteFile={deleteFile}
+              ></FileItem>
+            );
+          })}
+        </div>
       </div>
     </div>
+  );
+};
+
+const FileItem = ({ file, deleteFile }) => {
+  return (
+    <ul className={styles.file_item}>
+      <li>
+        <InsertDriveFileIcon />
+      </li>
+      <li className={styles.file_name}>
+        {file.name || file.communityFileName}
+      </li>
+      <li>
+        <ClearIcon
+          className={styles.file_delete}
+          onClick={() => {
+            deleteFile(file);
+          }}
+        />
+      </li>
+    </ul>
   );
 };
 
