@@ -436,6 +436,9 @@ const MemberInfo = () => {
                 ></Input>
               </li>
             </ul>
+            <Button type="button" className="btn outline lg">
+              회원탈퇴
+            </Button>
             <Button type="submit" className="btn primary lg">
               내 정보 수정
             </Button>
