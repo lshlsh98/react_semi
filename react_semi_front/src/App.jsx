@@ -9,8 +9,41 @@ import Mypage from "./pages/Mypage";
 import CommunityWritePage from "./pages/community/CommunityWritePage";
 import Find_id from "./pages/member/Find_id";
 import Find_pw from "./pages/member/Find_pw";
+import axios from "axios";
+import useAuthStore from "./components/utils/useAuthStore";
+import { useEffect } from "react";
 
 function App() {
+  const { endTime, token } = useAuthStore(); // endTime = 만료시간, token = 걍 토큰
+
+  const logout = () => {
+    // logout 함수 상태 비우기 + axios 헤더 비우기
+    useAuthStore.getState().logout();
+    delete axios.defaults.headers.common["Authorization"];
+  };
+
+  useEffect(() => {
+    useAuthStore.getState().setReady(true); // 앱 준비중
+
+    if (endTime === null) {
+      // 로그인된 상태가 아니면 타이머 안돌림
+      return;
+    }
+    const timeout = endTime - Date.now(); // 남은 시간 = 만료시간 - 현재시간
+
+    if (timeout > 0) {
+      axios.defaults.headers.common["Authorization"] = token; // axios가 서버에 요청 보낼때마다 토큰을 달고 가도록 세팅
+
+      window.setTimeout(() => {
+        // useEffect처럼(똑같진 않음, if(time > 0)이쪽에 걸려있음) timeout값을 계속 갱신하다가 0이 되면 자동으로 logout하고 if문 나가게함.
+        logout();
+      }, timeout);
+    } else {
+      // 쓰레기 토큰 파기 (로그아웃 처리함, 예 : 어제 로그인하고 오늘 켰을떄 등)
+      logout();
+    }
+  }, [endTime]); // endTime이 바뀔때마다 (로그인 / 로그아웃) useEffect함수 실행
+
   return (
     <div className="wrap">
       <Header />
