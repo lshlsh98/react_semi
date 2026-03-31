@@ -32,6 +32,7 @@
 
 body {
   background-color: var(--bg);
+  font-family: rb_b;
 }
 
 a {
