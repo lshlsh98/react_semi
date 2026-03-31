@@ -51,6 +51,23 @@
   color: var(--gray8);
 }
 
+.member_thumb_exists {
+  width: 200px;
+  height: 200px;
+  background-color: var(--gray7);
+  overflow: hidden;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border-radius: 4px;
+}
+
+.member_thumb_exists > img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
 .profile_info_update {
   width: 100%;
   display: flex;
@@ -101,6 +118,10 @@
 }
 .member_detail_addr > li:nth-child(2) {
   width: 55%;
+}
+
+.info_input_wrap > li:nth-child(2) {
+  margin-right: 16px;
 }
 
 .profile_info_update > form > button {

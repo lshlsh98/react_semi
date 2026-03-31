@@ -12,7 +12,14 @@ const useAuthStore = create(
       endTime: null,
       isReady: false,
 
-      login: ({ memberId, memberGrade, memberName, memberThumb, token, endTime }) => {
+      login: ({
+        memberId,
+        memberGrade,
+        memberName,
+        memberThumb,
+        token,
+        endTime,
+      }) => {
         set({ memberId, memberGrade, memberName, memberThumb, token, endTime });
       },
       logout: () => {
@@ -31,6 +38,9 @@ const useAuthStore = create(
       setThumb: (thumb) => {
         set({ memberThumb: thumb });
       },
+      setName: (name) => {
+        set({ memberName: name });
+      },
     }),
     {
       name: "auth-key",
@@ -39,14 +49,14 @@ const useAuthStore = create(
         return {
           memberId: state.memberId,
           memberGrade: state.memberGrade,
-          memberName: state.memberName, 
+          memberName: state.memberName,
           memberThumb: state.memberThumb,
           token: state.token,
           endTime: state.endTime,
         };
       },
-    }
-  )
+    },
+  ),
 );
 
 export default useAuthStore;
