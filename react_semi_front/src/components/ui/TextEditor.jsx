@@ -25,8 +25,24 @@ const MenuBar = ({ editor }) => {
   if (!editor) {
     return null;
   }
+  const addImage = () => {
+    const input = document.createElement("input");
+    input.type = "file";
+    input.accept = "image/*";
+    input.click();
+
+    input.onchange = () => {
+      const file = input.files && input.files[0];
+      if (!file) {
+        return;
+      }
+      const form = new FormData();
+      form.append("image", file);
+    };
+  };
   return (
     <div className={styles.menu_bar}>
+      <button type="button">Image</button>
       <button
         type="button"
         className={editor.isActive("bold") ? styles.active : ""}
