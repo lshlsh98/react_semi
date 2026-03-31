@@ -13,7 +13,6 @@ const TextEditor = ({ data, setData }) => {
       setData(editor.getHTML());
     },
   });
-
   return (
     <div className={styles.editor_wrap}>
       <MenuBar editor={editor} />
@@ -23,6 +22,9 @@ const TextEditor = ({ data, setData }) => {
 };
 
 const MenuBar = ({ editor }) => {
+  if (!editor) {
+    return null;
+  }
   return (
     <div className={styles.menu_bar}>
       <button
@@ -33,6 +35,26 @@ const MenuBar = ({ editor }) => {
         }}
       >
         Bold
+      </button>
+      <button
+        type="button"
+        className={editor.isActive("italic") ? styles.active : ""}
+        onClick={() => {
+          editor.chain().focus().toggleItalic().run();
+        }}
+      >
+        Italic
+      </button>
+      <button
+        type="button"
+        className={
+          editor.isActive("heading", { level: 2 }) ? styles.active : ""
+        }
+        onClick={() => {
+          editor.chain().focus().toggleHeading({ level: 2 }).run();
+        }}
+      >
+        H2
       </button>
     </div>
   );

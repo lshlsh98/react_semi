@@ -3,6 +3,7 @@ import Button from "../../components/ui/Button";
 import { Input } from "../../components/ui/Form";
 import styles from "./Community.module.css";
 import { useState } from "react";
+import TextEditor from "../../components/ui/TextEditor";
 
 const CommunityWritePage = () => {
   const navigate = useNavigate();
@@ -24,6 +25,7 @@ const CommunityWritePage = () => {
         ></Input>
 
         <label htmlFor="communityContent" />
+        <TextEditor />
         <textarea
           className={styles.content}
           type="text"
