@@ -13,5 +13,4 @@ public interface MarketDao {
 	Integer selectMarketCount(ListItem request);
 
 	List<Market> selectMarketList(ListItem request);
-
 }

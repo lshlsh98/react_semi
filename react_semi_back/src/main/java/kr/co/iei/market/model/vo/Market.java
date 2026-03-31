@@ -23,5 +23,4 @@ public class Market {
 	private Integer sellPrice;		//판매금액
 	private Integer completed;		//완료	(0:미완료 1:완료)
 	private String completedDate;	//거래완료시간
-	
 }

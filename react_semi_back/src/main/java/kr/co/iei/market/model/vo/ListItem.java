@@ -7,7 +7,6 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor	
 @Data
-	//입력받은 필터링 정보를 전송할 객체
 public class ListItem {
 	private Integer page;
 	private Integer size;
