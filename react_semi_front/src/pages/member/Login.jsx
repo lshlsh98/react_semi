@@ -10,23 +10,28 @@ import useAuthStore from "../../components/utils/useAuthStore";
 const Login = () => {
   const navigate = useNavigate();
 
-  const [member, setMember] = useState({ memberId: "", memberPw: "" });
+  const [member, setMember] = useState({ memberId: "", memberPw: "" }); // member 정보를 담는 용도의 state
 
   const inputMember = (e) => {
+    // 이젠 너무 익숙한 value에 있는 값을 member에 넣는 방법
     setMember({ ...member, [e.target.name]: e.target.value });
   };
 
   const login = () => {
     if (member.memberId === "" || member.memberPw === "") {
-      alert("아이디와 비밀번호를 모두 입력해주세요.");
+      Swal.fire({
+        icon: "warning",
+        title: "입력 오류",
+        text: "아이디와 비밀번호를 모두 입력해주세요.",
+      });
       return;
     }
+
     axios
       .post(`${import.meta.env.VITE_BACKSERVER}/members/login`, member)
       .then((res) => {
         console.log(res);
         useAuthStore.getState().login(res.data);
-
         axios.defaults.headers.common["Authorization"] = res.data.token;
 
         Swal.fire({
