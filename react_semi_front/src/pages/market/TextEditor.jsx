@@ -35,7 +35,7 @@ const MenuBar = ({ editor }) => {
             editor.chain().focus().toggleHeading({ level: 1 }).run();
           }}
         >
-          더크게
+          H1
         </button>
 
         <button
@@ -47,17 +47,17 @@ const MenuBar = ({ editor }) => {
             editor.chain().focus().toggleHeading({ level: 2 }).run();
           }}
         >
-          크게
+          H2
         </button>
 
         <button
           type="button"
           className={editor.isActive("bulletList") ? styles.active : ""}
           onClick={() => {
-            editor.chain().focus().toggleBulletList().run(); //기본사용범
+            editor.chain().focus().toggleBulletList().run();
           }}
         >
-          들여쓰기
+          리스트
         </button>
       </div>
     </>
