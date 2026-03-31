@@ -13,6 +13,7 @@ const TextEditor = ({ data, setData }) => {
       setData(editor.getHTML());
     },
   });
+
   return (
     <div className={styles.editor_wrap}>
       <MenuBar editor={editor} />

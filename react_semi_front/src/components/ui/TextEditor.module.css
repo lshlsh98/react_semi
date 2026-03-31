@@ -1,0 +1,10 @@
+.editor_wrap {
+  border: 1px solid var(#222222);
+  border-radius: 8px;
+  background-color: var(#549849);
+  overflow: hidden;
+}
+
+.editor_content {
+  padding: 16px;
+}
