@@ -6,10 +6,12 @@ import axios from "axios";
 import { Input } from "../ui/Form";
 import Button from "../ui/Button";
 import Swal from "sweetalert2";
+import { useKakaoPostcode } from "@clroot/react-kakao-postcode";
 
 const MemberInfo = () => {
   const navigate = useNavigate();
   const inputRef = useRef(null);
+  const detailRef = useRef(null);
 
   const { memberId, memberThumb } = useAuthStore();
   const [member, setMember] = useState(null);
@@ -41,6 +43,7 @@ const MemberInfo = () => {
 
   const auth = () => {
     console.log(memberAuth);
+    console.log(memberThumb);
 
     if (memberAuth.memberPw === "") {
       alert("비밀번호를 입력해주세요.");
@@ -73,13 +76,55 @@ const MemberInfo = () => {
     form.append("file", file);
     axios
       .patch(
-        `${import.meta.env.VITE_BACKSERVER}/members/${memberId}/thumbnail`,
+        `${import.meta.env.VITE_BACKSERVER}/members/${memberId}/thumbnail/update`,
         form,
         { headers: { "content-Type": "multipart/form-data" } },
       )
       .then((res) => {
         console.log(res);
         useAuthStore.getState().setThumb(res.data);
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  };
+
+  const deleteThumb = () => {
+    axios
+      .patch(
+        `${import.meta.env.VITE_BACKSERVER}/members/${memberId}/thumbnail/delete`,
+      )
+      .then((res) => {
+        console.log(res);
+        useAuthStore.getState().setThumb(res.data);
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  };
+
+  const { open } = useKakaoPostcode({
+    onComplete: (data) => {
+      console.log(data);
+
+      setMember({
+        ...member,
+        memberPostcode: data.zonecode,
+        memberAddr: data.roadAddress,
+      });
+      detailRef.current.focus();
+    },
+  });
+
+  const memberUpdate = () => {
+    axios
+      .patch(
+        `${import.meta.env.VITE_BACKSERVER}/members/${member.memberId}`,
+        member,
+      )
+      .then((res) => {
+        Swal.fire({ title: "수정완료" });
+        useAuthStore.getState().setName(res.data);
       })
       .catch((err) => {
         console.log(err);
@@ -111,7 +156,7 @@ const MemberInfo = () => {
                 >
                   {memberThumb ? (
                     <img
-                      src={`${import.meta.env.VITE_BACKSERVER}/member/thumb/${memberThumb}`}
+                      src={`${import.meta.env.VITE_BACKSERVER}/semi/${memberThumb}`}
                     />
                   ) : (
                     <span class="material-icons">account_circle</span>
@@ -132,6 +177,13 @@ const MemberInfo = () => {
                   style={{ display: "none" }}
                   onChange={changeThumb}
                 ></input>
+                <Button
+                  type="button"
+                  className="btn primary"
+                  onClick={deleteThumb}
+                >
+                  이미지 제거
+                </Button>
               </div>
             </div>
             <ul className={`${styles.info_input_wrap} ${styles.member_name}`}>
@@ -189,10 +241,13 @@ const MemberInfo = () => {
                   name="memberPostcode"
                   id="memberPostcode"
                   value={member.memberPostcode}
-                  onChange={(e) => {
-                    setMember({ ...member, memberPortcode: e.target.value });
-                  }}
+                  readOnly={true}
                 ></Input>
+              </li>
+              <li>
+                <Button type="button" className="btn primary" onClick={open}>
+                  주소 찾기
+                </Button>
               </li>
             </ul>
             <ul className={`${styles.info_input_wrap} ${styles.member_addr}`}>

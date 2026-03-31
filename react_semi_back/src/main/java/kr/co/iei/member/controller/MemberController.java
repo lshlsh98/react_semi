@@ -40,6 +40,7 @@ public class MemberController {
     @Autowired
     private BCryptPasswordEncoder passwordEncoder;	// BCryptPasswordEncoder는 내가 만든 class가 아님 spring에서 지원하는 이미 만들어져 있는 class를 받아옴
 
+    @Autowired
     private FileUtils fileUtil;
 
 	@Value("${file.root}")
@@ -178,7 +179,6 @@ public class MemberController {
     // 내 정보 비밀번호 인증
     @PostMapping(value="/pw-auth")
     public ResponseEntity<?> memberAuth (@RequestBody Member memberAuth){
-    	System.out.println(memberAuth);
     	LoginMember member = memberService.login(memberAuth);
     	if(member == null) {
             return ResponseEntity.status(404).build();
@@ -186,16 +186,32 @@ public class MemberController {
             return ResponseEntity.ok(member); 
         }}
 
-    @PatchMapping(value = "/{memberId}/thumbnail")
+    @PatchMapping(value = "/{memberId}/thumbnail/update")
 	public ResponseEntity<?> updateThumbnail(@PathVariable String memberId, @ModelAttribute MultipartFile file) {
-		String savepath = root + "member/";
+		String savepath = root + "semi/";
 		String memberThumb = fileUtil.upload(savepath, file);
 		
 		Member m = new Member();
 		m.setMemberThumb(memberThumb);
 		m.setMemberId(memberId);
 		
-		int result = memberService.updateMemberThumb(m);
+		int result = memberService.updateThumbnail(m);
 		return ResponseEntity.ok(memberThumb);
+	}
+    
+    @PatchMapping(value = "/{memberId}/thumbnail/delete")
+	public ResponseEntity<?> deleteThumbnail(@PathVariable String memberId) {	
+		Member member = new Member();
+		member.setMemberThumb(null);
+		member.setMemberId(memberId);
+		
+		int result = memberService.deleteThumbnail(member);
+		return ResponseEntity.ok(0);
+	}
+    
+    @PatchMapping(value = "/{memberId}")
+	public ResponseEntity<?> memberUpdate(@RequestBody Member member){
+		int result = memberService.memberUpdate(member);
+		return ResponseEntity.ok(member.getMemberName());
 	}
 }
