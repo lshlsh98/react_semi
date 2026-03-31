@@ -35,7 +35,7 @@ const Header = () => {
               <Button
                 className="btn primary"
                 onClick={() => {
-                  useAuthStore.getState().logout();
+                  useAuthStore.getState().logout(); // token(key) 삭제(비우기)
                   delete axios.defaults.headers.common["Authorization"];
                   navigate("/");
                 }}
@@ -72,7 +72,7 @@ const Header = () => {
               <Link to="/community">커뮤니티</Link>
             </li>
             <li>
-              <Link to="/map">우리동네 에코맵</Link>
+              <Link to="/map">그린리턴 맵</Link>
             </li>
           </ul>
         </nav>
