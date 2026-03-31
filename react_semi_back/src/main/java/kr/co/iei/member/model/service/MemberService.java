@@ -72,10 +72,22 @@ public class MemberService {
         return result;
     }
 
-	public int updateMemberThumb(Member m) {
-		int result = memberDao.updateMemberThumb(m);
+	public int updateThumbnail(Member m) {
+		int result = memberDao.updateThumbnail(m);
 		return result;
 	}
+
+	
+	public int deleteThumbnail(Member member) {
+		int result = memberDao.updateThumbnail(member);
+		return result;
+	}
+	
+	public int memberUpdate(Member member) {
+		int result = memberDao.updateMember(member);
+		return result;
+	}
+
 
     /*
      public Member mypage(String memberId, String token) {

@@ -1,12 +1,12 @@
 import styles from "./Button.module.css";
 
-const Button = ({ children, className, ...props }) => {
+const Button = ({ children, type = "button", className, ...props }) => {
   const classList = className.split(" ");
   const classStyles = classList.map((cls) => {
     return styles[cls];
   });
   return (
-    <button className={classStyles.join(" ")} {...props}>
+    <button type={type} className={classStyles.join(" ")} {...props}>
       {children}
     </button>
   );
