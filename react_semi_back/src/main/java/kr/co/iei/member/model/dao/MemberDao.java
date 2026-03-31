@@ -14,5 +14,8 @@ public interface MemberDao {
     
     int updateTempPw(Member member);
 
-	int updateMemberThumb(Member m);
+	int updateThumbnail(Member m);
+
+	
+	int updateMember(Member member);
 }

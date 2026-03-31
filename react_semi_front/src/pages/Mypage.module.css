@@ -41,6 +41,22 @@
   font-size: 200px;
 }
 
+.member_thumb_exists {
+  width: 250px;
+  height: 250px;
+  background-color: var(--gray7);
+  overflow: hidden;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.member_thumb_exists > img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
 .profile_info {
   padding: 10px;
   text-align: center;
