@@ -12,6 +12,7 @@ import Find_pw from "./pages/member/Find_pw";
 import axios from "axios";
 import useAuthStore from "./components/utils/useAuthStore";
 import { useEffect } from "react";
+import CommunityModifyPage from "./pages/community/CommunityModifyPage";
 
 function App() {
   const { endTime, token } = useAuthStore(); // endTime = 만료시간, token = 걍 토큰
@@ -56,6 +57,7 @@ function App() {
 
           <Route path="/member/mypage/*" element={<Mypage />} />
           <Route path="/community/write" element={<CommunityWritePage />} />
+          <Route path="/community/modify" element={<CommunityModifyPage />} />
         </Routes>
       </div>
       <Footer />

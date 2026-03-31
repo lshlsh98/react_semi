@@ -13,6 +13,8 @@ const CommunityWritePage = () => {
     communityContent: "",
   });
 
+  const [member, setMember] = useState(3); // 1: 슈퍼 유저, 2: 관리자, 3: 일반
+
   return (
     <section className={styles.community_wrap}>
       <div className={styles.communitywrite_card}>
@@ -38,7 +40,14 @@ const CommunityWritePage = () => {
       <form className={styles.btn_wrap}>
         <Button
           className="btn primary"
-          onClick={() => navigate("/community/list")}
+          onClick={() => {
+            if (member === 1 || member === 2) {
+              // 1: 슈퍼 유저, 2: 관리자
+              navigate("/community/notice"); // 커뮤니티 공지사항
+            } else {
+              navigate("/community/list"); // 커뮤니티 게시판
+            }
+          }}
         >
           등록
         </Button>
