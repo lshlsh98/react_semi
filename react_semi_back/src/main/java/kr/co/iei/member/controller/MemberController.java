@@ -63,7 +63,7 @@ public class MemberController {
     // 3. 이메일 인증
     @PostMapping(value="/email-verification")
     public ResponseEntity<?> sendMail(@RequestBody Map<String, String> requestData){
-        String emailTitle = "C2C 회원가입 이메일 인증번호입니다.";
+        String emailTitle = "C2C 이메일 인증번호입니다.";
         
         String receiverEmail = requestData.get("memberEmail");
         

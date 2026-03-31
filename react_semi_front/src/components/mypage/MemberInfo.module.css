@@ -110,8 +110,37 @@
 .member_email > li:nth-child(2) {
   width: 40%;
 }
-.member_postcode > li:nth-child(2) {
+
+.member_email_auth > li:first-child {
+  width: 30%;
+}
+.member_email_auth > li:nth-child(2) {
+  width: 36%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.member_email_auth > li:nth-child(3) {
+  width: 8%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.member_email_auth > li:nth-child(4) {
   width: 10%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.member_email_auth > li:nth-child(5) {
+  width: 16%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.member_postcode > li:nth-child(2) {
+  width: 11%;
 }
 .member_addr > li:nth-child(2) {
   width: 55%;
@@ -126,4 +155,19 @@
 
 .profile_info_update > form > button {
   margin-top: 50px;
+}
+
+.validation_msg {
+  font-size: 13px;
+  margin-top: 4px;
+  padding-left: 4px;
+  font-weight: 600;
+}
+
+.validation_msg.valid {
+  color: var(--secendary);
+}
+
+.validation_msg.invalid {
+  color: var(--danger);
 }

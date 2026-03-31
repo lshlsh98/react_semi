@@ -20,6 +20,7 @@ const MemberInfo = () => {
     memberPw: "",
   });
   const [memberAuthSuccess, setMemberAuthSuccess] = useState(false);
+  const [newEmail, setNewEmail] = useState(null);
 
   const inputMember = (e) => {
     setMemberAuth({ ...memberAuth, [e.target.name]: e.target.value });
@@ -35,6 +36,7 @@ const MemberInfo = () => {
         setMember(res.data);
         setMemberAuth((prev) => ({ ...prev, memberId: res.data.memberId }));
         console.log(memberAuth);
+        setNewEmail(res.data.memberEmail);
       })
       .catch((err) => {
         console.log(err);
@@ -103,6 +105,72 @@ const MemberInfo = () => {
       });
   };
 
+  const [mailAuth, setMailAuth] = useState(0); // mail input의 상태(예:disable) 관리를 위한 state
+  const [mailAuthCode, setMailAuthCode] = useState(null); // 서버에서 날아온 인증번호를 담는 용도의 state
+  const [mailAuthInput, setMailAuthInput] = useState(""); // 사용자가 입력한 인증번호를 담는 용도의 state
+
+  const [time, setTime] = useState(300); // 시간 300초로 설정하기
+  const timerRef = useRef(null); // 시간을 state로만 관리하면 set으로 랜더링할때마다 시간이 깜빡깜빡하는데 화면 랜더링에 영향 없이 타이머(시간)를 담는 용도
+
+  const sendMail = () => {
+    setTime(300);
+    setMailAuthCode(null);
+    if (timerRef.current) window.clearInterval(timerRef.current);
+
+    setMailAuth(1);
+
+    Swal.fire({ title: "메일 발송 중...", didOpen: () => Swal.showLoading() });
+
+    axios
+      .post(`${import.meta.env.VITE_BACKSERVER}/members/email-verification`, {
+        memberEmail: newEmail,
+      })
+      .then((res) => {
+        console.log("인증코드:", res.data); // 인증코드 f12로 편하게 보는용 (나중에 지워야함.)
+        Swal.fire({
+          icon: "success",
+          title: "발송 완료",
+          text: "이메일로 인증번호가 발송되었습니다.",
+        });
+        setMailAuthCode(res.data);
+        setMailAuth(2);
+
+        // 인증코드 인증시간이 넘었을때를 위해
+        timerRef.current = window.setInterval(() => {
+          setTime((prev) => {
+            if (prev <= 1) {
+              window.clearInterval(timerRef.current);
+              Swal.fire({
+                icon: "warning",
+                title: "시간 초과",
+                text: "인증 시간이 만료되었습니다. 다시 시도해주세요.",
+              });
+              setMailAuthCode(null);
+              setMailAuth(0);
+              return 0;
+            }
+            return prev - 1;
+          });
+        }, 1000);
+      })
+      .catch((err) => {
+        console.log(err);
+        Swal.fire({
+          icon: "error",
+          title: "발송 실패",
+          text: "이메일 발송에 실패했습니다. 입력하신 이메일을 확인해주세요!",
+        });
+        setMailAuth(0);
+      });
+  };
+
+  // 분 : 초 세팅
+  const showTime = () => {
+    const min = Math.floor(time / 60);
+    const sec = String(time % 60).padStart(2, "0");
+    return `${min}:${sec}`;
+  };
+
   const { open } = useKakaoPostcode({
     onComplete: (data) => {
       console.log(data);
@@ -141,7 +209,11 @@ const MemberInfo = () => {
           <form
             onSubmit={(e) => {
               e.preventDefault();
-              memberUpdate();
+              if (mailAuth === 0 || mailAuth === 3) {
+                memberUpdate();
+              } else {
+                Swal.fire({ title: "이메일 인증을 완료하세요" });
+              }
             }}
             autoComplete="off"
           >
@@ -224,13 +296,93 @@ const MemberInfo = () => {
               </li>
               <li>
                 <Input
-                  type="text"
+                  type="email"
                   name="memberEmail"
                   id="memberEmail"
-                  value={member.memberEmail}
+                  value={newEmail}
+                  readOnly={mailAuth === 1 || mailAuth === 3}
+                  onChange={(e) => {
+                    setNewEmail(e.target.value);
+                  }}
                 ></Input>
               </li>
+              <li>
+                <Button
+                  className="btn primary"
+                  type="button"
+                  onClick={sendMail}
+                  disabled={mailAuth === 1 || mailAuth === 3}
+                >
+                  {mailAuth >= 2 ? "재전송" : "인증 코드 전송"}
+                </Button>
+              </li>
             </ul>
+
+            {mailAuth > 1 && (
+              <ul
+                className={`${styles.info_input_wrap} ${styles.member_email_auth}`}
+              >
+                <li>
+                  <label htmlFor="mailAuthInput" className={styles.label}>
+                    이메일 (E-Mail) - 인증코드
+                  </label>
+                </li>
+                <li>
+                  <Input
+                    type="text"
+                    name="mailAuthInput"
+                    id="mailAuthInput"
+                    placeholder="이메일에 도착한 인증코드를 입력하세요."
+                    value={mailAuthInput}
+                    onChange={(e) => setMailAuthInput(e.target.value)}
+                    disabled={mailAuth === 3}
+                  />
+                </li>
+                <li>
+                  {mailAuth !== 3 && (
+                    <span className={styles.timer_text}>{showTime()}</span>
+                  )}
+                </li>
+                <li>
+                  <Button
+                    className="btn primary sm"
+                    type="button"
+                    disabled={mailAuth === 3}
+                    onClick={() => {
+                      if (
+                        mailAuthCode === mailAuthInput &&
+                        mailAuthInput !== ""
+                      ) {
+                        setMailAuth(3);
+                        setMember({ ...member, memberEmail: newEmail });
+                        window.clearInterval(timerRef.current);
+                        Swal.fire({
+                          icon: "success",
+                          title: "인증 성공",
+                          text: "이메일 인증이 완료되었습니다.",
+                        });
+                      } else {
+                        Swal.fire({
+                          icon: "error",
+                          title: "인증 실패",
+                          text: "인증코드가 올바르지 않습니다.",
+                        });
+                      }
+                    }}
+                  >
+                    인증하기
+                  </Button>
+                </li>
+                {mailAuth === 3 && (
+                  <li>
+                    <p className={`${styles.validation_msg} ${styles.valid}`}>
+                      인증되었습니다.
+                    </p>
+                  </li>
+                )}
+              </ul>
+            )}
+
             <ul
               className={`${styles.info_input_wrap} ${styles.member_postcode}`}
             >
