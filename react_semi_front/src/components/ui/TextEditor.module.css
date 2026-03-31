@@ -8,3 +8,7 @@
 .editor_content {
   padding: 16px;
 }
+
+.active {
+  background-color: var(#717171);
+}

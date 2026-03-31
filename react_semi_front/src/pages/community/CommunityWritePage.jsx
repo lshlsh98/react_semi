@@ -27,7 +27,7 @@ const CommunityWritePage = () => {
         ></Input>
 
         <label htmlFor="communityContent" />
-        <TextEditor />
+        <TextEditor className={styles.editor} />
         <textarea
           className={styles.content}
           type="text"

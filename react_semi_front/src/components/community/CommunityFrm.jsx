@@ -13,6 +13,7 @@ const CommunityFrm = ({ community, inputCommunity }) => {
           onChange={inputCommunity}
         />
       </div>
+
       <div className={styles.input_wrap}>
         <label htmlFor="files">첨부파일</label>
         <label htmlFor="files" className={styles.file_btn}>
@@ -21,6 +22,7 @@ const CommunityFrm = ({ community, inputCommunity }) => {
         <input type="file" id="files"></input>
         <input type="submit" value="test"></input>
       </div>
+
       <div className={styles.input_wrap}>
         <label htmlFor="communityContent">내용</label>
         <TextArea

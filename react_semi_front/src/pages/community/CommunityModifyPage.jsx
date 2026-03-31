@@ -10,7 +10,7 @@ const CommunityModifyPage = () => {
     <section className={styles.community_wrap}>
       <Button
         className="btn light outline"
-        onClick={() => navigate("/community/modify")}
+        onClick={() => navigate("/community/detail")}
       >
         취소
       </Button>

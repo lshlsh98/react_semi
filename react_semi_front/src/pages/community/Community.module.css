@@ -25,3 +25,7 @@
   border: none;
   cursor: pointer;
 }
+
+.editor {
+  background-color: lightgreen;
+}
