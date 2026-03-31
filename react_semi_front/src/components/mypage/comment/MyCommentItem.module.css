@@ -1,0 +1,26 @@
+.item_wrap {
+  width: 700px;
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  margin-bottom: 30px;
+  border: 1px solid black;
+}
+
+.comment_writer {
+}
+
+.member_thumb {
+  width: 50px;
+  height: 50px;
+  background-color: var(--gray6);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 25px;
+}
+
+.member_thumb > span {
+  font-size: 50px;
+  color: var(--gray8);
+}
