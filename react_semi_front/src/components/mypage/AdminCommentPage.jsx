@@ -3,8 +3,10 @@ import BasicSelect from "../ui/BasicSelect";
 import MyCommentList from "./comment/MyCommentList";
 import styles from "./MyCommentPage.module.css";
 import Pagination from "../ui/Pagination";
+import { Input } from "../ui/Form";
+import SearchIcon from "@mui/icons-material/Search";
 
-const MyCommentPage = () => {
+const AdminCommentPage = () => {
   const [page, setPage] = useState(0);
   const [totalPage, setTotalPage] = useState(10);
   const [order, setOrder] = useState(0); // 0: 기본 1: 중급 2: 고급
@@ -12,6 +14,10 @@ const MyCommentPage = () => {
   return (
     <div className={styles.mycomment_wrap}>
       <div className={styles.filter_section}>
+        <div className={styles.filter_input}>
+          <Input />
+          <SearchIcon />
+        </div>
         <div className={styles.filter_select}>
           <BasicSelect
             state={order}
@@ -39,4 +45,4 @@ const MyCommentPage = () => {
   );
 };
 
-export default MyCommentPage;
+export default AdminCommentPage;

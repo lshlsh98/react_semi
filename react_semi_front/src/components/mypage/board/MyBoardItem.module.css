@@ -4,6 +4,9 @@
   flex-direction: column;
   gap: 5px;
   margin-bottom: 30px;
+  border: 1px solid var(--gray4);
+  border-radius: 8px;
+  padding: 10px;
 }
 
 .item_title {
@@ -44,9 +47,26 @@
 
 .item {
   display: flex;
-  gap: 50px;
+  gap: 20px;
 }
 
 .switch {
   align-self: center;
+}
+
+.btn {
+  width: 50px;
+  height: 25px;
+  border-radius: 8px;
+  border: 1px solid var(--gray0);
+
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.admin_section {
+  display: flex;
+  flex-direction: column;
+  gap: 30px;
 }

@@ -40,19 +40,24 @@ const AdminBoardItem = () => {
           </div>
         </div>
       </div>
-      <Switch
-        className={styles.switch}
-        sx={{
-          "& .MuiSwitch-thumb": {
-            color: "var(--primary)",
-          },
-          "& .MuiSwitch-track": {
-            backgroundColor: "var(--gray3)",
-          },
-        }}
-        checked={board === 1}
-        onChange={changeStatus}
-      />
+      <div className={styles.admin_section}>
+        <Switch
+          className={styles.switch}
+          sx={{
+            "& .MuiSwitch-thumb": {
+              color: "var(--primary)",
+            },
+            "& .MuiSwitch-track": {
+              backgroundColor: "var(--gray3)",
+            },
+          }}
+          checked={board === 1}
+          onChange={changeStatus}
+        />
+        <div className={styles.btn_section}>
+          <div className={styles.btn}>삭제</div>
+        </div>
+      </div>
     </div>
   );
 };

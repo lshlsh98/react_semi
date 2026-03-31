@@ -7,6 +7,7 @@ import MyCommentPage from "../components/mypage/MyCommentPage";
 import useAuthStore from "../components/utils/useAuthStore";
 import MemberInfo from "../components/mypage/MemberInfo";
 import Swal from "sweetalert2";
+import AdminCommentPage from "../components/mypage/AdminCommentPage";
 
 const Mypage = () => {
   const navigate = useNavigate();
@@ -34,8 +35,10 @@ const Mypage = () => {
         <div className={styles.mypage_content}>
           <Routes>
             <Route path="myinfo" element={<MemberInfo />} />
-            <Route path="board" element={<AdminBoardPage />}></Route>
-            <Route path="comment" element={<MyCommentPage />}></Route>
+            <Route path="board1" element={<MyBoardPage />}></Route>
+            <Route path="board2" element={<AdminBoardPage />}></Route>
+            <Route path="comment1" element={<MyCommentPage />}></Route>
+            <Route path="comment2" element={<AdminCommentPage />}></Route>
           </Routes>
         </div>
       </div>
@@ -171,7 +174,7 @@ const SideBar = () => {
               onClick={() => setSelectMenu("postManagement_trade")}
             >
               <Link
-                to="/member/mypage/board"
+                to="/member/mypage/board1"
                 style={{ textDecoration: "none", color: "inherit" }}
               >
                 거래
@@ -183,7 +186,12 @@ const SideBar = () => {
               }
               onClick={() => setSelectMenu("postManagement_community")}
             >
-              커뮤니티
+              <Link
+                to="/member/mypage/board2"
+                style={{ textDecoration: "none", color: "inherit" }}
+              >
+                커뮤니티
+              </Link>
             </li>
           </ul>
         </li>
@@ -220,7 +228,7 @@ const SideBar = () => {
               onClick={() => setSelectMenu("commentManagement_trade")}
             >
               <Link
-                to="/member/mypage/comment"
+                to="/member/mypage/comment1"
                 style={{ textDecoration: "none", color: "inherit" }}
               >
                 거래
@@ -234,7 +242,12 @@ const SideBar = () => {
               }
               onClick={() => setSelectMenu("commentManagement_community")}
             >
-              커뮤니티
+              <Link
+                to="/member/mypage/comment2"
+                style={{ textDecoration: "none", color: "inherit" }}
+              >
+                커뮤니티
+              </Link>
             </li>
           </ul>
         </li>

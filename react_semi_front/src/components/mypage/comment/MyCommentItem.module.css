@@ -1,18 +1,27 @@
 .item_wrap {
+  display: flex;
+  gap: 10px;
+}
+
+.comment_wrap {
   width: 700px;
   display: flex;
   flex-direction: column;
   gap: 5px;
   margin-bottom: 30px;
-  border: 1px solid black;
+  border: 1px solid var(--gray4);
+  border-radius: 8px;
+  padding: 10px;
 }
 
 .comment_writer {
+  display: flex;
+  gap: 5px;
 }
 
 .member_thumb {
-  width: 50px;
-  height: 50px;
+  width: 40px;
+  height: 40px;
   background-color: var(--gray6);
   display: flex;
   align-items: center;
@@ -21,6 +30,79 @@
 }
 
 .member_thumb > span {
-  font-size: 50px;
+  font-size: 40px;
   color: var(--gray8);
+}
+
+.comment_writer_info {
+  display: flex;
+  flex-direction: column;
+}
+
+.comment_content {
+  padding: 5px;
+}
+
+.comment_type {
+  font-size: 13px;
+  color: var(--gray4);
+}
+
+.comment_actions {
+  display: flex;
+  gap: 10px;
+}
+
+.comment_actions > div {
+  display: flex;
+  align-items: center;
+  font-size: 15px;
+  color: var(--gray4);
+}
+
+.comment_actions_report {
+  margin-left: auto;
+}
+
+.comment_actions > div > svg {
+  font-size: 16px;
+  fill: var(--gray4);
+}
+
+.comment_btn_section {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  height: 141px;
+}
+
+.comment_btn {
+  width: 50px;
+  height: 50px;
+  border: 1px solid black;
+  border-radius: 8px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.textarea {
+  width: 100%;
+  outline: none;
+  padding: 8px 4px;
+  border: 1px solid var(--gray5);
+  border-radius: 8px;
+  resize: none; /* 수동 리사이즈 막기 */
+  overflow: hidden; /* 스크롤바 제거 */
+}
+
+.textarea:focus {
+  border: 1px solid var(--primary);
+  box-shadow: 0 0 0 0.25rem rgba(37, 99, 235, 0.3);
+}
+
+.textarea:disabled {
+  border: none;
+  background-color: var(--gray8);
 }
