@@ -6,6 +6,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import kr.co.iei.community.model.service.CommunityService;
+import kr.co.iei.utils.FileUtils;
 
 @CrossOrigin(value="*")
 @RestController
@@ -14,4 +15,6 @@ public class CommunityController {
 
 	@Autowired
 	private CommunityService communityService;
+	@Autowired
+	private FileUtils fileUtil;
 }

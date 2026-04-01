@@ -45,6 +45,7 @@ const CommunityModifyPage = () => {
 
   return (
     <section className={styles.community_wrap}>
+      <h3 className="page-title">게시글 수정</h3>
       {community && (
         <CommunityFrm
           community={community}
