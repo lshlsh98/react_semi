@@ -2,7 +2,6 @@ package kr.co.iei.mypage.model.vo;
 
 import org.apache.ibatis.type.Alias;
 
-import kr.co.iei.member.model.vo.Member;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -18,7 +17,7 @@ public class CommunitySummary {
 	private String writerId;
 	private String writerName;
 	private String contentDate;
-	private Integer contetnStatus;
+	private Integer contentStatus;
 	private Integer viewCount;
 	private Integer likeCount;
 	private Integer dislikeCount;
