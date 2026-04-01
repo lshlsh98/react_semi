@@ -5,6 +5,7 @@ import { useNavigate } from "react-router-dom";
 import Button from "../../components/ui/Button";
 import { Input } from "../../components/ui/Form";
 import TextEditor from "../../components/ui/TextEditor";
+import axios from "axios";
 
 const CommunityWritePage = () => {
   const navigate = useNavigate();
@@ -13,6 +14,8 @@ const CommunityWritePage = () => {
     communityTitle: "",
     communityContent: "",
   });
+
+  const [member, setMember] = useState(3); // 1: 슈퍼 유저, 2: 관리자, 3: 일반
 
   const [files, setFiles] = useState([]);
   const addFiles = (fileList) => {
@@ -46,12 +49,33 @@ const CommunityWritePage = () => {
     files.forEach((file) => {
       form.append("files", file);
     });
-  };
 
-  const [member, setMember] = useState(3); // 1: 슈퍼 유저, 2: 관리자, 3: 일반
+    axios
+      .post(`${import.meta.env.VITE_BACKSERVER}/community`, form, {
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
+      })
+      .then((res) => {
+        console.log(res);
+        if (res.data > 0) {
+          Swal.fire({ title: "게시글 작성 완료", icon: "success" }).then(() => {
+            if (member === 1 || member === 2) {
+              navigate("/community/notice");
+            } else {
+              navigate("/community/list");
+            }
+          });
+        }
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  };
 
   return (
     <section className={styles.community_wrap}>
+      <h3 className="page-title">게시글 작성</h3>
       <CommunityFrm
         community={community}
         inputCommunity={inputCommunity}
@@ -62,20 +86,13 @@ const CommunityWritePage = () => {
       />
 
       <div className={styles.btn_wrap}>
-        <Button
-          className="btn primary"
-          onClick={() => {
-            if (member === 1 || member === 2) {
-              // 1: 슈퍼 유저, 2: 관리자
-              navigate("/community/notice"); // 커뮤니티 공지사항
-            } else {
-              navigate("/community/list"); // 커뮤니티 게시판
-            }
-          }}
-        >
+        <Button className="btn primary" onClick={registCommunity}>
           등록
         </Button>
-        <Button className="btn light outline" onClick={registCommunity}>
+        <Button
+          className="btn light"
+          onClick={() => navigate("/community/list")}
+        >
           취소
         </Button>
       </div>
