@@ -32,10 +32,8 @@ const MemberInfo = () => {
     axios
       .get(`${import.meta.env.VITE_BACKSERVER}/members/${memberId}`)
       .then((res) => {
-        console.log(res.data);
         setMember(res.data);
         setMemberAuth((prev) => ({ ...prev, memberId: res.data.memberId }));
-        console.log(memberAuth);
         setNewEmail(res.data.memberEmail);
       })
       .catch((err) => {
@@ -210,9 +208,10 @@ const MemberInfo = () => {
               text: "이용해주셔서 감사합니다.",
               icon: "success",
             });
-            navigate("/");
+            useAuthStore.getState().setReady(false);
             useAuthStore.getState().logout(true);
             delete axios.defaults.headers.common["Authorization"];
+            navigate("/");
           })
           .catch((err) => {
             console.log(err);
@@ -476,13 +475,15 @@ const MemberInfo = () => {
                 ></Input>
               </li>
             </ul>
-            <Button
-              type="button"
-              className="btn primary outline lg"
-              onClick={memberDelete}
-            >
-              회원탈퇴
-            </Button>
+            <div className={styles.member_delete_button_wrap}>
+              <Button
+                type="button"
+                className="btn primary outline"
+                onClick={memberDelete}
+              >
+                회원탈퇴
+              </Button>
+            </div>
             <Button type="submit" className="btn primary lg">
               내 정보 수정
             </Button>

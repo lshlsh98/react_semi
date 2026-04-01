@@ -164,6 +164,12 @@
   margin-top: 50px;
 }
 
+.member_delete_button_wrap {
+  width: 100%;
+  display: flex;
+  justify-content: end;
+}
+
 .validation_msg {
   font-size: 13px;
   margin-top: 4px;
