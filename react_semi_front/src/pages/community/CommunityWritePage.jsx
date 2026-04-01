@@ -36,7 +36,7 @@ const CommunityWritePage = () => {
     setCommunity(newCommunity);
   };
   const inputCommunityContent = (data) => {
-    setBoard({ ...community, communityContent: data });
+    setCommunity({ ...community, communityContent: data });
   };
 
   const registCommunity = () => {
@@ -84,7 +84,6 @@ const CommunityWritePage = () => {
         deleteFile={deleteFile}
         inputCommunityContent={inputCommunityContent}
       />
-
       <div className={styles.btn_wrap}>
         <Button className="btn primary" onClick={registCommunity}>
           등록
