@@ -10,6 +10,8 @@ import kr.co.iei.mypage.model.vo.CommunitySummary;
 @Mapper
 public interface MypageDao {
 
-	List<CommunitySummary> findCommunityAll(CommunityListRequestDto clrDto);
+	List<CommunitySummary> findCommunityAll(CommunityListRequestDto request);
+
+	int findCommunityCount(CommunityListRequestDto request);
 	
 }

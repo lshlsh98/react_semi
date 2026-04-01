@@ -12,7 +12,7 @@ import lombok.NoArgsConstructor;
 @Alias(value="communitySummary")
 public class CommunitySummary {
 	
-	private Integer communityNo;
+	private Integer boardNo;
 	private String title;
 	private String writerId;
 	private String writerName;

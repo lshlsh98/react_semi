@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import kr.co.iei.mypage.model.service.MypageService;
 import kr.co.iei.mypage.model.vo.CommunityListRequestDto;
+import kr.co.iei.mypage.model.vo.CommunityListResponseDto;
 import kr.co.iei.mypage.model.vo.CommunitySummary;
 
 @CrossOrigin(value = "*")
@@ -23,10 +24,14 @@ public class MypageController {
 	private MypageService mypageService;
 
 	@GetMapping("board/community")
-	public ResponseEntity<?> findCommunityAll(@ModelAttribute CommunityListRequestDto clrDto) {
-		List<CommunitySummary> list = mypageService.findCommunityAll(clrDto);
+	public ResponseEntity<?> findCommunityAll(@ModelAttribute CommunityListRequestDto request) {
+		List<CommunitySummary> list = mypageService.findCommunityAll(request);
 
-		return ResponseEntity.ok(list);
+		int count = mypageService.findCommunityCount(request);
+		int totalPage = (int) Math.ceil(count / (double) request.getSize()); 
+				
+		CommunityListResponseDto response = new CommunityListResponseDto(list, totalPage); 
+		
+		return ResponseEntity.ok(response);
 	}//
-
 }

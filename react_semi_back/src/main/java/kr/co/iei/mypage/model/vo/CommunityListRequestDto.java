@@ -12,6 +12,8 @@ public class CommunityListRequestDto {
 	private Integer page;
 	private Integer size;
 	private Integer order;
+	private Integer status;
+	private String searchKeyword;
 	private String memberId;
 	private Integer memberGrade;	
 }

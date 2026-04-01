@@ -15,10 +15,16 @@ public class MypageService {
 	@Autowired 
 	private MypageDao mypageDao;
 
-	public List<CommunitySummary> findCommunityAll(CommunityListRequestDto clrDto) {
-		List<CommunitySummary> list = mypageDao.findCommunityAll(clrDto);
+	public List<CommunitySummary> findCommunityAll(CommunityListRequestDto request) {
+		List<CommunitySummary> list = mypageDao.findCommunityAll(request);
 		
 		return list;
+	}//
+
+	public int findCommunityCount(CommunityListRequestDto request) {
+		int count = mypageDao.findCommunityCount(request);
+		
+		return count;
 	}//
 
 }

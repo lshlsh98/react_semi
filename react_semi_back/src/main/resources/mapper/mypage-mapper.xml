@@ -4,8 +4,7 @@
 	
 	<select id="findCommunityAll" resultType="communitySummary">
 		SELECT
-			COUNT(*),
-			csv.community_no,
+			csv.community_no AS board_no,
 			csv.title, 
 			csv.writer_id,
 			csv.writer_name,
@@ -41,9 +40,15 @@
 			ON csv.community_no = cr.community_no
 			AND cr.member_id = #{memberId}
 			
-		<if test="memberGrade == 1">
-			WHERE csv.writer_id = #{memberId}
-		</if>
+		<where>
+		    csv.title LIKE '%'||#{searchKeyword}||'%'
+   			<if test="memberGrade == 3">
+  			      AND csv.writer_id = #{memberId}
+    		</if>
+    		<if test="status != 0">
+        		AND csv.content_status = #{status}
+    		</if>
+		</where>
 
 		<if test="order == 0">
 			ORDER BY csv.content_date DESC, csv.community_no DESC
@@ -65,6 +70,58 @@
 		</if>
 		
 		OFFSET #{page} * #{size} ROWS FETCH NEXT #{size} ROWS ONLY
+	</select>
+	
+	<select id="findCommunityCount" resultType="int">
+		SELECT
+			COUNT(*) AS count
+
+		FROM community_summary_view csv
+
+		LEFT JOIN community_like_tbl cl
+			ON csv.community_no = cl.community_no
+			AND cl.member_id = #{memberId}
+
+		LEFT JOIN community_dislike_tbl cd
+			ON csv.community_no = cd.community_no
+			AND cd.member_id = #{memberId}
+
+		LEFT JOIN community_comment_tbl cc
+			ON csv.community_no = cc.community_no
+			AND cc.community_comment_writer = #{memberId}
+
+		LEFT JOIN community_report_tbl cr
+			ON csv.community_no = cr.community_no
+			AND cr.member_id = #{memberId}
+			
+		<where>
+		    csv.title LIKE '%'||#{searchKeyword}||'%'
+   			<if test="memberGrade == 3">
+  			      AND csv.writer_id = #{memberId}
+    		</if>
+    		<if test="status != 0">
+        		AND csv.content_status = #{status}
+    		</if>
+		</where>
+
+		<if test="order == 0">
+			ORDER BY csv.content_date DESC, csv.community_no DESC
+		</if>
+		<if test="order == 1">
+			ORDER BY csv.content_date ASC, csv.community_no ASC
+		</if>
+		<if test="order == 2">
+			ORDER BY csv.view_count DESC, csv.community_no DESC
+		</if>
+		<if test="order == 3">
+			ORDER BY csv.like_count DESC, csv.community_no DESC
+		</if>
+		<if test="order == 4">
+			ORDER BY csv.dislike_count DESC, csv.community_no DESC
+		</if>
+		<if test="order == 5">
+			ORDER BY csv.report_count DESC, csv.community_no DESC
+		</if>
 	</select>
 	
 </mapper>

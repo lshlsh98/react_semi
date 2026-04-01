@@ -1,13 +1,13 @@
 import { useState } from "react";
 import styles from "./Mypage.module.css";
 import { Link, NavLink, Route, Routes, useNavigate } from "react-router-dom";
-import MyBoardPage from "../components/mypage/MyBoardPage";
 import AdminBoardPage from "../components/mypage/AdminBoardPage";
 import MyCommentPage from "../components/mypage/MyCommentPage";
 import useAuthStore from "../components/utils/useAuthStore";
 import MemberInfo from "../components/mypage/MemberInfo";
 import Swal from "sweetalert2";
 import AdminCommentPage from "../components/mypage/AdminCommentPage";
+import MyCommunityPage from "../components/mypage/MyCommunityPage";
 
 const Mypage = () => {
   const navigate = useNavigate();
@@ -35,8 +35,8 @@ const Mypage = () => {
         <div className={styles.mypage_content}>
           <Routes>
             <Route path="myinfo" element={<MemberInfo />} />
-            <Route path="board1" element={<MyBoardPage />}></Route>
             <Route path="board2" element={<AdminBoardPage />}></Route>
+            <Route path="community" element={<MyCommunityPage />}></Route>
             <Route path="comment1" element={<MyCommentPage />}></Route>
             <Route path="comment2" element={<AdminCommentPage />}></Route>
           </Routes>
@@ -185,7 +185,7 @@ const SideBar = () => {
               onClick={() => setSelectMenu("postManagement_community")}
             >
               <Link
-                to="/member/mypage/board2"
+                to="/member/mypage/community"
                 style={{ textDecoration: "none", color: "inherit" }}
               >
                 커뮤니티

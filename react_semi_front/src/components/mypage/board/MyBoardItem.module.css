@@ -33,7 +33,6 @@
   display: flex;
   align-items: center;
   font-size: 15px;
-  color: var(--gray4);
 }
 
 .item_actions_report {
@@ -42,7 +41,6 @@
 
 .item_actions > div > svg {
   font-size: 16px;
-  fill: var(--gray4);
 }
 
 .item {
@@ -69,4 +67,39 @@
   display: flex;
   flex-direction: column;
   gap: 30px;
+}
+
+.isLiked div {
+  color: rgb(82, 129, 199);
+}
+.isLiked svg {
+  fill: rgb(82, 129, 199);
+}
+
+.isDisliked div {
+  color: rgb(233, 153, 48);
+}
+.isDisliked svg {
+  fill: rgb(233, 153, 48);
+}
+
+.isCommented div {
+  color: rgb(82, 161, 124);
+}
+.isCommented svg {
+  fill: rgb(82, 161, 124);
+}
+
+.isReported div {
+  color: rgb(255, 0, 0);
+}
+.isReported svg {
+  fill: rgb(255, 0, 0);
+}
+
+.action_default div {
+  color: var(--gray4);
+}
+.action_default svg {
+  fill: var(--gray4);
 }
