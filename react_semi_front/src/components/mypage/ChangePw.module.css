@@ -72,6 +72,10 @@
   width: 200px;
 }
 
+.member_new_pw > li > span {
+  cursor: pointer;
+}
+
 .member_check_new_pw {
   display: flex;
   align-items: center;
