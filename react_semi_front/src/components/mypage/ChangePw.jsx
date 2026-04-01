@@ -78,12 +78,15 @@ const ChangePw = () => {
       .then((res) => {
         console.log(res);
         console.log(memberAuth);
-        navigate("/member/mypage/");
         Swal.fire({
           icon: "success",
           title: "변경 완료",
           text: "성공적으로 비밀번호가 변경되었습니다.",
         });
+        useAuthStore.getState().setReady(false);
+        useAuthStore.getState().logout(true);
+        delete axios.defaults.headers.common["Authorization"];
+        navigate("/member/login");
       })
       .catch((err) => {
         console.log(err);

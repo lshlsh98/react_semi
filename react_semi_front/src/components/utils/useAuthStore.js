@@ -22,7 +22,7 @@ const useAuthStore = create(
       }) => {
         set({ memberId, memberGrade, memberName, memberThumb, token, endTime });
       },
-      logout: (isUnregist = false) => {
+      logout: (isNotLogout = false) => {
         set({
           memberId: null,
           memberGrade: null,
@@ -30,7 +30,7 @@ const useAuthStore = create(
           memberThumb: null,
           token: null,
           endTime: null,
-          isUnregist,
+          isNotLogout,
         });
       },
       setReady: (ready) => {

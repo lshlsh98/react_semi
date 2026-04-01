@@ -1,18 +1,18 @@
 import { useState } from "react";
 import styles from "./Mypage.module.css";
 import { NavLink, Route, Routes, useNavigate } from "react-router-dom";
-import useAuthStore from "../components/utils/useAuthStore";
-import MemberInfo from "../components/mypage/MemberInfo";
+import useAuthStore from "../../components/utils/useAuthStore";
+import MemberInfo from "../../components/mypage/MemberInfo";
 import Swal from "sweetalert2";
-import ChangePw from "../components/mypage/ChangePw";
+import ChangePw from "../../components/mypage/ChangePw";
 
 const Mypage = () => {
   const navigate = useNavigate();
-  const { memberId, isReady, isUnregist } = useAuthStore();
+  const { memberId, isReady, isNotLogout } = useAuthStore();
 
   console.log(useAuthStore());
 
-  if (isReady && memberId == null && !isUnregist) {
+  if (isReady && memberId == null && !isNotLogout) {
     Swal.fire({
       title: "로그인 후 이용 가능합니다.",
       icon: "warning",

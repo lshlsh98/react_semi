@@ -5,7 +5,7 @@ import Footer from "./components/commons/Footer";
 import Header from "./components/commons/Header";
 import Join from "./pages/member/Join";
 import Login from "./pages/member/Login";
-import Mypage from "./pages/Mypage";
+import Mypage from "./pages/mypage/Mypage";
 import Find_id from "./pages/member/Find_id";
 import Find_pw from "./pages/member/Find_pw";
 import axios from "axios";
