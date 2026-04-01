@@ -3,70 +3,180 @@ import styles from "./Map.module.css";
 import { Input } from "../../components/ui/Form";
 import Button from "../../components/ui/Button";
 import { useKakaoPostcode } from "@clroot/react-kakao-postcode";
+import axios from "axios";
 
 const Map = () => {
-  const mapDivRef = useRef(null); // 지도를 그릴 Ref
+  const mapDivRef = useRef(null); // 화면의 지도 ref (div에 연결됨)
+  const markersRef = useRef([]); // 화면의 마커 ref
 
-  // 지도 객체와 마커 객체를 상태(state)로 관리합니다.
-  // (검색 후 지도를 이동시키거나 마커를 움직이려면 객체를 기억해야 합니다)
-  const [mapObj, setMapObj] = useState(null);
-  const [markerObj, setMarkerObj] = useState(null);
+  const [mapObj, setMapObj] = useState(null); // 네이버 지도 객체 자체를 저장 (나중에 지도 중심 이동할 때 씀)
+  const [infoWindowObj, setInfoWindowObj] = useState(null); // marker 클릭시 나오는 정보창 객체를 저장
+  const [searchAddr, setSearchAddr] = useState(""); // 인풋창에 보여질 주소 텍스트
 
-  // 검색된 주소를 보여줄 상태
-  const [searchAddr, setSearchAddr] = useState("");
+  // 가짜 유저 정보 (테스트용)
+  const mockUser = {
+    isLoggedIn: false,
+    address: "서울특별시 마포구 월드컵북로 434",
+  };
 
-  // 1️⃣ 최초 화면 렌더링 시 지도 생성 (수업 코드 패턴)
+  // 맨 처음 한번만 실행되며 첫 화면 세팅
   useEffect(() => {
-    // 네이버 지도 스크립트가 로드되지 않았거나, div가 없으면 멈춤
-    if (!mapDivRef.current || !window.naver) return;
+    if (!mapDivRef.current || !window.naver) return; // div에 연결된 지도가 없거나 뭐지 네이버 api를 못 불러오면 return
 
-    // 초기 중심 좌표 (예: 서울시청)
-    const initialCenter = new window.naver.maps.LatLng(37.5666805, 126.9784147);
+    // 정보창 세팅
+    const infoWindow = new window.naver.maps.InfoWindow({
+      content: "",
+      backgroundColor: "var(--gray8)",
+      borderWidth: 1,
+      borderColor: "var(--secendary)",
+      anchorSize: new window.naver.maps.Size(10, 10),
+    });
+    setInfoWindowObj(infoWindow);
 
-    // 지도 객체 생성
+    const center = new window.naver.maps.LatLng(37.554648, 126.972559); // 서울역을 중심으로
     const map = new window.naver.maps.Map(mapDivRef.current, {
-      center: initialCenter,
+      center: center,
       zoom: 15,
     });
+    setMapObj(map);
 
-    // 마커 객체 생성
-    const marker = new window.naver.maps.Marker({
-      position: initialCenter,
-      map: map,
+    window.naver.maps.Event.addListener(map, "click", () => {
+      infoWindow.close();
     });
 
-    // 나중에 쓸 수 있도록 state에 저장해 둡니다.
-    setMapObj(map);
-    setMarkerObj(marker);
+    // 💡 2. 지도가 그려졌으니, 이제 유저 상태를 확인합니다.
+    if (mockUser.isLoggedIn && mockUser.address) {
+      // 로그인 유저: 주소를 좌표로 변환해서 '이동(panTo)' 시킵니다.
+      window.naver.maps.Service.geocode(
+        { query: mockUser.address },
+        (status, response) => {
+          if (
+            status === window.naver.maps.Service.Status.OK &&
+            response.v2.addresses.length > 0
+          ) {
+            const { x, y, addressElements } = response.v2.addresses[0];
+            const sidoEl = addressElements.find((el) =>
+              el.types.includes("SIDO"),
+            );
+            const regionName = sidoEl ? sidoEl.shortName : "서울";
+
+            // 🌟 아까 만든 지도의 중심을 유저 동네로 스르륵 이동시킴!
+            const newPoint = new window.naver.maps.LatLng(y, x);
+            map.panTo(newPoint);
+
+            // 해당 동네 데이터 불러오기
+            fetchGreenReturnData(map, infoWindow, regionName);
+          }
+        },
+      );
+    } else {
+      // 비로그인 유저: 이미 서울역 지도가 떠 있으니, 서울 데이터만 불러오면 끝!
+      fetchGreenReturnData(map, infoWindow, "서울");
+    }
   }, []);
 
-  // 2️⃣ 카카오 우편번호 API 연동 (팀장님 Address 수업 코드 활용)
+  // =========================================================================
+  // 🟢 STEP 2: 공공데이터 서버에서 거점 정보 가져오기
+  // =========================================================================
+  const fetchGreenReturnData = (
+    currentMap,
+    sharedInfoWindow,
+    regionName = "",
+  ) => {
+    const params = {
+      pageNo: 1,
+      numOfRows: 630, // 데이터가 가장 많은 서울이 630개임(기준을 서울로)
+      returnType: "json",
+    };
+
+    if (regionName) {
+      params.positnRgnNm = regionName;
+    }
+
+    axios
+      .get(
+        `/api/B552584/kecoapi/rtrvlCmpnPositnService/getCmpnPositnInfo?serviceKey=${encodeURIComponent(import.meta.env.VITE_GREEN_RETURN_API_KEY)}`,
+        { params },
+      )
+      .then((res) => {
+        console.log(res.data);
+        markersRef.current.forEach((marker) => marker.setMap(null)); // 이건 마커 지우는 작업
+        markersRef.current = [];
+
+        const dataList = res.data.body?.items || [];
+
+        // 새로운 마커 함수
+        const newMarkers = dataList.map((item) => {
+          const position = new window.naver.maps.LatLng(
+            parseFloat(item.positnPstnLat),
+            parseFloat(item.positnPstnLot),
+          );
+
+          const marker = new window.naver.maps.Marker({
+            position: position,
+            map: currentMap,
+          });
+
+          // 마커 클릭 이벤트
+          window.naver.maps.Event.addListener(marker, "click", () => {
+            const content = `
+              <div style="padding: 15px; min-width: 200px; line-height: 1.5;">
+                <h4 style="margin: 0 0 8px 0; color: var(--secendary);">그린리턴 거점</h4>
+                <p style="margin: 0; font-size: 13px; font-weight: bold;">${item.positnRdnmAddr}</p>
+                <p style="margin: 5px 0 0 0; font-size: 12px; color: var(--gray4);">${item.positnIntdcCn || "상세정보 없음"}</p>
+              </div>
+            `;
+
+            const isOpen =
+              sharedInfoWindow.getMap() &&
+              sharedInfoWindow.getPosition().equals(marker.getPosition());
+
+            if (isOpen) {
+              sharedInfoWindow.close();
+            } else {
+              sharedInfoWindow.setContent(content);
+              sharedInfoWindow.open(currentMap, marker);
+            }
+          });
+
+          return marker;
+        });
+
+        markersRef.current = newMarkers;
+      })
+      .catch((err) => {
+        console.log("데이터 로딩 실패:", err);
+      });
+  };
+
+  // =========================================================================
+  // 🟢 STEP 3: 카카오 주소 검색 & 지도 이동
+  // =========================================================================
   const { open } = useKakaoPostcode({
     onComplete: (data) => {
-      // 검색 완료 시 실행되는 함수
-      // 도로명 주소를 화면의 input 창에 보여주기 위해 저장합니다.
       setSearchAddr(data.roadAddress);
+      const regionName = data.sido; // '시/도' 단위 추출(이걸로 그린리턴 찍히는 범위를 '시/도' 기준으로 찍을거임)
 
-      // 💡 3️⃣ 핵심! 검색된 주소(도로명)를 네이버 지도의 위도/경도로 변환합니다.
       if (window.naver && window.naver.maps.Service) {
         window.naver.maps.Service.geocode(
-          { query: data.roadAddress }, // 변환할 주소
+          { query: data.roadAddress },
           (status, response) => {
-            if (status === window.naver.maps.Service.Status.ERROR) {
-              return alert("주소를 좌표로 변환하는 데 실패했습니다.");
-            }
+            if (
+              status === window.naver.maps.Service.Status.OK &&
+              response.v2.addresses.length > 0
+            ) {
+              const { x, y } = response.v2.addresses[0];
+              const newPoint = new window.naver.maps.LatLng(y, x);
 
-            // 검색 결과가 있는 경우
-            if (response.v2.meta.totalCount > 0) {
-              const item = response.v2.addresses[0];
-              // 찾은 주소의 x(경도), y(위도) 좌표로 LatLng 객체를 만듭니다.
-              const point = new window.naver.maps.LatLng(item.y, item.x);
+              mapObj.panTo(newPoint);
+              mapObj.setZoom(12);
 
-              // 아까 저장해둔 mapObj와 markerObj를 사용해 지도 이동 및 마커 위치 변경
-              if (mapObj && markerObj) {
-                mapObj.setCenter(point); // 지도 중심 이동
-                markerObj.setPosition(point); // 마커 위치 이동
-              }
+              if (infoWindowObj) infoWindowObj.close();
+
+              // 🌟 이동한 지역의 데이터 불러오기!
+              fetchGreenReturnData(mapObj, infoWindowObj, regionName);
+            } else {
+              alert("해당 주소를 지도에서 찾을 수 없습니다.");
             }
           },
         );
@@ -74,23 +184,30 @@ const Map = () => {
     },
   });
 
+  // =========================================================================
+  // 🟢 STEP 4: 화면 디자인 (팀장님의 UI 컴포넌트 200% 활용!)
+  // =========================================================================
   return (
     <div className={styles.map_wrap}>
-      <h3 className="page-title">그린리턴 맵</h3>
+      <h3 className={styles.page_title}>그린리턴 맵</h3>
 
       <div className={styles.search_area}>
-        <Input
-          type="text"
-          placeholder="도로명 주소"
-          value={searchAddr}
-          readOnly
-        />
+        {/* 💡 .input_box로 너비만 제한하고, 디자인은 <Input>에게 온전히 맡깁니다. */}
+        <div className={styles.input_box}>
+          <Input
+            type="text"
+            value={searchAddr}
+            readOnly
+            placeholder="주소를 검색하세요"
+          />
+        </div>
+
+        {/* 💡 팀장님이 만드신 'btn'과 'primary' 클래스를 조합해서 넣었습니다! */}
         <Button className="btn primary" onClick={open}>
-          주소 찾기
+          주소 검색
         </Button>
       </div>
 
-      {/* mapDivRef로 지도 그리기 */}
       <div className={styles.map_div} ref={mapDivRef}></div>
     </div>
   );
