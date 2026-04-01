@@ -10,5 +10,23 @@
 			#{communityContent}
 		)
 	</insert>
-
+	
+	<select id="selectOneBoard" resultType="Integer">
+		select
+			community_no,
+			community_title,
+			community_content,
+			community_writer,
+			to_char(community_date,'yyyy-mm-dd hh24:mi') community_date
+		from community_tbl
+		where community_no = #{communityNo}
+	</select>
+	
+	<update id="updateCommunity">
+		update community_tbl set
+			community_title = #{communityTitle},
+  			community_content = #{communityContent}
+  		where board_no = #{boardNo}
+	</update>
+	
 </mapper>

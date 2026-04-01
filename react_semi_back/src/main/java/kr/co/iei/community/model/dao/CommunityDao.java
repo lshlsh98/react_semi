@@ -8,5 +8,10 @@ import kr.co.iei.community.model.vo.Community;
 public interface CommunityDao {
 
 	int insertCommunity(Community community);
+	
+	Community selectOneBoard(int communityNo);
+
+	int updateCommunity(Community community);
+
 
 }

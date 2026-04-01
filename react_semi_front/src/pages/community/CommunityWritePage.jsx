@@ -1,11 +1,11 @@
 import { useState } from "react";
 import styles from "./Community.module.css";
 import CommunityFrm from "../../components/community/CommunityFrm";
-import { useNavigate } from "react-router-dom";
 import Button from "../../components/ui/Button";
 import { Input } from "../../components/ui/Form";
 import TextEditor from "../../components/ui/TextEditor";
 import axios from "axios";
+import { useNavigate } from "react-router-dom";
 
 const CommunityWritePage = () => {
   const navigate = useNavigate();

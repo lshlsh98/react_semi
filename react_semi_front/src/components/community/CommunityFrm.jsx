@@ -33,6 +33,7 @@ const CommunityFrm = ({
           setData={inputCommunityContent}
         ></TextEditor>
       </div>
+
       <div className={styles.input_wrap}>
         <input
           type="file"

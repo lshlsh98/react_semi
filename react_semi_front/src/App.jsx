@@ -57,7 +57,7 @@ function App() {
 
           <Route path="/member/mypage/*" element={<Mypage />} />
           <Route path="/community/write" element={<CommunityWritePage />} />
-          <Route path="/community/modify" element={<CommunityModifyPage />} />
+          <Route path="/community/modify/" element={<CommunityModifyPage />} />
         </Routes>
       </div>
       <Footer />

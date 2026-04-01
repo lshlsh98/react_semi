@@ -18,4 +18,17 @@ public class CommunityService {
 		int result = communityDao.insertCommunity(community);
 		return result;
 	}
+	
+	
+	public Community selectOneCommunity(int communityNo) {
+		Community community = communityDao.selectOneBoard(communityNo);
+		return community;
+	}
+	
+	@Transactional
+	public int updateCommunity(Community community) {
+		int result = communityDao.updateCommunity(community);
+		return result;
+	}
+
 }
