@@ -4,10 +4,12 @@ import { Input } from "../ui/Form";
 import useAuthStore from "../utils/useAuthStore";
 import styles from "./ChangePw.module.css";
 import axios from "axios";
+import Swal from "sweetalert2";
+import { useNavigate } from "react-router-dom";
 
 const ChangePw = () => {
-  const { memberId, memberThumb } = useAuthStore();
-  const [member, setMember] = useState(null);
+  const navigate = useNavigate();
+  const { memberId } = useAuthStore();
   const [memberAuth, setMemberAuth] = useState({
     memberId: "",
     memberPw: "",
@@ -36,8 +38,6 @@ const ChangePw = () => {
   }, []);
 
   const auth = () => {
-    console.log(memberAuth);
-
     if (memberAuth.memberPw === "") {
       alert("비밀번호를 입력해주세요.");
       return;
@@ -46,9 +46,7 @@ const ChangePw = () => {
     axios
       .post(`${import.meta.env.VITE_BACKSERVER}/members/pw-auth`, memberAuth)
       .then((res) => {
-        console.log(memberAuth);
         setMemberAuthSuccess(true);
-        console.log(res);
       })
       .catch((err) => {
         console.log(err);
@@ -60,9 +58,40 @@ const ChangePw = () => {
       });
   };
 
+  const updatePw = () => {
+    if (
+      memberAuth.memberPw === "" ||
+      memberAuth.memberPw === newPw ||
+      newPw === "" ||
+      newPwRe === "" ||
+      newPw !== newPwRe
+    ) {
+      alert("비밀번호를 다시 확인해주십시오.");
+      return;
+    } else {
+      memberAuth.memberPw = newPwRe;
+    }
+
+    axios
+      .patch(`${import.meta.env.VITE_BACKSERVER}/members/update-pw`, memberAuth)
+      .then((res) => {
+        console.log(res);
+        console.log(memberAuth);
+        navigate("/member/mypage/");
+        Swal.fire({
+          icon: "success",
+          title: "변경 완료",
+          text: "성공적으로 비밀번호가 변경되었습니다.",
+        });
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  };
+
   return (
     <div className={styles.member_info_wrap}>
-      <h3 className="page-title">내 정보</h3>
+      <h3 className="page-title">비밀번호 변경</h3>
       <div className={styles.profile_info}>
         <form
           onSubmit={(e) => {
@@ -86,9 +115,11 @@ const ChangePw = () => {
               ></Input>
             </li>
             <li>
-              <Button type="submit" className="btn primary">
-                비밀번호 확인
-              </Button>
+              {!memberAuthSuccess && (
+                <Button type="submit" className="btn primary">
+                  비밀번호 확인
+                </Button>
+              )}
             </li>
           </ul>
         </form>
@@ -96,6 +127,7 @@ const ChangePw = () => {
           <form
             onSubmit={(e) => {
               e.preventDefault();
+              updatePw();
             }}
             autoComplete="off"
           >
@@ -117,6 +149,21 @@ const ChangePw = () => {
               </li>
               <li></li>
             </ul>
+
+            {memberAuth.memberPw === newPw && (
+              <ul className={styles.member_new_pw_comment}>
+                <li></li>
+                <li>
+                  <li>
+                    <p className={`${styles.validation_msg} ${styles.invalid}`}>
+                      기존 비밀번호와 다른 비밀번호를 입력해주세요.
+                    </p>
+                  </li>
+                </li>
+                <li></li>
+              </ul>
+            )}
+
             <ul className={styles.member_new_pw}>
               <li>
                 <p>새로운 비밀번호 확인</p>
@@ -132,6 +179,25 @@ const ChangePw = () => {
                     setNewPwRe(e.target.value);
                   }}
                 ></Input>
+              </li>
+              <li></li>
+            </ul>
+            <ul className={styles.member_check_new_pw}>
+              <li></li>
+              <li>
+                {newPw !== "" && newPw === newPwRe ? (
+                  <li>
+                    <p className={`${styles.validation_msg} ${styles.valid}`}>
+                      비밀번호가 일치합니다.
+                    </p>
+                  </li>
+                ) : (
+                  <li>
+                    <p className={`${styles.validation_msg} ${styles.invalid}`}>
+                      비밀번호가 일치하지 않습니다.
+                    </p>
+                  </li>
+                )}
               </li>
               <li></li>
             </ul>

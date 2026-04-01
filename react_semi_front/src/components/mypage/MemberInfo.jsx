@@ -69,6 +69,7 @@ const MemberInfo = () => {
       });
   };
 
+  // 프로필 이미지 등록/수정
   const changeThumb = (e) => {
     const file = inputRef.current.files && inputRef.current.files[0];
     if (!file) {
@@ -91,6 +92,7 @@ const MemberInfo = () => {
       });
   };
 
+  // 프로필 이미지 삭제
   const deleteThumb = (e) => {
     axios
       .patch(
@@ -105,12 +107,13 @@ const MemberInfo = () => {
       });
   };
 
-  const [mailAuth, setMailAuth] = useState(0); // mail input의 상태(예:disable) 관리를 위한 state
-  const [mailAuthCode, setMailAuthCode] = useState(null); // 서버에서 날아온 인증번호를 담는 용도의 state
-  const [mailAuthInput, setMailAuthInput] = useState(""); // 사용자가 입력한 인증번호를 담는 용도의 state
+  // 인증 메일 전송
+  const [mailAuth, setMailAuth] = useState(0);
+  const [mailAuthCode, setMailAuthCode] = useState(null);
+  const [mailAuthInput, setMailAuthInput] = useState("");
 
-  const [time, setTime] = useState(300); // 시간 300초로 설정하기
-  const timerRef = useRef(null); // 시간을 state로만 관리하면 set으로 랜더링할때마다 시간이 깜빡깜빡하는데 화면 랜더링에 영향 없이 타이머(시간)를 담는 용도
+  const [time, setTime] = useState(300);
+  const timerRef = useRef(null);
 
   const sendMail = () => {
     setTime(300);
@@ -126,7 +129,7 @@ const MemberInfo = () => {
         memberEmail: newEmail,
       })
       .then((res) => {
-        console.log("인증코드:", res.data); // 인증코드 f12로 편하게 보는용 (나중에 지워야함.)
+        console.log("인증코드:", res.data);
         Swal.fire({
           icon: "success",
           title: "발송 완료",
@@ -164,13 +167,13 @@ const MemberInfo = () => {
       });
   };
 
-  // 분 : 초 세팅
   const showTime = () => {
     const min = Math.floor(time / 60);
     const sec = String(time % 60).padStart(2, "0");
     return `${min}:${sec}`;
   };
 
+  //우편번호 api
   const { open } = useKakaoPostcode({
     onComplete: (data) => {
       console.log(data);
@@ -184,6 +187,41 @@ const MemberInfo = () => {
     },
   });
 
+  // 회원 탈퇴
+  const memberDelete = () => {
+    Swal.fire({
+      title: "정말 탈퇴하시겠습니까?",
+      text: "탈퇴 이후에는 계정의 정보를 복구할 수 없습니다.",
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonColor: "var(--primary)",
+      cancelButtonColor: "var(--danger)",
+      confirmButtonText: "예",
+      cancelButtonText: "아니오",
+    }).then((result) => {
+      if (result.isConfirmed) {
+        axios
+          .delete(
+            `${import.meta.env.VITE_BACKSERVER}/members/${member.memberId}`,
+          )
+          .then((res) => {
+            Swal.fire({
+              title: "탈퇴되었습니다.",
+              text: "이용해주셔서 감사합니다.",
+              icon: "success",
+            });
+            useAuthStore.getState().logout();
+            delete axios.defaults.headers.common["Authorization"];
+            navigate("/");
+          })
+          .catch((err) => {
+            console.log(err);
+          });
+      }
+    });
+  };
+
+  // 회원 정보 수정
   const memberUpdate = () => {
     axios
       .patch(
@@ -191,7 +229,7 @@ const MemberInfo = () => {
         member,
       )
       .then((res) => {
-        Swal.fire({ title: "수정완료" });
+        Swal.fire({ title: "수정완료", icon: "success" });
         useAuthStore.getState().setName(res.data);
         navigate("/member/mypage");
       })
@@ -436,7 +474,11 @@ const MemberInfo = () => {
                 ></Input>
               </li>
             </ul>
-            <Button type="button" className="btn outline lg">
+            <Button
+              type="button"
+              className="btn primary outline lg"
+              onClick={memberDelete}
+            >
               회원탈퇴
             </Button>
             <Button type="submit" className="btn primary lg">
