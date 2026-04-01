@@ -14,7 +14,7 @@ const CommunityModifyPage = () => {
   const [community, setCommunity] = useState(null);
   useEffect(() => {
     axios
-      .get(`${import.meta.env.VITE_BACKSERVER}/community/${communityNo}`)
+      .get(`${import.meta.env.VITE_BACKSERVER}/communities/${communityNo}`)
       .then((res) => {
         console.log(res.data);
         setCommunity(res.data);
