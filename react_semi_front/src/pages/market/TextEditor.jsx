@@ -1,66 +1,130 @@
-import { EditorContent, useEditor } from "@tiptap/react";
-import styles from "./TextEditor.module.css";
+import { useEditor, EditorContent } from "@tiptap/react";
 import StarterKit from "@tiptap/starter-kit";
+import { TextStyle } from "@tiptap/extension-text-style";
+import { Color } from "@tiptap/extension-color";
+import TextAlign from "@tiptap/extension-text-align";
+import styles from "./TextEditor.module.css";
+import FormatBoldIcon from "@mui/icons-material/FormatBold";
+import FormatItalicIcon from "@mui/icons-material/FormatItalic";
+import FormatListBulletedIcon from "@mui/icons-material/FormatListBulleted";
+import LooksOneIcon from "@mui/icons-material/LooksOne";
+import LooksTwoIcon from "@mui/icons-material/LooksTwo";
+import FormatAlignLeftIcon from "@mui/icons-material/FormatAlignLeft";
+import FormatAlignCenterIcon from "@mui/icons-material/FormatAlignCenter";
+import FormatAlignRightIcon from "@mui/icons-material/FormatAlignRight";
+
+const MenuBar = ({ editor }) => {
+  if (!editor) return null;
+
+  return (
+    <div className={styles.menu_bar}>
+      {/* H1 */}
+      <button
+        type="button"
+        className={
+          editor.isActive("heading", { level: 1 }) ? styles.active : ""
+        }
+        onClick={() => editor.chain().focus().toggleHeading({ level: 1 }).run()}
+      >
+        <LooksOneIcon />
+      </button>
+
+      {/* H2 */}
+      <button
+        type="button"
+        className={
+          editor.isActive("heading", { level: 2 }) ? styles.active : ""
+        }
+        onClick={() => editor.chain().focus().toggleHeading({ level: 2 }).run()}
+      >
+        <LooksTwoIcon />
+      </button>
+
+      {/* Bold */}
+      <button
+        type="button"
+        className={editor.isActive("bold") ? styles.active : ""}
+        onClick={() => editor.chain().focus().toggleBold().run()}
+      >
+        <FormatBoldIcon />
+      </button>
+
+      {/* Italic */}
+      <button
+        type="button"
+        className={editor.isActive("italic") ? styles.active : ""}
+        onClick={() => editor.chain().focus().toggleItalic().run()}
+      >
+        <FormatItalicIcon />
+      </button>
+
+      {/* 리스트 */}
+      <button
+        type="button"
+        className={editor.isActive("bulletList") ? styles.active : ""}
+        onClick={() => editor.chain().focus().toggleBulletList().run()}
+      >
+        <FormatListBulletedIcon />
+      </button>
+
+      {/* 정렬 */}
+      <button
+        type="button"
+        className={editor.isActive({ textAlign: "left" }) ? styles.active : ""}
+        onClick={() => editor.chain().focus().setTextAlign("left").run()}
+      >
+        <FormatAlignLeftIcon />
+      </button>
+
+      <button
+        type="button"
+        className={
+          editor.isActive({ textAlign: "center" }) ? styles.active : ""
+        }
+        onClick={() => editor.chain().focus().setTextAlign("center").run()}
+      >
+        <FormatAlignCenterIcon />
+      </button>
+
+      <button
+        type="button"
+        className={editor.isActive({ textAlign: "right" }) ? styles.active : ""}
+        onClick={() => editor.chain().focus().setTextAlign("right").run()}
+      >
+        <FormatAlignRightIcon />
+      </button>
+
+      {/* 색상 */}
+      <input
+        type="color"
+        className={styles.color_picker}
+        onChange={(e) => editor.chain().focus().setColor(e.target.value).run()}
+      />
+    </div>
+  );
+};
+
 const TextEditor = ({ data, setData }) => {
   const editor = useEditor({
-    extensions: [StarterKit],
-    content: data || "",
-    immediatelyRender: false,
+    extensions: [
+      StarterKit,
+      TextStyle,
+      Color,
+      TextAlign.configure({
+        types: ["heading", "paragraph"],
+      }),
+    ],
+    content: data,
     onUpdate: ({ editor }) => {
       setData(editor.getHTML());
     },
   });
 
   return (
-    <>
-      <MenuBar editor={editor} />
+    <div className={styles.editor_wrap}>
+      <MenuBar editor={editor} className={styles.menu_bar} />
       <EditorContent editor={editor} className={styles.editor_content} />
-    </>
-  );
-};
-
-const MenuBar = ({ editor }) => {
-  if (!editor) {
-    return null;
-  }
-  return (
-    <>
-      <div className={styles.menu_bar}>
-        <button
-          type="button"
-          className={
-            editor.isActive("heading", { level: 1 }) ? styles.active : ""
-          }
-          onClick={() => {
-            editor.chain().focus().toggleHeading({ level: 1 }).run();
-          }}
-        >
-          H1
-        </button>
-
-        <button
-          type="button"
-          className={
-            editor.isActive("heading", { level: 2 }) ? styles.active : ""
-          }
-          onClick={() => {
-            editor.chain().focus().toggleHeading({ level: 2 }).run();
-          }}
-        >
-          H2
-        </button>
-
-        <button
-          type="button"
-          className={editor.isActive("bulletList") ? styles.active : ""}
-          onClick={() => {
-            editor.chain().focus().toggleBulletList().run();
-          }}
-        >
-          리스트
-        </button>
-      </div>
-    </>
+    </div>
   );
 };
 

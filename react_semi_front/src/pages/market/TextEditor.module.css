@@ -4,7 +4,7 @@
 .editor_wrap {
   border: 1px solid var(--secendary);
   border-radius: 8px;
-  background-color: var(--secendary);
+
   overflow: hidden;
 }
 .menu_bar {
@@ -12,11 +12,13 @@
   gap: 8px;
   flex-wrap: wrap;
   padding: 12px;
-  border-bottom: 1px solid var(--secendary);
-  background-color: var(--light);
+
   justify-content: center;
 }
-.menu_bar button {
+.menu_bar button,
+input {
+  width: 50px;
+  height: 50px;
   padding: 8px 12px;
   border: 1px solid var(--secendary);
   border-radius: 4px;
@@ -25,6 +27,7 @@
   background-color: var(--light); /*기본 배경*/
   color: var(--primary); /*기본 글자*/
 }
+
 .menu_bar button:hover {
   background-color: var(--secendary);
   color: var(--light);
@@ -39,8 +42,11 @@
 }
 .editor_content > div {
   min-height: 400px;
+  background-color: var(--light);
+  padding: 12px;
   outline: none;
   border: 1px solid black;
+  border-radius: 12px;
   line-height: 1.4;
 }
 .editor_content > div ul {

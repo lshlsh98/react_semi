@@ -11,6 +11,13 @@
   },
   "dependencies": {
     "@clroot/react-kakao-postcode": "^1.0.0",
+    "@emotion/react": "^11.14.0",
+    "@emotion/styled": "^11.14.1",
+    "@mui/icons-material": "^7.3.9",
+    "@mui/material": "^7.3.9",
+    "@tiptap/extension-color": "^3.22.0",
+    "@tiptap/extension-text-align": "^3.22.0",
+    "@tiptap/extension-text-style": "^3.22.0",
     "@tiptap/react": "^3.21.0",
     "@tiptap/starter-kit": "^3.21.0",
     "axios": "^1.14.0",

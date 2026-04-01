@@ -180,7 +180,6 @@ const MarketItem = ({ market }) => {
     >
       <p>번호 : {market.marketNo}</p>
       <p>제목 : {market.marketTitle}</p>
-      <p>썸네일 : {market.marketThumb}</p>
       <p>작성일 : {market.marketDate}</p>
       <p>작성자 : {market.marketWriter}</p>
       <p>조회수 : {market.viewCount}</p>

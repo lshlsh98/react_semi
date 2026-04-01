@@ -12,7 +12,6 @@
 	select
 		market_no,
 		market_title,
-		market_thumb,
 		to_char(market_date, 'yyyy-mm-dd') as market_date,
 		market_writer,
 		view_count,
