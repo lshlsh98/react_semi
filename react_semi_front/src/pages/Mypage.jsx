@@ -8,11 +8,11 @@ import ChangePw from "../components/mypage/ChangePw";
 
 const Mypage = () => {
   const navigate = useNavigate();
-  const { memberName, memberId, isReady } = useAuthStore();
+  const { memberName, memberId, isReady, isTimeout } = useAuthStore();
 
   console.log(useAuthStore());
 
-  if (isReady && memberId == null) {
+  if (isReady && memberId == null && isTimeout) {
     Swal.fire({
       title: "로그인 후 이용 가능합니다.",
       icon: "warning",

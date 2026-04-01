@@ -68,6 +68,13 @@
   object-fit: cover;
 }
 
+.thumb_button_wrap {
+  width: 100%;
+  display: flex;
+  gap: 16px;
+  margin-bottom: 44px;
+}
+
 .profile_info_update {
   width: 100%;
   display: flex;

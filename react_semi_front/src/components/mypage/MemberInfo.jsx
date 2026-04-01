@@ -44,9 +44,6 @@ const MemberInfo = () => {
   }, []);
 
   const auth = () => {
-    console.log(memberAuth);
-    console.log(memberThumb);
-
     if (memberAuth.memberPw === "") {
       alert("비밀번호를 입력해주세요.");
       return;
@@ -174,16 +171,19 @@ const MemberInfo = () => {
   };
 
   //우편번호 api
-  const { open } = useKakaoPostcode({
+  const { open, close } = useKakaoPostcode({
     onComplete: (data) => {
-      console.log(data);
+      close();
 
       setMember({
         ...member,
         memberPostcode: data.zonecode,
         memberAddr: data.roadAddress,
       });
-      detailRef.current.focus();
+      setTimeout(() => {
+        close();
+        detailRef.current.focus();
+      }, 0);
     },
   });
 
@@ -206,13 +206,13 @@ const MemberInfo = () => {
           )
           .then((res) => {
             Swal.fire({
-              title: "탈퇴되었습니다.",
+              title: "탈퇴 완료되었습니다.",
               text: "이용해주셔서 감사합니다.",
               icon: "success",
             });
-            useAuthStore.getState().logout();
-            delete axios.defaults.headers.common["Authorization"];
             navigate("/");
+            useAuthStore.getState().logout(true);
+            delete axios.defaults.headers.common["Authorization"];
           })
           .catch((err) => {
             console.log(err);
@@ -273,30 +273,32 @@ const MemberInfo = () => {
                     <span class="material-icons">account_circle</span>
                   )}
                 </div>
-                <Button
-                  type="button"
-                  className="btn primary"
-                  onClick={() => {
-                    inputRef.current.click();
-                  }}
-                >
-                  이미지 변경
-                </Button>
-                <input
-                  type="file"
-                  accept="image/*"
-                  ref={inputRef}
-                  style={{ display: "none" }}
-                  onChange={changeThumb}
-                ></input>
-                <Button
-                  type="button"
-                  className="btn primary"
-                  onClick={deleteThumb}
-                >
-                  이미지 제거
-                </Button>
               </div>
+            </div>
+            <div className={styles.thumb_button_wrap}>
+              <Button
+                type="button"
+                className="btn primary"
+                onClick={() => {
+                  inputRef.current.click();
+                }}
+              >
+                이미지 변경
+              </Button>
+              <input
+                type="file"
+                accept="image/*"
+                ref={inputRef}
+                style={{ display: "none" }}
+                onChange={changeThumb}
+              ></input>
+              <Button
+                type="button"
+                className="btn primary"
+                onClick={deleteThumb}
+              >
+                이미지 제거
+              </Button>
             </div>
             <ul className={`${styles.info_input_wrap} ${styles.member_name}`}>
               <li>
