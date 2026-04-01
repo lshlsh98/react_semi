@@ -11,6 +11,7 @@ import Find_pw from "./pages/member/Find_pw";
 import axios from "axios";
 import useAuthStore from "./components/utils/useAuthStore";
 import { useEffect } from "react";
+import Map from "./pages/map/Map";
 
 function App() {
   const { endTime, token } = useAuthStore(); // endTime = 만료시간, token = 걍 토큰
@@ -52,6 +53,7 @@ function App() {
           <Route path="/member/login" element={<Login />} />
           <Route path="/member/find-id" element={<Find_id />} />
           <Route path="/member/find-pw" element={<Find_pw />} />
+          <Route path="/map" element={<Map />} />
 
           <Route path="/member/mypage/*" element={<Mypage />} />
         </Routes>
