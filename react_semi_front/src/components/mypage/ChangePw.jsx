@@ -19,6 +19,9 @@ const ChangePw = () => {
   const [newPw, setNewPw] = useState("");
   const [newPwRe, setNewPwRe] = useState("");
 
+  const [pwVisible, setPwVisible] = useState(false);
+  const [pwReVisible, setPwReVisible] = useState(false);
+
   const inputMember = (e) => {
     setMemberAuth({ ...memberAuth, [e.target.name]: e.target.value });
   };
@@ -141,7 +144,7 @@ const ChangePw = () => {
               </li>
               <li>
                 <Input
-                  type="password"
+                  type={pwVisible ? "text" : "password"}
                   name="memberPw"
                   id="memberPw"
                   placeholder="새로운 비밀번호를 입력하세요."
@@ -151,7 +154,27 @@ const ChangePw = () => {
                   }}
                 ></Input>
               </li>
-              <li></li>
+              <li>
+                {pwVisible ? (
+                  <span
+                    class="material-icons"
+                    onClick={() => {
+                      setPwVisible(false);
+                    }}
+                  >
+                    visibility_off
+                  </span>
+                ) : (
+                  <span
+                    class="material-icons"
+                    onClick={() => {
+                      setPwVisible(true);
+                    }}
+                  >
+                    visibility
+                  </span>
+                )}
+              </li>
             </ul>
 
             {memberAuth.memberPw === newPw && (
@@ -174,7 +197,7 @@ const ChangePw = () => {
               </li>
               <li>
                 <Input
-                  type="password"
+                  type={pwReVisible ? "text" : "password"}
                   name="memberPw"
                   id="memberPw"
                   placeholder="새로운 비밀번호를 입력하세요."
@@ -184,7 +207,27 @@ const ChangePw = () => {
                   }}
                 ></Input>
               </li>
-              <li></li>
+              <li>
+                {pwReVisible ? (
+                  <span
+                    class="material-icons"
+                    onClick={() => {
+                      setPwReVisible(false);
+                    }}
+                  >
+                    visibility_off
+                  </span>
+                ) : (
+                  <span
+                    class="material-icons"
+                    onClick={() => {
+                      setPwReVisible(true);
+                    }}
+                  >
+                    visibility
+                  </span>
+                )}
+              </li>
             </ul>
             <ul className={styles.member_check_new_pw}>
               <li></li>
