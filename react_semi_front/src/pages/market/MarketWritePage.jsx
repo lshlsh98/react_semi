@@ -106,7 +106,7 @@ const MarketWritePage = () => {
     <section>
       {/* 제목 필드 */}
       <div>
-        <lable htmlFor="marketTitle">제목</lable>
+        <label htmlFor="marketTitle">제목</label>
         <input
           type="text"
           name="marketTitle"
@@ -117,7 +117,7 @@ const MarketWritePage = () => {
       </div>
       {/* 금액 필드 */}
       <div>
-        <lable htmlFor="sellPrice">판매금액</lable>
+        <label htmlFor="sellPrice">판매금액</label>
         <input
           type="text"
           name="sellPrice"
@@ -128,7 +128,7 @@ const MarketWritePage = () => {
       </div>
       {/* 내용 필드 */}
       <div>
-        <lable htmlFor="marketContent">내용</lable>
+        <label>내용</label>
         <MarketWriteFrm
           market={market}
           inputMarket={inputMarket}
@@ -140,7 +140,7 @@ const MarketWritePage = () => {
       </div>
       {/* 거래장소 필드 */}
       <div>
-        <lable htmlFor="marketTitle">거래장소</lable>
+        <label htmlFor="marketTitle">거래장소</label>
         <input
           type="text"
           name="sellAddr"
