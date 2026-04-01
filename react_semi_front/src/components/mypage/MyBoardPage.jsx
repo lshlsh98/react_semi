@@ -7,7 +7,8 @@ import useAuthStore from "../utils/useAuthStore";
 import axios from "axios";
 
 const MyBoardPage = () => {
-  const { memberId } = useAuthStore;
+  const memberId = useAuthStore((state) => state.memberId);
+  const memberGrade = useAuthStore((state) => state.memberGrade);
 
   const [boardList, setBoardList] = useState([]);
   const [page, setPage] = useState(0);
@@ -18,7 +19,7 @@ const MyBoardPage = () => {
   useEffect(() => {
     axios
       .get(
-        `${import.meta.env.VITE_BACKSERVER}/mypages?page=${page}&size=${size}&order=${order}`,
+        `${import.meta.env.VITE_BACKSERVER}/mypages/board/community?page=${page}&size=${size}&order=${order}&memberId=${memberId}&memberGrade=${memberGrade}`,
       )
       .then((res) => {
         console.log(res);
