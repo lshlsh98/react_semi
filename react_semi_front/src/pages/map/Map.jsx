@@ -40,13 +40,14 @@ const Map = () => {
     });
     setMapObj(map);
 
+    // 정보창 없애는 로직(지도 아무대나 클릭시) -> 이거 없으면 난리나거나 정보창이 안사라짐(불편해짐)
     window.naver.maps.Event.addListener(map, "click", () => {
       infoWindow.close();
     });
 
-    // 💡 2. 지도가 그려졌으니, 이제 유저 상태를 확인합니다.
+    // 유저 상태 확인 -> 이건 위의 테스트용 코드 바뀌거나 사라지면 수정해야함 (현재 로그인되어있고 주소가 있으면 if문 실행)
     if (mockUser.isLoggedIn && mockUser.address) {
-      // 로그인 유저: 주소를 좌표로 변환해서 '이동(panTo)' 시킵니다.
+      // 주소를 좌표로 변환해서 이동(panTo)함.
       window.naver.maps.Service.geocode(
         { query: mockUser.address },
         (status, response) => {
