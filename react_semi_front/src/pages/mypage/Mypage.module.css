@@ -58,7 +58,7 @@
   padding: 5px;
 }
 
-.sidebar > ul {
+.normal_menu {
   margin-bottom: 50px;
 }
 
@@ -119,6 +119,11 @@
   cursor: default;
   border-top: 1px solid var(--gray6);
   color: var(--gray1);
+}
+
+.management > li:last-child {
+  cursor: default;
+  border-bottom: none;
 }
 
 .mypage_content {

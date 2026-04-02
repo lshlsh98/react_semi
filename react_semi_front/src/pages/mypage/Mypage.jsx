@@ -76,7 +76,7 @@ const SideBar = () => {
 
   return (
     <div className={styles.sidebar}>
-      <ul>
+      <ul className={styles.normal_menu}>
         <NavLink to="/member/mypage/myinfo">
           <li
             className={selectMenu === "myinfo" ? styles.active : ""}
@@ -250,10 +250,12 @@ const SideBar = () => {
           </li>
           <li
             onClick={() => {
-              toggleMenu("postManagement");
-              setSelectMenu("postManagement");
+              toggleMenu("postManagementManager");
+              setSelectMenu("postManagementManager");
             }}
-            className={selectMenu === "postManagement" ? styles.active : ""}
+            className={
+              selectMenu === "postManagementManager" ? styles.active : ""
+            }
           >
             게시글 관리
           </li>
