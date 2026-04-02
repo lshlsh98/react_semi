@@ -5,15 +5,22 @@ import Footer from "./components/commons/Footer";
 import Header from "./components/commons/Header";
 import Join from "./pages/member/Join";
 import Login from "./pages/member/Login";
+
 import Mypage from "./pages/Mypage";
 import CommunityWritePage from "./pages/community/CommunityWritePage";
+
+import Mypage from "./pages/mypage/Mypage";
+
 import Find_id from "./pages/member/Find_id";
 import Find_pw from "./pages/member/Find_pw";
 import axios from "axios";
 import useAuthStore from "./components/utils/useAuthStore";
 import { useEffect } from "react";
+
 import CommunityModifyPage from "./pages/community/CommunityModifyPage";
 import CommunityViewPage from "./pages/community/CommunityViewPage";
+
+import CommunityListPage from "./pages/community/CommunityListPage";
 
 function App() {
   const { endTime, token } = useAuthStore(); // endTime = 만료시간, token = 걍 토큰
@@ -55,6 +62,7 @@ function App() {
           <Route path="/member/login" element={<Login />} />
           <Route path="/member/find-id" element={<Find_id />} />
           <Route path="/member/find-pw" element={<Find_pw />} />
+          <Route path="/community" element={<CommunityListPage />} />
 
           <Route path="/member/mypage/*" element={<Mypage />} />
           <Route path="/community/write" element={<CommunityWritePage />} />
