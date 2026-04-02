@@ -47,7 +47,7 @@ public class MemberService {
 		Member loginMember = memberDao.selectOneMember(member.getMemberId());
 
 		if (loginMember != null && bcrypt.matches(member.getMemberPw(), loginMember.getMemberPw())) {
-			LoginMember login = jwtUtil.createToken(loginMember.getMemberId(), loginMember.getMemberGrade());
+			LoginMember login = jwtUtil.createToken(loginMember.getMemberId(), loginMember.getMemberGrade(), loginMember.getMemberAddr());
 			login.setMemberThumb(loginMember.getMemberThumb());
 			login.setMemberName(loginMember.getMemberName());
 

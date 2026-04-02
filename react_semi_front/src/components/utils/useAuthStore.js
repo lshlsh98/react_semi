@@ -8,6 +8,7 @@ const useAuthStore = create(
       memberGrade: null,
       memberName: null,
       memberThumb: null,
+      memberAddr: null,
       token: null,
       endTime: null,
       isReady: false,
@@ -17,10 +18,19 @@ const useAuthStore = create(
         memberGrade,
         memberName,
         memberThumb,
+        memberAddr,
         token,
         endTime,
       }) => {
-        set({ memberId, memberGrade, memberName, memberThumb, token, endTime });
+        set({
+          memberId,
+          memberGrade,
+          memberName,
+          memberThumb,
+          memberAddr,
+          token,
+          endTime,
+        });
       },
       logout: (isNotLogout = false) => {
         set({
@@ -28,6 +38,7 @@ const useAuthStore = create(
           memberGrade: null,
           memberName: null,
           memberThumb: null,
+          memberAddr: null,
           token: null,
           endTime: null,
           isNotLogout,
@@ -52,6 +63,7 @@ const useAuthStore = create(
           memberGrade: state.memberGrade,
           memberName: state.memberName,
           memberThumb: state.memberThumb,
+          memberAddr: state.memberAddr,
           token: state.token,
           endTime: state.endTime,
         };

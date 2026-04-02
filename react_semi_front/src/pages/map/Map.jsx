@@ -4,20 +4,26 @@ import { Input } from "../../components/ui/Form";
 import Button from "../../components/ui/Button";
 import { useKakaoPostcode } from "@clroot/react-kakao-postcode";
 import axios from "axios";
+import useAuthStore from "../../components/utils/useAuthStore";
 
 const Map = () => {
   const mapDivRef = useRef(null); // 화면의 지도 ref (div에 연결됨)
   const markersRef = useRef([]); // 화면의 마커 ref
 
-  const [mapObj, setMapObj] = useState(null); // 네이버 지도 객체 자체를 저장 (나중에 지도 중심 이동할 때 씀)
+  const mapObjRef = useRef(null); // 네이버 지도 객체 자체를 저장 (나중에 지도 중심 이동할 때 씀 -> 실시간으로 바꾸기위해 state대신 ref활용)
   const [infoWindowObj, setInfoWindowObj] = useState(null); // marker 클릭시 나오는 정보창 객체를 저장
   const [searchAddr, setSearchAddr] = useState(""); // 인풋창에 보여질 주소 텍스트
 
-  // 가짜 유저 정보 (테스트용)
-  const mockUser = {
-    isLoggedIn: false,
-    address: "서울특별시 마포구 월드컵북로 434",
+  // 카카오의 줄임말을 공공데이터용 풀네임으로 바꿔주는 번역기 -> 여기 없는건 카카오의 줄임말이어도 검색이 되기떄문에(이거 하나하나 찾는대만 몇십분이나..)
+  const SIDO_MAP = {
+    전남: "전라남도",
+    경남: "경상남도",
+    경북: "경상북도",
+    충남: "충청남도",
+    충북: "충청북도",
   };
+
+  const { memberId, memberAddr } = useAuthStore(); // 로그인 되어 있는지 확인용, 주소..도 확인은 하는데 (DB에서 not null이긴해서 형식상 확인)
 
   // 맨 처음 한번만 실행되며 첫 화면 세팅
   useEffect(() => {
@@ -38,20 +44,22 @@ const Map = () => {
       center: center,
       zoom: 15,
     });
-    setMapObj(map);
+    // 지도를 저장하는 객체에 위에서 만든 map이라는 지도 정보 넣기
+    mapObjRef.current = map;
 
     // 정보창 없애는 로직(지도 아무대나 클릭시) -> 이거 없으면 난리나거나 정보창이 안사라짐(불편해짐)
     window.naver.maps.Event.addListener(map, "click", () => {
       infoWindow.close();
     });
 
-    // 유저 상태 확인 -> 이건 위의 테스트용 코드 바뀌거나 사라지면 수정해야함 (현재 로그인되어있고 주소가 있으면 if문 실행)
-    if (mockUser.isLoggedIn && mockUser.address) {
-      // https://navermaps.github.io/maps.js.ncp/docs/naver.maps.Service.html 여기 참고해서 만듬 쉽지 않았음 다시 하라하면 못해
+    // 유저 상태 확인 (현재 로그인되어있고 주소가 있으면 if문 실행)
+    if (memberId && memberAddr) {
+      // https://api.ncloud-docs.com/docs/ai-naver-mapsgeocoding-geocode
+      // https://navermaps.github.io/maps.js.ncp/docs/naver.maps.Service.html 위랑 여기 2 사이트 참고해서 만듬
       // 주소를 좌표로 변환해서 이동(panTo)함.
 
       window.naver.maps.Service.geocode(
-        { query: mockUser.address },
+        { query: memberAddr },
 
         (status, response) => {
           // status : 응답 결과에 대한 상태 코드
@@ -64,12 +72,15 @@ const Map = () => {
           ) {
             const { x, y, addressElements } = response.v2.addresses[0]; // 주소 검색 결과의 1번 컬럼의 x, y : 경/위도 addressElements : 주소를 이루는 요소들
 
+            // 주소요소중 SIDO라는걸 찾아서 sidoElement에 넣기
             const sidoElement = addressElements.find((e) =>
               e.types.includes("SIDO"),
             );
             // shortName / longName / code 라는 요소 type들이 있던데  각각 지번, 도로명, 우편번호인줄 알았는데
             // 더 심플하게 longName = 전체이름 (예 : "서울특별시") shortName = 짧은이름 (예 : "서울") code = 고유코드
-            const regionName = sidoElement ? sidoElement.shortName : "서울";
+            // 여기서 longName 왜 안써서 이리 어렵게 코드를 짰냐 할수 있는데 전남같은건 기본적으로 요약되어 나온 이름을 기준으로 short / long이 있어서 long(long도 전남이런식으로 있거나 아니면 너무 길게 되어 있어서 오히려 줄여야 공공데이터api와 데이터 값을 맞출수 있었다)이 의미가 없었다
+            const regionName =
+              SIDO_MAP[sidoElement.shortName] || sidoElement.shortName;
 
             // 지도의 중심을 유저 동네로 이동
             map.panTo(window.naver.maps.LatLng(y, x));
@@ -83,7 +94,7 @@ const Map = () => {
       // else -> 비로그인 유저 : 이미 서울역이 지도에 떠 있으니, 서울 데이터만 불러오면 끝
       fetchGreenReturnData(map, infoWindow, "서울");
     }
-  }, []);
+  }, [memberId, memberAddr]); // 유저 정보가 바뀔떄 마다(로그인 / 로그아웃) 지도 갱신
 
   // 공공데이터 서버에서 거점 정보 가져오기 함수
   const fetchGreenReturnData = (
@@ -161,20 +172,24 @@ const Map = () => {
         markersRef.current = newMarkers;
       })
       .catch((err) => {
-        // 에러 나지마 제발
+        // 에러 나지마 제발 -> 보통 에러나면 api서버쪽 문제이거나 git으로 받아왔을때 일시적인 오류
         console.log("데이터 로딩 실패:", err);
       });
   };
 
-  // 🟢 STEP 3: 카카오 주소 검색 & 지도 이동
+  // 카카오 주소 검색 & 지도 이동
   const { open } = useKakaoPostcode({
     onComplete: (data) => {
-      setSearchAddr(data.roadAddress);
-      const regionName = data.sido; // '시/도' 단위 추출(이걸로 그린리턴 찍히는 범위를 '시/도' 기준으로 찍을거임)
+      // 만약 도로명 주소가 비어있으면 일반 주소(지번)라도 가져오기(도로명이 2개이상이면 값이 안들어갈때가 있음)
+      const targetAddress = data.roadAddress || data.address;
+      setSearchAddr(targetAddress); // Join에서도 설명했지만 roadAddress : 도로명 주소
+
+      const regionName = SIDO_MAP[data.sido] || data.sido;
 
       if (window.naver && window.naver.maps.Service) {
         window.naver.maps.Service.geocode(
-          { query: data.roadAddress },
+          { query: targetAddress }, // 💡 안전한 주소로 검색!
+
           (status, response) => {
             if (
               status === window.naver.maps.Service.Status.OK &&
@@ -183,13 +198,17 @@ const Map = () => {
               const { x, y } = response.v2.addresses[0];
               const newPoint = new window.naver.maps.LatLng(y, x);
 
-              mapObj.panTo(newPoint);
-              mapObj.setZoom(12);
+              const currentMap = mapObjRef.current;
 
-              if (infoWindowObj) infoWindowObj.close();
+              if (currentMap) {
+                // 🚀 [핵심 해결] panTo 대신 setCenter(순간이동)를 씁니다!
+                // 이렇게 하면 줌(Zoom) 설정과 충돌하지 않아서 절대 엉뚱한 곳으로 튀지 않습니다.
+                currentMap.setCenter(newPoint);
+                currentMap.setZoom(15);
 
-              // 🌟 이동한 지역의 데이터 불러오기!
-              fetchGreenReturnData(mapObj, infoWindowObj, regionName);
+                if (infoWindowObj) infoWindowObj.close();
+                fetchGreenReturnData(currentMap, infoWindowObj, regionName);
+              }
             } else {
               alert("해당 주소를 지도에서 찾을 수 없습니다.");
             }

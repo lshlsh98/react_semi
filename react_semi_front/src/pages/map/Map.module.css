@@ -8,28 +8,24 @@
   text-align: center;
   margin-bottom: 30px;
 }
-/**/
-/* 💡 주소 검색 영역 (우측 정렬 및 간격 조절만 담당!) */
+
 .search_area {
   display: flex;
-  justify-content: flex-end; /* 컴포넌트들을 오른쪽으로 밉니다 */
-  align-items: center; /* 버튼과 인풋의 높이 중심을 맞춥니다 */
-  gap: 10px; /* 인풋과 버튼 사이의 간격 */
-  margin-bottom: 15px; /* 지도와의 간격 */
+  justify-content: flex-end;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 15px;
 }
 
-/* 💡 Input 컴포넌트의 너비를 제한하기 위한 박스 */
-/* (팀장님의 .input CSS가 width: 100% 이므로, 부모 박스로 크기를 제어합니다) */
 .input_box {
   width: 300px;
 }
 
-/* 지도 영역 스타일 (이건 지도의 껍데기니까 그대로 둡니다) */
 .map_div {
   width: 100%;
   height: 500px;
-  background-color: #f0f0f0;
+  background-color: var(--gray8);
   border-radius: 8px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1); /* 큰 의미는 없는 그림자인데 있으니까 사각에서 볼때 더 잘보임 뭔가 차이가 확실히 있었음 */
   overflow: hidden;
 }
