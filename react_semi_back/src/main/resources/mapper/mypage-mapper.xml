@@ -124,4 +124,17 @@
 		</if>
 	</select>
 	
+	<update id="updateCommunityStatus">
+		UPDATE community_tbl
+		SET community_status = #{status}
+		WHERE community_no = #{boardNo}
+	</update>
+	
+	<delete id="deleteCommunity">
+		DELETE 
+		FROM community_tbl
+		WHERE community_no = #{boardNo}
+	</delete>
+	
+	
 </mapper>

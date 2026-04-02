@@ -1,7 +1,7 @@
 import MyBoardItem from "./MyBoardItem";
 import styles from "./MyBoardList.module.css";
 
-const MyBoardList = ({ boardList, setBoardList }) => {
+const MyBoardList = ({ boardList, setBoardList, status }) => {
   return (
     <div className={styles.myboard_list_wrap}>
       {boardList.map((board, index) => (
@@ -11,6 +11,7 @@ const MyBoardList = ({ boardList, setBoardList }) => {
           index={index}
           boardList={boardList}
           setBoardList={setBoardList}
+          status={status}
         />
       ))}
     </div>

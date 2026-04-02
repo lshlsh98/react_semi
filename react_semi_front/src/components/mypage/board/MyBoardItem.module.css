@@ -57,10 +57,15 @@
   height: 25px;
   border-radius: 8px;
   border: 1px solid var(--gray0);
-
+  cursor: pointer;
   display: flex;
   justify-content: center;
   align-items: center;
+}
+
+.btn:hover {
+  background-color: var(--gray0);
+  color: var(--gray8);
 }
 
 .admin_section {

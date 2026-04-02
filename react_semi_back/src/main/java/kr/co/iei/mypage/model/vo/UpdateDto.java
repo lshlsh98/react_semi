@@ -9,15 +9,8 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 @Data
-@JsonInclude(JsonInclude.Include.NON_NULL)
-public class CommunityListRequestDto {
+public class UpdateDto {
 	
-	private Integer page;
-	private Integer size;
-	private Integer order;
+	private Integer boardNo;
 	private Integer status;
-	private String searchKeyword;
-	private String memberId;
-	private Integer memberGrade;	
 }
-

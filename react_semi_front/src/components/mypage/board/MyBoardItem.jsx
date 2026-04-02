@@ -8,13 +8,13 @@ import useAuthStore from "../../utils/useAuthStore";
 import Switch from "@mui/material/Switch";
 import axios from "axios";
 
-const MyBoardItem = ({ board, index, boardList, setBoardList }) => {
+const MyBoardItem = ({ board, index, boardList, setBoardList, status }) => {
   const [contentStatus, setContentStatus] = useState(board.contentStatus);
   const memberGrade = useAuthStore((state) => state.memberGrade);
 
   const changeStatus = () => {
-    const status = contentStatus === 1 ? 2 : 1;
-    const obj = { boardNo: board.boardNo, contentStatus: board.contentStatus };
+    const toggle = contentStatus === 1 ? 2 : 1;
+    const obj = { boardNo: board.boardNo, status: toggle };
 
     axios
       .patch(
@@ -22,13 +22,33 @@ const MyBoardItem = ({ board, index, boardList, setBoardList }) => {
         obj,
       )
       .then((res) => {
-        console.log(res);
+        if (res.data === 1) {
+          if (status !== 0) {
+            const newBoardList = boardList.filter((b, i) => {
+              return i !== index;
+            });
+            setBoardList(newBoardList);
+          }
+        }
       })
       .catch((err) => {
         console.log(err);
       });
 
-    setContentStatus(status);
+    setContentStatus(toggle);
+  };
+
+  const deleteBoard = () => {
+    axios
+      .delete(
+        `${import.meta.env.VITE_BACKSERVER}/mypages/board/community/${board.boardNo}`,
+      )
+      .then((res) => {
+        console.log(res);
+      })
+      .catch((err) => {
+        console.log(err);
+      });
   };
 
   return (
@@ -64,7 +84,7 @@ const MyBoardItem = ({ board, index, boardList, setBoardList }) => {
             <div
               className={styles.btn}
               onClick={() => {
-                console.log(board.boardNo);
+                deleteBoard();
               }}
             >
               삭제

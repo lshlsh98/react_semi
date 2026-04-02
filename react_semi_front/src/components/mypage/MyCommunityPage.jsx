@@ -86,7 +86,11 @@ const MyCommunityPage = () => {
         </div>
       </div>
       <div className={styles.myboard_list_content}>
-        <MyBoardList boardList={boardList} setBoardList={setBoardList} />
+        <MyBoardList
+          boardList={boardList}
+          setBoardList={setBoardList}
+          status={status}
+        />
       </div>
       <div className={styles.pagination_section}>
         <Pagination
