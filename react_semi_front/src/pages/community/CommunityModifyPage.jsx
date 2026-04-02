@@ -15,25 +15,40 @@ const CommunityModifyPage = () => {
     communityContent: "",
     communityWriter: "",
   });
+  useEffect(() => {
+    if (!communityNo) return;
 
-  const loginUser = JSON.parse(localStorage.getItem("user"));
+    axios
+      .get(`${import.meta.env.VITE_BACKSERVER}/communities/${communityNo}`)
+      .then((res) => {
+        console.log(res.data);
+        setCommunity(res.data);
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  }, [communityNo]);
+
   const isWriter =
     community.communityWriter &&
     loginUser?.username === community.communityWriter;
 
   useEffect(() => {
-    if (communityNo) {
+    if (communityNo && loginUser) {
       axios
-        .get(`${import.meta.env.VITE_BACKSERVER}/community/${communityNo}`)
+        .get(`${import.meta.env.VITE_BACKSERVER}/communities/${communityNo}`)
         .then((res) => {
-          console.log(res.data);
           setCommunity(res.data);
+
+          // 작성자 본인이 아닐 경우 강제 이동
+          if (res.data.communityWriter !== username) {
+            Swal.fire("권한 없음", "작성자만 수정할 수 있습니다.", "error");
+            navigate(`/community/detail/${communityNo}`);
+          }
         })
-        .catch((err) => {
-          console.log(err);
-        });
+        .catch((err) => console.log(err));
     }
-  }, [communityNo]);
+  }, []);
 
   const inputCommunity = (e) => {
     const name = e.target.name;
@@ -53,11 +68,14 @@ const CommunityModifyPage = () => {
     form.append("communityWriter", community.communityWriter);
 
     axios
-      .put(`${import.meta.env.VITE_BACKSERVER}/community/${communityNo}`, form)
+      .put(
+        `${import.meta.env.VITE_BACKSERVER}/communities/${communityNo}`,
+        form,
+      )
       .then(() => {
         Swal.fire({
           icon: "success",
-          title: "수정 성공!",
+          title: "게시물 수정 성공!",
           confirmButtonText: "확인",
         });
         navigate(`/community/detail/${communityNo}`);
@@ -67,32 +85,11 @@ const CommunityModifyPage = () => {
       });
   };
 
-  const deleteCommunity = () => {
-    Swal.fire({
-      title: "정말 삭제하시겠습니까?",
-      icon: "warning",
-      showCancelButton: true,
-      confirmButtonText: "삭제",
-      cancelButtonText: "취소",
-    }).then((result) => {
-      if (result.isConfirmed) {
-        axios
-          .delete(`${import.meta.env.VITE_BACKSERVER}/community/${communityNo}`)
-          .then(() => {
-            Swal.fire("삭제가 완료 되었습니다.", "", "success");
-            navigate("/community/list");
-          })
-          .catch((err) => console.log(err));
-      }
-    });
-  };
-
   return (
     <section className={styles.community_wrap}>
-      <h3 className="page-title">
-        {isWriter ? "게시글 수정" : "게시글 상세보기"}
-      </h3>
-      {community && (
+      <h3 className="page-title">게시글 수정</h3>
+
+      {community.communityWriter && (
         <CommunityFrm
           community={community}
           inputCommunity={inputCommunity}
@@ -100,17 +97,21 @@ const CommunityModifyPage = () => {
           isWriter={isWriter}
         />
       )}
+
       <div className={styles.btn_wrap}>
-        {isWriter ? (
+        {isWriter && (
           <>
             <Button className="btn primary" onClick={modifyCommunity}>
               수정
             </Button>
-            <Button className="btn danger" onClick={deleteCommunity}>
+            <Button
+              className="btn light outline"
+              onClick={() => navigate("/community/view")}
+            >
               취소
             </Button>
           </>
-        ) : null}
+        )}
       </div>
     </section>
   );

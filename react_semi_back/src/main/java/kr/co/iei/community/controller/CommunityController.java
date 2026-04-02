@@ -39,14 +39,11 @@ public class CommunityController {
 	return ResponseEntity.ok(result);
 	}
 	
-	@GetMapping(value="/{communityNo}")
-	public ResponseEntity<?> selectOneCommunity(@PathVariable int communityNo){
-		Community community = communityService.selectOneCommunity(communityNo);
-		return ResponseEntity.ok(community);
-	}
-	
 	@PutMapping(value="/{communityNo}")
-	public ResponseEntity<?> updateCommunity(@PathVariable int communityNo, @RequestBody Community community){
+	public ResponseEntity<?> updateCommunity(@PathVariable Integer communityNo, @ModelAttribute Community community){
+		community.setCommunityNo(communityNo);
+		System.out.println(community);
+		Document doc = Jsoup.parse(community.getCommunityContent());
 		int result = communityService.updateCommunity(community);
 		return ResponseEntity.ok(result);
 	}

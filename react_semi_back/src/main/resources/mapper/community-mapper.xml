@@ -39,5 +39,7 @@
   			community_content = #{communityContent}
   		where community_no = #{communityNo}
 	</update>
-	
 </mapper>
+
+
+

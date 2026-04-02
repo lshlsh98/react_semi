@@ -24,11 +24,13 @@ public class CommunityService {
 		Community community = communityDao.selectOneCommunity(communityNo);
 		return community;
 	}
-	
+
 	@Transactional
 	public int updateCommunity(Community community) {
 		int result = communityDao.updateCommunity(community);
 		return result;
 	}
+	
+	
 
 }
