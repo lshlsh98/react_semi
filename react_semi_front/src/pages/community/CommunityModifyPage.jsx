@@ -10,11 +10,8 @@ const CommunityModifyPage = () => {
   const navigate = useNavigate();
   const params = useParams();
   const communityNo = params.communityNo;
-  const [community, setCommunity] = useState({
-    communityTitle: "",
-    communityContent: "",
-    communityWriter: "",
-  });
+
+  const [community, setCommunity] = useState(null);
   useEffect(() => {
     if (!communityNo) return;
 
@@ -30,25 +27,9 @@ const CommunityModifyPage = () => {
   }, [communityNo]);
 
   const isWriter =
-    community.communityWriter &&
-    loginUser?.username === community.communityWriter;
-
-  useEffect(() => {
-    if (communityNo && loginUser) {
-      axios
-        .get(`${import.meta.env.VITE_BACKSERVER}/communities/${communityNo}`)
-        .then((res) => {
-          setCommunity(res.data);
-
-          // 작성자 본인이 아닐 경우 강제 이동
-          if (res.data.communityWriter !== username) {
-            Swal.fire("권한 없음", "작성자만 수정할 수 있습니다.", "error");
-            navigate(`/community/detail/${communityNo}`);
-          }
-        })
-        .catch((err) => console.log(err));
-    }
-  }, []);
+    community && loginUser
+      ? loginUser.username === community.communityWriter
+      : false;
 
   const inputCommunity = (e) => {
     const name = e.target.name;
@@ -89,7 +70,7 @@ const CommunityModifyPage = () => {
     <section className={styles.community_wrap}>
       <h3 className="page-title">게시글 수정</h3>
 
-      {community.communityWriter && (
+      {community?.communityWriter && (
         <CommunityFrm
           community={community}
           inputCommunity={inputCommunity}
