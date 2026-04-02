@@ -1,27 +1,37 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import Swal from "sweetalert2";
 import useAuthStore from "../../components/utils/useAuthStore";
 import styles from "./MarketWritePage.module.css";
-import TextEditor from "./TextEditor";
 import axios from "axios";
 import Button from "../../components/ui/Button";
-import InsertPhotoIcon from "@mui/icons-material/InsertPhoto";
-import ClearIcon from "@mui/icons-material/Clear";
-import { useKakaoPostcode } from "@clroot/react-kakao-postcode";
 import { Input } from "../../components/ui/form";
-import { useRef } from "react";
+// 파일추가 아이콘
+import InsertPhotoIcon from "@mui/icons-material/InsertPhoto";
+import DeleteIcon from "@mui/icons-material/Delete";
+import { useKakaoPostcode } from "@clroot/react-kakao-postcode";
+//tip-tap editor
+import { useEditor, EditorContent } from "@tiptap/react";
+import StarterKit from "@tiptap/starter-kit";
+import { TextStyle } from "@tiptap/extension-text-style";
+import { Color } from "@tiptap/extension-color";
+import TextAlign from "@tiptap/extension-text-align";
+import FormatBoldIcon from "@mui/icons-material/FormatBold";
+import FormatItalicIcon from "@mui/icons-material/FormatItalic";
+import FormatListBulletedIcon from "@mui/icons-material/FormatListBulleted";
+import LooksOneIcon from "@mui/icons-material/LooksOne";
+import LooksTwoIcon from "@mui/icons-material/LooksTwo";
+import FormatAlignLeftIcon from "@mui/icons-material/FormatAlignLeft";
+import FormatAlignCenterIcon from "@mui/icons-material/FormatAlignCenter";
+import FormatAlignRightIcon from "@mui/icons-material/FormatAlignRight";
+import ClearIcon from "@mui/icons-material/Clear";
+import UndoIcon from "@mui/icons-material/Undo";
+import RedoIcon from "@mui/icons-material/Redo";
 
 const MarketWritePage = () => {
   const { memberId } = useAuthStore();
   const navigate = useNavigate();
-  const saveDraft = () => {
-    localStorage.setItem("tempMarket", JSON.stringify(market));
-    Swal.fire({
-      icon: "success",
-      title: "임시저장 완료!",
-    });
-  };
+
   useEffect(() => {
     if (!memberId) {
       Swal.fire({
@@ -61,6 +71,7 @@ const MarketWritePage = () => {
         title: "이미지 파일만 업로드 가능합니다.",
       });
     }
+    /* 최대 이미지 갯수 설정 */
     if (files.length + imageFiles.length > 3) {
       Swal.fire({
         icon: "warning",
@@ -126,8 +137,8 @@ const MarketWritePage = () => {
     const form = new FormData();
     form.append("marketTitle", market.marketTitle);
     form.append("marketContent", market.marketContent);
-    form.append("marketPrice", market.sellPrice);
-    form.append("marketAddr", market.sellAddr);
+    form.append("sellPrice", market.sellPrice);
+    form.append("sellAddr", market.sellAddr);
     form.append("marketWriter", market.marketWriter);
     files.forEach((file) => {
       form.append("files", file);
@@ -202,14 +213,7 @@ const MarketWritePage = () => {
       </div>
       {/* 내용 필드 */}
       <div className={styles.market_input_wrap_content}>
-        <MarketWriteFrm
-          market={market}
-          inputMarket={inputMarket}
-          inputMarketContent={inputMarketContent}
-          files={files}
-          addFiles={addFiles}
-          deleteFile={deleteFile}
-        />
+        <TextEditor data={market.marketContent} setData={inputMarketContent} />
       </div>
       {/* 파일첨부 필드 */}
 
@@ -240,7 +244,7 @@ const MarketWritePage = () => {
                 <FileItem
                   key={"old-file-item-" + index}
                   file={file}
-                  deleteFile={addDeleteFileList}
+                  deleteFile={deleteFile}
                 ></FileItem>
               );
             })}
@@ -297,31 +301,27 @@ const MarketWritePage = () => {
         <Button className="btn primary" onClick={registMarket}>
           작성하기
         </Button>
-        <Button className="btn primary" onClick={saveDraft}>
-          임시저장
-        </Button>
+
         <Button
-          className="btn primary"
+          className="btn primary danger"
           onClick={() => {
-            navigate("/market");
+            Swal.fire({
+              title: "작성을 취소하시겠어요?.",
+              icon: "warning",
+              showCancelButton: true,
+              confirmButtonText: "네",
+              cancelButtonText: "아니오",
+            }).then((result) => {
+              if (result.isConfirmed) {
+                navigate("/market");
+              }
+            });
           }}
         >
           작성취소
         </Button>
       </div>
     </section>
-  );
-};
-
-const MarketWriteFrm = ({ market, inputMarketContent }) => {
-  const { memberId } = useAuthStore();
-  console.log(memberId);
-  return (
-    <>
-      <div className={styles.editor}>
-        <TextEditor data={market.marketContent} setData={inputMarketContent} />
-      </div>
-    </>
   );
 };
 
@@ -342,6 +342,160 @@ const FileItem = ({ file, deleteFile }) => {
         />
       </li>
     </ul>
+  );
+};
+
+const MenuBar = ({ editor }) => {
+  if (!editor) return null;
+
+  return (
+    <div className={styles.menu_bar}>
+      {/* H1 */}
+      <button
+        type="button"
+        className={
+          editor.isActive("heading", { level: 1 }) ? styles.active : ""
+        }
+        onClick={() => editor.chain().focus().toggleHeading({ level: 1 }).run()}
+      >
+        <LooksOneIcon />
+      </button>
+
+      {/* H2 */}
+      <button
+        type="button"
+        className={
+          editor.isActive("heading", { level: 2 }) ? styles.active : ""
+        }
+        onClick={() => editor.chain().focus().toggleHeading({ level: 2 }).run()}
+      >
+        <LooksTwoIcon />
+      </button>
+
+      {/* Bold */}
+      <button
+        type="button"
+        className={editor.isActive("bold") ? styles.active : ""}
+        onClick={() => editor.chain().focus().toggleBold().run()}
+      >
+        <FormatBoldIcon />
+      </button>
+
+      {/* Italic */}
+      <button
+        type="button"
+        className={editor.isActive("italic") ? styles.active : ""}
+        onClick={() => editor.chain().focus().toggleItalic().run()}
+      >
+        <FormatItalicIcon />
+      </button>
+
+      {/* 리스트 */}
+      <button
+        type="button"
+        className={editor.isActive("bulletList") ? styles.active : ""}
+        onClick={() => editor.chain().focus().toggleBulletList().run()}
+      >
+        <FormatListBulletedIcon />
+      </button>
+
+      {/* 정렬 */}
+      <button
+        type="button"
+        className={editor.isActive({ textAlign: "left" }) ? styles.active : ""}
+        onClick={() => editor.chain().focus().setTextAlign("left").run()}
+      >
+        <FormatAlignLeftIcon />
+      </button>
+
+      <button
+        type="button"
+        className={
+          editor.isActive({ textAlign: "center" }) ? styles.active : ""
+        }
+        onClick={() => editor.chain().focus().setTextAlign("center").run()}
+      >
+        <FormatAlignCenterIcon />
+      </button>
+
+      <button
+        type="button"
+        className={editor.isActive({ textAlign: "right" }) ? styles.active : ""}
+        onClick={() => editor.chain().focus().setTextAlign("right").run()}
+      >
+        <FormatAlignRightIcon />
+      </button>
+
+      {/* 색상 */}
+      <input
+        type="color"
+        className={styles.color_picker}
+        onChange={(e) => editor.chain().focus().setColor(e.target.value).run()}
+      />
+
+      {/* 되돌리기 */}
+      <button
+        type="button"
+        disabled={!editor.can().undo()}
+        onClick={() => editor.chain().focus().undo().run()}
+      >
+        <UndoIcon />
+      </button>
+
+      {/* 다시하기 */}
+      <button
+        type="button"
+        disabled={!editor.can().redo()}
+        onClick={() => editor.chain().focus().redo().run()}
+      >
+        <RedoIcon />
+      </button>
+
+      {/* 삭제 */}
+      <button
+        type="button"
+        disabled={editor.isEmpty}
+        onClick={() => {
+          Swal.fire({
+            title: "내용을 모두 삭제하시겠습니까?",
+            icon: "warning",
+            showCancelButton: true,
+            confirmButtonText: "삭제",
+            cancelButtonText: "취소",
+          }).then((result) => {
+            if (result.isConfirmed) {
+              editor.chain().focus().clearContent().run();
+            }
+          });
+        }}
+      >
+        <DeleteIcon />
+      </button>
+    </div>
+  );
+};
+
+const TextEditor = ({ data, setData }) => {
+  const editor = useEditor({
+    extensions: [
+      StarterKit,
+      TextStyle,
+      Color,
+      TextAlign.configure({
+        types: ["heading", "paragraph"],
+      }),
+    ],
+    content: data,
+    onUpdate: ({ editor }) => {
+      setData(editor.getHTML());
+    },
+  });
+
+  return (
+    <div className={styles.editor_wrap}>
+      <MenuBar editor={editor} className={styles.menu_bar} />
+      <EditorContent editor={editor} className={styles.editor_content} />
+    </div>
   );
 };
 

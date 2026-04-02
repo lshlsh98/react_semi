@@ -6,6 +6,7 @@ import org.apache.ibatis.annotations.Mapper;
 
 import kr.co.iei.market.model.vo.ListItem;
 import kr.co.iei.market.model.vo.Market;
+import kr.co.iei.market.model.vo.MarketFile;
 
 @Mapper
 public interface MarketDao {
@@ -13,4 +14,10 @@ public interface MarketDao {
 	Integer selectMarketCount(ListItem request);
 
 	List<Market> selectMarketList(ListItem request);
+
+	int getNewMarketNo();
+
+	int insertMarket(Market market);
+
+	int insertMarketFile(MarketFile marketFile);
 }

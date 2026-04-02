@@ -7,7 +7,7 @@
 	select count(*) from market_tbl where market_status = #{status}
 	</select>
 	
-	<!--마켓 리스트 객체 생성 -->
+	<!--Select ___ from market_tbl : 마켓 리스트 객체 생성 -->
 	<select id="selectMarketList" resultType="market">
 	select
 		market_no,
@@ -37,5 +37,38 @@
 		
 		offset #{page}*#{size} rows fetch next #{size} rows only
 	</select>
+		
+	<!-- 시퀀스 번호 발급 -->
+	<select id="getNewMarketNo" resultType="int">
+		select market_seq.nextval from dual
+	</select>
+	
+	<!-- Insert Market_tbl : 판매게시글 등록 -->
+	<insert id="insertMarket">
+	insert into market_tbl values(
+		#{marketNo},
+		#{marketTitle},
+		#{marketContent},
+		sysdate,
+		1,
+		#{marketWriter},
+		0,
+		#{sellAddr},
+		#{sellPrice},
+		0,
+		null
+	)
+	
+	</insert>
+	
+	<!-- 마켓 파일 등록 -->
+	<insert id="insertMarketFile">
+		insert into market_file_tbl values(
+			market_file_seq.nextval,
+			#{marketFileName},
+			#{marketFilePath},
+			#{marketNo}
+		)
+	</insert>
   
 </mapper>
