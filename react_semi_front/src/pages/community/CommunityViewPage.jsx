@@ -53,11 +53,23 @@ const CommunityViewPage = () => {
     });
   };
   return (
-    <ul className={styles.comment_item}>
-      <li className={styles.comment_info}>
-        <div className={styles.comment_writer_wrap}></div>
-      </li>
-    </ul>
+    <section className={styles.community_wrap}>
+      {community && (
+        <>
+          <div className={styles.community_view_wrap}>
+            <div className={styles.community_view_header}>
+              <h2 className={styles.community_title}>
+                {community.communityTitle}
+              </h2>
+              <div className={styles.community_sub_info}>
+                <div className={styles.community_writer}></div>
+              </div>
+            </div>
+            <div className={styles.community_view_content}></div>
+          </div>
+        </>
+      )}
+    </section>
   );
 };
 
