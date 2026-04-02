@@ -9,7 +9,7 @@ public interface CommunityDao {
 
 	int insertCommunity(Community community);
 	
-	Community selectOneBoard(int communityNo);
+	Community selectOneCommunity(int communityNo);
 
 	int updateCommunity(Community community);
 

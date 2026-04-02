@@ -52,6 +52,26 @@ const MenuBar = ({ editor }) => {
 
         <button
           type="button"
+          className={editor.isActive("bold") ? styles.active : ""}
+          onClick={() => {
+            editor.chain().focus().toggleBold().run();
+          }}
+        >
+          Bold
+        </button>
+
+        <button
+          type="button"
+          className={editor.isActive("italic") ? styles.active : ""}
+          onClick={() => {
+            editor.chain().focus().toggleItalic().run();
+          }}
+        >
+          Italic
+        </button>
+
+        <button
+          type="button"
           className={editor.isActive("bulletList") ? styles.active : ""}
           onClick={() => {
             editor.chain().focus().toggleBulletList().run();

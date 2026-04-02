@@ -1,9 +1,17 @@
 package kr.co.iei.community.controller;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import org.jsoup.Jsoup;
+import org.jsoup.nodes.Document;
+import org.jsoup.nodes.Element;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
@@ -22,8 +30,11 @@ public class CommunityController {
 	@Autowired
 	private CommunityService communityService;
 	
+	
 	@PostMapping
-	public ResponseEntity<?> insertCommunity(@RequestBody Community community){
+	public ResponseEntity<?> insertCommunity(@ModelAttribute Community community){
+		System.out.println(community);
+		Document doc = Jsoup.parse(community.getCommunityContent());
 	int result = communityService.insertCommunity(community);
 	return ResponseEntity.ok(result);
 	}

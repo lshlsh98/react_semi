@@ -21,7 +21,7 @@ public class CommunityService {
 	
 	
 	public Community selectOneCommunity(int communityNo) {
-		Community community = communityDao.selectOneBoard(communityNo);
+		Community community = communityDao.selectOneCommunity(communityNo);
 		return community;
 	}
 	

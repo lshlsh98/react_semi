@@ -6,7 +6,6 @@ import Header from "./components/commons/Header";
 import Join from "./pages/member/Join";
 import Login from "./pages/member/Login";
 
-import Mypage from "./pages/Mypage";
 import CommunityWritePage from "./pages/community/CommunityWritePage";
 
 import Mypage from "./pages/mypage/Mypage";
@@ -67,7 +66,7 @@ function App() {
           <Route path="/member/mypage/*" element={<Mypage />} />
           <Route path="/community/write" element={<CommunityWritePage />} />
           <Route path="/community/view" element={<CommunityViewPage />} />
-          <Route path="/community/modify/" element={<CommunityModifyPage />} />
+          <Route path="/community/modify" element={<CommunityModifyPage />} />
         </Routes>
       </div>
       <Footer />

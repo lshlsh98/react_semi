@@ -3,15 +3,26 @@
 <mapper namespace="kr.co.iei.community.model.dao.CommunityDao">
 
 	<insert id="insertCommunity">
-		insert into community_tbl values
-		(
-			community_seq.nextval,
-			#{communityTitle},
-			#{communityContent}
-		)
+		insert into community_tbl (
+        community_no,
+        community_title,
+        community_content,
+        community_date,
+        community_status,
+        community_writer,
+        view_count
+    ) values (
+        community_seq.nextval,
+        #{communityTitle},
+        #{communityContent},
+        sysdate,
+        1,
+        #{communityWriter},
+        0
+    )
 	</insert>
 	
-	<select id="selectOneBoard" resultType="Integer">
+	<select id="selectOneCommunity" resultType="community">
 		select
 			community_no,
 			community_title,
@@ -26,7 +37,7 @@
 		update community_tbl set
 			community_title = #{communityTitle},
   			community_content = #{communityContent}
-  		where board_no = #{boardNo}
+  		where community_no = #{communityNo}
 	</update>
 	
 </mapper>

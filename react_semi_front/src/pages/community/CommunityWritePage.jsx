@@ -6,6 +6,7 @@ import { Input } from "../../components/ui/Form";
 import TextEditor from "../../components/ui/TextEditor";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
+import Swal from "sweetalert2";
 
 const CommunityWritePage = () => {
   const navigate = useNavigate();
@@ -13,21 +14,10 @@ const CommunityWritePage = () => {
   const [community, setCommunity] = useState({
     communityTitle: "",
     communityContent: "",
+    communityWriter: "",
   });
 
   const [member, setMember] = useState(3); // 1: 슈퍼 유저, 2: 관리자, 3: 일반
-
-  const [files, setFiles] = useState([]);
-  const addFiles = (fileList) => {
-    const newFiles = [...files, ...fileList];
-    setFiles(newFiles);
-  };
-  const deleteFile = (file) => {
-    const newFiles = files.filter((item) => {
-      return item !== file;
-    });
-    setFiles(newFiles);
-  };
 
   const inputCommunity = (e) => {
     const name = e.target.name;
@@ -46,12 +36,10 @@ const CommunityWritePage = () => {
     const form = new FormData();
     form.append("communityTitle", community.communityTitle);
     form.append("communityContent", community.communityContent);
-    files.forEach((file) => {
-      form.append("files", file);
-    });
+    form.append("communityWriter", community.communityWriter);
 
     axios
-      .post(`${import.meta.env.VITE_BACKSERVER}/community`, form, {
+      .post(`${import.meta.env.VITE_BACKSERVER}/communities`, form, {
         headers: {
           "Content-Type": "multipart/form-data",
         },
@@ -79,9 +67,6 @@ const CommunityWritePage = () => {
       <CommunityFrm
         community={community}
         inputCommunity={inputCommunity}
-        files={files}
-        addFiles={addFiles}
-        deleteFile={deleteFile}
         inputCommunityContent={inputCommunityContent}
       />
       <div className={styles.btn_wrap}>

@@ -13,33 +13,21 @@ const CommunityModifyPage = () => {
   const [community, setCommunity] = useState({
     communityTitle: "",
     communityContent: "",
-    fileList: [],
+    communityWriter: "",
   });
 
-  const [files, setFiles] = useState([]); // 새로 추가할 첨부파일
-  const addFiles = (fileList) => {
-    const newFiles = [...files, ...fileList];
-    setFiles(newFiles);
-  };
-
-  const deleteFile = (file) => {
-    const newFiles = files.filter((item) => {
-      return item !== file;
-    });
-    setFiles(newFiles);
-  };
+  const loginUser = JSON.parse(localStorage.getItem("user"));
+  const isWriter =
+    community.communityWriter &&
+    loginUser?.username === community.communityWriter;
 
   useEffect(() => {
     if (communityNo) {
       axios
-        .put(`${import.meta.env.VITE_BACKSERVER}/community/${communityNo}`)
+        .get(`${import.meta.env.VITE_BACKSERVER}/community/${communityNo}`)
         .then((res) => {
           console.log(res.data);
           setCommunity(res.data);
-          Swal.fire({
-            icon: "success",
-            title: "수정 완료!",
-          });
         })
         .catch((err) => {
           console.log(err);
@@ -57,49 +45,72 @@ const CommunityModifyPage = () => {
   const inputCommunityContent = (data) => {
     setCommunity({ ...community, communityContent: data });
   };
-  const [deleteFileList, setDeleteFileList] = useState([]);
-  const addDeleteFileList = (file) => {
-    const newFileList = community.fileList.filter((item) => {
-      return item !== file;
-    });
-    setCommunity({ ...community, fileList: newFileList });
-    setDeleteFileList([...deleteFileList, file.communityFilePath]);
-  };
 
   const modifyCommunity = () => {
     const form = new FormData();
     form.append("communityTitle", community.communityTitle);
     form.append("communityContent", community.communityContent);
-    files.forEach((file) => {
-      form.append("files", file);
+    form.append("communityWriter", community.communityWriter);
+
+    axios
+      .put(`${import.meta.env.VITE_BACKSERVER}/community/${communityNo}`, form)
+      .then(() => {
+        Swal.fire({
+          icon: "success",
+          title: "수정 성공!",
+          confirmButtonText: "확인",
+        });
+        navigate(`/community/detail/${communityNo}`);
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  };
+
+  const deleteCommunity = () => {
+    Swal.fire({
+      title: "정말 삭제하시겠습니까?",
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonText: "삭제",
+      cancelButtonText: "취소",
+    }).then((result) => {
+      if (result.isConfirmed) {
+        axios
+          .delete(`${import.meta.env.VITE_BACKSERVER}/community/${communityNo}`)
+          .then(() => {
+            Swal.fire("삭제가 완료 되었습니다.", "", "success");
+            navigate("/community/list");
+          })
+          .catch((err) => console.log(err));
+      }
     });
   };
 
   return (
     <section className={styles.community_wrap}>
-      <h3 className="page-title">게시글 수정</h3>
+      <h3 className="page-title">
+        {isWriter ? "게시글 수정" : "게시글 상세보기"}
+      </h3>
       {community && (
         <CommunityFrm
           community={community}
           inputCommunity={inputCommunity}
-          files={files}
-          addFiles={addFiles}
-          deleteFile={deleteFile}
           inputCommunityContent={inputCommunityContent}
-          addDeleteFileList={addDeleteFileList}
+          isWriter={isWriter}
         />
       )}
       <div className={styles.btn_wrap}>
-        <Button className="btn primary" onClick={modifyCommunity}>
-          수정
-        </Button>
-
-        <Button
-          className="btn light outline"
-          onClick={() => navigate(`/community/detail/${communityNo}`)}
-        >
-          취소
-        </Button>
+        {isWriter ? (
+          <>
+            <Button className="btn primary" onClick={modifyCommunity}>
+              수정
+            </Button>
+            <Button className="btn danger" onClick={deleteCommunity}>
+              취소
+            </Button>
+          </>
+        ) : null}
       </div>
     </section>
   );
