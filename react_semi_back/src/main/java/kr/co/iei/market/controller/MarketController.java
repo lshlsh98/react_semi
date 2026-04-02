@@ -57,11 +57,8 @@ public class MarketController {
 		List<MarketFile> fileList = new ArrayList<MarketFile>();
 		
 		 if(files != null) {
-			 /// To : Team 4 대장님
-			 /// Todo : 마켓게시판 글작성시 파일저장경로 확인후 수정
-			 /// Application Properties 에서 파일경로 임시 수정했습니다
-			 /// 확인후 폴더변경(root + "market/")바랍니다~
-			 String savepath = root;
+			 
+			 String savepath = root+ "market/";
 			 for (MultipartFile file : files) {
 				 String marketFileName = file.getOriginalFilename();
 				 String marketFilepath = fileUtil.upload(savepath, file);

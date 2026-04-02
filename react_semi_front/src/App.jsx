@@ -9,6 +9,7 @@ import Mypage from "./pages/mypage/Mypage";
 import Find_id from "./pages/member/Find_id";
 import MarketListPage from "./pages/market/MarketListPage";
 import MarketWritePage from "./pages/market/MarketWritePage";
+import MarketViewPage from "./pages/market/MarketViewPage";
 import Find_pw from "./pages/member/Find_pw";
 import axios from "axios";
 import useAuthStore from "./components/utils/useAuthStore";
@@ -60,6 +61,7 @@ function App() {
           {/* 진호 */}
           <Route path="/market" element={<MarketListPage />} />
           <Route path="/market/writeFrm" element={<MarketWritePage />} />
+          <Route path="market/view/:marketNo" element={<MarketViewPage />} />
 
           <Route path="/member/mypage/*" element={<Mypage />} />
         </Routes>
