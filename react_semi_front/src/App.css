@@ -48,3 +48,9 @@ a {
 .main {
   flex-grow: 1;
 }
+
+.page-title {
+  font-family: tr_b;
+  font-size: 25px;
+  color: var(--line);
+}
