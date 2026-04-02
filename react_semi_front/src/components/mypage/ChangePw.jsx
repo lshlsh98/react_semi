@@ -13,6 +13,7 @@ const ChangePw = () => {
   const [memberAuth, setMemberAuth] = useState({
     memberId: "",
     memberPw: "",
+    memberAddr: "",
   });
   const [memberAuthSuccess, setMemberAuthSuccess] = useState(false);
 
