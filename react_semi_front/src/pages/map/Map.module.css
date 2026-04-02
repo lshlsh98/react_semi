@@ -1,16 +1,14 @@
 .map_wrap {
   max-width: 1000px;
   margin: 0 auto;
-  padding: 40px 20px;
+  padding: 50px 20px;
 }
 
-/* 제목 스타일 */
-.page_title {
+.map_wrap > h3 {
   text-align: center;
   margin-bottom: 30px;
-  color: #2e7d32;
 }
-
+/**/
 /* 💡 주소 검색 영역 (우측 정렬 및 간격 조절만 담당!) */
 .search_area {
   display: flex;

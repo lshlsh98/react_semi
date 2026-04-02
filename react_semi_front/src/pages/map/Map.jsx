@@ -47,79 +47,92 @@ const Map = () => {
 
     // 유저 상태 확인 -> 이건 위의 테스트용 코드 바뀌거나 사라지면 수정해야함 (현재 로그인되어있고 주소가 있으면 if문 실행)
     if (mockUser.isLoggedIn && mockUser.address) {
+      // https://navermaps.github.io/maps.js.ncp/docs/naver.maps.Service.html 여기 참고해서 만듬 쉽지 않았음 다시 하라하면 못해
       // 주소를 좌표로 변환해서 이동(panTo)함.
+
       window.naver.maps.Service.geocode(
         { query: mockUser.address },
+
         (status, response) => {
+          // status : 응답 결과에 대한 상태 코드
+          // response : 응답 본문
+          // Status.ok : 응답 결과가 200으로 잘 들어오고 respone.v2.addresses.length : 주소 검색 결과 목록의 길이가 0보다 크면 함수 실행(함수에 이 if문밖에 없으니)
+          // 헷갈리면 안되는것 이건 로그인 정보를 가진 유저의 주소로 가기 위함임
           if (
             status === window.naver.maps.Service.Status.OK &&
             response.v2.addresses.length > 0
           ) {
-            const { x, y, addressElements } = response.v2.addresses[0];
-            const sidoEl = addressElements.find((el) =>
-              el.types.includes("SIDO"),
+            const { x, y, addressElements } = response.v2.addresses[0]; // 주소 검색 결과의 1번 컬럼의 x, y : 경/위도 addressElements : 주소를 이루는 요소들
+
+            const sidoElement = addressElements.find((e) =>
+              e.types.includes("SIDO"),
             );
-            const regionName = sidoEl ? sidoEl.shortName : "서울";
+            // shortName / longName / code 라는 요소 type들이 있던데  각각 지번, 도로명, 우편번호인줄 알았는데
+            // 더 심플하게 longName = 전체이름 (예 : "서울특별시") shortName = 짧은이름 (예 : "서울") code = 고유코드
+            const regionName = sidoElement ? sidoElement.shortName : "서울";
 
-            // 🌟 아까 만든 지도의 중심을 유저 동네로 스르륵 이동시킴!
-            const newPoint = new window.naver.maps.LatLng(y, x);
-            map.panTo(newPoint);
+            // 지도의 중심을 유저 동네로 이동
+            map.panTo(window.naver.maps.LatLng(y, x));
 
-            // 해당 동네 데이터 불러오기
+            // 해당 동네 데이터(서버에서 불러오는 거점 정보) 불러오기
             fetchGreenReturnData(map, infoWindow, regionName);
           }
         },
       );
     } else {
-      // 비로그인 유저: 이미 서울역 지도가 떠 있으니, 서울 데이터만 불러오면 끝!
+      // else -> 비로그인 유저 : 이미 서울역이 지도에 떠 있으니, 서울 데이터만 불러오면 끝
       fetchGreenReturnData(map, infoWindow, "서울");
     }
   }, []);
 
-  // =========================================================================
-  // 🟢 STEP 2: 공공데이터 서버에서 거점 정보 가져오기
-  // =========================================================================
+  // 공공데이터 서버에서 거점 정보 가져오기 함수
   const fetchGreenReturnData = (
     currentMap,
     sharedInfoWindow,
-    regionName = "",
+    regionName = "", // 지역이름이 null 혹은 비어있으면 기본값으면 "" 뭐이것도 비어있긴한데 보통 안비어있어서 밑에서 params의 지역명에 regionName으로 api에 잘 데이터를 보냄
   ) => {
+    // 공공데이터api에서 요구하는 데이터중 일부 묶음
     const params = {
       pageNo: 1,
       numOfRows: 630, // 데이터가 가장 많은 서울이 630개임(기준을 서울로)
       returnType: "json",
     };
 
+    // 지역명이 이미 있다면 api에 보내야 하는 지역명에 포함해서 보냄
     if (regionName) {
       params.positnRgnNm = regionName;
     }
 
+    // api에 요청 보내기 -> 주소 어떻게 쓰는지 찾는대만 30분은 걸림 ㅠㅠ ai는 멍청해서 해결못하고 직접 찾아보니 더 쉬웠던...
     axios
       .get(
         `/api/B552584/kecoapi/rtrvlCmpnPositnService/getCmpnPositnInfo?serviceKey=${encodeURIComponent(import.meta.env.VITE_GREEN_RETURN_API_KEY)}`,
         { params },
       )
       .then((res) => {
-        console.log(res.data);
-        markersRef.current.forEach((marker) => marker.setMap(null)); // 이건 마커 지우는 작업
-        markersRef.current = [];
+        // 요청 잘 보내고 response 잘 받으면 마커 지우고
+        markersRef.current.forEach((marker) => marker.setMap(null)); // 이건 마커 지우는 작업 (찍혀있는 마커가 여러개니까 전부 지우기위해 forEach)
+        markersRef.current = []; // 마커는 다 지웠고 markerRef도 싹 비워주기
 
-        const dataList = res.data.body?.items || [];
+        const dataList = res.data.body?.items || []; // 서버에서 받은 데이터들 List로 저장하기 근데 없으면 빈배열
 
-        // 새로운 마커 함수
+        // 새로운 마커 함수 (서버에서 받은 데이터의 List로 map으로 다 찍기)
         const newMarkers = dataList.map((item) => {
+          // 위/경도 세팅
           const position = new window.naver.maps.LatLng(
             parseFloat(item.positnPstnLat),
             parseFloat(item.positnPstnLot),
           );
 
+          // 마커 객체 생성
           const marker = new window.naver.maps.Marker({
-            position: position,
-            map: currentMap,
+            position: position, // 위에서 세팅한 위/경도
+            map: currentMap, // 현재 화면의 지도에
           });
 
-          // 마커 클릭 이벤트
+          // 마커 클릭 이벤트(정보창 뜨게)
           window.naver.maps.Event.addListener(marker, "click", () => {
+            // 정보창에 뜰 내용
             const content = `
               <div style="padding: 15px; min-width: 200px; line-height: 1.5;">
                 <h4 style="margin: 0 0 8px 0; color: var(--secendary);">그린리턴 거점</h4>
@@ -128,11 +141,12 @@ const Map = () => {
               </div>
             `;
 
-            const isOpen =
+            // if문 : 이미 열려있는 마커가 있거나 방금 누른 마커가 현재 열려있는 정보창 마커랑 같다면 닫아라
+            // else : 열려있는 마커가 없거나 내가 누른 마커가 이전과 다른 마커라면 새로운 정보창 띄우기, 마커찍기
+            if (
               sharedInfoWindow.getMap() &&
-              sharedInfoWindow.getPosition().equals(marker.getPosition());
-
-            if (isOpen) {
+              sharedInfoWindow.getPosition().equals(marker.getPosition())
+            ) {
               sharedInfoWindow.close();
             } else {
               sharedInfoWindow.setContent(content);
@@ -143,16 +157,16 @@ const Map = () => {
           return marker;
         });
 
+        // 위에서 처음에 싹 비웠었던걸 새롭게 api가 준 데이터로 만든 마커들로 채우기
         markersRef.current = newMarkers;
       })
       .catch((err) => {
+        // 에러 나지마 제발
         console.log("데이터 로딩 실패:", err);
       });
   };
 
-  // =========================================================================
   // 🟢 STEP 3: 카카오 주소 검색 & 지도 이동
-  // =========================================================================
   const { open } = useKakaoPostcode({
     onComplete: (data) => {
       setSearchAddr(data.roadAddress);
@@ -185,15 +199,11 @@ const Map = () => {
     },
   });
 
-  // =========================================================================
-  // 🟢 STEP 4: 화면 디자인 (팀장님의 UI 컴포넌트 200% 활용!)
-  // =========================================================================
   return (
     <div className={styles.map_wrap}>
-      <h3 className={styles.page_title}>그린리턴 맵</h3>
+      <h3 className="page-title">그린리턴 맵</h3>
 
       <div className={styles.search_area}>
-        {/* 💡 .input_box로 너비만 제한하고, 디자인은 <Input>에게 온전히 맡깁니다. */}
         <div className={styles.input_box}>
           <Input
             type="text"
@@ -203,7 +213,6 @@ const Map = () => {
           />
         </div>
 
-        {/* 💡 팀장님이 만드신 'btn'과 'primary' 클래스를 조합해서 넣었습니다! */}
         <Button className="btn primary" onClick={open}>
           주소 검색
         </Button>
