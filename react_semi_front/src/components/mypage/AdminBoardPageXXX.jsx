@@ -1,18 +1,33 @@
 import { useState } from "react";
-import BasicSelect from "../ui/BasicSelect";
-import MyCommentList from "./comment/MyCommentList";
-import styles from "./MyCommentPage.module.css";
 import Pagination from "../ui/Pagination";
+import styles from "./MyBoardPage.module.css";
+import BasicSelect from "../ui/BasicSelect";
+import AdminBoardList from "./board/AdminBoardListXXX";
+import { Input } from "../ui/Form";
+import SearchIcon from "@mui/icons-material/Search";
 
-const MyCommentPage = () => {
+const AdminBoardPage = () => {
   const [page, setPage] = useState(0);
   const [totalPage, setTotalPage] = useState(10);
   const [order, setOrder] = useState(0); // 0: 기본 1: 중급 2: 고급
 
   return (
-    <div className={styles.mycomment_wrap}>
+    <div className={styles.myboard_wrap}>
       <div className={styles.filter_section}>
+        <div className={styles.filter_input}>
+          <Input />
+          <SearchIcon />
+        </div>
         <div className={styles.filter_select}>
+          <BasicSelect
+            state={order}
+            setState={setOrder}
+            list={[
+              [0, "기본"],
+              [1, "중급"],
+              [2, "고급"],
+            ]}
+          />
           <BasicSelect
             state={order}
             setState={setOrder}
@@ -24,8 +39,8 @@ const MyCommentPage = () => {
           />
         </div>
       </div>
-      <div className={styles.mycomment_list_content}>
-        <MyCommentList />
+      <div className={styles.myboard_list_content}>
+        <AdminBoardList />
       </div>
       <div className={styles.pagination_section}>
         <Pagination
@@ -39,4 +54,4 @@ const MyCommentPage = () => {
   );
 };
 
-export default MyCommentPage;
+export default AdminBoardPage;

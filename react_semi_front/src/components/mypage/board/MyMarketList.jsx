@@ -1,10 +1,10 @@
-import MyBoardItem from "./MyBoardItem";
+import MyMarketItem from "./MyMarketItem";
 
-const MyBoardList = ({ boardList, setBoardList, status }) => {
+const MyMarketList = ({ boardList, setBoardList, status }) => {
   return (
     <div>
       {boardList.map((board, index) => (
-        <MyBoardItem
+        <MyMarketItem
           key={board.boardNo}
           board={board}
           index={index}
@@ -17,4 +17,4 @@ const MyBoardList = ({ boardList, setBoardList, status }) => {
   );
 };
 
-export default MyBoardList;
+export default MyMarketList;

@@ -9,24 +9,20 @@ import Switch from "@mui/material/Switch";
 import axios from "axios";
 import Swal from "sweetalert2";
 
-const MyBoardItem = ({ board, index, boardList, setBoardList, status }) => {
+const MyMarketItem = ({ board, index, boardList, setBoardList, status }) => {
   const [contentStatus, setContentStatus] = useState(board.contentStatus);
   const memberGrade = useAuthStore((state) => state.memberGrade);
 
   const changeStatus = () => {
-    console.log(board.boardNo);
-    console.log(index);
-
     const toggle = contentStatus === 1 ? 2 : 1;
     const obj = { boardNo: board.boardNo, status: toggle };
 
     axios
       .patch(
-        `${import.meta.env.VITE_BACKSERVER}/mypages/board/community/${board.boardNo}`,
+        `${import.meta.env.VITE_BACKSERVER}/mypages/board/market/${board.boardNo}`,
         obj,
       )
       .then((res) => {
-        console.log(res.data);
         if (res.data === 1 && status !== 0) {
           const newBoardList = boardList.filter((b, i) => {
             return i !== index;
@@ -53,7 +49,7 @@ const MyBoardItem = ({ board, index, boardList, setBoardList, status }) => {
       if (result.isConfirmed) {
         axios
           .delete(
-            `${import.meta.env.VITE_BACKSERVER}/mypages/board/community/${board.boardNo}`,
+            `${import.meta.env.VITE_BACKSERVER}/mypages/board/market/${board.boardNo}`,
           )
           .then((res) => {
             if (res.data === 1) {
@@ -83,6 +79,10 @@ const MyBoardItem = ({ board, index, boardList, setBoardList, status }) => {
         </div>
         <div className={styles.views_done}>
           <div className={styles.views}>조회수: {board.viewCount}</div>
+          <div className={styles.done}>
+            <div>{board.isCompleted === 1 ? "완료" : "미완료"}</div>
+            {board.isCompleted === 1 ? <div>[{board.completedDate}]</div> : ""}
+          </div>
         </div>
       </div>
       {memberGrade === 3 ? (
@@ -153,4 +153,4 @@ const Actions = ({ board }) => {
   );
 };
 
-export default MyBoardItem;
+export default MyMarketItem;

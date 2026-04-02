@@ -2,7 +2,7 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
 <mapper namespace="kr.co.iei.mypage.model.dao.MypageDao">
 	
-	<select id="findCommunityAll" resultType="communitySummary">
+	<select id="findCommunityAll" resultType="boardSummary">
 		SELECT
 			csv.community_no AS board_no,
 			csv.title, 
@@ -136,5 +136,172 @@
 		WHERE community_no = #{boardNo}
 	</delete>
 	
+	<select id="findMarketAll" resultType="boardSummary">
+		SELECT
+			msv.market_no AS board_no,
+			msv.title, 
+			msv.writer_id,
+			msv.writer_name,
+			TO_CHAR(msv.content_date, 'mm-dd') AS content_date,
+			msv.content_status,
+			msv.view_count,
+			msv.like_count,
+			msv.comment_count,
+			msv.report_count,
+			msv.completed AS is_completed,
+			TO_CHAR(msv.completed_date, 'mm-dd') AS completed_date, 
+			
+			CASE WHEN cl.member_id IS NOT NULL THEN 1 ELSE 0 END AS is_liked,
+			CASE WHEN cc.market_comment_writer IS NOT NULL
+			THEN 1 ELSE 0 END AS is_commented,
+			CASE WHEN cr.member_id IS NOT NULL THEN 1 ELSE 0 END AS is_reported
+
+		FROM market_summary_view msv
+
+		LEFT JOIN market_like_tbl cl
+			ON msv.market_no = cl.market_no
+			AND cl.member_id = #{memberId}
+
+		LEFT JOIN (
+        	SELECT DISTINCT market_no, market_comment_writer
+        	FROM market_comment_tbl
+        	WHERE market_comment_writer = #{memberId}
+    		) cc ON msv.market_no = cc.market_no
+
+		LEFT JOIN market_report_tbl cr
+			ON msv.market_no = cr.market_no
+			AND cr.member_id = #{memberId}
+			
+		<where>
+		    msv.title LIKE '%'||#{searchKeyword}||'%'
+   			<if test="memberGrade == 3">
+  			      AND msv.writer_id = #{memberId}
+    		</if>
+    		<if test="status != 0">
+        		AND msv.content_status = #{status}
+    		</if>
+    		<if test="completed != 2">
+    			AND msv.completed = #{completed}
+    		</if>
+		</where>
+
+		<if test="order == 0">
+			ORDER BY msv.content_date DESC, msv.market_no DESC
+		</if>
+		<if test="order == 1">
+			ORDER BY msv.content_date ASC, msv.market_no ASC
+		</if>
+		<if test="order == 2">
+			ORDER BY msv.view_count DESC, msv.market_no DESC
+		</if>
+		<if test="order == 3">
+			ORDER BY msv.like_count DESC, msv.market_no DESC
+		</if>
+		<if test="order == 4">
+			ORDER BY msv.report_count DESC, msv.market_no DESC
+		</if>
+		<if test="order == 5">
+    		ORDER BY completed_date DESC NULLS LAST
+		</if>
+		
+		OFFSET #{page} * #{size} ROWS FETCH NEXT #{size} ROWS ONLY
+	</select>
+	
+	<select id="findMarketAllCount" resultType="int">
+		SELECT
+			COUNT(*) AS count
+
+		FROM market_summary_view msv
+
+		LEFT JOIN market_like_tbl cl
+			ON msv.market_no = cl.market_no
+			AND cl.member_id = #{memberId}
+
+		LEFT JOIN (
+        	SELECT DISTINCT market_no, market_comment_writer
+        	FROM market_comment_tbl
+        	WHERE market_comment_writer = #{memberId}
+    		) cc ON msv.market_no = cc.market_no
+
+		LEFT JOIN market_report_tbl cr
+			ON msv.market_no = cr.market_no
+			AND cr.member_id = #{memberId}
+			
+		<where>
+		    msv.title LIKE '%'||#{searchKeyword}||'%'
+   			<if test="memberGrade == 3">
+  			      AND msv.writer_id = #{memberId}
+    		</if>
+    		<if test="status != 0">
+        		AND msv.content_status = #{status}
+    		</if>
+    		<if test="completed != 2">
+    			AND msv.completed = #{completed}
+    		</if>
+		</where>
+
+		
+	</select>
+	
+	<update id="updateMarketStatus">
+		UPDATE market_tbl 
+		SET market_status = #{status}
+		WHERE market_no = #{boardNo}
+	</update>
+	
+	<delete id="deleteMarket">
+		DELETE 
+		FROM market_tbl
+		WHERE market_no = #{boardNo}
+	</delete>
+	
+	<select id="findMarketCommentAll" resultType="commentSummary">
+		SELECT 
+			mcsv.market_comment_no AS comment_no,
+			mcsv.market_comment_content AS comment_content,
+			mcsv.market_comment_date AS comment_date,
+			mcsv.market_no AS board_no,
+			mcsv.market_comment_writer	AS writer_id,
+			mcsv.member_name AS writer_name,
+			mcsv.member_thumb AS writer_thumb,
+			mcsv.report_count,
+			
+			CASE WHEN cr.member_id IS NOT NULL THEN 1 ELSE 0 END AS is_reported
+	
+		FROM market_comment_summary_view mcsv
+		
+		LEFT JOIN market_comment_report_tbl cr
+			ON mcsv.market_comment_no = cr.market_comment_no
+			AND cr.member_id = #{memberId}
+			
+		<where>
+			mcsv.member_name LIKE '%'||#{searchKeyword}||'%'
+		</where>
+		
+		<if test="order == 0">
+			ORDER BY comment_date DESC
+		</if>
+		<if test="order == 1">
+			ORDER BY comment_date ASC
+		</if>
+		<if test="order == 2">
+			ORDER BY report_count DESC
+		</if>
+	</select>
+	
+	<select id="findMarketCommentAllCount" resultType="int">
+		SELECT 
+			COUNT(*) AS count
+	
+		FROM market_comment_summary_view mcsv
+		
+		LEFT JOIN market_comment_report_tbl cr
+			ON mcsv.market_comment_no = cr.market_comment_no
+			AND cr.member_id = #{memberId}
+			
+		<where>
+			mcsv.member_name LIKE '%'||#{searchKeyword}||'%'
+		</where>
+	</select>
 	
 </mapper>

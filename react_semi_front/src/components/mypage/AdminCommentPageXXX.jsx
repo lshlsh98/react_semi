@@ -1,12 +1,12 @@
 import { useState } from "react";
 import BasicSelect from "../ui/BasicSelect";
-import MyCommentList from "./comment/MyCommentList";
+import MyCommentList from "./comment/MyCommunityCommentList";
 import styles from "./MyCommentPage.module.css";
 import Pagination from "../ui/Pagination";
 import { Input } from "../ui/Form";
 import SearchIcon from "@mui/icons-material/Search";
 
-const AdminCommentPage = () => {
+const AdminCommentPageXXX = () => {
   const [page, setPage] = useState(0);
   const [totalPage, setTotalPage] = useState(10);
   const [order, setOrder] = useState(0); // 0: 기본 1: 중급 2: 고급
@@ -45,4 +45,4 @@ const AdminCommentPage = () => {
   );
 };
 
-export default AdminCommentPage;
+export default AdminCommentPageXXX;

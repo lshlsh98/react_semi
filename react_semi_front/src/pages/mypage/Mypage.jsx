@@ -1,16 +1,15 @@
 import { useState } from "react";
 import styles from "./Mypage.module.css";
 import { Link, NavLink, Route, Routes, useNavigate } from "react-router-dom";
-import AdminBoardPage from "../components/mypage/AdminBoardPage";
-import MyCommentPage from "../components/mypage/MyCommentPage";
-import useAuthStore from "../components/utils/useAuthStore";
-import MemberInfo from "../components/mypage/MemberInfo";
+import MemberInfo from "../../components/mypage/MemberInfo";
+import MyCommunityPage from "../../components/mypage/MyCommunityPage";
+import MyCommentPage from "../../components/mypage/MyCommunityCommentPage";
+import AdminCommentPage from "../../components/mypage/AdminCommentPageXXX";
 import Swal from "sweetalert2";
-import AdminCommentPage from "../components/mypage/AdminCommentPage";
-import MyCommunityPage from "../components/mypage/MyCommunityPage";
 import useAuthStore from "../../components/utils/useAuthStore";
 import ChangePw from "../../components/mypage/ChangePw";
-import MemberInfo from "../../components/mypage/MemberInfo";
+import MyMarketPage from "../../components/mypage/MyMarketPage";
+import MyCommunityCommentPage from "../../components/mypage/MyCommunityCommentPage";
 
 const Mypage = () => {
   const navigate = useNavigate();
@@ -38,9 +37,9 @@ const Mypage = () => {
         <div className={styles.mypage_content}>
           <Routes>
             <Route path="myinfo" element={<MemberInfo />} />
-            <Route path="board2" element={<AdminBoardPage />}></Route>
+            <Route path="market" element={<MyMarketPage />}></Route>
             <Route path="community" element={<MyCommunityPage />}></Route>
-            <Route path="comment1" element={<MyCommentPage />}></Route>
+            <Route path="comment1" element={<MyCommunityCommentPage />}></Route>
             <Route path="comment2" element={<AdminCommentPage />}></Route>
             <Route path="pw" element={<ChangePw />} />
           </Routes>
@@ -178,7 +177,7 @@ const SideBar = () => {
               onClick={() => setSelectMenu("postManagement_trade")}
             >
               <Link
-                to="/member/mypage/board1"
+                to="/member/mypage/market"
                 style={{ textDecoration: "none", color: "inherit" }}
               >
                 거래

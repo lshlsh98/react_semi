@@ -1,8 +1,8 @@
 import styles from "./MyBoardList.module.css";
-import AdminBoardItem from "./AdminBoardItem";
+import AdminBoardItem from "./AdminBoardItemXXX";
 import { useState } from "react";
 
-const AdminBoardList = () => {
+const AdminBoardListXXX = () => {
   return (
     <div className={styles.myboard_list_wrap}>
       <AdminBoardItem />
@@ -19,4 +19,4 @@ const AdminBoardList = () => {
   );
 };
 
-export default AdminBoardList;
+export default AdminBoardListXXX;

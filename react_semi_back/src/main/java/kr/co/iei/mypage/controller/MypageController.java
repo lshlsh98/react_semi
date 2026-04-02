@@ -15,9 +15,11 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import kr.co.iei.mypage.model.service.MypageService;
-import kr.co.iei.mypage.model.vo.CommunityListRequestDto;
-import kr.co.iei.mypage.model.vo.CommunityListResponseDto;
-import kr.co.iei.mypage.model.vo.CommunitySummary;
+import kr.co.iei.mypage.model.vo.BoardListRequestDto;
+import kr.co.iei.mypage.model.vo.BoardListResponseDto;
+import kr.co.iei.mypage.model.vo.BoardSummary;
+import kr.co.iei.mypage.model.vo.CommentListResponseDto;
+import kr.co.iei.mypage.model.vo.CommentSummary;
 import kr.co.iei.mypage.model.vo.UpdateDto;
 
 @CrossOrigin(value = "*")
@@ -29,13 +31,13 @@ public class MypageController {
 	private MypageService mypageService;
 
 	@GetMapping("/board/community")
-	public ResponseEntity<?> findCommunityAll(@ModelAttribute CommunityListRequestDto request) {
-		List<CommunitySummary> list = mypageService.findCommunityAll(request);
+	public ResponseEntity<?> findCommunityAll(@ModelAttribute BoardListRequestDto request) {
+		List<BoardSummary> list = mypageService.findCommunityAll(request);
 
 		int count = mypageService.findCommunityCount(request);
 		int totalPage = (int) Math.ceil(count / (double) request.getSize()); 
 				
-		CommunityListResponseDto response = new CommunityListResponseDto(list, totalPage); 
+		BoardListResponseDto response = new BoardListResponseDto(list, totalPage); 
 		
 		return ResponseEntity.ok(response);
 	}//
@@ -53,8 +55,47 @@ public class MypageController {
 		
 		return ResponseEntity.ok(result);
 	}//
-}
+	
+	
+	@GetMapping("/board/market")
+	public ResponseEntity<?> findMarketAll(@ModelAttribute BoardListRequestDto request){
+		List<BoardSummary> list = mypageService.findMarketAll(request);
+		
+		int count = mypageService.findMarketAllCount(request);
+		int totalPage = (int) Math.ceil(count / (double) request.getSize());
+		
+		BoardListResponseDto response = new BoardListResponseDto(list, totalPage);
+		
+		return ResponseEntity.ok(response);
+	}//
+	
+	@PatchMapping("/board/market/{boardNo}")
+	public ResponseEntity<?> updateMarketStatus(@RequestBody UpdateDto update){
+		int result = mypageService.updateMarketStatus(update);
+		
+		return ResponseEntity.ok(result);
+	}//
+	
+	@DeleteMapping("/board/market/{boardNo}")
+	public ResponseEntity<?> deleteMarket(@PathVariable int boardNo){
+		int result = mypageService.deleteMarket(boardNo);
+		
+		return ResponseEntity.ok(result);
+	}//
+	
 
+	@GetMapping("/comment/market")
+	public ResponseEntity<?> findMarketCommentAll(@ModelAttribute BoardListRequestDto request){
+		List<CommentSummary> list = mypageService.findMarketCommentAll(request);
+		
+		int count = mypageService.findMarketCommentAllCount(request);
+		int totalPage = (int) Math.ceil(count / (double) request.getSize());
+		
+		CommentListResponseDto response = new CommentListResponseDto(list, totalPage);
+		
+		return ResponseEntity.ok(response); 
+	}//
+}
 
 
 

@@ -1,7 +1,5 @@
 package kr.co.iei.mypage.model.vo;
 
-import com.fasterxml.jackson.annotation.JsonInclude;
-
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -9,8 +7,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 @Data
-@JsonInclude(JsonInclude.Include.NON_NULL)
-public class CommunityListRequestDto {
+public class BoardListRequestDto {
 	
 	private Integer page;
 	private Integer size;
@@ -19,5 +16,7 @@ public class CommunityListRequestDto {
 	private String searchKeyword;
 	private String memberId;
 	private Integer memberGrade;	
+	
+	private Integer completed;
 }
 

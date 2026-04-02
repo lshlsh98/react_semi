@@ -6,7 +6,7 @@ import ReportIcon from "@mui/icons-material/Report";
 import Switch from "@mui/material/Switch";
 import { useState } from "react";
 
-const AdminBoardItem = () => {
+const AdminBoardItemXXX = () => {
   const [board, setBoard] = useState(1);
 
   const changeStatus = () => {
@@ -62,4 +62,4 @@ const AdminBoardItem = () => {
   );
 };
 
-export default AdminBoardItem;
+export default AdminBoardItemXXX;

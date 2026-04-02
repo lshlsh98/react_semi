@@ -17,6 +17,7 @@
 .comment_writer {
   display: flex;
   gap: 5px;
+  align-items: center;
 }
 
 .member_thumb {
@@ -64,16 +65,21 @@
   margin-left: auto;
 }
 
-.comment_actions > div > svg {
-  font-size: 16px;
-  fill: var(--gray4);
-}
-
 .comment_btn_section {
   display: flex;
   flex-direction: column;
   gap: 10px;
   height: 141px;
+}
+
+.comment_actions {
+  margin-left: auto;
+}
+.comment_actions div {
+  font-size: 15px;
+}
+.comment_actions svg {
+  font-size: 15px;
 }
 
 .comment_btn {
@@ -85,6 +91,11 @@
   display: flex;
   align-items: center;
   justify-content: center;
+}
+
+.comment_btn:hover {
+  background-color: var(--gray0);
+  color: var(--gray8);
 }
 
 .textarea {
@@ -105,4 +116,44 @@
 .textarea:disabled {
   border: none;
   background-color: var(--gray8);
+}
+
+.isLiked div {
+  color: rgb(82, 129, 199);
+}
+.isLiked svg {
+  fill: rgb(82, 129, 199);
+}
+
+.isDisliked div {
+  color: rgb(233, 153, 48);
+}
+.isDisliked svg {
+  fill: rgb(233, 153, 48);
+}
+
+.isCommented div {
+  color: rgb(82, 161, 124);
+}
+.isCommented svg {
+  fill: rgb(82, 161, 124);
+}
+
+.isReported div {
+  color: rgb(255, 0, 0);
+}
+.isReported svg {
+  fill: rgb(255, 0, 0);
+}
+
+.action_default div {
+  color: var(--gray4);
+}
+.action_default svg {
+  fill: var(--gray4);
+}
+
+.views_done div {
+  color: var(--gray4);
+  font-size: 14px;
 }

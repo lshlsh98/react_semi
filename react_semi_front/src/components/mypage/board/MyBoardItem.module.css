@@ -108,3 +108,18 @@
 .action_default svg {
   fill: var(--gray4);
 }
+
+.views_done div {
+  color: var(--gray4);
+  font-size: 14px;
+}
+
+.views_done {
+  display: flex;
+  justify-content: space-between;
+}
+
+.done {
+  display: flex;
+  gap: 5px;
+}

@@ -2,6 +2,8 @@ package kr.co.iei.mypage.model.vo;
 
 import org.apache.ibatis.type.Alias;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
+
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -9,8 +11,9 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 @Data
-@Alias(value="communitySummary")
-public class CommunitySummary {
+@Alias(value="boardSummary")
+@JsonInclude(JsonInclude.Include.NON_NULL)
+public class BoardSummary {
 	
 	private Integer boardNo;
 	private String title;
@@ -27,4 +30,8 @@ public class CommunitySummary {
 	private Integer isDisliked;
 	private Integer isCommented;
 	private Integer isReported;
+	
+	private Integer isCompleted;
+	private String completedDate;
 }
+
