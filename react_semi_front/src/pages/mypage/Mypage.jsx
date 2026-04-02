@@ -8,14 +8,17 @@ import MemberInfo from "../components/mypage/MemberInfo";
 import Swal from "sweetalert2";
 import AdminCommentPage from "../components/mypage/AdminCommentPage";
 import MyCommunityPage from "../components/mypage/MyCommunityPage";
+import useAuthStore from "../../components/utils/useAuthStore";
+import ChangePw from "../../components/mypage/ChangePw";
+import MemberInfo from "../../components/mypage/MemberInfo";
 
 const Mypage = () => {
   const navigate = useNavigate();
-  const { memberName, memberId, isReady } = useAuthStore();
+  const { memberId, isReady, isNotLogout } = useAuthStore();
 
   console.log(useAuthStore());
 
-  if (isReady && memberId == null) {
+  if (isReady && memberId == null && !isNotLogout) {
     Swal.fire({
       title: "로그인 후 이용 가능합니다.",
       icon: "warning",
@@ -39,6 +42,7 @@ const Mypage = () => {
             <Route path="community" element={<MyCommunityPage />}></Route>
             <Route path="comment1" element={<MyCommentPage />}></Route>
             <Route path="comment2" element={<AdminCommentPage />}></Route>
+            <Route path="pw" element={<ChangePw />} />
           </Routes>
         </div>
       </div>
@@ -91,12 +95,14 @@ const SideBar = () => {
             내 정보
           </li>
         </NavLink>
-        <li
-          className={selectMenu === "pw" ? styles.active : ""}
-          onClick={() => setSelectMenu("pw")}
-        >
-          비밀번호 변경
-        </li>
+        <NavLink to="/member/mypage/pw">
+          <li
+            className={selectMenu === "pw" ? styles.active : ""}
+            onClick={() => setSelectMenu("pw")}
+          >
+            비밀번호 변경
+          </li>
+        </NavLink>
         <li
           className={
             selectMenu === "likehate" ||

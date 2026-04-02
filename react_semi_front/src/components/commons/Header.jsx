@@ -7,8 +7,7 @@ import axios from "axios";
 const Header = () => {
   const navigate = useNavigate();
 
-  const login = useAuthStore();
-  const memberId = login.memberId;
+  const memberId = useAuthStore((state) => state.memberId);
 
   return (
     <header className={styles.header}>
