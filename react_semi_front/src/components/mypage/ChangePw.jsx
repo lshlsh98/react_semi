@@ -120,6 +120,7 @@ const ChangePw = () => {
                 placeholder="비밀번호를 입력하세요."
                 value={memberAuth.memberPw}
                 onChange={inputMember}
+                readOnly={memberAuthSuccess}
               ></Input>
             </li>
             <li>
