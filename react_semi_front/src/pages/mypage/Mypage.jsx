@@ -1,17 +1,18 @@
 import { useState } from "react";
 import styles from "./Mypage.module.css";
 import { NavLink, Route, Routes, useNavigate } from "react-router-dom";
-import useAuthStore from "../components/utils/useAuthStore";
-import MemberInfo from "../components/mypage/MemberInfo";
+import useAuthStore from "../../components/utils/useAuthStore";
+import MemberInfo from "../../components/mypage/MemberInfo";
 import Swal from "sweetalert2";
+import ChangePw from "../../components/mypage/ChangePw";
 
 const Mypage = () => {
   const navigate = useNavigate();
-  const { memberName, memberId, isReady } = useAuthStore();
+  const { memberId, isReady, isNotLogout } = useAuthStore();
 
   console.log(useAuthStore());
 
-  if (isReady && memberId == null) {
+  if (isReady && memberId == null && !isNotLogout) {
     Swal.fire({
       title: "로그인 후 이용 가능합니다.",
       icon: "warning",
@@ -31,6 +32,7 @@ const Mypage = () => {
         <div className={styles.mypage_content}>
           <Routes>
             <Route path="myinfo" element={<MemberInfo />} />
+            <Route path="pw" element={<ChangePw />} />
           </Routes>
         </div>
       </div>
@@ -83,12 +85,14 @@ const SideBar = () => {
             내 정보
           </li>
         </NavLink>
-        <li
-          className={selectMenu === "pw" ? styles.active : ""}
-          onClick={() => setSelectMenu("pw")}
-        >
-          비밀번호 변경
-        </li>
+        <NavLink to="/member/mypage/pw">
+          <li
+            className={selectMenu === "pw" ? styles.active : ""}
+            onClick={() => setSelectMenu("pw")}
+          >
+            비밀번호 변경
+          </li>
+        </NavLink>
         <li
           className={
             selectMenu === "likehate" ||

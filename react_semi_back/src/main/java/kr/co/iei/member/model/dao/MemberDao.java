@@ -16,6 +16,9 @@ public interface MemberDao {
 
 	int updateThumbnail(Member m);
 
-	
-	int updateMember(Member member);
+	int memberUpdate(Member member);
+
+	int memberDelete(String memberId);
+
+	int updatePw(Member member);
 }
