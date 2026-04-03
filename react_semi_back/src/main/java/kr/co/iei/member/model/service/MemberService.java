@@ -1,13 +1,12 @@
 package kr.co.iei.member.model.service;
 
 import java.io.File;
+import java.util.Objects;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.bind.annotation.PathVariable;
 
 import kr.co.iei.member.model.dao.MemberDao;
 import kr.co.iei.member.model.vo.LoginMember;
@@ -68,23 +67,28 @@ public class MemberService {
 		return result;
 	}
 
-	public int updateThumbnail(Member m) {
-		int result = memberDao.updateThumbnail(m);
-		return result;
+	public int updateThumbnail(Member m, String root) {
+	    Member oldM = memberDao.selectOneMember(m.getMemberId());
+	    String oldThumb = oldM.getMemberThumb();
+
+	    int result = memberDao.updateThumbnail(m);
+
+	    if (result == 1 && oldThumb != null) {
+			System.out.println("delete");
+	        deleteFile(oldThumb, root);
+	    }
+
+	    return result;
 	}
 
 	public int memberUpdate(String memberId, Member member, String root) {
 		System.out.println("memberid:" + memberId);
 		Member oldM = memberDao.selectOneMember(memberId);
-		System.out.println(oldM);
 
 		int result = memberDao.memberUpdate(member);
 
-		Member newM = memberDao.selectOneMember(memberId);
-		System.out.println(newM);
-		if (result == 1 && oldM != null && oldM.getMemberThumb() != null
-				&& !oldM.getMemberThumb().equals(newM.getMemberThumb())) {
-			System.out.println("delete");
+		if (result == 1 && oldM.getMemberThumb() != null 
+		        && member.getMemberThumb() == null) {
 			deleteFile(oldM.getMemberThumb(), root);
 		}
 		return result;
@@ -94,10 +98,10 @@ public class MemberService {
 		System.out.println(filename);
 		if (filename == null || filename.isEmpty())
 			return false;
-		String savepath = root + "semi/";
-		File file = new File(savepath + filename);
+		File file = new File(root + filename);
+		System.out.println(file);
+		System.out.println(file.exists());
 		if (file.exists()) {
-			System.out.println(savepath);
 			return file.delete();
 		}
 		return false;

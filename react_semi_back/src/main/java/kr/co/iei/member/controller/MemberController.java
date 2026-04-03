@@ -192,17 +192,16 @@ public class MemberController {
 		m.setMemberThumb(memberThumb);
 		m.setMemberId(memberId);
 
-		int result = memberService.updateThumbnail(m);
+		int result = memberService.updateThumbnail(m, savepath);
 		return ResponseEntity.ok(memberThumb);
 	}
 
 	// 회원 정보 수정 완료
 	@PatchMapping(value = "/{memberId}")
 	public ResponseEntity<?> memberUpdate(@PathVariable String memberId, @RequestBody Member member) {
-		System.out.println(member);
-		System.out.println(memberId);
-		int result = memberService.memberUpdate(memberId, member, root);
-		return ResponseEntity.ok(member.getMemberName());
+		String savepath = root + "semi/";
+		int result = memberService.memberUpdate(memberId, member, savepath);
+		return ResponseEntity.ok(member);
 	}
 
 	// 회원 탈퇴
