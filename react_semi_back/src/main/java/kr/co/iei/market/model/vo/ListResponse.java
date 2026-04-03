@@ -14,3 +14,4 @@ public class ListResponse {
 	private List<Market> items;
 	private Integer totalPage;
 }
+

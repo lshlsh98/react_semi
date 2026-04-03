@@ -7,7 +7,6 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor	
 @Data
-	
 public class ListItem {
 	private Integer page;
 	private Integer size;

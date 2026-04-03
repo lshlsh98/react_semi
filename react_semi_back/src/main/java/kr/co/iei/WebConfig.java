@@ -22,5 +22,11 @@ public class WebConfig implements WebMvcConfigurer {
     registry
         .addResourceHandler("/semi/**")							// 요청 패턴
         .addResourceLocations("file:///" + root + "semi/");		// 실제 경로
+    
+    registry
+    	.addResourceHandler("/market/**")	  					// 요청 패턴
+    	.addResourceLocations("file:///" + root + "market/");   // 실제경로 
+     
+    
     }
 }
