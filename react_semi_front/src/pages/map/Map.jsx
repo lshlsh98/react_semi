@@ -181,30 +181,33 @@ const Map = () => {
   const { open } = useKakaoPostcode({
     onComplete: (data) => {
       // 만약 도로명 주소가 비어있으면 일반 주소(지번)라도 가져오기(도로명이 2개이상이면 값이 안들어갈때가 있음)
-      const targetAddress = data.roadAddress || data.address;
-      setSearchAddr(targetAddress); // Join에서도 설명했지만 roadAddress : 도로명 주소
+      const targetAddress = data.roadAddress || data.address; // Join에서도 설명했지만 roadAddress : 도로명 주소
+      setSearchAddr(targetAddress);
 
-      const regionName = SIDO_MAP[data.sido] || data.sido;
+      const regionName = SIDO_MAP[data.sido] || data.sido; // 사전(sido_map)에 있으면 풀네임(예 : 전라남도)으로 바꾸고, 사전에 없으면(서울, 대구) 원래 이름 그대로 쓴다!
 
+      // 네이버 지도가 잘 활성화 되있으면 실행
       if (window.naver && window.naver.maps.Service) {
+        // geocode : 네이버 지도 서버에 카카오의 주소를 보냄
         window.naver.maps.Service.geocode(
-          { query: targetAddress }, // 💡 안전한 주소로 검색!
+          { query: targetAddress },
 
+          // 네이버가 변환 작업이 끝내고 결과를 돌려주면 실행되는 콜백 함수
           (status, response) => {
             if (
               status === window.naver.maps.Service.Status.OK &&
               response.v2.addresses.length > 0
             ) {
-              const { x, y } = response.v2.addresses[0];
+              const { x, y } = response.v2.addresses[0]; // 주소 검색 결과의 1번 컬럼의 x, y : 경/위도
               const newPoint = new window.naver.maps.LatLng(y, x);
 
+              // 위에서 만든 지도를 저장하는 객체의 현재 지도 객체를 가져옴
               const currentMap = mapObjRef.current;
 
+              // 현재 지도가 있다면
               if (currentMap) {
-                // 🚀 [핵심 해결] panTo 대신 setCenter(순간이동)를 씁니다!
-                // 이렇게 하면 줌(Zoom) 설정과 충돌하지 않아서 절대 엉뚱한 곳으로 튀지 않습니다.
-                currentMap.setCenter(newPoint);
-                currentMap.setZoom(15);
+                currentMap.setCenter(newPoint); // 기존에 panTo를 사용했었는데 setCenter으로 바꿈 (이유 : panTo는 부드럽게 움직이려 하는데 zoom 설정과 충돌되어 중간에 엉뚱한 곳에서 멈출때가 있었음 그래서 그냥 순간이동하는 setCenter 설정을 사용)
+                currentMap.setZoom(15); // 줌은 15로 통일
 
                 if (infoWindowObj) infoWindowObj.close();
                 fetchGreenReturnData(currentMap, infoWindowObj, regionName);
@@ -228,7 +231,7 @@ const Map = () => {
             type="text"
             value={searchAddr}
             readOnly
-            placeholder="주소를 검색하세요"
+            placeholder={memberAddr ? memberAddr : "주소를 검색하세요"}
           />
         </div>
 
