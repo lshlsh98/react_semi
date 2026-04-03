@@ -32,9 +32,12 @@
 			ON csv.community_no = cd.community_no
 			AND cd.member_id = #{memberId}
 
-		LEFT JOIN community_comment_tbl cc
-			ON csv.community_no = cc.community_no
-			AND cc.community_comment_writer = #{memberId}
+		LEFT JOIN (
+    			SELECT community_no, MAX(community_comment_writer) AS community_comment_writer
+    			FROM community_comment_tbl
+		    	WHERE community_comment_writer = #{memberId}
+    			GROUP BY community_no
+			) cc ON csv.community_no = cc.community_no
 
 		LEFT JOIN community_report_tbl cr
 			ON csv.community_no = cr.community_no
@@ -42,7 +45,7 @@
 			
 		<where>
 		    csv.title LIKE '%'||#{searchKeyword}||'%'
-   			<if test="memberGrade == 3">
+   			<if test="adminMode != true">
   			      AND csv.writer_id = #{memberId}
     		</if>
     		<if test="status != 0">
@@ -86,9 +89,12 @@
 			ON csv.community_no = cd.community_no
 			AND cd.member_id = #{memberId}
 
-		LEFT JOIN community_comment_tbl cc
-			ON csv.community_no = cc.community_no
-			AND cc.community_comment_writer = #{memberId}
+		LEFT JOIN (
+    			SELECT community_no, MAX(community_comment_writer) AS community_comment_writer
+    			FROM community_comment_tbl
+		    	WHERE community_comment_writer = #{memberId}
+    			GROUP BY community_no
+			) cc ON csv.community_no = cc.community_no
 
 		LEFT JOIN community_report_tbl cr
 			ON csv.community_no = cr.community_no
@@ -96,7 +102,7 @@
 			
 		<where>
 		    csv.title LIKE '%'||#{searchKeyword}||'%'
-   			<if test="memberGrade == 3">
+   			<if test="adminMode != true">
   			      AND csv.writer_id = #{memberId}
     		</if>
     		<if test="status != 0">
@@ -163,10 +169,11 @@
 			AND cl.member_id = #{memberId}
 
 		LEFT JOIN (
-        	SELECT DISTINCT market_no, market_comment_writer
-        	FROM market_comment_tbl
-        	WHERE market_comment_writer = #{memberId}
-    		) cc ON msv.market_no = cc.market_no
+    		SELECT market_no, MAX(market_comment_writer) AS market_comment_writer
+    		FROM market_comment_tbl
+    		WHERE market_comment_writer = #{memberId}
+    		GROUP BY market_no
+		) cc ON msv.market_no = cc.market_no
 
 		LEFT JOIN market_report_tbl cr
 			ON msv.market_no = cr.market_no
@@ -174,7 +181,7 @@
 			
 		<where>
 		    msv.title LIKE '%'||#{searchKeyword}||'%'
-   			<if test="memberGrade == 3">
+   			<if test="adminMode != true">
   			      AND msv.writer_id = #{memberId}
     		</if>
     		<if test="status != 0">
@@ -218,10 +225,11 @@
 			AND cl.member_id = #{memberId}
 
 		LEFT JOIN (
-        	SELECT DISTINCT market_no, market_comment_writer
-        	FROM market_comment_tbl
-        	WHERE market_comment_writer = #{memberId}
-    		) cc ON msv.market_no = cc.market_no
+    		SELECT market_no, MAX(market_comment_writer) AS market_comment_writer
+    		FROM market_comment_tbl
+    		WHERE market_comment_writer = #{memberId}
+    		GROUP BY market_no
+		) cc ON msv.market_no = cc.market_no
 
 		LEFT JOIN market_report_tbl cr
 			ON msv.market_no = cr.market_no
@@ -229,7 +237,7 @@
 			
 		<where>
 		    msv.title LIKE '%'||#{searchKeyword}||'%'
-   			<if test="memberGrade == 3">
+   			<if test="adminMode != true">
   			      AND msv.writer_id = #{memberId}
     		</if>
     		<if test="status != 0">
@@ -276,6 +284,9 @@
 			
 		<where>
 			mcsv.member_name LIKE '%'||#{searchKeyword}||'%'
+			<if test="adminMode != true">
+  			      AND csv.writer_id = #{memberId}
+    		</if>
 		</where>
 		
 		<if test="order == 0">
@@ -287,6 +298,8 @@
 		<if test="order == 2">
 			ORDER BY report_count DESC
 		</if>
+		
+		OFFSET #{page} * #{size} ROWS FETCH NEXT #{size} ROWS ONLY
 	</select>
 	
 	<select id="findMarketCommentAllCount" resultType="int">
@@ -303,5 +316,106 @@
 			mcsv.member_name LIKE '%'||#{searchKeyword}||'%'
 		</where>
 	</select>
+	
+	<update id="updateMarketComment">
+		UPDATE market_comment_tbl
+		SET market_comment_content = #{newComment}
+		WHERE market_comment_no = #{commentNo}
+	</update>
+	
+	<update id="updateCommunityComment">
+		UPDATE community_comment_tbl
+		SET community_comment_content = #{newComment}
+		WHERE community_comment_no = #{commentNo}
+	</update>
+	
+	<delete id="deleteMarketComment">
+		DELETE 
+		FROM market_comment_tbl
+		WHERE market_comment_no = #{commentNo}
+	</delete>
+	
+	<delete id="deleteCommunityComment">
+		DELETE 
+		FROM community_comment_tbl
+		WHERE community_comment_no = #{commentNo}
+	</delete>
+	
+	<select id="findCommunityCommentAll" resultType="commentSummary">
+		SELECT 
+			ccsv.community_comment_no AS comment_no,
+			ccsv.community_comment_content AS comment_content,
+			ccsv.community_comment_date AS comment_date,
+			ccsv.community_no AS board_no,
+			ccsv.community_comment_writer	AS writer_id,
+			ccsv.member_name AS writer_name,
+			ccsv.member_thumb AS writer_thumb,
+			ccsv.report_count,
+			ccsv.like_count,
+			ccsv.dislike_count,
+			
+			CASE WHEN cr.member_id IS NOT NULL THEN 1 ELSE 0 END AS is_reported,
+			CASE WHEN cl.member_id IS NOT NULL THEN 1 ELSE 0 END AS is_liked,
+			CASE WHEN cd.member_id IS NOT NULL THEN 1 ELSE 0 END AS is_disliked
+	
+		FROM community_comment_summary_view ccsv
+		
+		LEFT JOIN community_comment_report_tbl cr
+			ON ccsv.community_comment_no = cr.community_comment_no
+			AND cr.member_id = #{memberId}
+			
+		LEFT JOIN community_comment_like_tbl cl
+			ON ccsv.community_comment_no = cl.community_comment_no
+			AND cl.member_id = #{memberId}
+		
+		LEFT JOIN community_comment_dislike_tbl cd
+			ON ccsv.community_comment_no = cd.community_comment_no
+			AND cd.member_id = #{memberId}
+			
+		<where>
+    		ccsv.member_name LIKE '%' || #{searchKeyword} || '%'
+		</where>
+		
+		<if test="order == 0">
+			ORDER BY comment_date DESC
+		</if>
+		<if test="order == 1">
+			ORDER BY comment_date ASC
+		</if>
+		<if test="order == 2">
+			ORDER BY report_count DESC
+		</if>	
+		<if test="order == 3">
+			ORDER BY like_count DESC
+		</if>	
+		<if test="order == 4">
+			ORDER BY dislike_count DESC
+		</if>	
+		
+		OFFSET #{page} * #{size} ROWS FETCH NEXT #{size} ROWS ONLY
+	</select>
+	
+	<select id="findCommunityCommentAllCount" resultType="int">
+		SELECT 
+			COUNT(*) AS count
+		FROM community_comment_summary_view ccsv
+		
+		LEFT JOIN community_comment_report_tbl cr
+			ON ccsv.community_comment_no = cr.community_comment_no
+			AND cr.member_id = #{memberId}
+			
+		LEFT JOIN community_comment_like_tbl cl
+			ON ccsv.community_comment_no = cl.community_comment_no
+			AND cl.member_id = #{memberId}
+		
+		LEFT JOIN community_comment_dislike_tbl cd
+			ON ccsv.community_comment_no = cd.community_comment_no
+			AND cd.member_id = #{memberId}
+			
+		<where>
+    		ccsv.member_name LIKE '%' || #{searchKeyword} || '%'
+		</where>
+	</select>
+	
 	
 </mapper>

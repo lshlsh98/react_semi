@@ -72,14 +72,11 @@
   height: 141px;
 }
 
-.comment_actions {
-  margin-left: auto;
-}
 .comment_actions div {
-  font-size: 15px;
+  font-size: 16px;
 }
 .comment_actions svg {
-  font-size: 15px;
+  font-size: 16px;
 }
 
 .comment_btn {

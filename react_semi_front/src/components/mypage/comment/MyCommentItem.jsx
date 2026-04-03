@@ -5,8 +5,16 @@ import ThumbDownIcon from "@mui/icons-material/ThumbDown";
 import ReportIcon from "@mui/icons-material/Report";
 import { TextArea } from "../../ui/Form";
 import { useEffect, useRef, useState } from "react";
+import axios from "axios";
+import Swal from "sweetalert2";
 
-const MyCommentItem = ({ comment, index, commentList, setCommentList }) => {
+const MyCommentItem = ({
+  comment,
+  index,
+  commentList,
+  setCommentList,
+  type,
+}) => {
   const memberThumb = comment.writerThumb;
 
   const memberGrade = useAuthStore((state) => state.memberGrade);
@@ -21,6 +29,63 @@ const MyCommentItem = ({ comment, index, commentList, setCommentList }) => {
         textareaRef.current.scrollHeight + "px"; // 내용만큼 늘리기
     }
   }, [curComment]); // comment 바뀔 때마다 실행
+
+  const [dis, setDis] = useState(true);
+  const updObj = {
+    commentNo: comment.commentNo,
+    newComment: curComment,
+    type: type,
+  };
+  const updateComment = () => {
+    if (!dis) {
+      axios
+        .patch(
+          `${import.meta.env.VITE_BACKSERVER}/mypages/comment/${comment.commentNo}`,
+          updObj,
+        )
+        .then((res) => {})
+        .catch((err) => {
+          console.log(err);
+        });
+    }
+
+    setDis(!dis);
+  };
+
+  const delObj = {
+    commentNo: comment.commentNo,
+    type: type,
+  };
+  const deleteComment = () => {
+    Swal.fire({
+      title: "삭제하시겠습니까?",
+      text: "삭제 시 정보를 복구할 수 없습니다",
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonText: "삭제",
+      cancelButtonText: "취소",
+    }).then((result) => {
+      if (result.isConfirmed) {
+        axios
+          .delete(
+            `${import.meta.env.VITE_BACKSERVER}/mypages/comment/${comment.commentNo}`,
+            { data: delObj },
+          )
+          .then((res) => {
+            if (res.data === 1) {
+              const newCommentList = commentList.filter((c, i) => {
+                return i !== index;
+              });
+
+              setCommentList(newCommentList);
+            }
+          })
+          .catch((err) => {
+            console.log(err);
+          });
+      }
+    });
+  };
 
   return (
     <div className={styles.item_wrap}>
@@ -53,26 +118,58 @@ const MyCommentItem = ({ comment, index, commentList, setCommentList }) => {
             className={styles.textarea}
             value={curComment}
             onChange={(e) => setCurComment(e.target.value)}
-            disabled={true}
+            disabled={dis}
           />
         </div>
         <div className={styles.comment_actions}>
-          <Actions comment={comment} />
+          <Actions comment={comment} type={type} />
         </div>
       </div>
       <div className={styles.comment_btn_section}>
-        <div className={styles.comment_btn}>수정</div>
-        <div className={styles.comment_btn}>삭제</div>
+        {memberGrade === 3 ? (
+          <div className={styles.comment_btn} onClick={updateComment}>
+            {dis ? "수정" : "완료"}
+          </div>
+        ) : (
+          ""
+        )}
+        <div className={styles.comment_btn} onClick={deleteComment}>
+          삭제
+        </div>
       </div>
     </div>
   );
 };
 
-const Actions = ({ comment }) => {
+const Actions = ({ comment, type }) => {
   return (
     <>
+      {type === "community" ? (
+        <>
+          <div
+            className={
+              comment.isLiked === 1 ? styles.isLiked : styles.action_default
+            }
+          >
+            <ThumbUpIcon />
+            <div>{comment.likeCount}</div>
+          </div>
+          <div
+            className={
+              comment.isDisliked === 1
+                ? styles.isDisliked
+                : styles.action_default
+            }
+          >
+            <ThumbDownIcon />
+            <div>{comment.dislikeCount}</div>
+          </div>
+        </>
+      ) : (
+        ""
+      )}
       <div
-        className={`${styles.item_actions_report} ${comment.isReported === 1 ? styles.isReported : styles.action_default}`}
+        className={`${styles.comment_actions_report} ${comment.isReported === 1 ? styles.isReported : styles.action_default}`}
       >
         <ReportIcon />
         <div>{comment.reportCount}</div>

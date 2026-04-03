@@ -27,6 +27,7 @@ const MyCommunityPage = () => {
         `${import.meta.env.VITE_BACKSERVER}/mypages/board/community?page=${page}&size=${size}&order=${order}&status=${status}&searchKeyword=${searchKeyword}&memberId=${memberId}&memberGrade=${memberGrade}`,
       )
       .then((res) => {
+        console.log(res.data.list);
         setBoardList(res.data.list);
         setTotalPage(res.data.totalPage);
       })

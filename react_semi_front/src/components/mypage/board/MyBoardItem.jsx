@@ -60,6 +60,7 @@ const MyBoardItem = ({ board, index, boardList, setBoardList, status }) => {
               const newBoardList = boardList.filter((b, i) => {
                 return i !== index;
               });
+
               setBoardList(newBoardList);
             }
           })

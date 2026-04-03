@@ -7,10 +7,9 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 @Data
-public class UpdateDto {
+public class UpdateCommentDto {
 	
-	private Integer boardNo;
-	private Integer status;
-	
-	
+	private Integer commentNo;
+	private String newComment;
+	private String type;
 }

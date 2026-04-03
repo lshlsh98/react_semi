@@ -7,8 +7,11 @@ import axios from "axios";
 import SearchIcon from "@mui/icons-material/Search";
 import { Input } from "../ui/Form";
 import MyMarketList from "./board/MyMarketList";
+import { useParams } from "react-router-dom";
 
 const MyMarketPage = () => {
+  const { isAdminMode } = useParams();
+
   const memberId = useAuthStore((state) => state.memberId);
   const memberGrade = useAuthStore((state) => state.memberGrade);
 
@@ -25,7 +28,7 @@ const MyMarketPage = () => {
   useEffect(() => {
     axios
       .get(
-        `${import.meta.env.VITE_BACKSERVER}/mypages/board/market?page=${page}&size=${size}&order=${order}&status=${status}&completed=${completed}&searchKeyword=${searchKeyword}&memberId=${memberId}&memberGrade=${memberGrade}`,
+        `${import.meta.env.VITE_BACKSERVER}/mypages/board/market?isAdminMode=${isAdminMode}&page=${page}&size=${size}&order=${order}&status=${status}&completed=${completed}&searchKeyword=${searchKeyword}&memberId=${memberId}&memberGrade=${memberGrade}`,
       )
       .then((res) => {
         console.log(res);

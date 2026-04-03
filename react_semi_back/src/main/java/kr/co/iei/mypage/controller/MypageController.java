@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import kr.co.iei.mypage.model.service.MypageService;
@@ -20,6 +21,7 @@ import kr.co.iei.mypage.model.vo.BoardListResponseDto;
 import kr.co.iei.mypage.model.vo.BoardSummary;
 import kr.co.iei.mypage.model.vo.CommentListResponseDto;
 import kr.co.iei.mypage.model.vo.CommentSummary;
+import kr.co.iei.mypage.model.vo.UpdateCommentDto;
 import kr.co.iei.mypage.model.vo.UpdateDto;
 
 @CrossOrigin(value = "*")
@@ -82,7 +84,6 @@ public class MypageController {
 		
 		return ResponseEntity.ok(result);
 	}//
-	
 
 	@GetMapping("/comment/market")
 	public ResponseEntity<?> findMarketCommentAll(@ModelAttribute BoardListRequestDto request){
@@ -95,12 +96,34 @@ public class MypageController {
 		
 		return ResponseEntity.ok(response); 
 	}//
+	
+	@PatchMapping("/comment/{commentNo}")
+	public ResponseEntity<?> updateComment(@RequestBody UpdateCommentDto update){
+		int result = mypageService.updateComment(update); 
+		
+		return ResponseEntity.ok(result);
+	}//
+	
+	@DeleteMapping("/comment/{commentNo}")
+	public ResponseEntity<?> deleteComment(@RequestBody UpdateCommentDto delete){
+		int result = mypageService.deleteComment(delete);
+		
+		return ResponseEntity.ok(result);
+	}//
+	
+	@GetMapping("/comment/community")
+	public ResponseEntity<?> findCommunityCommentAll(@ModelAttribute BoardListRequestDto request){
+		List<CommentSummary> list = mypageService.findCommunityCommentAll(request);
+		
+		int count = mypageService.findCommunityCommentAllCount(request);
+		int totalPage = (int) Math.ceil(count / (double) request.getSize());
+		
+		CommentListResponseDto response = new CommentListResponseDto(list, totalPage);
+				
+		return ResponseEntity.ok(response);
+	}//
+	
 }
-
-
-
-
-
 
 
 

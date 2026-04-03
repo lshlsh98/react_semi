@@ -9,6 +9,7 @@ import lombok.NoArgsConstructor;
 @Data
 public class BoardListRequestDto {
 	
+	private Boolean isAdminMode;
 	private Integer page;
 	private Integer size;
 	private Integer order;

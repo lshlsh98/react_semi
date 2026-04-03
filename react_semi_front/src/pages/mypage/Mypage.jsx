@@ -3,13 +3,12 @@ import styles from "./Mypage.module.css";
 import { Link, NavLink, Route, Routes, useNavigate } from "react-router-dom";
 import MemberInfo from "../../components/mypage/MemberInfo";
 import MyCommunityPage from "../../components/mypage/MyCommunityPage";
-import MyCommentPage from "../../components/mypage/MyCommunityCommentPage";
-import AdminCommentPage from "../../components/mypage/AdminCommentPageXXX";
 import Swal from "sweetalert2";
 import useAuthStore from "../../components/utils/useAuthStore";
 import ChangePw from "../../components/mypage/ChangePw";
 import MyMarketPage from "../../components/mypage/MyMarketPage";
 import MyCommunityCommentPage from "../../components/mypage/MyCommunityCommentPage";
+import MyMarketCommentPage from "../../components/mypage/MyMarketCommentPage";
 
 const Mypage = () => {
   const navigate = useNavigate();
@@ -37,10 +36,22 @@ const Mypage = () => {
         <div className={styles.mypage_content}>
           <Routes>
             <Route path="myinfo" element={<MemberInfo />} />
-            <Route path="market" element={<MyMarketPage />}></Route>
-            <Route path="community" element={<MyCommunityPage />}></Route>
-            <Route path="comment1" element={<MyCommunityCommentPage />}></Route>
-            <Route path="comment2" element={<AdminCommentPage />}></Route>
+            <Route
+              path="market/:isAdminMode"
+              element={<MyMarketPage />}
+            ></Route>
+            <Route
+              path="community/:isAdminMode"
+              element={<MyCommunityPage />}
+            ></Route>
+            <Route
+              path="marketcomment/:isAdminMode"
+              element={<MyMarketCommentPage />}
+            ></Route>
+            <Route
+              path="communitycomment/:isAdminMode"
+              element={<MyCommunityCommentPage />}
+            ></Route>
             <Route path="pw" element={<ChangePw />} />
           </Routes>
         </div>
@@ -177,7 +188,7 @@ const SideBar = () => {
               onClick={() => setSelectMenu("postManagement_trade")}
             >
               <Link
-                to="/member/mypage/market"
+                to={`/member/mypage/market/false`}
                 style={{ textDecoration: "none", color: "inherit" }}
               >
                 거래
@@ -190,7 +201,7 @@ const SideBar = () => {
               onClick={() => setSelectMenu("postManagement_community")}
             >
               <Link
-                to="/member/mypage/community"
+                to={`/member/mypage/community/false`}
                 style={{ textDecoration: "none", color: "inherit" }}
               >
                 커뮤니티
@@ -231,7 +242,7 @@ const SideBar = () => {
               onClick={() => setSelectMenu("commentManagement_trade")}
             >
               <Link
-                to="/member/mypage/comment1"
+                to={`/member/mypage/marketcomment/${false}`}
                 style={{ textDecoration: "none", color: "inherit" }}
               >
                 거래
@@ -246,7 +257,7 @@ const SideBar = () => {
               onClick={() => setSelectMenu("commentManagement_community")}
             >
               <Link
-                to="/member/mypage/comment2"
+                to={`/member/mypage/communitycomment/false`}
                 style={{ textDecoration: "none", color: "inherit" }}
               >
                 커뮤니티

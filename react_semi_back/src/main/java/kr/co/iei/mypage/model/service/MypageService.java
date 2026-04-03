@@ -1,6 +1,7 @@
 package kr.co.iei.mypage.model.service;
 
 import java.util.List;
+import java.util.Objects;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -10,6 +11,7 @@ import kr.co.iei.mypage.model.dao.MypageDao;
 import kr.co.iei.mypage.model.vo.BoardListRequestDto;
 import kr.co.iei.mypage.model.vo.BoardSummary;
 import kr.co.iei.mypage.model.vo.CommentSummary;
+import kr.co.iei.mypage.model.vo.UpdateCommentDto;
 import kr.co.iei.mypage.model.vo.UpdateDto;
 
 @Service
@@ -78,6 +80,40 @@ public class MypageService {
 
 	public int findMarketCommentAllCount(BoardListRequestDto request) {
 		int count = mypageDao.findMarketCommentAllCount(request);
+		
+		return count;
+	}//
+
+	@Transactional
+	public int updateComment(UpdateCommentDto update) {
+		if(Objects.equals(update.getType(), "market")) {
+			return mypageDao.updateMarketComment(update);
+		} else if (Objects.equals(update.getType(), "community")) {
+			return mypageDao.updateCommunityComment(update);
+		}
+		 
+		return -1;
+	}//
+
+	@Transactional
+	public int deleteComment(UpdateCommentDto delete) {
+		if(Objects.equals(delete.getType(), "market")) {
+			return mypageDao.deleteMarketComment(delete);
+		} else if (Objects.equals(delete.getType(), "community")) {
+			return mypageDao.deleteCommunityComment(delete);
+		}
+		 
+		return -1;
+	}//
+
+	public List<CommentSummary> findCommunityCommentAll(BoardListRequestDto request) {
+		List<CommentSummary> list = mypageDao.findCommunityCommentAll(request);
+		
+		return list;
+	}//
+
+	public int findCommunityCommentAllCount(BoardListRequestDto request) {
+		int count = mypageDao.findCommunityCommentAllCount(request);
 		
 		return count;
 	}//
