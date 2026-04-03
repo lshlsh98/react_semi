@@ -6,54 +6,23 @@ import axios from "axios";
 import Swal from "sweetalert2";
 
 const CommunityViewPage = () => {
-  const navigate = useNavigate();
   const params = useParams();
   const communityNo = params.communityNo;
-  const { memberId, isReady } = useAuthStore();
   const [community, setCommunity] = useState(null);
-  console.log(isReady, "isReady 확인");
   useEffect(() => {
-    if (!isReady) {
-      return;
-    }
     axios
-      .get(`${import.meta.env.VITE_BACKSERVER}/community/${communityNo}`)
+      .get(`${import.meta.env_VITE_BACKSERVER}/communties/${communityNo}`)
       .then((res) => {
         console.log(res);
-        setCommunity(res.data);
       })
       .catch((err) => {
         console.log(err);
       });
-  }, [isReady]);
+  }, []);
 
-  const deleteCommunity = () => {
-    Swal.fire({
-      title: "게시글을 삭제하시겠습니까?",
-      icon: "warning",
-      showCancelButton: true,
-      confirmButtonText: "삭제",
-      cancelButtonText: "취소",
-      confirmButtonColor: "var(--primary)",
-      cancelButtonColor: "var(--danger)",
-    }).then((result) => {
-      if (result.isConfirmed) {
-        axios
-          .delete(`${import.meta.env.VITE_BACKSERVER}/community/${communityNo}`)
-          .then((res) => {
-            console.log(res);
-            if (res.data === 1) {
-              navigate("/community/list");
-            }
-          })
-          .catch((err) => {
-            console.log(err);
-          });
-      }
-    });
-  };
   return (
     <section className={styles.community_wrap}>
+      <h3 className="page-title">게시글 상세보기</h3>
       {community && (
         <>
           <div className={styles.community_view_wrap}>
@@ -62,10 +31,9 @@ const CommunityViewPage = () => {
                 {community.communityTitle}
               </h2>
               <div className={styles.community_sub_info}>
-                <div className={styles.community_writer}></div>
+                <span>{community.communityWriter}</span>
               </div>
             </div>
-            <div className={styles.community_view_content}></div>
           </div>
         </>
       )}

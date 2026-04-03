@@ -39,6 +39,12 @@ public class CommunityController {
 	return ResponseEntity.ok(result);
 	}
 	
+	@GetMapping(value="/{communityNo}")
+	public ResponseEntity<?> selectOneCommunity(@PathVariable Integer communityNo){
+		Community community = communityService.selectOneCommunity(communityNo);
+		return ResponseEntity.ok(community);
+	}
+	
 	@PutMapping(value="/{communityNo}")
 	public ResponseEntity<?> updateCommunity(@PathVariable Integer communityNo, @ModelAttribute Community community){
 		community.setCommunityNo(communityNo);

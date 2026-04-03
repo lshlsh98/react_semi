@@ -28,8 +28,10 @@
 			community_title,
 			community_content,
 			community_writer,
-			to_char(community_date,'yyyy-mm-dd hh24:mi') community_date
+			view_count,
+			to_char(community_date,'yyyy-mm-dd') as community_date
 		from community_tbl
+		join member_tbl on (community_writer = member_id)
 		where community_no = #{communityNo}
 	</select>
 	
