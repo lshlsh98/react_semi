@@ -3,3 +3,56 @@
   margin: 50px auto;
   text-align: center;
 }
+
+.community_wrap {
+  margin-top: 50px;
+}
+
+.search_wrap {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  gap: 16px;
+}
+
+.search_wrap > select {
+  padding: 10px;
+  appearance: none;
+  border-radius: 4px;
+  padding-right: 30px;
+  border: 1px solid var(--primary);
+  outline: none;
+  color: var(--line);
+}
+
+.search_wrap > input {
+  width: 400px;
+}
+
+.search_wrap > button {
+  padding: 5px 16px;
+}
+
+.search_wrap > button > span {
+  color: var(--gray8);
+  font-weight: 600;
+  font-size: 25px;
+}
+
+.order_wrap {
+  display: flex;
+  flex-direction: row;
+  justify-content: end;
+  gap: 16px;
+  margin-top: 40px;
+}
+
+.order_wrap > select {
+  padding: 10px;
+  appearance: none;
+  border-radius: 4px;
+  padding-right: 30px;
+  border: 1px solid var(--primary);
+  outline: none;
+  color: var(--line);
+}

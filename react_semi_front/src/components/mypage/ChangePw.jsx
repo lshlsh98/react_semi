@@ -13,6 +13,7 @@ const ChangePw = () => {
   const [memberAuth, setMemberAuth] = useState({
     memberId: "",
     memberPw: "",
+    memberAddr: "",
   });
   const [memberAuthSuccess, setMemberAuthSuccess] = useState(false);
 
@@ -119,6 +120,7 @@ const ChangePw = () => {
                 placeholder="비밀번호를 입력하세요."
                 value={memberAuth.memberPw}
                 onChange={inputMember}
+                readOnly={memberAuthSuccess}
               ></Input>
             </li>
             <li>
@@ -233,17 +235,13 @@ const ChangePw = () => {
               <li></li>
               <li>
                 {newPw !== "" && newPw === newPwRe ? (
-                  <li>
-                    <p className={`${styles.validation_msg} ${styles.valid}`}>
-                      비밀번호가 일치합니다.
-                    </p>
-                  </li>
+                  <p className={`${styles.validation_msg} ${styles.valid}`}>
+                    비밀번호가 일치합니다.
+                  </p>
                 ) : (
-                  <li>
-                    <p className={`${styles.validation_msg} ${styles.invalid}`}>
-                      비밀번호가 일치하지 않습니다.
-                    </p>
-                  </li>
+                  <p className={`${styles.validation_msg} ${styles.invalid}`}>
+                    비밀번호가 일치하지 않습니다.
+                  </p>
                 )}
               </li>
               <li></li>
