@@ -59,7 +59,21 @@ public class CommunityController {
 		CommunityComment newComment = communityService.insertCommunityComment(communityComment);
 		return ResponseEntity.ok(newComment);
 	}
+	
+	@GetMapping(value="/{communityNo}/comments")
+	public ResponseEntity<?> selectCommunityCommentList(@PathVariable Integer communityNo){
+		List<CommunityComment> commentList = communityService.selectCommunityCommentList(communityNo);
+		return ResponseEntity.ok(commentList);
+	}
+	
+	@PutMapping(value="/comments/{communityCommentNo}")
+	public ResponseEntity<?> updateCommunityComment(@RequestBody CommunityComment comment){
+		int result = communityService.updateCommunityComment(comment);
+		return ResponseEntity.ok(result);
+	}
 }
+
+
 
 
 

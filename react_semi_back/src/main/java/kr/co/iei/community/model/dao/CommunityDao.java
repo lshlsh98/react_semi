@@ -1,5 +1,7 @@
 package kr.co.iei.community.model.dao;
 
+import java.util.List;
+
 import org.apache.ibatis.annotations.Mapper;
 
 import kr.co.iei.community.model.vo.Community;
@@ -12,12 +14,14 @@ public interface CommunityDao {
 	
 	Community selectOneCommunity(Integer communityNo);
 
-	int updateCommunity(Community community);
-
 	int selectNewCommunityCommentNo();
 
 	int insertCommunityComment(CommunityComment communityComment);
 
 	CommunityComment selectCommunityComment(int communityCommentNo);
+
+	List<CommunityComment> selectCommunityCommentList(Integer communityNo);
+
+	int updateCommunityComment(CommunityComment comment);
 
 }

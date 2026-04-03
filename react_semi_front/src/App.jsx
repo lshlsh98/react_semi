@@ -61,15 +61,18 @@ function App() {
           <Route path="/member/login" element={<Login />} />
           <Route path="/member/find-id" element={<Find_id />} />
           <Route path="/member/find-pw" element={<Find_pw />} />
-          <Route path="/community/list" element={<CommunityListPage />} />
-
           <Route path="/member/mypage/*" element={<Mypage />} />
+
+          <Route path="/community/list" element={<CommunityListPage />} />
           <Route path="/community/write" element={<CommunityWritePage />} />
           <Route
             path="/community/view/:communityNo"
             element={<CommunityViewPage />}
           />
-          <Route path="/community/modify" element={<CommunityModifyPage />} />
+          <Route
+            path="/community/modify/:communityNo"
+            element={<CommunityModifyPage />}
+          />
         </Routes>
       </div>
       <Footer />
