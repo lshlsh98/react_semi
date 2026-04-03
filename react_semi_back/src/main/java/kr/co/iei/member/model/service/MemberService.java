@@ -1,20 +1,17 @@
 package kr.co.iei.member.model.service;
 
+import java.io.File;
+
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.multipart.MultipartFile;
 
 import kr.co.iei.member.model.dao.MemberDao;
 import kr.co.iei.member.model.vo.LoginMember;
 import kr.co.iei.member.model.vo.Member;
-import kr.co.iei.utils.FileUtils;
 import kr.co.iei.utils.JwtUtils;
 
 @Service
@@ -76,14 +73,34 @@ public class MemberService {
 		return result;
 	}
 
-	public int deleteThumbnail(Member member) {
-		int result = memberDao.updateThumbnail(member);
+	public int memberUpdate(String memberId, Member member, String root) {
+		System.out.println("memberid:" + memberId);
+		Member oldM = memberDao.selectOneMember(memberId);
+		System.out.println(oldM);
+
+		int result = memberDao.memberUpdate(member);
+
+		Member newM = memberDao.selectOneMember(memberId);
+		System.out.println(newM);
+		if (result == 1 && oldM != null && oldM.getMemberThumb() != null
+				&& !oldM.getMemberThumb().equals(newM.getMemberThumb())) {
+			System.out.println("delete");
+			deleteFile(oldM.getMemberThumb(), root);
+		}
 		return result;
 	}
 
-	public int memberUpdate(Member member) {
-		int result = memberDao.memberUpdate(member);
-		return result;
+	private boolean deleteFile(String filename, String root) {
+		System.out.println(filename);
+		if (filename == null || filename.isEmpty())
+			return false;
+		String savepath = root + "semi/";
+		File file = new File(savepath + filename);
+		if (file.exists()) {
+			System.out.println(savepath);
+			return file.delete();
+		}
+		return false;
 	}
 
 	public int memberDelete(String memberId) {

@@ -1,9 +1,9 @@
 package kr.co.iei.member.controller;
 
+import java.io.File;
 import java.util.Map;
 import java.util.Random;
 
-import org.apache.ibatis.annotations.Delete;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
@@ -196,39 +196,32 @@ public class MemberController {
 		return ResponseEntity.ok(memberThumb);
 	}
 
-	// 회원 프로필 썸네일 삭제
-	@PatchMapping(value = "/{memberId}/thumbnail/delete")
-	public ResponseEntity<?> deleteThumbnail(@PathVariable String memberId) {
-		Member member = new Member();
-		member.setMemberThumb(null);
-		member.setMemberId(memberId);
-
-		int result = memberService.deleteThumbnail(member);
-		return ResponseEntity.ok(0);
-	}
-
 	// 회원 정보 수정 완료
 	@PatchMapping(value = "/{memberId}")
-	public ResponseEntity<?> memberUpdate(@RequestBody Member member) {
-		int result = memberService.memberUpdate(member);
+	public ResponseEntity<?> memberUpdate(@PathVariable String memberId, @RequestBody Member member) {
+		System.out.println(member);
+		System.out.println(memberId);
+		int result = memberService.memberUpdate(memberId, member, root);
 		return ResponseEntity.ok(member.getMemberName());
 	}
-	
+
+	// 회원 탈퇴
 	@DeleteMapping(value = "/{memberId}")
 	public ResponseEntity<?> memberDelete(@PathVariable String memberId) {
 		int result = memberService.memberDelete(memberId);
 		return ResponseEntity.ok(result);
 	}
-	
-	@PatchMapping(value="/update-pw")
-	public ResponseEntity<?> updatePw(@RequestBody Member member){
+
+	// 비밀번호 변경
+	@PatchMapping(value = "/update-pw")
+	public ResponseEntity<?> updatePw(@RequestBody Member member) {
 		int result = memberService.updatePw(member);
 
-		if (result > 0) { 
+		if (result > 0) {
 			return ResponseEntity.ok(result);
 		} else {
 			return ResponseEntity.status(404).build();
 		}
 	}
-	
+
 }
