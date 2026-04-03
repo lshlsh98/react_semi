@@ -13,6 +13,7 @@ import useAuthStore from "./components/utils/useAuthStore";
 import { useEffect } from "react";
 import Map from "./pages/map/Map";
 import CommunityListPage from "./pages/community/CommunityListPage";
+import Main from "./pages/Main";
 
 function App() {
   const { endTime, token } = useAuthStore(); // endTime = 만료시간, token = 걍 토큰
@@ -50,6 +51,7 @@ function App() {
       <Header />
       <div className="main">
         <Routes>
+          <Route path="/" element={<Main />} />
           <Route path="/member/join" element={<Join />} />
           <Route path="/member/login" element={<Login />} />
           <Route path="/member/find-id" element={<Find_id />} />
