@@ -175,7 +175,7 @@ const MarketList = ({ marketList }) => {
 const MarketItem = ({ market }) => {
   const navigate = useNavigate();
   /* 이미지 매핑 */
-  const imgUrl = "http://192.168.31.4:9999/market";
+  const imgUrl = "http://192.168.31.24:9999/market";
   return (
     <li
       onClick={() => {
