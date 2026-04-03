@@ -24,4 +24,5 @@ public interface CommunityDao {
 
 	int updateCommunityComment(CommunityComment comment);
 
+
 }

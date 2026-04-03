@@ -51,7 +51,7 @@ const CommunityWritePage = () => {
             if (member === 1 || member === 2) {
               navigate("/community/notice");
             } else {
-              navigate("/community/list");
+              navigate("/community");
             }
           });
         }
@@ -73,10 +73,7 @@ const CommunityWritePage = () => {
         <Button className="btn primary" onClick={registCommunity}>
           등록
         </Button>
-        <Button
-          className="btn light"
-          onClick={() => navigate("/community/list")}
-        >
+        <Button className="btn light" onClick={() => navigate("/community")}>
           취소
         </Button>
       </div>

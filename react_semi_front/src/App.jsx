@@ -63,7 +63,7 @@ function App() {
           <Route path="/member/find-pw" element={<Find_pw />} />
           <Route path="/member/mypage/*" element={<Mypage />} />
 
-          <Route path="/community/list" element={<CommunityListPage />} />
+          <Route path="/community" element={<CommunityListPage />} />
           <Route path="/community/write" element={<CommunityWritePage />} />
           <Route
             path="/community/view/:communityNo"

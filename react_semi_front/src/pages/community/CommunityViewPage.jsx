@@ -47,7 +47,7 @@ const CommunityViewPage = () => {
           .then((res) => {
             console.log(res);
             if (res.data === 1) {
-              navigate("/community/list");
+              navigate("/community");
             }
           })
           .catch((err) => {
@@ -96,6 +96,7 @@ const CommunityViewPage = () => {
                 >
                   수정
                 </Button>
+
                 <Button
                   className="btn primary outline"
                   onClick={deleteCommunity}
