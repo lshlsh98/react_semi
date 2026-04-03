@@ -30,7 +30,7 @@ import RedoIcon from "@mui/icons-material/Redo";
 
 const MarketWritePage = () => {
   const { memberId, memberAddr } = useAuthStore();
-  console.log(memberAddr, typeof memberAddr);
+  //console.log(memberAddr, typeof memberAddr);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -100,6 +100,19 @@ const MarketWritePage = () => {
     const newMarket = { ...market, [name]: value };
     setMarket(newMarket);
   };
+  /* 판매제목 함수 */
+  const inputMarketTitle = (e) => {
+    const name = e.target.name;
+    const value = e.target.value;
+    if (value.length > 50) {
+      Swal.fire({
+        icon: "warning",
+        title: "50자 이상 쓸수 없어요.",
+      });
+      return;
+    }
+    setMarket({ ...market, [name]: value });
+  };
 
   /* 판매금액 함수 */
   const inputMarketPrice = (e) => {
@@ -124,6 +137,7 @@ const MarketWritePage = () => {
     setMarket({ ...market, [name]: value });
   };
   /* 테스트 에디터용 함수 */
+
   const inputMarketContent = (data) => {
     setMarket({ ...market, marketContent: data });
   };
@@ -156,8 +170,10 @@ const MarketWritePage = () => {
     for (let pair of form.entries()) {
       console.log(pair[0], pair[1]);
     }
-
+    console.log(market.marketContent.length);
     /* 마켓 등록 요청 */
+
+    /*
     axios
       .post(`${import.meta.env.VITE_BACKSERVER}/markets`, form, {
         headers: {
@@ -178,6 +194,7 @@ const MarketWritePage = () => {
       .catch((err) => {
         console.log(err);
       });
+    */
   };
 
   /* 판매주소*/
@@ -205,7 +222,7 @@ const MarketWritePage = () => {
           name="marketTitle"
           id="marketTitle"
           value={market.marketTitle}
-          onChange={inputMarket}
+          onChange={inputMarketTitle}
         ></Input>
       </div>
       {/* 금액 필드 */}
@@ -234,6 +251,7 @@ const MarketWritePage = () => {
 
         <div className={styles.market_addr}>
           <Input
+            style={{ backgroundColor: "var(--light)" }}
             type="text"
             name="sellAddr"
             id="sellAddr"
@@ -264,8 +282,12 @@ const MarketWritePage = () => {
       </div>
       {/* 파일첨부 필드 */}
 
-      <div className={styles.market_input_wrap}>
-        <label htmlFor="files" className={styles.file_btn}>
+      <div className={styles.market_file_wrap}>
+        <label
+          htmlFor="files"
+          className={styles.file_btn}
+          title="이미지는 최대 3장까지 저장됩니다."
+        >
           파일추가
         </label>
         <input
@@ -306,7 +328,7 @@ const MarketWritePage = () => {
         </div>
       </div>
 
-      <div className={styles.market_input_wrap}>
+      <div className={styles.market_write_btn_wrap}>
         <Button className="btn primary" onClick={registMarket}>
           작성하기
         </Button>
@@ -498,6 +520,9 @@ const MenuBar = ({ editor }) => {
 };
 
 const TextEditor = ({ data, setData }) => {
+  //console.log(data);
+
+  let lastValidHTML = "";
   const editor = useEditor({
     extensions: [
       StarterKit,
@@ -508,8 +533,45 @@ const TextEditor = ({ data, setData }) => {
       }),
     ],
     content: data,
+    /* 에디터의 글자수를 제한 */
+    editorProps: {
+      handleTextInput(view, from, to, text) {
+        const currentHTML = view.dom.innerHTML;
+        const newHTML = currentHTML + text;
+        const byteLength = new TextEncoder().encode(newHTML).length;
+        //console.log("새글자입력" + byteLength);
+        if (byteLength > 4000) {
+          alert("최대입력수 초과");
+          return true; // 입력 막기
+        }
+        return false;
+      },
+
+      handleKeyDown(view, event) {
+        if (event.key === "Enter") {
+          const html = view.dom.innerHTML;
+          const byteLength = new TextEncoder().encode(html).length;
+          console.log(byteLength);
+          if (byteLength > 4000) {
+            alert("더이상 입력할수 없어요");
+            return true;
+          }
+        }
+        return false;
+      },
+    },
     onUpdate: ({ editor }) => {
-      setData(editor.getHTML());
+      const html = editor.getHTML();
+      const byteLength = new TextEncoder().encode(html).length;
+
+      if (byteLength > 4000) {
+        editor.commands.setContent(lastValidHTML, false);
+        console.log(byteLength);
+        alert("지워버린다.");
+        return;
+      }
+      lastValidHTML = html;
+      setData(html);
     },
   });
 

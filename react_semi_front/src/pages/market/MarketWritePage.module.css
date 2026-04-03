@@ -9,47 +9,6 @@ a {
   text-decoration: none;
 }
 
-/* 파일 */
-.board_frm_wrap {
-  width: 640px;
-  margin: 30px auto;
-}
-.input_wrap {
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-  margin-bottom: 24px;
-}
-.input_wrap > label {
-  font-size: 15px;
-}
-.file_btn {
-  /*파일추가버튼*/
-  cursor: pointer;
-  font-size: 14px;
-  background-color: var(--primary);
-  width: fit-content;
-  padding: 10px 20px;
-  color: var(--gray8);
-  border-radius: 8px;
-}
-.file_item {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  padding: 12px 16px;
-  background-color: var(--secendary);
-  border-radius: 8px;
-  margin-bottom: 8px;
-}
-.file_name {
-  flex-grow: 1;
-  font-size: 14px;
-}
-.file_delete {
-  cursor: pointer;
-}
-
 /*컴포넌트 전체 랩*/
 .market_write_wrap {
   width: 720px;
@@ -87,6 +46,7 @@ a {
   border: 1px solid var(--secendary);
   border-radius: 8px;
   overflow: hidden;
+  background-color: var(--light);
 }
 .menu_bar {
   display: flex;
@@ -131,8 +91,59 @@ input {
   border-radius: 12px;
   line-height: 1.4;
 }
+.editor_content > div:hover {
+  background-color: var(--bg);
+}
 .editor_content > div ul {
   padding-left: 20px;
 }
 
+/* 파일 첨부 */
+.market_file_wrap {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  gap: 8px;
+}
+
+.file_btn {
+  /*파일추가버튼*/
+  cursor: pointer;
+  font-size: 14px;
+  background-color: var(--secendary);
+  width: fit-content;
+  padding: 10px 20px;
+  color: var(--gray8);
+  border-radius: 8px;
+}
+.file_btn:hover {
+  background-color: var(--primary);
+}
+
+.file_wrap {
+  width: 100%;
+}
+.file_item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 12px 16px;
+  background-color: var(--secendary);
+  border-radius: 8px;
+  margin-bottom: 8px;
+}
+.file_name {
+  flex-grow: 1;
+  font-size: 14px;
+}
+.file_delete {
+  cursor: pointer;
+}
+
 /* 작성 취소*/
+.market_write_btn_wrap {
+  display: flex;
+  justify-content: center;
+  gap: 12px;
+}
