@@ -61,7 +61,7 @@ function App() {
           <Route path="/member/login" element={<Login />} />
           <Route path="/member/find-id" element={<Find_id />} />
           <Route path="/member/find-pw" element={<Find_pw />} />
-          <Route path="/community" element={<CommunityListPage />} />
+          <Route path="/community/list" element={<CommunityListPage />} />
 
           <Route path="/member/mypage/*" element={<Mypage />} />
           <Route path="/community/write" element={<CommunityWritePage />} />

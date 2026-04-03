@@ -41,6 +41,13 @@
   			community_content = #{communityContent}
   		where community_no = #{communityNo}
 	</update>
+	
+	<insert id="insertCommunityComment">
+		insert into community_comment_tbl values
+		(
+			#{communityCommentNo},
+		)
+	</insert>
 </mapper>
 
 

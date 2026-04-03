@@ -6,6 +6,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import kr.co.iei.community.model.dao.CommunityDao;
 import kr.co.iei.community.model.vo.Community;
+import kr.co.iei.community.model.vo.CommunityComment;
 
 @Service
 public class CommunityService {
@@ -30,7 +31,15 @@ public class CommunityService {
 		int result = communityDao.updateCommunity(community);
 		return result;
 	}
-	
+	@Transactional
+	public CommunityComment insertCommunityComment(CommunityComment communityComment) {
+		int communityCommentNo = communityDao.selectNewCommunityCommentNo();
+		communityComment.setCommunityCommentNo(communityCommentNo);
+		int result = communityDao.insertCommunityComment(communityComment);
+		CommunityComment newComment = communityDao.selectCommunityComment(communityCommentNo);
+		return newComment;
+	}
+
 	
 
 }

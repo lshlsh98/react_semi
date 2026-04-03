@@ -21,6 +21,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import kr.co.iei.community.model.service.CommunityService;
 import kr.co.iei.community.model.vo.Community;
+import kr.co.iei.community.model.vo.CommunityComment;
 
 @CrossOrigin(value="*")
 @RequestMapping(value="/communities")
@@ -29,7 +30,6 @@ public class CommunityController {
 
 	@Autowired
 	private CommunityService communityService;
-	
 	
 	@PostMapping
 	public ResponseEntity<?> insertCommunity(@ModelAttribute Community community){
@@ -52,6 +52,12 @@ public class CommunityController {
 		Document doc = Jsoup.parse(community.getCommunityContent());
 		int result = communityService.updateCommunity(community);
 		return ResponseEntity.ok(result);
+	}
+	
+	@PostMapping(value="/comments")
+	public ResponseEntity<?> insertCommunityComment(@RequestBody CommunityComment communityComment){
+		CommunityComment newComment = communityService.insertCommunityComment(communityComment);
+		return ResponseEntity.ok(newComment);
 	}
 }
 
