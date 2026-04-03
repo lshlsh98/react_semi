@@ -29,7 +29,8 @@ import UndoIcon from "@mui/icons-material/Undo";
 import RedoIcon from "@mui/icons-material/Redo";
 
 const MarketWritePage = () => {
-  const { memberId } = useAuthStore();
+  const { memberId, memberAddr } = useAuthStore();
+  console.log(memberAddr, typeof memberAddr);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -100,6 +101,7 @@ const MarketWritePage = () => {
     setMarket(newMarket);
   };
 
+  /* 판매금액 함수 */
   const inputMarketPrice = (e) => {
     const name = e.target.name;
     const value = e.target.value;
@@ -108,6 +110,13 @@ const MarketWritePage = () => {
       Swal.fire({
         icon: "warning",
         title: "0원 보다 작게 설정하실수는 없어요!",
+      });
+      setMarket({ ...market, [name]: "" });
+      return;
+    } else if (num > 10000000) {
+      Swal.fire({
+        icon: "warning",
+        title: "최대 1000만원까지 설정 가능해요!",
       });
       setMarket({ ...market, [name]: "" });
       return;
@@ -189,36 +198,73 @@ const MarketWritePage = () => {
   return (
     <section className={styles.market_write_wrap}>
       {/* 제목 필드 */}
-      <div className={styles.market_input_wrap_title}>
+      <div className={styles.market_input_wrap}>
         <label htmlFor="marketTitle">제목</label>
-        <input
+        <Input
           type="text"
           name="marketTitle"
           id="marketTitle"
           value={market.marketTitle}
           onChange={inputMarket}
-        ></input>
+        ></Input>
       </div>
       {/* 금액 필드 */}
-      <div className={styles.market_input_wrap_price}>
+      <div className={styles.market_input_wrap}>
         <label htmlFor="sellPrice">판매금액(원)</label>
-        <input
+        <Input
           type="number"
           name="sellPrice"
           id="sellPrice"
           value={market.sellPrice}
           onChange={inputMarketPrice}
           placeholder="숫자만입력가능"
-        ></input>
+        ></Input>
+      </div>
+
+      {/* 거래장소 필드 */}
+      <div className={styles.market_input_wrap}>
+        <label htmlFor="marketTitle">거래장소</label>
+        {/* <input
+          type="text"
+          name="sellAddr"
+          id="sellAddr"
+          value={market.sellAddr}
+          onChange={inputMarket}
+        ></input> */}
+
+        <div className={styles.market_addr}>
+          <Input
+            type="text"
+            name="sellAddr"
+            id="sellAddr"
+            value={market.sellAddr}
+            onChange={inputMarket}
+            readOnly={true}
+          ></Input>
+
+          <Button type="button" className="btn primary" onClick={open}>
+            주소 찾기
+          </Button>
+          <Input
+            style={{ display: "none" }}
+            type="text"
+            name="sellAddrDetail"
+            onChange={inputMarket}
+            ref={detailRef}
+          />
+        </div>
+      </div>
+      {/* MAP API 영역 */}
+      <div className={styles.market_input_wrap}>
+        <label>API 등록예정</label>
       </div>
       {/* 내용 필드 */}
-      <div className={styles.market_input_wrap_content}>
+      <div>
         <TextEditor data={market.marketContent} setData={inputMarketContent} />
       </div>
       {/* 파일첨부 필드 */}
 
-      <div className={styles.input_wrap}>
-        <label htmlFor="files">첨부파일</label>
+      <div className={styles.market_input_wrap}>
         <label htmlFor="files" className={styles.file_btn}>
           파일추가
         </label>
@@ -258,43 +304,6 @@ const MarketWritePage = () => {
             );
           })}
         </div>
-      </div>
-
-      {/* 거래장소 필드 */}
-      <div className={styles.market_input_wrap_addr}>
-        <label htmlFor="marketTitle">거래장소</label>
-        {/* <input
-          type="text"
-          name="sellAddr"
-          id="sellAddr"
-          value={market.sellAddr}
-          onChange={inputMarket}
-        ></input> */}
-
-        <Button type="button" className="btn primary" onClick={open}>
-          주소 찾기
-        </Button>
-        <Input
-          type="text"
-          name="sellAddr"
-          id="sellAddr"
-          value={market.sellAddr}
-          onChange={inputMarket}
-          readOnly={true}
-        ></Input>
-        <Input
-          style={{ display: "none" }}
-          type="text"
-          name="sellAddrDetail"
-          //value={market.sellAddrDetail}
-          onChange={inputMarket}
-          placeholder="상세주소 입력"
-          ref={detailRef}
-        />
-      </div>
-      {/* MAP API 영역 */}
-      <div className={styles.market_input_wrap}>
-        <p>API 등록예정</p>
       </div>
 
       <div className={styles.market_input_wrap}>
@@ -357,6 +366,7 @@ const MenuBar = ({ editor }) => {
           editor.isActive("heading", { level: 1 }) ? styles.active : ""
         }
         onClick={() => editor.chain().focus().toggleHeading({ level: 1 }).run()}
+        title="글자 H1 적용"
       >
         <LooksOneIcon />
       </button>
@@ -368,6 +378,7 @@ const MenuBar = ({ editor }) => {
           editor.isActive("heading", { level: 2 }) ? styles.active : ""
         }
         onClick={() => editor.chain().focus().toggleHeading({ level: 2 }).run()}
+        title="글자 H2 적용"
       >
         <LooksTwoIcon />
       </button>
@@ -377,6 +388,7 @@ const MenuBar = ({ editor }) => {
         type="button"
         className={editor.isActive("bold") ? styles.active : ""}
         onClick={() => editor.chain().focus().toggleBold().run()}
+        title="글자 진하게"
       >
         <FormatBoldIcon />
       </button>
@@ -386,6 +398,7 @@ const MenuBar = ({ editor }) => {
         type="button"
         className={editor.isActive("italic") ? styles.active : ""}
         onClick={() => editor.chain().focus().toggleItalic().run()}
+        title="글자 기울이기"
       >
         <FormatItalicIcon />
       </button>
@@ -395,6 +408,7 @@ const MenuBar = ({ editor }) => {
         type="button"
         className={editor.isActive("bulletList") ? styles.active : ""}
         onClick={() => editor.chain().focus().toggleBulletList().run()}
+        title="글자 목록 적용"
       >
         <FormatListBulletedIcon />
       </button>
@@ -404,6 +418,7 @@ const MenuBar = ({ editor }) => {
         type="button"
         className={editor.isActive({ textAlign: "left" }) ? styles.active : ""}
         onClick={() => editor.chain().focus().setTextAlign("left").run()}
+        title="문단 왼쪽 정렬"
       >
         <FormatAlignLeftIcon />
       </button>
@@ -414,6 +429,7 @@ const MenuBar = ({ editor }) => {
           editor.isActive({ textAlign: "center" }) ? styles.active : ""
         }
         onClick={() => editor.chain().focus().setTextAlign("center").run()}
+        title="문단 가온데 정렬"
       >
         <FormatAlignCenterIcon />
       </button>
@@ -422,6 +438,7 @@ const MenuBar = ({ editor }) => {
         type="button"
         className={editor.isActive({ textAlign: "right" }) ? styles.active : ""}
         onClick={() => editor.chain().focus().setTextAlign("right").run()}
+        title="문단 오른쪽 정렬"
       >
         <FormatAlignRightIcon />
       </button>
@@ -431,6 +448,7 @@ const MenuBar = ({ editor }) => {
         type="color"
         className={styles.color_picker}
         onChange={(e) => editor.chain().focus().setColor(e.target.value).run()}
+        title="색상적용"
       />
 
       {/* 되돌리기 */}
@@ -438,6 +456,7 @@ const MenuBar = ({ editor }) => {
         type="button"
         disabled={!editor.can().undo()}
         onClick={() => editor.chain().focus().undo().run()}
+        title="작업 되돌리기"
       >
         <UndoIcon />
       </button>
@@ -447,12 +466,14 @@ const MenuBar = ({ editor }) => {
         type="button"
         disabled={!editor.can().redo()}
         onClick={() => editor.chain().focus().redo().run()}
+        title="작업 다시하기"
       >
         <RedoIcon />
       </button>
 
       {/* 삭제 */}
       <button
+        style={{ backgroundColor: "var(--danger)" }}
         type="button"
         disabled={editor.isEmpty}
         onClick={() => {
@@ -468,6 +489,7 @@ const MenuBar = ({ editor }) => {
             }
           });
         }}
+        title="지우기"
       >
         <DeleteIcon />
       </button>

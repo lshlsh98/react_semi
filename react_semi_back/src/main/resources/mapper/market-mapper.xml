@@ -12,14 +12,12 @@
 		<if test="searchType==2">
 			and market_writer = #{searchKeyword}
 		</if>
+		<!--  
 		<if test="order==0"> order by market_no desc</if>
 		<if test="order==1"> order by market_no asc</if>
 		<if test="order==2"> order by view_count desc </if>
-		<!-- 좋아요 많은순 
-		<if test="order==3"> order by
-		-->
 		<if test="order==4">order by sell_price desc</if>
-		
+		-->
 	</select>
 
 	<!--Select ___ from market_tbl : 마켓 리스트 객체 생성 -->
@@ -27,7 +25,7 @@
 		select
 				market_no,
 				market_title,
-				to_char(market_date, 'yyyy-mm-dd') as
+				to_char(market_date, 'yyyy-mm-dd HH24:mi:ss') as
 				market_date,
 				market_writer,
 				view_count,

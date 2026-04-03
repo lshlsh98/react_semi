@@ -50,66 +50,42 @@ a {
   cursor: pointer;
 }
 
-/* */
+/*컴포넌트 전체 랩*/
 .market_write_wrap {
-  width: 1200px;
+  width: 720px;
   margin: 12px auto;
   display: flex;
   flex-direction: column;
   gap: 12px;
 }
-.market_textedit_wrap {
-  /*텍스트에디터*/
-  background-color: brown;
-}
-.market_input_wrap_title,
-.market_input_wrap_price,
-.market_input_wrap_addr {
+
+/* 제목 , 판매금액 */
+.market_input_wrap {
   display: flex;
+  flex-direction: column;
   justify-content: center;
 }
-
-.market_input_wrap_title > label,
-.market_input_wrap_price > label,
-.market_input_wrap_addr > label,
-.market_input_wrap_content > label {
-  width: 150px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
+.market_input_wrap > label {
+  text-align: center;
+  padding: 12px;
 }
-
-.market_input_wrap_title > input {
+/*거래장소 */
+.market_addr {
+  display: flex;
+  gap: 8px;
+}
+.market_addr > input {
   flex-grow: 1;
-  outline: none;
-  padding: 8px 4px;
-  border: 1px solid var(--gray5);
-  border-radius: 8px;
-  padding-left: 16px;
 }
-
-.market_input_wrap_price > input,
-.market_input_wrap_addr > input {
-  width: 200px;
-  outline: none;
-  padding: 8px 4px;
-  border: 1px solid var(--gray5);
-  border-radius: 8px;
-  padding-left: 16px;
-}
-.market_input_wrap > input:focus {
-  border: 1px solid var(--primary);
-  box-shadow: 0 0 0 0.25rem rgba(37, 99, 235, 0.3);
+.market_addr > button {
+  width: 150px;
 }
 
 /* 텍스트 에디터 */
-.editor_box {
-  background-color: burlywood;
-}
+
 .editor_wrap {
   border: 1px solid var(--secendary);
   border-radius: 8px;
-
   overflow: hidden;
 }
 .menu_bar {
@@ -117,7 +93,6 @@ a {
   gap: 8px;
   flex-wrap: wrap;
   padding: 12px;
-
   justify-content: center;
 }
 .menu_bar button,
@@ -135,13 +110,15 @@ input {
 
 .menu_bar button:hover {
   background-color: var(--secendary);
-  color: var(--light);
+}
+.menu_bar button:hover svg {
+  fill: var(--light);
 }
 .menu_bar button.active {
   background-color: var(--primary);
   border: 1px solid var(--primary);
-  color: var(--light);
 }
+
 .editor_content {
   padding: 16px;
 }
@@ -150,10 +127,12 @@ input {
   background-color: var(--light);
   padding: 12px;
   outline: none;
-  border: 1px solid black;
+  border: 1px solid var(--gray1);
   border-radius: 12px;
   line-height: 1.4;
 }
 .editor_content > div ul {
   padding-left: 20px;
 }
+
+/* 작성 취소*/
