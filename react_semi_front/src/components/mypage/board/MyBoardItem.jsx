@@ -9,7 +9,14 @@ import Switch from "@mui/material/Switch";
 import axios from "axios";
 import Swal from "sweetalert2";
 
-const MyBoardItem = ({ board, index, boardList, setBoardList, status }) => {
+const MyBoardItem = ({
+  board,
+  index,
+  boardList,
+  setBoardList,
+  status,
+  isAdminMode,
+}) => {
   const [contentStatus, setContentStatus] = useState(board.contentStatus);
   const memberGrade = useAuthStore((state) => state.memberGrade);
 
@@ -86,7 +93,7 @@ const MyBoardItem = ({ board, index, boardList, setBoardList, status }) => {
           <div className={styles.views}>조회수: {board.viewCount}</div>
         </div>
       </div>
-      {memberGrade === 3 ? (
+      {isAdminMode === "false" ? (
         ""
       ) : (
         <div className={styles.admin_section}>

@@ -1,6 +1,6 @@
 import { useState } from "react";
 import styles from "./Mypage.module.css";
-import { Link, NavLink, Route, Routes, useNavigate } from "react-router-dom";
+import { NavLink, Route, Routes, useNavigate } from "react-router-dom";
 import MemberInfo from "../../components/mypage/MemberInfo";
 import MyCommunityPage from "../../components/mypage/MyCommunityPage";
 import Swal from "sweetalert2";
@@ -181,32 +181,26 @@ const SideBar = () => {
             게시글 관리
           </div>
           <ul className={openMenu === "postManagement" ? styles.open : ""}>
-            <li
-              className={
-                selectMenu === "postManagement_trade" ? styles.active : ""
-              }
-              onClick={() => setSelectMenu("postManagement_trade")}
-            >
-              <Link
-                to={`/member/mypage/market/false`}
-                style={{ textDecoration: "none", color: "inherit" }}
+            <NavLink to={`/member/mypage/market/${false}`}>
+              <li
+                className={
+                  selectMenu === "postManagement_trade" ? styles.active : ""
+                }
+                onClick={() => setSelectMenu("postManagement_trade")}
               >
                 거래
-              </Link>
-            </li>
-            <li
-              className={
-                selectMenu === "postManagement_community" ? styles.active : ""
-              }
-              onClick={() => setSelectMenu("postManagement_community")}
-            >
-              <Link
-                to={`/member/mypage/community/false`}
-                style={{ textDecoration: "none", color: "inherit" }}
+              </li>
+            </NavLink>
+            <NavLink to={`/member/mypage/community/${false}`}>
+              <li
+                className={
+                  selectMenu === "postManagement_community" ? styles.active : ""
+                }
+                onClick={() => setSelectMenu("postManagement_community")}
               >
                 커뮤니티
-              </Link>
-            </li>
+              </li>
+            </NavLink>
           </ul>
         </li>
         <li
@@ -235,34 +229,28 @@ const SideBar = () => {
             댓글 관리
           </div>
           <ul className={openMenu === "commentManagement" ? styles.open : ""}>
-            <li
-              className={
-                selectMenu === "commentManagement_trade" ? styles.active : ""
-              }
-              onClick={() => setSelectMenu("commentManagement_trade")}
-            >
-              <Link
-                to={`/member/mypage/marketcomment/${false}`}
-                style={{ textDecoration: "none", color: "inherit" }}
+            <NavLink to={`/member/mypage/marketcomment/${false}`}>
+              <li
+                className={
+                  selectMenu === "commentManagement_trade" ? styles.active : ""
+                }
+                onClick={() => setSelectMenu("commentManagement_trade")}
               >
                 거래
-              </Link>
-            </li>
-            <li
-              className={
-                selectMenu === "commentManagement_community"
-                  ? styles.active
-                  : ""
-              }
-              onClick={() => setSelectMenu("commentManagement_community")}
-            >
-              <Link
-                to={`/member/mypage/communitycomment/false`}
-                style={{ textDecoration: "none", color: "inherit" }}
+              </li>
+            </NavLink>
+            <NavLink to={`/member/mypage/communitycomment/${false}`}>
+              <li
+                className={
+                  selectMenu === "commentManagement_community"
+                    ? styles.active
+                    : ""
+                }
+                onClick={() => setSelectMenu("commentManagement_community")}
               >
                 커뮤니티
-              </Link>
-            </li>
+              </li>
+            </NavLink>
           </ul>
         </li>
         <li
@@ -289,13 +277,118 @@ const SideBar = () => {
             회원 관리
           </li>
           <li
-            onClick={() => {
-              toggleMenu("postManagement");
-              setSelectMenu("postManagement");
-            }}
-            className={selectMenu === "postManagement" ? styles.active : ""}
+            className={
+              selectMenu === "postManagement_admin" ||
+              selectMenu === "postManagement_trade_admin" ||
+              selectMenu === "postManagement_community_admin"
+                ? styles.active
+                : ""
+            }
           >
-            게시글 관리
+            <div
+              className={styles.menu_title}
+              onClick={() => {
+                toggleMenu("postManagement_admin");
+                setSelectMenu("postManagement_admin");
+              }}
+            >
+              <span
+                className={`material-icons ${styles.arrow} ${
+                  openMenu === "postManagement" ? styles.rotate : ""
+                }`}
+              >
+                chevron_right
+              </span>
+              게시글 관리
+            </div>
+            <ul
+              className={openMenu === "postManagement_admin" ? styles.open : ""}
+            >
+              <NavLink to={`/member/mypage/market/${true}`}>
+                <li
+                  className={
+                    selectMenu === "postManagement_trade_admin"
+                      ? styles.active
+                      : ""
+                  }
+                  onClick={() => setSelectMenu("postManagement_trade_admin")}
+                >
+                  거래
+                </li>
+              </NavLink>
+              <NavLink to={`/member/mypage/community/${true}`}>
+                <li
+                  className={
+                    selectMenu === "postManagement_community_admin"
+                      ? styles.active
+                      : ""
+                  }
+                  onClick={() =>
+                    setSelectMenu("postManagement_community_admin")
+                  }
+                >
+                  커뮤니티
+                </li>
+              </NavLink>
+            </ul>
+          </li>
+          <li
+            className={
+              selectMenu === "commentManagement_admin" ||
+              selectMenu === "commentManagement_trade_admin" ||
+              selectMenu === "commentManagement_community_admin"
+                ? styles.active
+                : ""
+            }
+          >
+            <div
+              className={styles.menu_title}
+              onClick={() => {
+                toggleMenu("commentManagement_admin");
+                setSelectMenu("commentManagement_admin");
+              }}
+            >
+              <span
+                className={`material-icons ${styles.arrow} ${
+                  openMenu === "commentManagement_admin" ? styles.rotate : ""
+                }`}
+              >
+                chevron_right
+              </span>
+              댓글 관리
+            </div>
+            <ul
+              className={
+                openMenu === "commentManagement_admin" ? styles.open : ""
+              }
+            >
+              <NavLink to={`/member/mypage/marketcomment/${true}`}>
+                <li
+                  className={
+                    selectMenu === "commentManagement_trade_admin"
+                      ? styles.active
+                      : ""
+                  }
+                  onClick={() => setSelectMenu("commentManagement_trade_admin")}
+                >
+                  거래
+                </li>
+              </NavLink>
+              <NavLink to={`/member/mypage/communitycomment/${true}`}>
+                <li
+                  className={
+                    selectMenu === "commentManagement_community_admin"
+                      ? styles.active
+                      : ""
+                  }
+                  onClick={() =>
+                    setSelectMenu("commentManagement_community_admin")
+                  }
+                >
+                  커뮤니티
+                </li>
+              </NavLink>
+            </ul>
           </li>
           <li
             onClick={() => {
@@ -306,7 +399,7 @@ const SideBar = () => {
               selectMenu === "reportedPostManagement" ? styles.active : ""
             }
           >
-            신고된 게시글 확인
+            거래 현황
           </li>
         </ul>
       )}

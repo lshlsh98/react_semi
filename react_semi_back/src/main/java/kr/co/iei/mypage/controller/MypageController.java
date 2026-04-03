@@ -21,6 +21,8 @@ import kr.co.iei.mypage.model.vo.BoardListResponseDto;
 import kr.co.iei.mypage.model.vo.BoardSummary;
 import kr.co.iei.mypage.model.vo.CommentListResponseDto;
 import kr.co.iei.mypage.model.vo.CommentSummary;
+import kr.co.iei.mypage.model.vo.ReportRequestDto;
+import kr.co.iei.mypage.model.vo.ReportResponseDto;
 import kr.co.iei.mypage.model.vo.UpdateCommentDto;
 import kr.co.iei.mypage.model.vo.UpdateDto;
 
@@ -123,6 +125,12 @@ public class MypageController {
 		return ResponseEntity.ok(response);
 	}//
 	
+	@GetMapping("/report/{boardNo}")
+	public ResponseEntity<?> findReportAll(@ModelAttribute ReportRequestDto request){
+		List<ReportResponseDto> list = mypageService.findReportAll(request);
+		
+		return ResponseEntity.ok(list);
+	}//
 }
 
 

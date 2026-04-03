@@ -1,6 +1,6 @@
 import MyMarketItem from "./MyMarketItem";
 
-const MyMarketList = ({ boardList, setBoardList, status }) => {
+const MyMarketList = ({ boardList, setBoardList, status, isAdminMode }) => {
   return (
     <div>
       {boardList.map((board, index) => (
@@ -11,6 +11,7 @@ const MyMarketList = ({ boardList, setBoardList, status }) => {
           boardList={boardList}
           setBoardList={setBoardList}
           status={status}
+          isAdminMode={isAdminMode}
         />
       ))}
     </div>

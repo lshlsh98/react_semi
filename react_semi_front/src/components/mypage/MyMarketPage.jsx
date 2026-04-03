@@ -31,7 +31,6 @@ const MyMarketPage = () => {
         `${import.meta.env.VITE_BACKSERVER}/mypages/board/market?isAdminMode=${isAdminMode}&page=${page}&size=${size}&order=${order}&status=${status}&completed=${completed}&searchKeyword=${searchKeyword}&memberId=${memberId}&memberGrade=${memberGrade}`,
       )
       .then((res) => {
-        console.log(res);
         setBoardList(res.data.list);
         setTotalPage(res.data.totalPage);
       })
@@ -47,7 +46,7 @@ const MyMarketPage = () => {
   return (
     <div className={styles.myboard_wrap}>
       <div className={styles.filter_section}>
-        {memberGrade === 3 ? (
+        {isAdminMode === "false" ? (
           ""
         ) : (
           <div className={styles.filter_input}>
@@ -56,6 +55,7 @@ const MyMarketPage = () => {
               onChange={(e) => {
                 setKeyword(e.target.value);
               }}
+              placeholder="제목 검색"
             />
             <SearchIcon
               onClick={() => {
@@ -103,6 +103,7 @@ const MyMarketPage = () => {
           boardList={boardList}
           setBoardList={setBoardList}
           status={status}
+          isAdminMode={isAdminMode}
         />
       </div>
       <div className={styles.pagination_section}>

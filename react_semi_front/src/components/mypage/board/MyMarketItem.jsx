@@ -8,8 +8,16 @@ import useAuthStore from "../../utils/useAuthStore";
 import Switch from "@mui/material/Switch";
 import axios from "axios";
 import Swal from "sweetalert2";
+import ReportModal from "../ReportModal";
 
-const MyMarketItem = ({ board, index, boardList, setBoardList, status }) => {
+const MyMarketItem = ({
+  board,
+  index,
+  boardList,
+  setBoardList,
+  status,
+  isAdminMode,
+}) => {
   const [contentStatus, setContentStatus] = useState(board.contentStatus);
   const memberGrade = useAuthStore((state) => state.memberGrade);
 
@@ -75,7 +83,7 @@ const MyMarketItem = ({ board, index, boardList, setBoardList, status }) => {
           <div>{board.contentDate}</div>
         </div>
         <div className={styles.item_actions}>
-          <Actions board={board} />
+          <Actions board={board} isAdminMode={isAdminMode} />
         </div>
         <div className={styles.views_done}>
           <div className={styles.views}>조회수: {board.viewCount}</div>
@@ -85,7 +93,7 @@ const MyMarketItem = ({ board, index, boardList, setBoardList, status }) => {
           </div>
         </div>
       </div>
-      {memberGrade === 3 ? (
+      {isAdminMode === "false" ? (
         ""
       ) : (
         <div className={styles.admin_section}>
@@ -118,7 +126,17 @@ const MyMarketItem = ({ board, index, boardList, setBoardList, status }) => {
   );
 };
 
-const Actions = ({ board }) => {
+const Actions = ({ board, isAdminMode }) => {
+  const [open, setOpen] = useState(false);
+
+  const showReport = () => {
+    // if (board.reportCount <= 0 || isAdminMode === "false") {
+    //   return;
+    // }
+
+    setOpen(true);
+  };
+
   return (
     <>
       <div
@@ -145,10 +163,23 @@ const Actions = ({ board }) => {
       </div>
       <div
         className={`${styles.item_actions_report} ${board.isReported === 1 ? styles.isReported : styles.action_default}`}
+        onClick={showReport}
       >
         <ReportIcon />
         <div>{board.reportCount}</div>
       </div>
+
+      {/* 모달 */}
+      {open && (
+        <div className={styles.modal_overlay} onClick={() => setOpen(false)}>
+          <div
+            className={styles.modal_content}
+            onClick={(e) => e.stopPropagation()}
+          >
+            <ReportModal board={board} tblName="market" />
+          </div>
+        </div>
+      )}
     </>
   );
 };

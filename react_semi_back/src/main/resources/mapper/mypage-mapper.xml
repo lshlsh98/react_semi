@@ -45,7 +45,7 @@
 			
 		<where>
 		    csv.title LIKE '%'||#{searchKeyword}||'%'
-   			<if test="adminMode != true">
+   			<if test="isAdminMode != true">
   			      AND csv.writer_id = #{memberId}
     		</if>
     		<if test="status != 0">
@@ -102,7 +102,7 @@
 			
 		<where>
 		    csv.title LIKE '%'||#{searchKeyword}||'%'
-   			<if test="adminMode != true">
+   			<if test="isAdminMode != true">
   			      AND csv.writer_id = #{memberId}
     		</if>
     		<if test="status != 0">
@@ -181,7 +181,7 @@
 			
 		<where>
 		    msv.title LIKE '%'||#{searchKeyword}||'%'
-   			<if test="adminMode != true">
+   			<if test="isAdminMode != true">
   			      AND msv.writer_id = #{memberId}
     		</if>
     		<if test="status != 0">
@@ -237,7 +237,7 @@
 			
 		<where>
 		    msv.title LIKE '%'||#{searchKeyword}||'%'
-   			<if test="adminMode != true">
+   			<if test="isAdminMode != true">
   			      AND msv.writer_id = #{memberId}
     		</if>
     		<if test="status != 0">
@@ -284,8 +284,8 @@
 			
 		<where>
 			mcsv.member_name LIKE '%'||#{searchKeyword}||'%'
-			<if test="adminMode != true">
-  			      AND csv.writer_id = #{memberId}
+			<if test="isAdminMode != true">
+  			      AND mcsv.market_comment_writer = #{memberId}
     		</if>
 		</where>
 		
@@ -314,6 +314,9 @@
 			
 		<where>
 			mcsv.member_name LIKE '%'||#{searchKeyword}||'%'
+			<if test="isAdminMode != true">
+  			      AND mcsv.market_comment_writer = #{memberId}
+    		</if>
 		</where>
 	</select>
 	
@@ -374,6 +377,9 @@
 			
 		<where>
     		ccsv.member_name LIKE '%' || #{searchKeyword} || '%'
+    		<if test="isAdminMode != true">
+  			      AND ccsv.community_comment_writer = #{memberId}
+    		</if>
 		</where>
 		
 		<if test="order == 0">
@@ -414,8 +420,51 @@
 			
 		<where>
     		ccsv.member_name LIKE '%' || #{searchKeyword} || '%'
+    		<if test="isAdminMode != true">
+  			      AND ccsv.community_comment_writer = #{memberId}
+    		</if>
 		</where>
 	</select>
 	
+	<select id="findMarketReportAll" resultType="report">
+		SELECT 
+			r.member_id AS writer_id,
+			r.market_report_reason AS reason,
+			m.member_name AS writer_name
+		FROM market_report_tbl r
+		LEFT JOIN member_tbl m ON r.member_id = m.member_id
+		WHERE market_no = #{boardNo}
+		
+	</select>
+	
+	<select id="findCommunityReportAll" resultType="report">
+		SELECT 
+			r.member_id AS writer_id,
+			r.community_report_reason AS reason,
+			m.member_name AS writer_name
+		FROM community_report_tbl r
+		LEFT JOIN member_tbl m ON r.member_id = m.member_id
+		WHERE community_no = #{boardNo}
+	</select>
+	
+	<select id="findMarketCommentReportAll" resultType="report">
+		SELECT 
+			r.member_id AS writer_id,
+			r.market_comment_report_reason AS reason,
+			m.member_name AS writer_name
+		FROM market_comment_report_tbl r
+		LEFT JOIN member_tbl m ON r.member_id = m.member_id
+		WHERE market_comment_no = #{boardNo}	
+	</select>
+	
+	<select id="findCommunityCommentReportAll" resultType="report">
+		SELECT 
+			r.member_id AS writer_id,
+			r.community_comment_report_reason AS reason,
+			m.member_name AS writer_name
+		FROM community_comment_report_tbl r
+		LEFT JOIN member_tbl m ON r.member_id = m.member_id
+		WHERE community_comment_no = #{boardNo}
+	</select>
 	
 </mapper>

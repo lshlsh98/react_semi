@@ -7,8 +7,11 @@ import SearchIcon from "@mui/icons-material/Search";
 import MyCommentItem from "./comment/MyCommentItem";
 import useAuthStore from "../utils/useAuthStore";
 import axios from "axios";
+import { useParams } from "react-router-dom";
 
 const MyMarketCommentPage = () => {
+  const { isAdminMode } = useParams();
+
   const memberId = useAuthStore((state) => state.memberId);
   const memberGrade = useAuthStore((state) => state.memberGrade);
 
@@ -23,7 +26,7 @@ const MyMarketCommentPage = () => {
   useEffect(() => {
     axios
       .get(
-        `${import.meta.env.VITE_BACKSERVER}/mypages/comment/market?page=${page}&size=${size}&order=${order}&searchKeyword=${searchKeyword}&memberId=${memberId}&memberGrade=${memberGrade}`,
+        `${import.meta.env.VITE_BACKSERVER}/mypages/comment/market?isAdminMode=${isAdminMode}&page=${page}&size=${size}&order=${order}&searchKeyword=${searchKeyword}&memberId=${memberId}&memberGrade=${memberGrade}`,
       )
       .then((res) => {
         setCommentList(res.data.list);
@@ -41,7 +44,7 @@ const MyMarketCommentPage = () => {
   return (
     <div className={styles.mycomment_wrap}>
       <div className={styles.filter_section}>
-        {memberGrade === 3 ? (
+        {isAdminMode === "false" ? (
           ""
         ) : (
           <div className={styles.filter_input}>
@@ -50,7 +53,7 @@ const MyMarketCommentPage = () => {
               onChange={(e) => {
                 setKeyword(e.target.value);
               }}
-              placeholder="회원명 입력"
+              placeholder="회원명 검색"
             />
             <SearchIcon
               className={styles.search_icon}
@@ -82,6 +85,7 @@ const MyMarketCommentPage = () => {
               commentList={commentList}
               setCommentList={setCommentList}
               type="market"
+              isAdminMode={isAdminMode}
             />
           ))}
         </div>

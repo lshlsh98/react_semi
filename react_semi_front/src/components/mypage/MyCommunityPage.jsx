@@ -7,8 +7,11 @@ import useAuthStore from "../utils/useAuthStore";
 import axios from "axios";
 import SearchIcon from "@mui/icons-material/Search";
 import { Input } from "../ui/Form";
+import { useParams } from "react-router-dom";
 
 const MyCommunityPage = () => {
+  const { isAdminMode } = useParams();
+
   const memberId = useAuthStore((state) => state.memberId);
   const memberGrade = useAuthStore((state) => state.memberGrade);
 
@@ -24,10 +27,9 @@ const MyCommunityPage = () => {
   useEffect(() => {
     axios
       .get(
-        `${import.meta.env.VITE_BACKSERVER}/mypages/board/community?page=${page}&size=${size}&order=${order}&status=${status}&searchKeyword=${searchKeyword}&memberId=${memberId}&memberGrade=${memberGrade}`,
+        `${import.meta.env.VITE_BACKSERVER}/mypages/board/community?isAdminMode=${isAdminMode}&page=${page}&size=${size}&order=${order}&status=${status}&searchKeyword=${searchKeyword}&memberId=${memberId}&memberGrade=${memberGrade}`,
       )
       .then((res) => {
-        console.log(res.data.list);
         setBoardList(res.data.list);
         setTotalPage(res.data.totalPage);
       })
@@ -43,7 +45,7 @@ const MyCommunityPage = () => {
   return (
     <div className={styles.myboard_wrap}>
       <div className={styles.filter_section}>
-        {memberGrade === 3 ? (
+        {isAdminMode === "false" ? (
           ""
         ) : (
           <div className={styles.filter_input}>
@@ -52,6 +54,7 @@ const MyCommunityPage = () => {
               onChange={(e) => {
                 setKeyword(e.target.value);
               }}
+              placeholder="제목 검색"
             />
             <SearchIcon
               onClick={() => {
@@ -91,6 +94,7 @@ const MyCommunityPage = () => {
           boardList={boardList}
           setBoardList={setBoardList}
           status={status}
+          isAdminMode={isAdminMode}
         />
       </div>
       <div className={styles.pagination_section}>

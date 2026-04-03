@@ -11,6 +11,8 @@ import kr.co.iei.mypage.model.dao.MypageDao;
 import kr.co.iei.mypage.model.vo.BoardListRequestDto;
 import kr.co.iei.mypage.model.vo.BoardSummary;
 import kr.co.iei.mypage.model.vo.CommentSummary;
+import kr.co.iei.mypage.model.vo.ReportRequestDto;
+import kr.co.iei.mypage.model.vo.ReportResponseDto;
 import kr.co.iei.mypage.model.vo.UpdateCommentDto;
 import kr.co.iei.mypage.model.vo.UpdateDto;
 
@@ -116,6 +118,20 @@ public class MypageService {
 		int count = mypageDao.findCommunityCommentAllCount(request);
 		
 		return count;
+	}//
+
+	public List<ReportResponseDto> findReportAll(ReportRequestDto request) {
+		if (Objects.equals("market", request.getTblName())) {
+			return  mypageDao.findMarketReportAll(request);
+		} else if (Objects.equals("community", request.getTblName())) {
+			return mypageDao.findCommunityReportAll(request); 
+		} else if (Objects.equals("marketComment", request.getTblName())) {
+			return mypageDao.findMarketCommentReportAll(request); 
+		} else if (Objects.equals("communityComment", request.getTblName())) {
+			return mypageDao.findCommunityCommentReportAll(request); 
+		} 
+		
+		return null;
 	}//
 
 }

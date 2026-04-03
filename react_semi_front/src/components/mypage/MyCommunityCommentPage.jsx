@@ -7,8 +7,11 @@ import SearchIcon from "@mui/icons-material/Search";
 import MyCommentItem from "./comment/MyCommentItem";
 import useAuthStore from "../utils/useAuthStore";
 import axios from "axios";
+import { useParams } from "react-router-dom";
 
 const MyCommunityCommentPage = () => {
+  const { isAdminMode } = useParams();
+
   const memberId = useAuthStore((state) => state.memberId);
   const memberGrade = useAuthStore((state) => state.memberGrade);
 
@@ -23,10 +26,9 @@ const MyCommunityCommentPage = () => {
   useEffect(() => {
     axios
       .get(
-        `${import.meta.env.VITE_BACKSERVER}/mypages/comment/community?page=${page}&size=${size}&order=${order}&searchKeyword=${searchKeyword}&memberId=${memberId}&memberGrade=${memberGrade}`,
+        `${import.meta.env.VITE_BACKSERVER}/mypages/comment/community?isAdminMode=${isAdminMode}&page=${page}&size=${size}&order=${order}&searchKeyword=${searchKeyword}&memberId=${memberId}&memberGrade=${memberGrade}`,
       )
       .then((res) => {
-        console.log(res.data);
         setCommentList(res.data.list);
         setTotalPage(res.data.totalPage);
       })
@@ -42,7 +44,7 @@ const MyCommunityCommentPage = () => {
   return (
     <div className={styles.mycomment_wrap}>
       <div className={styles.filter_section}>
-        {memberGrade === 3 ? (
+        {isAdminMode === "false" ? (
           ""
         ) : (
           <div className={styles.filter_input}>
@@ -51,7 +53,7 @@ const MyCommunityCommentPage = () => {
               onChange={(e) => {
                 setKeyword(e.target.value);
               }}
-              placeholder="회원명 입력"
+              placeholder="회원명 검색"
             />
             <SearchIcon
               className={styles.search_icon}
@@ -85,6 +87,7 @@ const MyCommunityCommentPage = () => {
               commentList={commentList}
               setCommentList={setCommentList}
               type="community"
+              isAdminMode={isAdminMode}
             />
           ))}
         </div>

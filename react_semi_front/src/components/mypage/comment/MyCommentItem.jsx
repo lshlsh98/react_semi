@@ -14,6 +14,7 @@ const MyCommentItem = ({
   commentList,
   setCommentList,
   type,
+  isAdminMode,
 }) => {
   const memberThumb = comment.writerThumb;
 
@@ -126,7 +127,7 @@ const MyCommentItem = ({
         </div>
       </div>
       <div className={styles.comment_btn_section}>
-        {memberGrade === 3 ? (
+        {isAdminMode === "false" ? (
           <div className={styles.comment_btn} onClick={updateComment}>
             {dis ? "수정" : "완료"}
           </div>

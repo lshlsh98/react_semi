@@ -1,9 +1,7 @@
 import MyBoardItem from "./MyBoardItem";
 
-const MyBoardList = ({ boardList, setBoardList, status }) => {
-  boardList.map((b) => {
-    console.log(b.boardNo);
-  });
+const MyBoardList = ({ boardList, setBoardList, status, isAdminMode }) => {
+  boardList.map((b) => {});
   return (
     <div>
       {boardList.map((board, index) => (
@@ -14,6 +12,7 @@ const MyBoardList = ({ boardList, setBoardList, status }) => {
           boardList={boardList}
           setBoardList={setBoardList}
           status={status}
+          isAdminMode={isAdminMode}
         />
       ))}
     </div>
