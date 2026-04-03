@@ -22,6 +22,8 @@ const Mypage = () => {
     return;
   }
 
+  window.scrollTo(0, 0);
+
   return (
     memberId && (
       <div className={styles.mypage_wrap}>
