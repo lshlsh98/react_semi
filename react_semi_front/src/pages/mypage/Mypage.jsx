@@ -53,7 +53,7 @@ const Profile = () => {
         {memberThumb ? (
           <img src={`${import.meta.env.VITE_BACKSERVER}/semi/${memberThumb}`} />
         ) : (
-          <span class="material-icons">account_circle</span>
+          <span className="material-icons">account_circle</span>
         )}
       </div>
       <div className={styles.profile_info}>

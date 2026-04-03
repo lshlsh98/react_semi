@@ -159,7 +159,7 @@ const ChangePw = () => {
               <li>
                 {pwVisible ? (
                   <span
-                    class="material-icons"
+                    className="material-icons"
                     onClick={() => {
                       setPwVisible(false);
                     }}
@@ -168,7 +168,7 @@ const ChangePw = () => {
                   </span>
                 ) : (
                   <span
-                    class="material-icons"
+                    className="material-icons"
                     onClick={() => {
                       setPwVisible(true);
                     }}
@@ -212,7 +212,7 @@ const ChangePw = () => {
               <li>
                 {pwReVisible ? (
                   <span
-                    class="material-icons"
+                    className="material-icons"
                     onClick={() => {
                       setPwReVisible(false);
                     }}
@@ -221,7 +221,7 @@ const ChangePw = () => {
                   </span>
                 ) : (
                   <span
-                    class="material-icons"
+                    className="material-icons"
                     onClick={() => {
                       setPwReVisible(true);
                     }}
