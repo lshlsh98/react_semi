@@ -5,7 +5,7 @@ import useAuthStore from "../../components/utils/useAuthStore";
 import styles from "./MarketWritePage.module.css";
 import axios from "axios";
 import Button from "../../components/ui/Button";
-import { Input } from "../../components/ui/form";
+import { Input } from "../../components/ui/Form";
 // 파일추가 아이콘
 import InsertPhotoIcon from "@mui/icons-material/InsertPhoto";
 import DeleteIcon from "@mui/icons-material/Delete";

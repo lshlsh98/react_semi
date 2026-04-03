@@ -20,4 +20,6 @@ public interface MarketDao {
 	int insertMarket(Market market);
 
 	int insertMarketFile(MarketFile marketFile);
+	
+	List<Market> selectMainPageMarketList(Integer order);
 }

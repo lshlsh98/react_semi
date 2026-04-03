@@ -49,4 +49,9 @@ public class MarketService {
 		}
 		return result;
 	}
+	
+	public List<Market> selectMainPageMarketList(Integer order) {
+		List<Market> list = marketDao.selectMainPageMarketList(order);
+		return list;
+	}
 }

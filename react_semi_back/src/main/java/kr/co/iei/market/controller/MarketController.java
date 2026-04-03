@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -76,4 +77,12 @@ public class MarketController {
 		
 		return ResponseEntity.ok(result);
 	}
+	
+	// 메인 페이지용 5개 리스트 조회
+		@GetMapping("/main")
+		public ResponseEntity<?> selectMainPageMarketList(@RequestParam Integer order){
+			// 저는 totalPage가 필요없어서 마켓 리스트 객체를 따로 만들게요 - 이영민
+			List<Market> list = marketService.selectMainPageMarketList(order);
+		    return ResponseEntity.ok(list);
+		}
 }

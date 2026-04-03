@@ -35,13 +35,13 @@ const CommunityItem = ({ community }) => {
                 src={`${import.meta.env.VITE_BACKSERVER}/semi/${community.memberThumb}`}
               ></img>
             ) : (
-              <span class="material-icons">account_circle</span>
+              <span className="material-icons">account_circle</span>
             )}
           </div>
           <p>{community.communityWriter}</p>
         </div>
         <diiv className={styles.community_view_count}>
-          <span class="material-icons">visibility</span>
+          <span className="material-icons">visibility</span>
           <p>{community.viewCount}</p>
         </diiv>
       </div>
@@ -56,11 +56,11 @@ const CommunityItem = ({ community }) => {
       </div>
       <div className={styles.community_info_wrap}>
         <div className={styles.community_info_item_wrap}>
-          <span class="material-icons">thumb_up_off_alt</span>
+          <span className="material-icons">thumb_up_off_alt</span>
           <p>{community.likeCount}</p>
-          <span class="material-icons">thumb_down_off_alt</span>
+          <span className="material-icons">thumb_down_off_alt</span>
           <p>{community.dislikeCount}</p>
-          <span class="material-icons">report_gmailerrorred</span>
+          <span className="material-icons">report_gmailerrorred</span>
           <p>{community.reportCount}</p>
         </div>
         <div className={styles.community_date_wrap}>
