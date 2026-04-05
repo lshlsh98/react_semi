@@ -13,6 +13,7 @@ const ReportModal = ({ board, tblName }) => {
         { params: obj },
       )
       .then((res) => {
+        console.log(res.data);
         setReportList(res.data);
       })
       .catch((err) => {
@@ -30,8 +31,8 @@ const ReportModal = ({ board, tblName }) => {
         <ul key={report.writerId} className={styles.report_item}>
           <li
             className={styles.report_writer}
-          >{`${report.reportName} [${report.reportId}]`}</li>
-          <li className={styles.report_reason}>{report.reportReason}</li>
+          >{`${report.writerName} [${report.writerId}]`}</li>
+          <li className={styles.report_reason}>{report.reason}</li>
         </ul>
       ))}
     </div>

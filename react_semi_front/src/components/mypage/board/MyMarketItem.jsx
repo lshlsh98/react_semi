@@ -75,7 +75,12 @@ const MyMarketItem = ({
   };
 
   return (
-    <div className={styles.item}>
+    <div
+      className={styles.item}
+      onClick={() => {
+        console.log(board.boardNo);
+      }}
+    >
       <div className={styles.item_wrap}>
         <div className={styles.item_title}>{board.title}</div>
         <div className={styles.item_info}>
@@ -130,9 +135,9 @@ const Actions = ({ board, isAdminMode }) => {
   const [open, setOpen] = useState(false);
 
   const showReport = () => {
-    // if (board.reportCount <= 0 || isAdminMode === "false") {
-    //   return;
-    // }
+    if (board.reportCount <= 0 || isAdminMode === "false") {
+      return;
+    }
 
     setOpen(true);
   };
@@ -163,7 +168,10 @@ const Actions = ({ board, isAdminMode }) => {
       </div>
       <div
         className={`${styles.item_actions_report} ${board.isReported === 1 ? styles.isReported : styles.action_default}`}
-        onClick={showReport}
+        onClick={(e) => {
+          e.stopPropagation();
+          showReport();
+        }}
       >
         <ReportIcon />
         <div>{board.reportCount}</div>
@@ -171,7 +179,13 @@ const Actions = ({ board, isAdminMode }) => {
 
       {/* 모달 */}
       {open && (
-        <div className={styles.modal_overlay} onClick={() => setOpen(false)}>
+        <div
+          className={styles.modal_overlay}
+          onClick={(e) => {
+            e.stopPropagation();
+            setOpen(false);
+          }}
+        >
           <div
             className={styles.modal_content}
             onClick={(e) => e.stopPropagation()}
