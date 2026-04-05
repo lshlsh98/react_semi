@@ -3,7 +3,15 @@ import axios from "axios";
 import { useEffect, useState } from "react";
 
 const ReportModal = ({ board, tblName }) => {
-  const obj = { boardNo: board.boardNo, tblName: tblName };
+  // const obj = { boardNo: board.boardNo, tblName: tblName };
+  const obj = {
+    boardNo:
+      tblName === "market" || tblName === "community"
+        ? board.boardNo
+        : board.commentNo,
+    tblName: tblName,
+  };
+
   const [reportList, setReportList] = useState([]);
 
   useEffect(() => {
@@ -13,7 +21,6 @@ const ReportModal = ({ board, tblName }) => {
         { params: obj },
       )
       .then((res) => {
-        console.log(res.data);
         setReportList(res.data);
       })
       .catch((err) => {

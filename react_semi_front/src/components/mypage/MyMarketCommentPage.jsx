@@ -86,6 +86,7 @@ const MyMarketCommentPage = () => {
               setCommentList={setCommentList}
               type="market"
               isAdminMode={isAdminMode}
+              tblName="marketComment"
             />
           ))}
         </div>

@@ -88,6 +88,7 @@ const MyCommunityCommentPage = () => {
               setCommentList={setCommentList}
               type="community"
               isAdminMode={isAdminMode}
+              tblName="communityComment"
             />
           ))}
         </div>

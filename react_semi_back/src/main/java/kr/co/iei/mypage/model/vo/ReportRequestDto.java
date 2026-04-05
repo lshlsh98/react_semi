@@ -9,6 +9,6 @@ import lombok.NoArgsConstructor;
 @Data
 public class ReportRequestDto {
 
-	private Integer BoardNo;
+	private Integer boardNo;
 	private String tblName;
 }

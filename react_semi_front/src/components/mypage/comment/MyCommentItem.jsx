@@ -3,10 +3,10 @@ import styles from "./MyCommentItem.module.css";
 import ThumbUpIcon from "@mui/icons-material/ThumbUp";
 import ThumbDownIcon from "@mui/icons-material/ThumbDown";
 import ReportIcon from "@mui/icons-material/Report";
-import { TextArea } from "../../ui/Form";
 import { useEffect, useRef, useState } from "react";
 import axios from "axios";
 import Swal from "sweetalert2";
+import ReportModal from "../ReportModal";
 
 const MyCommentItem = ({
   comment,
@@ -15,6 +15,7 @@ const MyCommentItem = ({
   setCommentList,
   type,
   isAdminMode,
+  tblName,
 }) => {
   const memberThumb = comment.writerThumb;
 
@@ -100,7 +101,7 @@ const MyCommentItem = ({
             >
               {memberThumb ? (
                 <img
-                  src={`${import.meta.env.VITE_BACKSERVER}/member/thumb/${memberThumb}`}
+                  src={`${import.meta.env.VITE_BACKSERVER}/semi/${memberThumb}`}
                 />
               ) : (
                 <span className="material-icons">account_circle</span>
@@ -123,7 +124,12 @@ const MyCommentItem = ({
           />
         </div>
         <div className={styles.comment_actions}>
-          <Actions comment={comment} type={type} />
+          <Actions
+            comment={comment}
+            type={type}
+            isAdminMode={isAdminMode}
+            tblName={tblName}
+          />
         </div>
       </div>
       <div className={styles.comment_btn_section}>
@@ -142,7 +148,17 @@ const MyCommentItem = ({
   );
 };
 
-const Actions = ({ comment, type }) => {
+const Actions = ({ comment, type, isAdminMode, tblName }) => {
+  const [open, setOpen] = useState(false);
+
+  const showReport = () => {
+    if (comment.reportCount <= 0 || isAdminMode === "false") {
+      return;
+    }
+
+    setOpen(true);
+  };
+
   return (
     <>
       {type === "community" ? (
@@ -171,10 +187,32 @@ const Actions = ({ comment, type }) => {
       )}
       <div
         className={`${styles.comment_actions_report} ${comment.isReported === 1 ? styles.isReported : styles.action_default}`}
+        onClick={(e) => {
+          e.stopPropagation();
+          showReport();
+        }}
       >
         <ReportIcon />
         <div>{comment.reportCount}</div>
       </div>
+
+      {/* 모달 */}
+      {open && (
+        <div
+          className={styles.modal_overlay}
+          onClick={(e) => {
+            e.stopPropagation();
+            setOpen(false);
+          }}
+        >
+          <div
+            className={styles.modal_content}
+            onClick={(e) => e.stopPropagation()}
+          >
+            <ReportModal board={comment} tblName={tblName} />
+          </div>
+        </div>
+      )}
     </>
   );
 };
