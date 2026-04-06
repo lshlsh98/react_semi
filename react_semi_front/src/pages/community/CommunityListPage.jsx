@@ -71,7 +71,7 @@ const CommunityListPage = () => {
             }}
           ></Input>
           <Button type="submit" className="btn primary">
-            <span class="material-icons">search</span>
+            <span className="material-icons">search</span>
           </Button>
         </form>
         <div className={styles.order_wrap}>

@@ -22,7 +22,7 @@
 			where c.community_no = r.community_no) as report_count
 		from community_tbl c
 		join member_tbl on (community_writer = member_id)
-		where community_status = #{status}
+		where community_status = 1
 		
 		<if test ="searchType==1">
 		and community_title like '%'||#{searchKeyword}||'%' 

@@ -56,11 +56,11 @@ const CommunityItem = ({ community }) => {
       </div>
       <div className={styles.community_info_wrap}>
         <div className={styles.community_info_item_wrap}>
-          <span class="material-icons">thumb_up_off_alt</span>
+          <span className="material-icons">thumb_up_off_alt</span>
           <p>{community.likeCount}</p>
-          <span class="material-icons">thumb_down_off_alt</span>
+          <span className="material-icons">thumb_down_off_alt</span>
           <p>{community.dislikeCount}</p>
-          <span class="material-icons">report_gmailerrorred</span>
+          <span className="material-icons">report_gmailerrorred</span>
           <p>{community.reportCount}</p>
         </div>
         <div className={styles.community_date_wrap}>
@@ -75,7 +75,7 @@ const ConvertContent = ({ communityContent }) => {
   const parser = new DOMParser();
   const doc = parser.parseFromString(communityContent, "text/html");
   const text = doc.body.textContent || "";
-  return <div>{text}</div>;
+  return <div className={styles.community_content}>{text}</div>;
 };
 
 export default CommunityList;
