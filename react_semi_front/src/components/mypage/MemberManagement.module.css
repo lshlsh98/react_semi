@@ -1,0 +1,9 @@
+.member_management {
+  display: flex;
+  flex-direction: column;
+  gap: 50px;
+  justify-content: center;
+  align-items: center;
+  padding: 50px;
+  width: 100%;
+}

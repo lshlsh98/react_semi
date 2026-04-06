@@ -5,6 +5,7 @@ import useAuthStore from "../../components/utils/useAuthStore";
 import MemberInfo from "../../components/mypage/MemberInfo";
 import Swal from "sweetalert2";
 import ChangePw from "../../components/mypage/ChangePw";
+import MemberManagement from "../../components/mypage/MemberManagement";
 
 const Mypage = () => {
   const navigate = useNavigate();
@@ -35,6 +36,7 @@ const Mypage = () => {
           <Routes>
             <Route path="myinfo" element={<MemberInfo />} />
             <Route path="pw" element={<ChangePw />} />
+            <Route path="member-management" element={<MemberManagement />} />
           </Routes>
         </div>
       </div>
@@ -241,15 +243,17 @@ const SideBar = () => {
       {memberGrade !== 3 && (
         <ul className={styles.management}>
           <li>관리 페이지</li>
-          <li
-            onClick={() => {
-              toggleMenu("memberManagement");
-              setSelectMenu("memberManagement");
-            }}
-            className={selectMenu === "memberManagement" ? styles.active : ""}
-          >
-            회원 관리
-          </li>
+          <NavLink to="/member/mypage/member-management">
+            <li
+              onClick={() => {
+                toggleMenu("memberManagement");
+                setSelectMenu("memberManagement");
+              }}
+              className={selectMenu === "memberManagement" ? styles.active : ""}
+            >
+              회원 관리
+            </li>
+          </NavLink>
           <li
             onClick={() => {
               toggleMenu("postManagementManager");

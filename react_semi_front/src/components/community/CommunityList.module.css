@@ -111,8 +111,11 @@
 }
 
 .community_content {
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
   overflow-wrap: break-word;
   word-break: break-all;
   white-space: pre-wrap;
+  text-overflow: ellipsis;
   text-align: start;
 }
