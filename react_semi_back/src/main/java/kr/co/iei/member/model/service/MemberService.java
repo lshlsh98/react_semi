@@ -1,20 +1,16 @@
 package kr.co.iei.member.model.service;
 
+import java.io.File;
+import java.util.Objects;
+
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PatchMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.multipart.MultipartFile;
 
 import kr.co.iei.member.model.dao.MemberDao;
 import kr.co.iei.member.model.vo.LoginMember;
 import kr.co.iei.member.model.vo.Member;
-import kr.co.iei.utils.FileUtils;
 import kr.co.iei.utils.JwtUtils;
 
 @Service
@@ -71,23 +67,54 @@ public class MemberService {
 		return result;
 	}
 
-	public int updateThumbnail(Member m) {
-		int result = memberDao.updateThumbnail(m);
-		return result;
+	public int updateThumbnail(Member m, String root) {
+	    Member oldM = memberDao.selectOneMember(m.getMemberId());
+	    String oldThumb = oldM.getMemberThumb();
+
+	    int result = memberDao.updateThumbnail(m);
+
+	    if (result == 1 && oldThumb != null) {
+			System.out.println("delete");
+	        deleteFile(oldThumb, root);
+	    }
+
+	    return result;
 	}
 
-	public int deleteThumbnail(Member member) {
-		int result = memberDao.updateThumbnail(member);
-		return result;
-	}
+	public int memberUpdate(String memberId, Member member, String root) {
+		System.out.println("memberid:" + memberId);
+		Member oldM = memberDao.selectOneMember(memberId);
 
-	public int memberUpdate(Member member) {
 		int result = memberDao.memberUpdate(member);
+
+		if (result == 1 && oldM.getMemberThumb() != null 
+		        && member.getMemberThumb() == null) {
+			deleteFile(oldM.getMemberThumb(), root);
+		}
+		
 		return result;
 	}
 
-	public int memberDelete(String memberId) {
+	private boolean deleteFile(String filename, String root) {
+		if (filename == null || filename.isEmpty())
+			return false;
+		File file = new File(root + filename);
+		if (file.exists()) {
+			System.out.println("delete");
+			return file.delete();
+		}
+		return false;
+	}
+
+	public int memberDelete(String memberId, String root) {
+		Member m = memberDao.selectOneMember(memberId);
+		
 		int result = memberDao.memberDelete(memberId);
+		
+		if (result == 1 && m.getMemberThumb() != null ) {
+			deleteFile(m.getMemberThumb(), root);
+		}
+		
 		return result;
 	}
 

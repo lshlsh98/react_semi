@@ -17,9 +17,49 @@
 			community_title,
 			community_content,
 			community_writer,
-			to_char(community_date,'yyyy-mm-dd hh24:mi') community_date
-		from community_tbl
-		where community_no = #{communityNo}
+			to_char(community_date, 'yyyy-mm-dd') as community_date,
+			view_count,
+			member_thumb,
+			(select count(*)
+			from community_like_tbl l
+			where c.community_no = l.community_no) as like_count,
+			(select count(*)
+			from community_dislike_tbl d
+			where c.community_no = d.community_no) as dislike_count,
+			(select count(*)
+			from community_report_tbl r
+			where c.community_no = r.community_no) as report_count
+		from community_tbl c
+		join member_tbl on (community_writer = member_id)
+		where community_status = 1
+		
+		<if test ="searchType==1">
+		and community_title like '%'||#{searchKeyword}||'%' 
+		or community_content like '%'||#{searchKeyword}||'%'
+		</if>
+		<if test ="searchType==2">
+		and community_writer = #{searchKeyword}
+		</if>
+		
+		<if test ="order==1">
+			order by community_no desc
+		</if>
+		<if test ="order==2">
+			order by community_no asc
+		</if>
+		<if test ="order==3">
+			order by view_count desc
+		</if>
+		<if test ="order==4">
+			order by like_count desc
+		</if>
+		<if test ="order==5">
+			order by dislike_count desc
+		</if>
+		<if test ="order==6">
+			order by report_count desc
+		</if>
+		offset #{page}*#{size} rows fetch next #{size} rows only
 	</select>
 	
 	<update id="updateCommunity">

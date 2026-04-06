@@ -29,6 +29,7 @@
 	
 	<update id="memberUpdate">
 		update member_tbl set
+		member_thumb = #{memberThumb},
 		member_name = #{memberName},
 		member_email = #{memberEmail},
 		member_postcode = #{memberPostcode},

@@ -22,6 +22,9 @@ const Mypage = () => {
     });
     return;
   }
+
+  window.scrollTo(0, 0); //페이지 이동 시 항상 가장 맨 위 화면으로
+
   return (
     memberId && (
       <div className={styles.mypage_wrap}>
