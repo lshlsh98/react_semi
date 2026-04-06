@@ -67,7 +67,6 @@ const MainPage = () => {
     axios
       .get(`${import.meta.env.VITE_BACKSERVER}/communities/main?type=popular`)
       .then((res) => {
-        console.log(res);
         setPopularCommunity(res.data);
       })
       .catch((err) => {
@@ -78,7 +77,6 @@ const MainPage = () => {
     axios
       .get(`${import.meta.env.VITE_BACKSERVER}/communities/main?type=notice`)
       .then((res) => {
-        console.log(res);
         setNoticeCommunity(res.data);
       })
       .catch((err) => {
