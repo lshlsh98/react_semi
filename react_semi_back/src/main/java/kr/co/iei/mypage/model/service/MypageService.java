@@ -134,6 +134,11 @@ public class MypageService {
 		return null;
 	}//
 
+	public List<BoardSummary> findLikeDislikeAll(BoardListRequestDto request) {
+		List<BoardSummary> list = mypageDao.findLikeDislikeAll(request);
+		
+	}//
+
 }
 
 

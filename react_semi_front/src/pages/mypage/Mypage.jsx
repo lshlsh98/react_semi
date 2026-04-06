@@ -9,6 +9,7 @@ import ChangePw from "../../components/mypage/ChangePw";
 import MyMarketPage from "../../components/mypage/MyMarketPage";
 import MyCommunityCommentPage from "../../components/mypage/MyCommunityCommentPage";
 import MyMarketCommentPage from "../../components/mypage/MyMarketCommentPage";
+import LikeDislike from "../../components/mypage/LikeDislike";
 
 const Mypage = () => {
   const navigate = useNavigate();
@@ -36,6 +37,7 @@ const Mypage = () => {
         <div className={styles.mypage_content}>
           <Routes>
             <Route path="myinfo" element={<MemberInfo />} />
+            <Route path="likedislike" element={<LikeDislike />} />
             <Route
               path="market/:isAdminMode"
               element={<MyMarketPage />}
@@ -113,7 +115,7 @@ const SideBar = () => {
             비밀번호 변경
           </li>
         </NavLink>
-        <li
+        {/* <li
           className={
             selectMenu === "likehate" ||
             selectMenu === "likehate_trade" ||
@@ -154,7 +156,15 @@ const SideBar = () => {
               커뮤니티
             </li>
           </ul>
-        </li>
+        </li> */}
+        <NavLink to="/member/mypage/likedislike">
+          <li
+            className={selectMenu === "likedislike" ? styles.active : ""}
+            onClick={() => setSelectMenu("likedislike")}
+          >
+            좋아요 / 싫어요 기록
+          </li>
+        </NavLink>
         <li
           className={
             selectMenu === "postManagement" ||

@@ -131,6 +131,26 @@ public class MypageController {
 		
 		return ResponseEntity.ok(list);
 	}//
+	
+	@GetMapping("/board/likedislike")
+	public ResponseEntity<?> findLikeDislikeAll(@ModelAttribute BoardListRequestDto request){
+		List<BoardSummary> list = mypageService.findLikeDislikeAll(request);
+		
+		
+	}//
+	
+//	@GetMapping("/board/community")
+//	public ResponseEntity<?> findCommunityAll(@ModelAttribute BoardListRequestDto request) {
+//		List<BoardSummary> list = mypageService.findCommunityAll(request);
+//
+//		int count = mypageService.findCommunityCount(request);
+//		int totalPage = (int) Math.ceil(count / (double) request.getSize()); 
+//				
+//		BoardListResponseDto response = new BoardListResponseDto(list, totalPage); 
+//		
+//		return ResponseEntity.ok(response);
+//	}//
+	
 }
 
 
