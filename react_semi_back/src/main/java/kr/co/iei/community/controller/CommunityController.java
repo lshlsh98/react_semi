@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.ibatis.annotations.Delete;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
@@ -54,11 +55,22 @@ public class CommunityController {
 		return ResponseEntity.ok(commentList);
 	}
 	
-	
 	@PostMapping(value="/comments") // 커뮤 댓글 등록
 	public ResponseEntity<?> insertCommunityComment(@RequestBody CommunityComment communityComment){
 		CommunityComment newComment = communityService.insertCommunityComment(communityComment);
 		return ResponseEntity.ok(newComment);
+	}
+	
+	@PutMapping(value="/comments/{communityCommentNo}") // 커뮤 댓글 수정
+	public ResponseEntity<?> updateCommunityComment(@RequestBody CommunityComment comment){
+		int result = communityService.updateCommunityComment(comment);
+		return ResponseEntity.ok(result);
+	}
+	
+	@DeleteMapping(value="/comments/{communityCommentNo}")
+	public ResponseEntity<?> deleteCommunityComment(@PathVariable Integer communityCommentNo){
+		int result = communityService.deleteCommunityComment(communityCommentNo);
+		return ResponseEntity.ok(result);
 	}
 	
 	@GetMapping(value="/{communityNo}/likes") // 커뮤 좋아요 출력
@@ -108,6 +120,14 @@ public class CommunityController {
 		Map<String, Object> reportInfo = communityService.selectReportInfo(communityNo, token);
 		return ResponseEntity.ok(reportInfo);
 	}
+	
+	@PostMapping(value="/{communityNo}/reports") // 커뮤 신고 클릭
+	public ResponseEntity<?> reportOn(@PathVariable Integer communityNo,
+            	@RequestHeader(name="Authorization") String token){
+    int result = communityService.insertReport(communityNo, token);
+    return ResponseEntity.ok(result);
+	}
+	
 }
 
 

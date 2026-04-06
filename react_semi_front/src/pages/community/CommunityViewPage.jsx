@@ -95,6 +95,7 @@ const CommunityViewPage = () => {
 
           <div className={styles.community_action_wrap}>
             <LikeAndDislike communityNo={communityNo} />
+            <Report communityNo={communityNo} />
             {memberId && memberId === community.communityWriter && (
               <div>
                 <Button

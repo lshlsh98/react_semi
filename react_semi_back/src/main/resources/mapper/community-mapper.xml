@@ -54,6 +54,11 @@
 		)
 	</insert>
 	
+	<select id="selectOneCommunityComment" resultType="communityComment">
+		select
+			community_comment_no
+	</select>
+	
 	<select id="selectCommunityCommentList" resultType="communityComment">
 		select
 			community_comment_no,
@@ -74,9 +79,13 @@
 	
 	<update id="updateCommunityComment">
 		update community_comment_tbl set
-			community_comment_content = #{communityCommentContent}
-		where community_comment_no = #{communityCommentNo}
+  			community_comment_content = #{communityCommentContent}
+  		where community_comment_no = #{communityCommentNo}
 	</update>
+	
+	<delete id="deleteCommunityComment">
+		delete from community_comment_tbl where community_comment_no = #{communityCommentNo}
+	</delete>
 	
 	<select id="selectLikeCount" resultType="int">
   		select count(*) from community_like_tbl where community_no = #{communityNo}
@@ -115,6 +124,10 @@
   	<select id="selectReportCount">
   		select count(*) from community_report_tbl where community_no = #{communityNo}
   	</select>
+  	
+  	<insert id="insertReport">
+  		insert into community_report_tbl values(#{communityNo}, #{memberId})
+  	</insert>
 </mapper>
 
 

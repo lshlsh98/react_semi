@@ -23,7 +23,7 @@ public class CommunityService {
 	@Autowired
 	private JwtUtils jwtUtil;
 	
-	@Transactional
+	@Transactional // 커뮤 글 등록
 	public int insertCommunity(Community community) {
 		int result = communityDao.insertCommunity(community);
 		return result;
@@ -39,6 +39,7 @@ public class CommunityService {
 		return commentList;
 	}
 
+	@Transactional
 	public CommunityComment insertCommunityComment(CommunityComment communityComment) {
 		int communityCommentNo = communityDao.selectNewCommunityCommentNo();
 		communityComment.setCommunityCommentNo(communityCommentNo);
@@ -136,6 +137,26 @@ public class CommunityService {
 		}else {
 			result.put("isReport", 0);
 		}
+		return result;
+	}
+
+	@Transactional
+	public int insertReport(Integer communityNo, String token) {
+		LoginMember login = jwtUtil.checkToken(token);
+		Map<String, Object> params = new HashMap<String,Object>();
+		params.put("communityNo", communityNo);
+		params.put("memberId", login.getMemberId());
+		int result = communityDao.insertReport(params);
+		return result;
+	}
+
+	public int deleteCommunityComment(Integer communityCommentNo) {
+		int result = communityDao.deleteCommunityComment(communityCommentNo);
+		return result;
+	}
+
+	public int updateCommunityComment(CommunityComment comment) {
+		int result = communityDao.updateCommunityComment(comment);
 		return result;
 	}
 

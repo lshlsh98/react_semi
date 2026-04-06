@@ -22,6 +22,8 @@ public interface CommunityDao {
 	int selectNewCommunityCommentNo();
 	
 	CommunityComment selectOneCommunityComment(int communityCommentNo);
+	
+	int deleteCommunityComment(Integer communityCommentNo);
 
 	int selectLikeCount(Integer communityNo);
 
@@ -42,5 +44,11 @@ public interface CommunityDao {
 	int selectReportCount(Integer communityNo);
 
 	int selectIsReport(Map<String, Object> params);
+
+	int insertReport(Map<String, Object> params);
+
+	int updateCommunityComment(CommunityComment comment);
+
+	
 
 }
