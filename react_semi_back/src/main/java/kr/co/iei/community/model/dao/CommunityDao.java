@@ -19,6 +19,7 @@ public interface CommunityDao {
 	Community selectOneBoard(int communityNo);
 
 	int updateCommunity(Community community);
-
+	
+	List<Community> selectMainPageCommunityList(String type);
 
 }

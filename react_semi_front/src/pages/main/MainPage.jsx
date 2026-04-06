@@ -5,9 +5,42 @@ import styles from "./MainPage.module.css";
 import ImageNotSupportedIcon from "@mui/icons-material/ImageNotSupported";
 import FavoriteIcon from "@mui/icons-material/Favorite";
 
+// 시간 계산 함수 ("n분 전", "n시간 전" 표시) - 아래의 중고거래, 커뮤니티 둘다 이걸 쓰기 위해 밖에 선언
+const timeAgo = (dateString) => {
+  // 받은 시간값이 없으면 return
+  if (!dateString) {
+    return "";
+  }
+
+  const postDate = new Date(dateString); // postDate : 게시글 올린 date(날짜, 시간등)
+  const now = new Date(); // now : 지금(현재 날짜, 시간등)
+
+  const diffInSeconds = Math.floor((now - postDate) / 1000); // 현재 시간과 게시글 시간의 차이를 초 단위로 계산
+
+  if (diffInSeconds < 60) {
+    return "방금 전";
+  } else if (diffInSeconds < 3600) {
+    const minutes = Math.floor(diffInSeconds / 60);
+    return `${minutes}분 전`;
+  } else if (diffInSeconds < 86400) {
+    const hours = Math.floor(diffInSeconds / 3600);
+    return `${hours}시간 전`;
+  } else if (diffInSeconds < 2592000) {
+    const days = Math.floor(diffInSeconds / 86400);
+    return `${days}일 전`;
+  } else {
+    // __.split(" ") : " " 즉 공백을 기준을 자름. 현재 dateString은 예시로 ["2026-04-03", "15:30:00"] 이런식으로 찍힘. 즉 날짜와 시간 사이에 공백이 있음.
+    // 그중에 0번 즉 첫번쨰 값을 가져옴 -> 날짜 예시에서의 "2026-04-03"
+    return dateString.split(" ")[0];
+  }
+};
+
 const MainPage = () => {
-  const [recentItems, setRecentItems] = useState([]); // 방금 올라온 물건 (최신순)
-  const [hotItems, setHotItems] = useState([]); // 핫한 물건 (조회수순)
+  const [recentItems, setRecentItems] = useState([]); // 방금 올라온 물건 (최신순-중고거래)
+  const [hotItems, setHotItems] = useState([]); // 핫한 물건 (조회수순-중고거래)
+
+  const [popularCommunity, setPopularCommunity] = useState([]); // 커뮤니티 인기글 (좋아요순)
+  const [noticeCommunity, setNoticeCommunity] = useState([]); // 커뮤니티 공지사항 (공지사항 -> 회원등급 : 1-슈퍼관리자, 2-관리자 order by 최신순)
 
   useEffect(() => {
     // 1. 방금 올라온 따끈따끈한 물건 (order=0: 최신순, MarketListPage의 order와 동일하게 씀(안헷갈리게. 물론 메인페이지랑 마켓페이지는 아예 상관없지만 그래두 그냥))
@@ -29,6 +62,28 @@ const MainPage = () => {
       .catch((err) => {
         console.log("핫한 목록 로딩 실패:", err);
       });
+
+    // 3. 커뮤니티 인기글
+    axios
+      .get(`${import.meta.env.VITE_BACKSERVER}/communities/main?type=popular`)
+      .then((res) => {
+        console.log(res);
+        setPopularCommunity(res.data);
+      })
+      .catch((err) => {
+        console.log("인기글 로딩 실패:", err);
+      });
+
+    // 4. 커뮤니티 공지사항
+    axios
+      .get(`${import.meta.env.VITE_BACKSERVER}/communities/main?type=notice`)
+      .then((res) => {
+        console.log(res);
+        setNoticeCommunity(res.data);
+      })
+      .catch((err) => {
+        console.log("공지사항 로딩 실패:", err);
+      });
   }, []);
 
   return (
@@ -46,6 +101,12 @@ const MainPage = () => {
         highlightWord="가장 핫한"
         items={hotItems}
       />
+      <div className={styles.community_wrap}>
+        {/* 왼쪽: 3. 인기글 */}
+        <CommunitySection title="이번 주 인기글" items={popularCommunity} />
+        {/* 오른쪽: 4. 공지사항 */}
+        <CommunitySection title="커뮤니티 공지사항" items={noticeCommunity} />
+      </div>
     </div>
   );
 };
@@ -60,36 +121,6 @@ const MarketSection = ({ title, highlightWord, items }) => {
       return "무료나눔";
     }
     return price.toLocaleString() + "원"; // toLocaleString하면 현재 본인의 국가에 해당하는 숫자 표기법을 적용 (예 : 1000000 -> 1,000,000)
-  };
-
-  // 시간 계산 함수 ("n분 전", "n시간 전" 표시)
-  const timeAgo = (dateString) => {
-    // 받은 시간값이 없으면 return
-    if (!dateString) {
-      return "";
-    }
-
-    const postDate = new Date(dateString); // postDate : 게시글 올린 date(날짜, 시간등)
-    const now = new Date(); // now : 지금(현재 날짜, 시간등)
-
-    const diffInSeconds = Math.floor((now - postDate) / 1000); // 현재 시간과 게시글 시간의 차이를 초 단위로 계산
-
-    if (diffInSeconds < 60) {
-      return "방금 전";
-    } else if (diffInSeconds < 3600) {
-      const minutes = Math.floor(diffInSeconds / 60);
-      return `${minutes}분 전`;
-    } else if (diffInSeconds < 86400) {
-      const hours = Math.floor(diffInSeconds / 3600);
-      return `${hours}시간 전`;
-    } else if (diffInSeconds < 2592000) {
-      const days = Math.floor(diffInSeconds / 86400);
-      return `${days}일 전`;
-    } else {
-      // __.split(" ") : " " 즉 공백을 기준을 자름. 현재 dateString은 예시로 ["2026-04-03", "15:30:00"] 이런식으로 찍힘. 즉 날짜와 시간 사이에 공백이 있음.
-      // 그중에 0번 즉 첫번쨰 값을 가져옴 -> 날짜 예시에서의 "2026-04-03"
-      return dateString.split(" ")[0];
-    }
   };
 
   return (
@@ -153,6 +184,53 @@ const MarketSection = ({ title, highlightWord, items }) => {
                   {item.likeCount || 0}
                 </span>
               </div>
+            </div>
+          </li>
+        ))}
+      </ul>
+    </section>
+  );
+};
+
+// 커뮤니티 컴포넌트 (이것도 여기서만 쓰니 여기에 만듬)
+const CommunitySection = ({ title, items }) => {
+  const navigate = useNavigate();
+
+  return (
+    <section className={styles.comm_section_box}>
+      <div className={styles.section_header}>
+        <h2 className={styles.title}>{title}</h2>
+        <Link to="/community" className={styles.more_link}>
+          더보기 {">"}
+        </Link>
+      </div>
+
+      <ul className={styles.comm_list}>
+        {items.map((item) => (
+          <li
+            key={`main_comm-${item.communityNo}`}
+            className={styles.comm_card}
+            onClick={() => navigate(`/community/view/${item.communityNo}`)}
+          >
+            <h3 className={styles.comm_item_title}>{item.communityTitle}</h3>
+            <p className={styles.comm_item_content}>{item.communityContent}</p>
+
+            <div className={styles.comm_meta_box}>
+              <span>작성자: {item.communityWriter}</span>
+              <span className={styles.divider}>|</span>
+
+              {/* timeAgo : 앞에서 시간계산함수*/}
+              <span>{timeAgo(item.communityDate)}</span>
+
+              <span className={styles.divider}>|</span>
+
+              <span className={styles.like_count}>
+                <FavoriteIcon className={styles.heart_icon} />
+                {item.likeCount}
+              </span>
+              <span className={styles.divider}>|</span>
+
+              <span>조회수: {item.viewCount}</span>
             </div>
           </li>
         ))}

@@ -24,6 +24,9 @@ const Join = () => {
 
   const [memberPwRe, setMemberPwRe] = useState(""); // 비밀번호 확인 value용 state
 
+  const [pwVisible, setPwVisible] = useState(false); // 비번 숨김 / 보임용
+  const [pwReVisible, setPwReVisible] = useState(false); // 비번 확인의 숨김 / 보임용
+
   const inputMember = (e) => {
     // 이젠 너무 익숙한 value에 있는 값을 member에 넣는 방법
     setMember({ ...member, [e.target.name]: e.target.value });
@@ -256,9 +259,9 @@ const Join = () => {
             <label htmlFor="memberPw" className={styles.label}>
               비밀번호
             </label>
-            <div className={styles.input_row}>
+            <div className={`${styles.input_row} ${styles.pw_input_wrap}`}>
               <Input
-                type="password"
+                type={pwVisible ? "text" : "password"}
                 name="memberPw"
                 id="memberPw"
                 placeholder="비밀번호를 입력하세요."
@@ -266,6 +269,21 @@ const Join = () => {
                 onChange={inputMember}
                 onBlur={pwDupCheck}
               />
+              {pwVisible ? (
+                <span
+                  className={`material-icons ${styles.pw_icon}`}
+                  onClick={() => setPwVisible(false)}
+                >
+                  visibility_off
+                </span>
+              ) : (
+                <span
+                  className={`material-icons ${styles.pw_icon}`}
+                  onClick={() => setPwVisible(true)}
+                >
+                  visibility
+                </span>
+              )}
             </div>
           </div>
 
@@ -273,9 +291,9 @@ const Join = () => {
             <label htmlFor="memberPwRe" className={styles.label}>
               비밀번호 확인
             </label>
-            <div className={styles.input_row}>
+            <div className={`${styles.input_row} ${styles.pw_input_wrap}`}>
               <Input
-                type="password"
+                type={pwReVisible ? "text" : "password"}
                 name="memberPwRe"
                 id="memberPwRe"
                 placeholder="비밀번호를 다시 입력하세요."
@@ -283,6 +301,21 @@ const Join = () => {
                 onChange={(e) => setMemberPwRe(e.target.value)}
                 onBlur={pwDupCheck}
               />
+              {pwReVisible ? (
+                <span
+                  className={`material-icons ${styles.pw_icon}`}
+                  onClick={() => setPwReVisible(false)}
+                >
+                  visibility_off
+                </span>
+              ) : (
+                <span
+                  className={`material-icons ${styles.pw_icon}`}
+                  onClick={() => setPwReVisible(true)}
+                >
+                  visibility
+                </span>
+              )}
             </div>
             {checkPw > 0 && (
               <p

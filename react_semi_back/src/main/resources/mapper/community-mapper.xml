@@ -92,4 +92,29 @@
   		where board_no = #{boardNo}
 	</update>
 	
+	<select id="selectMainPageCommunityList" resultType="community">
+		select 
+			c.community_no,
+			c.community_title,
+			c.community_content,
+			c.community_writer,
+			to_char(c.community_date, 'yyyy-mm-dd hh24:mi:ss') as community_date,
+			c.view_count,
+			(select count(*)
+			from community_like_tbl l
+			where c.community_no = l.community_no) as like_count
+		from community_tbl c
+		join member_tbl m on (c.community_writer = m.member_id) where c.community_status = 1
+		
+		<if test="type == 'popular'">
+			order by like_count desc, c.community_no desc
+		</if>
+		
+		<if test="type == 'notice'">
+			and m.member_grade in (1, 2) order by c.community_no desc
+		</if>
+		
+		offset 0 rows fetch next 5 rows only
+	</select>
+	
 </mapper>

@@ -44,4 +44,7 @@ public class CommunityService {
 		return result;
 	}
 
+	public List<Community> selectMainPageCommunityList(String type) {
+		return communityDao.selectMainPageCommunityList(type);
+	}
 }
