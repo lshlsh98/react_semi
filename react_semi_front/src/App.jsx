@@ -62,8 +62,8 @@ function App() {
           <Route path="/member/login" element={<Login />} />
           <Route path="/member/find-id" element={<Find_id />} />
           <Route path="/member/find-pw" element={<Find_pw />} />
-          <Route path="/community" element={<CommunityListPage />} />
           <Route path="/map" element={<Map />} />
+          <Route path="/community" element={<CommunityListPage />} />
 
           {/* 진호 */}
           <Route path="/market" element={<MarketListPage />} />
