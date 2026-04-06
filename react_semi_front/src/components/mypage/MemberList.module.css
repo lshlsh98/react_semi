@@ -1,0 +1,42 @@
+.member_list_wrap {
+  width: 100%;
+  list-style-type: none;
+  display: flex;
+  flex-direction: column;
+  border-bottom: 1px solid var(--line);
+  margin-bottom: 50px;
+}
+.member_item_title {
+  width: 100%;
+  list-style-type: none;
+  display: flex;
+  padding: 20px;
+  background-color: var(--primary);
+}
+.member_item_title > li {
+  font-family: tr_b;
+  color: var(--gray8);
+}
+
+.member_item {
+  width: 100%;
+  list-style-type: none;
+  display: flex;
+  border-top: 1px solid var(--line);
+  padding: 20px;
+}
+
+.member_id {
+  width: 30%;
+}
+.member_name {
+  width: 30%;
+}
+.member_email {
+  width: 40%;
+}
+
+.member_item:hover {
+  cursor: pointer;
+  background-color: var(--gray7);
+}

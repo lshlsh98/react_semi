@@ -6,6 +6,7 @@ import MemberInfo from "../../components/mypage/MemberInfo";
 import Swal from "sweetalert2";
 import ChangePw from "../../components/mypage/ChangePw";
 import MemberManagement from "../../components/mypage/MemberManagement";
+import MemberInfoManagement from "../../components/mypage/MemberInfoManagement";
 
 const Mypage = () => {
   const navigate = useNavigate();
@@ -37,6 +38,10 @@ const Mypage = () => {
             <Route path="myinfo" element={<MemberInfo />} />
             <Route path="pw" element={<ChangePw />} />
             <Route path="member-management" element={<MemberManagement />} />
+            <Route path="member-management">
+              <Route index element={<MemberManagement />} />
+              <Route path=":memberId" element={<MemberInfoManagement />} />
+            </Route>
           </Routes>
         </div>
       </div>

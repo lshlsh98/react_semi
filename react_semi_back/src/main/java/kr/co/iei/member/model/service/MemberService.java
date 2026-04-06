@@ -1,7 +1,7 @@
 package kr.co.iei.member.model.service;
 
 import java.io.File;
-import java.util.Objects;
+import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -11,6 +11,8 @@ import org.springframework.transaction.annotation.Transactional;
 import kr.co.iei.member.model.dao.MemberDao;
 import kr.co.iei.member.model.vo.LoginMember;
 import kr.co.iei.member.model.vo.Member;
+import kr.co.iei.member.model.vo.MemberListItem;
+import kr.co.iei.member.model.vo.MemberListResponse;
 import kr.co.iei.utils.JwtUtils;
 
 @Service
@@ -126,13 +128,14 @@ public class MemberService {
 		return result;
 	}
 
-	/*
-	 * public Member mypage(String memberId, String token) { try { LoginMember login
-	 * = jwtUtil.checkToken(token); System.out.println(login); Member member =
-	 * memberDao.selectOneMember(memberId); return member; } catch (Exception e) {
-	 * // TODO: handle exception } return null; // 토큰 유효 시간 지났을 때 출력되는 부분 }
-	 */
+	public MemberListResponse selectAllMember(MemberListItem request) {
+		Integer totalCount = memberDao.selectMemberCount(request);
+		int totalPage = (int) Math.ceil(totalCount / (double) request.getSize());
+		
+		List<Member> list= memberDao.selectAllMember(request);
+		MemberListResponse response = new MemberListResponse(list,totalPage);
+		return response;
+	}
 
-	// 멤버 프로필 변경
 
 }

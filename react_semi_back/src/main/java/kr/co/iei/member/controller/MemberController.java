@@ -1,6 +1,5 @@
 package kr.co.iei.member.controller;
 
-import java.io.File;
 import java.util.Map;
 import java.util.Random;
 
@@ -23,6 +22,8 @@ import org.springframework.web.multipart.MultipartFile;
 import kr.co.iei.member.model.service.MemberService;
 import kr.co.iei.member.model.vo.LoginMember;
 import kr.co.iei.member.model.vo.Member;
+import kr.co.iei.member.model.vo.MemberListItem;
+import kr.co.iei.member.model.vo.MemberListResponse;
 import kr.co.iei.utils.EmailSender;
 import kr.co.iei.utils.FileUtils;
 
@@ -222,6 +223,13 @@ public class MemberController {
 		} else {
 			return ResponseEntity.status(404).build();
 		}
+	}
+	
+	// 전체 멤버 리스트
+	@GetMapping
+	public ResponseEntity<?> selectAllMember(@ModelAttribute MemberListItem request) {
+		MemberListResponse response= memberService.selectAllMember(request);
+		return ResponseEntity.ok(response);
 	}
 
 }
