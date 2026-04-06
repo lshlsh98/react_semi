@@ -115,52 +115,13 @@ const SideBar = () => {
             비밀번호 변경
           </li>
         </NavLink>
-        {/* <li
-          className={
-            selectMenu === "likehate" ||
-            selectMenu === "likehate_trade" ||
-            selectMenu === "likehate_community"
-              ? styles.active
-              : ""
-          }
-        >
-          <div
-            className={styles.menu_title}
-            onClick={() => {
-              toggleMenu("likehate");
-              setSelectMenu("likehate");
-            }}
-          >
-            <span
-              className={`material-icons ${styles.arrow} ${
-                openMenu === "likehate" ? styles.rotate : ""
-              }`}
-            >
-              chevron_right
-            </span>
-            좋아요 / 싫어요 기록
-          </div>
-          <ul className={openMenu === "likehate" ? styles.open : ""}>
-            <li
-              className={selectMenu === "likehate_trade" ? styles.active : ""}
-              onClick={() => setSelectMenu("likehate_trade")}
-            >
-              거래
-            </li>
-            <li
-              className={
-                selectMenu === "likehate_community" ? styles.active : ""
-              }
-              onClick={() => setSelectMenu("likehate_community")}
-            >
-              커뮤니티
-            </li>
-          </ul>
-        </li> */}
         <NavLink to="/member/mypage/likedislike">
           <li
+            onClick={() => {
+              toggleMenu("likedislike");
+              setSelectMenu("likedislike");
+            }}
             className={selectMenu === "likedislike" ? styles.active : ""}
-            onClick={() => setSelectMenu("likedislike")}
           >
             좋아요 / 싫어요 기록
           </li>
@@ -400,17 +361,19 @@ const SideBar = () => {
               </NavLink>
             </ul>
           </li>
-          <li
-            onClick={() => {
-              toggleMenu("reportedPostManagement");
-              setSelectMenu("reportedPostManagement");
-            }}
-            className={
-              selectMenu === "reportedPostManagement" ? styles.active : ""
-            }
-          >
-            거래 현황
-          </li>
+          <NavLink to="/member/mypage/myinfo">
+            <li
+              onClick={() => {
+                toggleMenu("reportedPostManagement");
+                setSelectMenu("reportedPostManagement");
+              }}
+              className={
+                selectMenu === "reportedPostManagement" ? styles.active : ""
+              }
+            >
+              거래 현황
+            </li>
+          </NavLink>
         </ul>
       )}
     </div>
