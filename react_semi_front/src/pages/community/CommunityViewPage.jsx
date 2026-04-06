@@ -19,7 +19,7 @@ const CommunityViewPage = () => {
       return;
     }
     axios
-      .get(`${import.meta.env_VITE_BACKSERVER}/communities/${communityNo}`)
+      .get(`${import.meta.env.VITE_BACKSERVER}/communities/${communityNo}`)
       .then((res) => {
         console.log(res);
         setCommunity(res.data);
