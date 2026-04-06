@@ -1,0 +1,28 @@
+.report_item {
+  list-style-type: none;
+  display: flex;
+  width: 800px;
+  font-size: 16px;
+  border-bottom: 1px solid black;
+}
+
+.report_writer {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 20%;
+  padding: 10px;
+  border-right: 1px solid black;
+}
+
+.report_reason {
+  width: 80%;
+  padding: 10px;
+}
+
+.title_ul {
+  border-top: 1px solid black;
+  text-align: center;
+  background-color: rgb(247, 240, 240);
+  font-size: 20px;
+}

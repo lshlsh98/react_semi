@@ -1,0 +1,30 @@
+.myboard_wrap {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+
+  padding: 10px;
+}
+
+.myboard_list_content {
+  margin: 0 auto;
+}
+
+.filter_section {
+  width: 770px;
+  margin: 0 auto;
+  display: flex;
+}
+
+.filter_select {
+  margin-left: auto;
+  display: flex;
+  gap: 10px;
+}
+
+.filter_input {
+  align-self: flex-end;
+  display: flex;
+  gap: 10px;
+  align-items: center;
+}
