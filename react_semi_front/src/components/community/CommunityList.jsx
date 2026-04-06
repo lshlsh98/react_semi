@@ -40,10 +40,10 @@ const CommunityItem = ({ community }) => {
           </div>
           <p>{community.communityWriter}</p>
         </div>
-        <diiv className={styles.community_view_count}>
+        <div className={styles.community_view_count}>
           <span class="material-icons">visibility</span>
           <p>{community.viewCount}</p>
-        </diiv>
+        </div>
       </div>
       <div
         className={styles.community_content_wrap}
