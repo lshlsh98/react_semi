@@ -7,6 +7,11 @@ import Button from "../../components/ui/Button";
 import Swal from "sweetalert2";
 import { TextArea } from "../../components/ui/Form";
 
+import ThumbUpAltIcon from "@mui/icons-material/ThumbUpAlt";
+import ThumbUpOffAltIcon from "@mui/icons-material/ThumbUpOffAlt";
+import ThumbDownAltIcon from "@mui/icons-material/ThumbDownAlt";
+import ThumbDownOffAltIcon from "@mui/icons-material/ThumbDownOffAlt";
+
 const CommunityViewPage = () => {
   const navigate = useNavigate();
   const params = useParams();
@@ -59,7 +64,6 @@ const CommunityViewPage = () => {
 
   return (
     <section className={styles.community_wrap}>
-      <h2>커뮤니티 상세보기</h2>
       {community && (
         <>
           <div className={styles.community_view_wrap}>
@@ -118,10 +122,135 @@ const LikeAndDislike = ({ communityNo }) => {
   const [likeInfo, setLikeInfo] = useState(null);
   const [dislikeInfo, setDislikeInfo] = useState(null);
   useEffect(() => {
-    axios.get(
-      `${import.meta.env.VITE_BACKSERVER}/communities/${communityNo}/likes`,
-    );
-  });
+    axios
+      .get(
+        `${import.meta.env.VITE_BACKSERVER}/communities/${communityNo}/likes`,
+      )
+      .then((res) => {
+        console.log(res);
+        setLikeInfo({
+          isLike: res.data?.isLike ?? 0,
+          likeCount: Number(res.data?.likeCount) || 0,
+        });
+      });
+    axios
+      .get(
+        `${import.meta.env.VITE_BACKSERVER}/communities/${communityNo}/dislikes`,
+      )
+      .then((res) => {
+        console.log(res);
+        setDislikeInfo({
+          isDisLike: res.data?.isDisLike ?? 0,
+          dislikeCount: Number(res.data?.dislikeCount) || 0,
+        });
+      });
+  }, []);
+  const likeOn = () => {
+    axios
+      .post(
+        `${import.meta.env.VITE_BACKSERVER}/communities/${communityNo}/likes`,
+      )
+      .then((res) => {
+        console.log(res);
+        if (res.data === 1) {
+          setLikeInfo({
+            ...likeInfo,
+            isLike: 1,
+            likeCount: likeInfo.likeCount + 1,
+          });
+        }
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  };
+
+  const likeOff = () => {
+    axios
+      .delete(
+        `${import.meta.env.VITE_BACKSERVER}/communities/${communityNo}/likes`,
+      )
+      .then((res) => {
+        if (res.data === 1) {
+          setLikeInfo({
+            ...likeInfo,
+            isLike: 0,
+            likeCount: likeInfo.likeCount - 1,
+          });
+        }
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  };
+
+  const dislikeOn = () => {
+    axios
+      .post(
+        `${import.meta.env.VITE_BACKSERVER}/communities/${communityNo}/dislikes`,
+      )
+      .then((res) => {
+        console.log(res);
+        if (res.data === 1) {
+          setDislikeInfo({
+            ...dislikeInfo,
+            disisLike: 1,
+            dislikeCount: dislikeInfo.dislikeCount + 1,
+          });
+        }
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  };
+
+  const dislikeOff = () => {
+    axios
+      .post(
+        `${import.meta.env.VITE_BACKSERVER}/communities/${communityNo}/dislikes`,
+      )
+      .then((res) => {
+        console.log(res);
+        if (res.data === 1) {
+          setDislikeInfo({
+            ...dislikeInfo,
+            disisLike: 1,
+            dislikeCount: dislikeInfo.dislikeCount + 1,
+          });
+        }
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  };
+
+  const loginMsg = () => {
+    Swal.fire({ title: "로그인 후 이용 가능합니다.", icon: "info" });
+  };
+  return (
+    <div>
+      {likeInfo && (
+        <div className={styles.community_like_wrap}>
+          {likeInfo.isLike === 1 ? (
+            <ThumbUpAltIcon onClick={likeOff} />
+          ) : (
+            <ThumbUpOffAltIcon onClick={memberId ? likeOn : loginMsg} />
+          )}
+          <span>{likeInfo.likeCount}</span>
+        </div>
+      )}
+      {dislikeInfo && (
+        <div className={styles.community_dislike_wrap}>
+          {dislikeInfo.isdisLike === 1 ? (
+            <ThumbDownAltIcon onClick={dislikeOff} />
+          ) : (
+            <ThumbDownOffAltIcon onClick={memberId ? dislikeOn : loginMsg} />
+          )}
+          <span>{dislikeInfo.dislikeCount}</span>
+        </div>
+      )}
+    </div>
+  );
 };
 
 const CommunityCommentComponent = ({ communityNo }) => {
@@ -130,6 +259,7 @@ const CommunityCommentComponent = ({ communityNo }) => {
     communityCommentContent: "",
     communityCommentWriter: memberId,
     communityNo: communityNo,
+    communityCommentNo2: "",
   });
   const [communityCommentList, setCommunityCommentList] = useState([]);
   useEffect(() => {
@@ -206,39 +336,37 @@ const CommunityCommentComponent = ({ communityNo }) => {
   };
   return (
     <div className={styles.comment_wrap}>
-      <div className={styles.comment_wrap}>
-        {memberId && (
-          <div className={styles.comment_regist_wrap}>
-            <h3>댓글 등록</h3>
-            <div className={styles.input_item}>
-              <TextArea
-                value={communityComment.communityCommentContent}
-                onChange={(e) => {
-                  setCommunityComment({
-                    ...Comment,
-                    communityCommentContent: e.target.value,
-                  });
-                }}
-              ></TextArea>
-              <Button className="btn primary" onClick={registComment}>
-                등록
-              </Button>
-            </div>
+      {memberId && (
+        <div className={styles.comment_regist_wrap}>
+          <h3>댓글 등록</h3>
+          <div className={styles.input_item}>
+            <TextArea
+              value={communityComment.communityCommentContent}
+              onChange={(e) => {
+                setCommunityComment({
+                  ...communityComment,
+                  communityCommentContent: e.target.value,
+                });
+              }}
+            ></TextArea>
+            <Button className="btn primary" onClick={registComment}>
+              등록
+            </Button>
           </div>
-        )}
-        <div className={styles.comment_list_wrap}>
-          {communityCommentList.map((comment, index) => {
-            return (
-              <CommunityComment
-                key={"comment-" + comment.communityCommentNo}
-                comment={comment}
-                index={index}
-                updateComment={updateComment}
-                deleteComment={deleteComment}
-              />
-            );
-          })}
         </div>
+      )}
+      <div className={styles.comment_list_wrap}>
+        {communityCommentList.map((comment, index) => {
+          return (
+            <CommunityComment
+              key={"comment-" + comment.communityCommentNo}
+              comment={comment}
+              index={index}
+              updateComment={updateComment}
+              deleteComment={deleteComment}
+            />
+          );
+        })}
       </div>
     </div>
   );

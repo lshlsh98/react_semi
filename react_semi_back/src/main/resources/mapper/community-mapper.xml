@@ -56,16 +56,20 @@
 	
 	<select id="selectCommunityCommentList" resultType="communityComment">
 		select
-			community_comment_no;
+			community_comment_no,
 			community_comment_content,
-			community_comment_writer,
-			community_no,
 			community_comment_date,
-			community_comment_no2;
+			community_no,
+			community_comment_writer,
+			community_comment_no2
 		from community_comment_tbl
 		join member_tbl on(community_comment_writer = member_id)
 		where community_no = #{communityNo}
 		order by community_comment_no
+	</select>
+	
+	<select id="selectNewCommunityCommentNo" resultType="int">
+   		select community_comment_seq.NEXTVAL from dual
 	</select>
 	
 	<update id="updateCommunityComment">

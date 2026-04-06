@@ -13,8 +13,6 @@ const CommunityModifyPage = () => {
 
   const [community, setCommunity] = useState(null);
   useEffect(() => {
-    if (!communityNo) return;
-
     axios
       .get(`${import.meta.env.VITE_BACKSERVER}/communities/${communityNo}`)
       .then((res) => {
@@ -24,7 +22,7 @@ const CommunityModifyPage = () => {
       .catch((err) => {
         console.log(err);
       });
-  }, [communityNo]);
+  }, []);
 
   const isWriter =
     community && loginUser

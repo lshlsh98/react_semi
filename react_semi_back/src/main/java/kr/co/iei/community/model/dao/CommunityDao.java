@@ -14,15 +14,15 @@ public interface CommunityDao {
 	
 	Community selectOneCommunity(Integer communityNo);
 
-	int selectNewCommunityCommentNo();
-
 	int insertCommunityComment(CommunityComment communityComment);
-
-	CommunityComment selectCommunityComment(int communityCommentNo);
 
 	List<CommunityComment> selectCommunityCommentList(Integer communityNo);
 
-	int updateCommunityComment(CommunityComment comment);
+	int selectNewCommunityCommentNo();
+	
+	CommunityComment selectOneCommunityComment(int communityCommentNo);
+
+
 
 
 }

@@ -45,31 +45,17 @@ public class CommunityController {
 		return ResponseEntity.ok(community);
 	}
 	
-	@PutMapping(value="/{communityNo}")
-	public ResponseEntity<?> updateCommunity(@PathVariable Integer communityNo, @ModelAttribute Community community){
-		community.setCommunityNo(communityNo);
-		System.out.println(community);
-		Document doc = Jsoup.parse(community.getCommunityContent());
-		int result = communityService.updateCommunity(community);
-		return ResponseEntity.ok(result);
-	}
-	
-	@PostMapping(value="/comments")
-	public ResponseEntity<?> insertCommunityComment(@RequestBody CommunityComment communityComment){
-		CommunityComment newComment = communityService.insertCommunityComment(communityComment);
-		return ResponseEntity.ok(newComment);
-	}
-	
 	@GetMapping(value="/{communityNo}/comments")
 	public ResponseEntity<?> selectCommunityCommentList(@PathVariable Integer communityNo){
 		List<CommunityComment> commentList = communityService.selectCommunityCommentList(communityNo);
 		return ResponseEntity.ok(commentList);
 	}
 	
-	@PutMapping(value="/comments/{communityCommentNo}")
-	public ResponseEntity<?> updateCommunityComment(@RequestBody CommunityComment comment){
-		int result = communityService.updateCommunityComment(comment);
-		return ResponseEntity.ok(result);
+	
+	@PostMapping(value="/comments")
+	public ResponseEntity<?> insertCommunityComment(@RequestBody CommunityComment communityComment){
+		CommunityComment newComment = communityService.insertCommunityComment(communityComment);
+		return ResponseEntity.ok(newComment);
 	}
 }
 

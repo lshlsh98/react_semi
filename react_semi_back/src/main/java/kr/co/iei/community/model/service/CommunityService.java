@@ -28,31 +28,17 @@ public class CommunityService {
 		return community;
 	}
 
-	
-	@Transactional
-	public CommunityComment insertCommunityComment(CommunityComment communityComment) {
-		int communityCommentNo = communityDao.selectNewCommunityCommentNo();
-		communityComment.setCommunityCommentNo(communityCommentNo);
-		int result = communityDao.insertCommunityComment(communityComment);
-		CommunityComment newComment = communityDao.selectCommunityComment(communityCommentNo);
-		return newComment;
-	}
-
-
 	public List<CommunityComment> selectCommunityCommentList(Integer communityNo) {
 		List<CommunityComment> commentList = communityDao.selectCommunityCommentList(communityNo);
 		return commentList;
 	}
 
-	@Transactional
-	public int updateCommunityComment(CommunityComment comment) {
-		int result = communityDao.updateCommunityComment(comment);
-		return result;
-	}
-
-	public int updateCommunity(Community community) {
-		// TODO Auto-generated method stub
-		return 0;
+	public CommunityComment insertCommunityComment(CommunityComment communityComment) {
+		int communityCommentNo = communityDao.selectNewCommunityCommentNo();
+		communityComment.setCommunityCommentNo(communityCommentNo);
+		int result = communityDao.insertCommunityComment(communityComment);
+		CommunityComment newComment = communityDao.selectOneCommunityComment(communityCommentNo);
+		return newComment;
 	}
 
 }
