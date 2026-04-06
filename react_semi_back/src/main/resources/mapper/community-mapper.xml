@@ -69,4 +69,16 @@
   		where board_no = #{boardNo}
 	</update>
 	
+	<select id="selectCommunityCount" resultType="Integer">
+		select count(*) from community_tbl 
+		where community_status = #{status}
+		<if test ="searchType==1">
+		and community_title like '%'||#{searchKeyword}||'%'
+		or community_content like '%'||#{searchKeyword}||'%'
+		</if>
+		<if test ="searchType==2">
+		and community_writer = #{searchKeyword}
+		</if>
+	</select>
+	
 </mapper>
