@@ -35,13 +35,13 @@ const CommunityItem = ({ community }) => {
                 src={`${import.meta.env.VITE_BACKSERVER}/semi/${community.memberThumb}`}
               ></img>
             ) : (
-              <span class="material-icons">account_circle</span>
+              <span className="material-icons">account_circle</span>
             )}
           </div>
           <p>{community.communityWriter}</p>
         </div>
         <div className={styles.community_view_count}>
-          <span class="material-icons">visibility</span>
+          <span className="material-icons">visibility</span>
           <p>{community.viewCount}</p>
         </div>
       </div>
@@ -52,7 +52,7 @@ const CommunityItem = ({ community }) => {
         }}
       >
         <p className={styles.community_title}>{community.communityTitle}</p>
-        <p>{community.communityContent}</p>
+        <ConvertContent communityContent={community.communityContent} />
       </div>
       <div className={styles.community_info_wrap}>
         <div className={styles.community_info_item_wrap}>
@@ -69,6 +69,13 @@ const CommunityItem = ({ community }) => {
       </div>
     </li>
   );
+};
+
+const ConvertContent = ({ communityContent }) => {
+  const parser = new DOMParser();
+  const doc = parser.parseFromString(communityContent, "text/html");
+  const text = doc.body.textContent || "";
+  return <div>{text}</div>;
 };
 
 export default CommunityList;
