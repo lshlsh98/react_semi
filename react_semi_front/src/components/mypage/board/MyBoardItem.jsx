@@ -22,9 +22,6 @@ const MyBoardItem = ({
   const memberGrade = useAuthStore((state) => state.memberGrade);
 
   const changeStatus = () => {
-    console.log(board.boardNo);
-    console.log(index);
-
     const toggle = contentStatus === 1 ? 2 : 1;
     const obj = { boardNo: board.boardNo, status: toggle };
 
