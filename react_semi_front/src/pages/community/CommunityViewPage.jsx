@@ -1,5 +1,5 @@
 import { useNavigate, useParams } from "react-router-dom";
-import styles from "./Community.module.css";
+import styles from "./CommunityViewPage.module.css";
 import { useEffect, useState } from "react";
 import axios from "axios";
 import useAuthStore from "../../components/utils/useAuthStore";
@@ -11,12 +11,16 @@ import ThumbUpAltIcon from "@mui/icons-material/ThumbUpAlt";
 import ThumbUpOffAltIcon from "@mui/icons-material/ThumbUpOffAlt";
 import ThumbDownAltIcon from "@mui/icons-material/ThumbDownAlt";
 import ThumbDownOffAltIcon from "@mui/icons-material/ThumbDownOffAlt";
+import ReportIcon from "@mui/icons-material/Report";
+import ReportGmailerrorredIcon from "@mui/icons-material/ReportGmailerrorred";
+import Pagination from "@mui/material/Pagination";
 
 const CommunityViewPage = () => {
   const navigate = useNavigate();
   const params = useParams();
   const communityNo = params.communityNo;
   const { memberId, isReady } = useAuthStore();
+
   const [community, setCommunity] = useState(null);
   console.log(isReady, "isReady 확인");
   useEffect(() => {
@@ -90,6 +94,7 @@ const CommunityViewPage = () => {
           </div>
 
           <div className={styles.community_action_wrap}>
+            <LikeAndDislike communityNo={communityNo} />
             {memberId && memberId === community.communityWriter && (
               <div>
                 <Button
@@ -247,6 +252,83 @@ const LikeAndDislike = ({ communityNo }) => {
             <ThumbDownOffAltIcon onClick={memberId ? dislikeOn : loginMsg} />
           )}
           <span>{dislikeInfo.dislikeCount}</span>
+        </div>
+      )}
+    </div>
+  );
+};
+
+const Report = ({ communityNo }) => {
+  const { memberId } = useAuthStore();
+  const [reportInfo, setReportInfo] = useState(null);
+  useEffect(() => {
+    axios
+      .get(
+        `${import.meta.env.VITE_BACKSERVER}/commuities/${communityNo}/reports`,
+      )
+      .then((res) => {
+        console.log(res);
+        setReportInfo({
+          isReport: res.data?.isReport ?? 0,
+          reportCount: Number(res.data?.reportCount) || 0,
+        });
+      });
+  }, []);
+  const loginMsg = () => {
+    Swal.fire({ title: "로그인 후 이용 가능합니다.", icon: "info" });
+  };
+  return (
+    <div>
+      {reportInfo && (
+        <div className={styles.community_report_wrap}>
+          {reportInfo.isReport === 1 ? (
+            <ReportIcon
+              onClick={() => {
+                axios
+                  .delete(
+                    `${import.meta.env.VITE_BACKSERVER}/communities/${communityNo}/reports`,
+                  )
+                  .then((res) => {
+                    if (res.data === 1) {
+                      setReportInfo({
+                        ...reportInfo,
+                        isReport: 0,
+                        reportCount: reportInfo.reportCount - 1,
+                      });
+                    }
+                  })
+                  .catch((err) => {
+                    console.log(err);
+                  });
+              }}
+            />
+          ) : (
+            <ReportGmailerrorredIcon
+              onClick={
+                memberId
+                  ? () => {
+                      axios
+                        .post(
+                          `${import.meta.env.VITE_BACKSERVER}/communities/${communityNo}/reports`,
+                        )
+                        .then((res) => {
+                          if (res.data === 1) {
+                            setReportInfo({
+                              ...reportInfo,
+                              isReport: 1,
+                              reportCount: reportInfo.reportCount + 1,
+                            });
+                          }
+                        })
+                        .catch((err) => {
+                          console.log(err);
+                        });
+                    }
+                  : loginMsg
+              }
+            />
+          )}
+          <span>{reportInfo.reportCount}</span>
         </div>
       )}
     </div>

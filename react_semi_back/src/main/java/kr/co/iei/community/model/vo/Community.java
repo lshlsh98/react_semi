@@ -18,4 +18,6 @@ public class Community {
 	private Integer communityStatus;	// 글 공개 여부 (1:공개 2:비공개)
 	private String communityWriter; 	// 글 작성자
 	private Integer viewCount;			// 조회수
+	private Integer likeCount;			// 커뮤 좋아요
+	private Integer dislikeCount;		// 커뮤 싫어요
 }

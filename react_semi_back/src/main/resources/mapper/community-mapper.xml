@@ -77,7 +77,47 @@
 			community_comment_content = #{communityCommentContent}
 		where community_comment_no = #{communityCommentNo}
 	</update>
+	
+	<select id="selectLikeCount" resultType="int">
+  		select count(*) from community_like_tbl where community_no = #{communityNo}
+  	</select>
+  	
+  	<select id="selectIsLike" resultType="int">
+  		select count(*) from community_like_tbl
+  		where community_no = #{communityNo} and member_id = #{memberId}
+  	</select>
+  	
+  	<insert id="insertLike">
+  		insert into community_like_tbl values(#{communityNo}, #{memberId})
+  	</insert>
+  	
+  	<delete id="deleteLike">
+  		delete from community_like_tbl where community_no = #{communityNo} and member_id = #{memberId}
+  	</delete>
+  	
+  	<select id="selectDislikeCount">
+  		select count(*) from community_dislike_tbl where community_no = #{communityNo}
+  	</select>
+  	
+  	<select id="selectIsDislike">
+  		select count(*) from community_dislike_tbl
+  		where community_no = #{communityNo} and member_id = #{memberId}
+  	</select>
+  	
+  	<insert id="insertDislike">
+  		insert into community_dislike_tbl values(#{communityNo}, #{memberId})
+  	</insert>
+  	
+  	<delete id="deleteDislike">
+  		delete from community_dislike_tbl where community_no = #{communityNo} and member_id = #{memberId}
+  	</delete>
+  	
+  	<select id="selectReportCount">
+  		select count(*) from community_report_tbl where community_no = #{communityNo}
+  	</select>
 </mapper>
+
+
 
 
 

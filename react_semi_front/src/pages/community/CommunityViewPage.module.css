@@ -5,5 +5,19 @@
   padding: 15px 20px;
   text-align: center;
   height: 50px;
-  color: white;
+}
+
+.comment_list_wrap {
+  margin-top: 32px;
+}
+.comment_item {
+  list-style-type: none;
+  padding: 12px;
+  border-bottom: none;
+}
+.comment_content {
+  margin-top: 16px;
+}
+.comment_content > textarea {
+  min-height: 80px;
 }
