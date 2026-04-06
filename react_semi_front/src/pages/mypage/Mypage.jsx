@@ -9,13 +9,10 @@ import ChangePw from "../../components/mypage/ChangePw";
 import MyMarketPage from "../../components/mypage/MyMarketPage";
 import MyCommunityCommentPage from "../../components/mypage/MyCommunityCommentPage";
 import MyMarketCommentPage from "../../components/mypage/MyMarketCommentPage";
-
 const Mypage = () => {
   const navigate = useNavigate();
   const { memberId, isReady, isNotLogout } = useAuthStore();
-
   console.log(useAuthStore());
-
   if (isReady && memberId == null && !isNotLogout) {
     Swal.fire({
       title: "로그인 후 이용 가능합니다.",
@@ -25,7 +22,6 @@ const Mypage = () => {
     });
     return;
   }
-
   return (
     memberId && (
       <div className={styles.mypage_wrap}>
@@ -59,10 +55,8 @@ const Mypage = () => {
     )
   );
 };
-
 const Profile = () => {
   const { memberId, memberName, memberThumb } = useAuthStore();
-
   return (
     <div className={styles.sidebar}>
       <div
@@ -83,20 +77,16 @@ const Profile = () => {
     </div>
   );
 };
-
 const SideBar = () => {
   const { memberGrade } = useAuthStore();
-
   const [selectMenu, setSelectMenu] = useState(null);
   const [openMenu, setOpenMenu] = useState(null);
-
   const toggleMenu = (menu) => {
     setOpenMenu(openMenu === menu ? null : menu);
   };
-
   return (
     <div className={styles.sidebar}>
-      <ul className={styles.normal_menu}>
+      <ul>
         <NavLink to="/member/mypage/myinfo">
           <li
             className={selectMenu === "myinfo" ? styles.active : ""}
@@ -263,7 +253,6 @@ const SideBar = () => {
           나의 탄소 기여도
         </li>
       </ul>
-
       {memberGrade !== 3 && (
         <ul className={styles.management}>
           <li>관리 페이지</li>
@@ -277,10 +266,6 @@ const SideBar = () => {
             회원 관리
           </li>
           <li
-            onClick={() => {
-              toggleMenu("postManagementManager");
-              setSelectMenu("postManagementManager");
-            }}
             className={
               selectMenu === "postManagement_admin" ||
               selectMenu === "postManagement_trade_admin" ||
@@ -410,5 +395,4 @@ const SideBar = () => {
     </div>
   );
 };
-
 export default Mypage;

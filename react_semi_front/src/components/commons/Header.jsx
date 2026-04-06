@@ -14,11 +14,7 @@ const Header = () => {
       <div className={styles.header_top}>
         <div className={styles.site_logo}>
           <Link to="/">
-            <img
-              src="../../public/logo.png"
-              alt="C2C 로고"
-              className={styles.logo}
-            />
+            <img src="/logo.png" alt="C2C 로고" className={styles.logo} />
           </Link>
         </div>
 
