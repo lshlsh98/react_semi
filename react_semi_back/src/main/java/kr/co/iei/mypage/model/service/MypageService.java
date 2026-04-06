@@ -137,6 +137,13 @@ public class MypageService {
 	public List<BoardSummary> findLikeDislikeAll(BoardListRequestDto request) {
 		List<BoardSummary> list = mypageDao.findLikeDislikeAll(request);
 		
+		return list;
+	}//
+
+	public int findLikeDislikeCount(BoardListRequestDto request) {
+		int count = mypageDao.findLikeDislikeCount(request);
+		
+		return count;
 	}//
 
 }

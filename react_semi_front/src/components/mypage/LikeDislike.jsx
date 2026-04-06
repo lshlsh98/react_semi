@@ -8,6 +8,7 @@ import axios from "axios";
 import SearchIcon from "@mui/icons-material/Search";
 import { Input } from "../ui/Form";
 import { useParams } from "react-router-dom";
+import LikeDislikeList from "./board/LikeDislikeList";
 
 const LikeDislike = () => {
   const memberId = useAuthStore((state) => state.memberId);
@@ -24,10 +25,8 @@ const LikeDislike = () => {
         `${import.meta.env.VITE_BACKSERVER}/mypages/board/likedislike?page=${page}&size=${size}&order=${order}&status=${status}&memberId=${memberId}`,
       )
       .then((res) => {
-        console.log("here111111111");
-        console.log(res);
-        // setBoardList(res.data.list);
-        // setTotalPage(res.data.totalPage);
+        setBoardList(res.data.list);
+        setTotalPage(res.data.totalPage);
       })
       .catch((err) => {
         console.log(err);
@@ -66,12 +65,7 @@ const LikeDislike = () => {
         </div>
       </div>
       <div className={styles.myboard_list_content}>
-        {/* <MyBoardList
-          boardList={boardList}
-          setBoardList={setBoardList}
-          status={status}
-          isAdminMode={isAdminMode}
-        /> */}
+        <LikeDislikeList boardList={boardList} />
       </div>
       <div className={styles.pagination_section}>
         <Pagination
