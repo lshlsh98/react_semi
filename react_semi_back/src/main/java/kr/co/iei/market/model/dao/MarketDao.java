@@ -20,4 +20,12 @@ public interface MarketDao {
 	int insertMarket(Market market);
 
 	int insertMarketFile(MarketFile marketFile);
+
+	Market selectOneMarket(Integer marketNo);
+
+	List<MarketFile> selectMarketFileList(Integer marketNo);
+
+	int incrementViewCount(Integer marketNo);
+
+	
 }

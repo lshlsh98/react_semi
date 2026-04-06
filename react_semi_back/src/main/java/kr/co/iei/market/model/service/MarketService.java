@@ -49,4 +49,20 @@ public class MarketService {
 		}
 		return result;
 	}
+	
+	@Transactional
+	public Market selectOneMarket(Integer marketNo) {
+		///마켓 게시글 조회
+		
+		int result = marketDao.incrementViewCount(marketNo);	//조회수증가
+		if(result>0) {
+			System.out.println("조회수증가");
+		}
+		Market m = marketDao.selectOneMarket(marketNo);
+		List<MarketFile> fileList = marketDao.selectMarketFileList(marketNo);
+		m.setFileList(fileList);
+		return m;
+	}
+	
+	
 }

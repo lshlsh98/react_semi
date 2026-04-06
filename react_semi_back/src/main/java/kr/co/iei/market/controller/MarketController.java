@@ -9,12 +9,13 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
-
+import kr.co.iei.WebConfig;
 import kr.co.iei.market.model.service.MarketService;
 import kr.co.iei.market.model.vo.ListItem;
 import kr.co.iei.market.model.vo.ListResponse;
@@ -27,12 +28,18 @@ import kr.co.iei.utils.FileUtils;
 @RequestMapping(value="/markets")
 
 public class MarketController {
+
+    private final WebConfig webConfig;
 	@Autowired
 	private MarketService marketService;
 	@Value("${file.root}")
 	private String root;
 	@Autowired
 	private FileUtils fileUtil;
+
+    MarketController(WebConfig webConfig) {
+        this.webConfig = webConfig;
+    }
 	
 	///전체 마켓게시글 조회
 	@GetMapping
@@ -47,12 +54,12 @@ public class MarketController {
 		
 		/*---------------------files 정상작동 확인--------------------------
 		
-		for (MultipartFile file : files) {
-		    System.out.println("파일명: " + file.getOriginalFilename());
-		    System.out.println("크기: " + file.getSize());
-		    System.out.println("타입: " + file.getContentType());
-		}
 		--------------------------------------------------------------------*/
+		for (MultipartFile file : files) {
+			System.out.println("파일명: " + file.getOriginalFilename());
+			System.out.println("크기: " + file.getSize());
+			System.out.println("타입: " + file.getContentType());
+		}
 		
 		List<MarketFile> fileList = new ArrayList<MarketFile>();
 		
@@ -75,5 +82,13 @@ public class MarketController {
 		int result = marketService.insertMarket(market, fileList);
 		
 		return ResponseEntity.ok(result);
+	}
+	
+	@GetMapping(value="/{marketNo}")
+	public ResponseEntity<?> selectOneMarket(@PathVariable Integer marketNo){
+		//System.out.println(marketNo);
+		Market m = marketService.selectOneMarket(marketNo);
+		//System.out.println(m);
+		return ResponseEntity.ok(m);
 	}
 }

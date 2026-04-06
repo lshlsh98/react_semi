@@ -190,7 +190,7 @@ const MarketItem = ({ market }) => {
 
       <div className={styles.info}>
         <p>제목 : {market.marketTitle}</p>
-        <p>작성일 : {market.marketDate}</p>
+        <p>작성일 : {market.marketDate.slice(0, 10)}</p>
         <p>작성자 : {market.marketWriter}</p>
         <p>조회수 : {market.viewCount}</p>
 

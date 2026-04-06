@@ -6,7 +6,6 @@ import styles from "./MarketWritePage.module.css";
 import axios from "axios";
 import Button from "../../components/ui/Button";
 import { Input } from "../../components/ui/form";
-// 파일추가 아이콘
 import InsertPhotoIcon from "@mui/icons-material/InsertPhoto";
 import DeleteIcon from "@mui/icons-material/Delete";
 import { useKakaoPostcode } from "@clroot/react-kakao-postcode";
@@ -30,6 +29,7 @@ import RedoIcon from "@mui/icons-material/Redo";
 
 const MarketWritePage = () => {
   const { memberId, memberAddr } = useAuthStore();
+  //console.log(memberId, typeof memberId);
   //console.log(memberAddr, typeof memberAddr);
   const navigate = useNavigate();
 
@@ -42,11 +42,7 @@ const MarketWritePage = () => {
         navigate("/member/login");
       });
     }
-    const saved = localStorage.getItem("tempMarket");
-    if (saved) {
-      setMarket(JSON.parse(saved));
-    }
-  }, [memberId]);
+  }, [memberId, memberAddr]);
 
   /* 여기서부터 시작 */
 
@@ -55,7 +51,7 @@ const MarketWritePage = () => {
     marketContent: "",
     marketWriter: memberId,
     sellPrice: "",
-    sellAddr: "",
+    sellAddr: memberAddr,
   });
   /* 파일 관리용 스테이트 */
   const [files, setFiles] = useState([]);
@@ -73,10 +69,10 @@ const MarketWritePage = () => {
       });
     }
     /* 최대 이미지 갯수 설정 */
-    if (files.length + imageFiles.length > 3) {
+    if (files.length + imageFiles.length > 10) {
       Swal.fire({
         icon: "warning",
-        title: "이미지는 최대 3장까지 업로드 가능합니다.",
+        title: "이미지는 최대 10장까지 업로드 가능합니다.",
       });
       return;
     }
@@ -170,10 +166,9 @@ const MarketWritePage = () => {
     for (let pair of form.entries()) {
       console.log(pair[0], pair[1]);
     }
-    console.log(market.marketContent.length);
+    //console.log(market.marketContent.length);
     /* 마켓 등록 요청 */
 
-    /*
     axios
       .post(`${import.meta.env.VITE_BACKSERVER}/markets`, form, {
         headers: {
@@ -194,7 +189,6 @@ const MarketWritePage = () => {
       .catch((err) => {
         console.log(err);
       });
-    */
   };
 
   /* 판매주소*/
@@ -286,7 +280,7 @@ const MarketWritePage = () => {
         <label
           htmlFor="files"
           className={styles.file_btn}
-          title="이미지는 최대 3장까지 저장됩니다."
+          title="이미지는 최대 10장까지 저장됩니다."
         >
           파일추가
         </label>
