@@ -152,14 +152,6 @@ const Actions = ({ board, isAdminMode }) => {
       </div>
       <div
         className={
-          board.isDisliked === 1 ? styles.isDisliked : styles.action_default
-        }
-      >
-        <ThumbDownIcon />
-        <div>{board.dislikeCount}</div>
-      </div>
-      <div
-        className={
           board.isCommented === 1 ? styles.isCommented : styles.action_default
         }
       >
