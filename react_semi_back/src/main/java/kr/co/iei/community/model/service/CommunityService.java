@@ -9,7 +9,7 @@ import org.springframework.transaction.annotation.Transactional;
 import kr.co.iei.community.model.dao.CommunityDao;
 import kr.co.iei.community.model.vo.Community;
 import kr.co.iei.community.model.vo.CommunityComment;
-import kr.co.iei.community.model.vo.ListResponse;
+import kr.co.iei.community.model.vo.CommunityListResponse;
 
 @Service
 public class CommunityService {

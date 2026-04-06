@@ -7,14 +7,15 @@ import TextEditor from "../../components/ui/TextEditor";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import Swal from "sweetalert2";
+import useAuthStore from "../../components/utils/useAuthStore";
 
 const CommunityWritePage = () => {
+  const { memberId } = useAuthStore();
   const navigate = useNavigate();
-
   const [community, setCommunity] = useState({
     communityTitle: "",
     communityContent: "",
-    communityWriter: "",
+    communityWriter: memberId,
   });
 
   const [member, setMember] = useState(3); // 1: 슈퍼 유저, 2: 관리자, 3: 일반
@@ -30,7 +31,10 @@ const CommunityWritePage = () => {
   };
 
   const registCommunity = () => {
-    if (community.communityTitle === "" || community.communityContent === "") {
+    if (
+      community.communityTitle === "제목" ||
+      community.communityContent === "내용"
+    ) {
       return;
     }
     const form = new FormData();

@@ -113,6 +113,17 @@ const CommunityViewPage = () => {
   );
 };
 
+const LikeAndDislike = ({ communityNo }) => {
+  const { memberId } = useAuthStore();
+  const [likeInfo, setLikeInfo] = useState(null);
+  const [dislikeInfo, setDislikeInfo] = useState(null);
+  useEffect(() => {
+    axios.get(
+      `${import.meta.env.VITE_BACKSERVER}/communities/${communityNo}/likes`,
+    );
+  });
+};
+
 const CommunityCommentComponent = ({ communityNo }) => {
   const { memberId } = useAuthStore();
   const [communityComment, setCommunityComment] = useState({

@@ -9,7 +9,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 @Data
-public class ListResponse {
+public class CommunityListResponse {
 	private List<Community> items;
 	private Integer totalPage;
 }
