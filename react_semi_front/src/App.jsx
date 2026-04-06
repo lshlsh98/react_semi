@@ -6,6 +6,7 @@ import Header from "./components/commons/Header";
 import Join from "./pages/member/Join";
 import Login from "./pages/member/Login";
 import Mypage from "./pages/mypage/Mypage";
+import CommunityWritePage from "./pages/community/CommunityWritePage";
 import Find_id from "./pages/member/Find_id";
 import MarketListPage from "./pages/market/MarketListPage";
 import MarketWritePage from "./pages/market/MarketWritePage";
@@ -17,6 +18,8 @@ import { useEffect } from "react";
 import Map from "./pages/map/Map";
 import CommunityListPage from "./pages/community/CommunityListPage";
 import MainPage from "./pages/main/MainPage";
+import CommunityModifyPage from "./pages/community/CommunityModifyPage";
+import CommunityViewPage from "./pages/community/CommunityViewPage";
 
 function App() {
   const { endTime, token } = useAuthStore(); // endTime = 만료시간, token = 걍 토큰
@@ -68,6 +71,9 @@ function App() {
           <Route path="market/view/:marketNo" element={<MarketViewPage />} />
 
           <Route path="/member/mypage/*" element={<Mypage />} />
+          <Route path="/community/write" element={<CommunityWritePage />} />
+          <Route path="/community/view" element={<CommunityViewPage />} />
+          <Route path="/community/modify/" element={<CommunityModifyPage />} />
         </Routes>
       </div>
       <Footer />

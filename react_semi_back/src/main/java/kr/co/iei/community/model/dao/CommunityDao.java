@@ -13,5 +13,12 @@ public interface CommunityDao {
 	Integer selectCommunityCount(CommunityListItem request);
 
 	List<Community> selectCommunityList(CommunityListItem request);
+	
+	int insertCommunity(Community community);
+	
+	Community selectOneBoard(int communityNo);
+
+	int updateCommunity(Community community);
+
 
 }
