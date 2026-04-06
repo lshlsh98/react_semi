@@ -91,24 +91,30 @@ public class MemberService {
 		        && member.getMemberThumb() == null) {
 			deleteFile(oldM.getMemberThumb(), root);
 		}
+		
 		return result;
 	}
 
 	private boolean deleteFile(String filename, String root) {
-		System.out.println(filename);
 		if (filename == null || filename.isEmpty())
 			return false;
 		File file = new File(root + filename);
-		System.out.println(file);
-		System.out.println(file.exists());
 		if (file.exists()) {
+			System.out.println("delete");
 			return file.delete();
 		}
 		return false;
 	}
 
-	public int memberDelete(String memberId) {
+	public int memberDelete(String memberId, String root) {
+		Member m = memberDao.selectOneMember(memberId);
+		
 		int result = memberDao.memberDelete(memberId);
+		
+		if (result == 1 && m.getMemberThumb() != null ) {
+			deleteFile(m.getMemberThumb(), root);
+		}
+		
 		return result;
 	}
 

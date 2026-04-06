@@ -207,7 +207,8 @@ public class MemberController {
 	// 회원 탈퇴
 	@DeleteMapping(value = "/{memberId}")
 	public ResponseEntity<?> memberDelete(@PathVariable String memberId) {
-		int result = memberService.memberDelete(memberId);
+		String savepath = root + "semi/";
+		int result = memberService.memberDelete(memberId, savepath);
 		return ResponseEntity.ok(result);
 	}
 
