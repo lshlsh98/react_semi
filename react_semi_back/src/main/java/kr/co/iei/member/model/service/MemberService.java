@@ -76,7 +76,6 @@ public class MemberService {
 	    int result = memberDao.updateThumbnail(m);
 
 	    if (result == 1 && oldThumb != null) {
-			System.out.println("delete");
 	        deleteFile(oldThumb, root);
 	    }
 
@@ -84,7 +83,6 @@ public class MemberService {
 	}
 
 	public int memberUpdate(String memberId, Member member, String root) {
-		System.out.println("memberid:" + memberId);
 		Member oldM = memberDao.selectOneMember(memberId);
 
 		int result = memberDao.memberUpdate(member);
@@ -102,7 +100,6 @@ public class MemberService {
 			return false;
 		File file = new File(root + filename);
 		if (file.exists()) {
-			System.out.println("delete");
 			return file.delete();
 		}
 		return false;

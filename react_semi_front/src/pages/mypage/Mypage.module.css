@@ -69,6 +69,10 @@
   cursor: pointer;
 }
 
+.sidebar:last-child {
+  border-bottom: none;
+}
+
 .sidebar li.active {
   color: var(--primary);
 }
@@ -92,6 +96,10 @@
     max-height 0.5s ease,
     padding 0.5s ease;
   padding-left: 15px;
+}
+
+.sidebar ul ul li:last-child {
+  border-bottom: none;
 }
 
 .sidebar ul ul.open {
@@ -119,11 +127,9 @@
 
 .sidebar > ul > :last-child {
   cursor: default;
-  border-bottom: none;
 }
 
 .management {
-  border-top: 1px solid var(--gray6);
   padding-top: 50px;
 }
 

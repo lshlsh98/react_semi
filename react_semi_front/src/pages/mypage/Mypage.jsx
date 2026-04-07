@@ -7,6 +7,7 @@ import Swal from "sweetalert2";
 import ChangePw from "../../components/mypage/ChangePw";
 import MemberManagement from "../../components/mypage/MemberManagement";
 import MemberInfoManagement from "../../components/mypage/MemberInfoManagement";
+import CarbonContribution from "../../components/mypage/CarbonContribution";
 
 const Mypage = () => {
   const navigate = useNavigate();
@@ -42,6 +43,10 @@ const Mypage = () => {
               <Route index element={<MemberManagement />} />
               <Route path=":memberId" element={<MemberInfoManagement />} />
             </Route>
+            <Route
+              path="carbon-contribution"
+              element={<CarbonContribution />}
+            ></Route>
           </Routes>
         </div>
       </div>
@@ -89,7 +94,10 @@ const SideBar = () => {
         <NavLink to="/member/mypage/myinfo">
           <li
             className={selectMenu === "myinfo" ? styles.active : ""}
-            onClick={() => setSelectMenu("myinfo")}
+            onClick={() => {
+              setSelectMenu("myinfo");
+              setOpenMenu(null);
+            }}
           >
             내 정보
           </li>
@@ -97,7 +105,10 @@ const SideBar = () => {
         <NavLink to="/member/mypage/pw">
           <li
             className={selectMenu === "pw" ? styles.active : ""}
-            onClick={() => setSelectMenu("pw")}
+            onClick={() => {
+              setSelectMenu("pw");
+              setOpenMenu(null);
+            }}
           >
             비밀번호 변경
           </li>
@@ -234,15 +245,17 @@ const SideBar = () => {
             </li>
           </ul>
         </li>
-        <li
-          onClick={() => {
-            toggleMenu("Contribution");
-            setSelectMenu("Contribution");
-          }}
-          className={selectMenu === "Contribution" ? styles.active : ""}
-        >
-          나의 탄소 기여도
-        </li>
+        <NavLink to="/member/mypage/carbon-contribution">
+          <li
+            onClick={() => {
+              setSelectMenu("Contribution");
+              setOpenMenu(null);
+            }}
+            className={selectMenu === "Contribution" ? styles.active : ""}
+          >
+            나의 탄소 기여도
+          </li>
+        </NavLink>
       </ul>
 
       {memberGrade !== 3 && (
@@ -251,8 +264,8 @@ const SideBar = () => {
           <NavLink to="/member/mypage/member-management">
             <li
               onClick={() => {
-                toggleMenu("memberManagement");
                 setSelectMenu("memberManagement");
+                setOpenMenu(null);
               }}
               className={selectMenu === "memberManagement" ? styles.active : ""}
             >
@@ -261,8 +274,8 @@ const SideBar = () => {
           </NavLink>
           <li
             onClick={() => {
-              toggleMenu("postManagementManager");
               setSelectMenu("postManagementManager");
+              setOpenMenu(null);
             }}
             className={
               selectMenu === "postManagementManager" ? styles.active : ""
@@ -272,8 +285,8 @@ const SideBar = () => {
           </li>
           <li
             onClick={() => {
-              toggleMenu("reportedPostManagement");
               setSelectMenu("reportedPostManagement");
+              setOpenMenu(null);
             }}
             className={
               selectMenu === "reportedPostManagement" ? styles.active : ""

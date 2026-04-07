@@ -22,7 +22,6 @@ const MemberInfoManagement = () => {
 
   useEffect(() => {
     if (!memberId) return;
-
     axios
       .get(`${import.meta.env.VITE_BACKSERVER}/members/${memberId}`)
       .then((res) => {
@@ -275,10 +274,10 @@ const MemberInfoManagement = () => {
                   type="radio"
                   value={member.memberGrade}
                   checked={member.memberGrade === 3}
+                  disabled={memberGrade === 2 ? true : false}
                   onChange={() => {
                     setMember((prev) => ({ ...prev, memberGrade: 3 }));
                   }}
-                  disabled={memberGrade === 2 ? true : false}
                 />
                 일반회원
               </label>
@@ -289,6 +288,9 @@ const MemberInfoManagement = () => {
                   type="radio"
                   value={member.memberGrade}
                   checked={member.memberGrade === 2}
+                  disabled={
+                    member.memberGrade === 1 && memberGrade !== 1 ? true : false
+                  }
                   onChange={() => {
                     setMember((prev) => ({ ...prev, memberGrade: 2 }));
                   }}
