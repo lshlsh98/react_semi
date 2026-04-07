@@ -36,7 +36,7 @@ const MemberManagement = () => {
   }, [page, order, searchType, searchKeyword, selectedGrade]);
 
   return (
-    <div className={styles.member_management}>
+    <section className={styles.member_management}>
       <h3 className="page-title">회원 관리</h3>
       <div className={styles.search_wrap}>
         <div className={styles.order_wrap}>
@@ -110,7 +110,7 @@ const MemberManagement = () => {
           />
         </div>
       </div>
-    </div>
+    </section>
   );
 };
 

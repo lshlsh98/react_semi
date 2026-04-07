@@ -123,7 +123,7 @@ const MemberInfoManagement = () => {
   };
 
   return (
-    <div className={styles.member_info_wrap}>
+    <section className={styles.member_info_wrap}>
       <h3 className="page-title">회원 정보</h3>
       <div className={styles.profile_info_update}>
         <form
@@ -313,7 +313,7 @@ const MemberInfoManagement = () => {
           </Button>
         </form>
       </div>
-    </div>
+    </section>
   );
 };
 

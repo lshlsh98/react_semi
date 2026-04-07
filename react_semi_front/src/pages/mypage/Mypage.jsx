@@ -58,7 +58,7 @@ const Profile = () => {
   const { memberId, memberName, memberThumb } = useAuthStore();
 
   return (
-    <div className={styles.sidebar}>
+    <section className={styles.sidebar}>
       <div
         className={
           memberThumb ? styles.member_thumb_exists : styles.member_thumb
@@ -74,7 +74,7 @@ const Profile = () => {
         <p>{memberName}</p>
         <p>{memberId}</p>
       </div>
-    </div>
+    </section>
   );
 };
 
@@ -89,7 +89,7 @@ const SideBar = () => {
   };
 
   return (
-    <div className={styles.sidebar}>
+    <section className={styles.sidebar}>
       <ul className={styles.normal_menu}>
         <NavLink to="/member/mypage/myinfo">
           <li
@@ -296,7 +296,7 @@ const SideBar = () => {
           </li>
         </ul>
       )}
-    </div>
+    </section>
   );
 };
 

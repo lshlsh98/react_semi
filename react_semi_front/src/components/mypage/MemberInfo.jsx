@@ -252,7 +252,7 @@ const MemberInfo = () => {
   };
 
   return (
-    <div className={styles.member_info_wrap}>
+    <section className={styles.member_info_wrap}>
       <h3 className="page-title">내 정보</h3>
 
       {member !== null && memberAuthSuccess ? (
@@ -531,7 +531,7 @@ const MemberInfo = () => {
           </form>
         </div>
       )}
-    </div>
+    </section>
   );
 };
 

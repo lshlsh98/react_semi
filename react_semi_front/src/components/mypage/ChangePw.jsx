@@ -98,7 +98,7 @@ const ChangePw = () => {
   };
 
   return (
-    <div className={styles.member_info_wrap}>
+    <section className={styles.member_info_wrap}>
       <h3 className="page-title">비밀번호 변경</h3>
       <div className={styles.profile_info}>
         <form
@@ -254,7 +254,7 @@ const ChangePw = () => {
           </form>
         )}
       </div>
-    </div>
+    </section>
   );
 };
 
