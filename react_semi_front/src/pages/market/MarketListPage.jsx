@@ -179,7 +179,7 @@ const MarketItem = ({ market }) => {
   return (
     <li
       onClick={() => {
-        navigate(`/market/view/${market.marketNo}`);
+        navigate(`/market/${market.marketNo}`);
       }}
     >
       {market.marketThumb ? (

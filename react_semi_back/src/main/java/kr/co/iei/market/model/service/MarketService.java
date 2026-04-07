@@ -1,6 +1,7 @@
 package kr.co.iei.market.model.service;
 
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -11,11 +12,15 @@ import kr.co.iei.market.model.vo.ListItem;
 import kr.co.iei.market.model.vo.ListResponse;
 import kr.co.iei.market.model.vo.Market;
 import kr.co.iei.market.model.vo.MarketFile;
+import kr.co.iei.member.model.vo.LoginMember;
+import kr.co.iei.utils.JwtUtils;
 
 @Service
 public class MarketService {
 	@Autowired
 	private MarketDao marketDao;
+	@Autowired
+	private JwtUtils jwtUtil;
 
 	public ListResponse selectMarketList(ListItem request) {
 		///총 게시물수 구하기
@@ -59,9 +64,22 @@ public class MarketService {
 			System.out.println("조회수증가");
 		}
 		Market m = marketDao.selectOneMarket(marketNo);
+		
 		List<MarketFile> fileList = marketDao.selectMarketFileList(marketNo);
 		m.setFileList(fileList);
 		return m;
+	}
+
+	public Map<String, Object> selectLikeInfo(Integer marketNo, String token) {
+		
+		int likeCount = marketDao.selectLikeCount(marketNo);	//총 좋아요 수 조회
+		System.out.println("총 좋아요 수 확인 : " + likeCount);
+		if(token != null) {
+			LoginMember loginMember = jwtUtil.checkToken(token);
+			System.out.println(loginMember);
+		}
+		
+		return null;
 	}
 	
 	

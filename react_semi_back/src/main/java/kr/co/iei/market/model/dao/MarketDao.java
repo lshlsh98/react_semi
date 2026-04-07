@@ -27,5 +27,7 @@ public interface MarketDao {
 
 	int incrementViewCount(Integer marketNo);
 
+	int selectLikeCount(Integer marketNo);
+
 	
 }
