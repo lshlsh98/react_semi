@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import axios from "axios";
 import CommunityFrm from "../../components/community/CommunityFrm";
 import Button from "../../components/ui/Button";
+import TextEditor from "../../components/ui/TextEditor";
 import Swal from "sweetalert2";
 
 const CommunityModifyPage = () => {
@@ -15,7 +16,6 @@ const CommunityModifyPage = () => {
     axios
       .get(`${import.meta.env.VITE_BACKSERVER}/communities/${communityNo}`)
       .then((res) => {
-        console.log(res.data);
         setCommunity(res.data);
       })
       .catch((err) => {
