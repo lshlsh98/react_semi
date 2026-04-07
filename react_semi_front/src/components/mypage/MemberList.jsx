@@ -8,6 +8,7 @@ const MemberList = ({ memberList }) => {
         <li className={styles.member_id}>아이디</li>
         <li className={styles.member_name}>이름</li>
         <li className={styles.member_email}>이메일</li>
+        <li className={styles.member_grade}>등급</li>
       </ul>
       <ul className={styles.member_list_wrap}>
         {memberList.map((member) => {
@@ -30,6 +31,13 @@ const MemberItem = ({ member }) => {
         <li className={styles.member_id}>{member.memberId}</li>
         <li className={styles.member_name}>{member.memberName}</li>
         <li className={styles.member_email}>{member.memberEmail}</li>
+        <li className={styles.member_grade}>
+          {member.memberGrade === 1
+            ? "슈퍼"
+            : member.memberGrade === 2
+              ? "관리자"
+              : "일반"}
+        </li>
       </ul>
     </NavLink>
   );

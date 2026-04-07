@@ -74,6 +74,18 @@
 				</if>
 			</where>
 		</if>
+		
+			<where>
+				<if test="selectedGrade==1">
+					and member_grade = 1
+				</if>
+				<if test="selectedGrade==2">
+					and member_grade = 2
+				</if>
+				<if test="selectedGrade==3">
+					and member_grade = 3
+				</if>
+			</where>
 
 
 		<if test="order==1">

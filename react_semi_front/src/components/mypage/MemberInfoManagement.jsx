@@ -77,7 +77,7 @@ const MemberInfoManagement = () => {
     setMember((prev) => ({ ...prev, memberThumb: null }));
   };
 
-  // 회원 탈퇴
+  // 회원 삭제
   const memberDelete = () => {
     Swal.fire({
       title: "정말 삭제하시겠습니까?",
@@ -99,6 +99,7 @@ const MemberInfoManagement = () => {
                 title: "삭제가 완료되었습니다.",
                 icon: "success",
               });
+              navigate("/member/mypage/member-management");
             }
           })
           .catch((err) => {
@@ -114,8 +115,6 @@ const MemberInfoManagement = () => {
       .patch(`${import.meta.env.VITE_BACKSERVER}/members/${memberId}`, member)
       .then((res) => {
         Swal.fire({ title: "수정완료", icon: "success" });
-        useAuthStore.getState().setThumb(res.data.memberThumb);
-        useAuthStore.getState().setName(res.data.memberName);
         navigate("/member/mypage/member-management");
       })
       .catch((err) => {
@@ -265,6 +264,35 @@ const MemberInfoManagement = () => {
                 value={member.memberDetailAddr}
                 readOnly={true}
               ></Input>
+            </li>
+          </ul>
+          <ul className={`${styles.info_input_wrap} ${styles.member_grade}`}>
+            <li>등급</li>
+            <li>
+              <label htmlFor="">
+                <input
+                  type="radio"
+                  value={member.memberGrade}
+                  checked={member.memberGrade === 3}
+                  onChange={() => {
+                    setMember((prev) => ({ ...prev, memberGrade: 3 }));
+                  }}
+                />
+                일반회원
+              </label>
+            </li>
+            <li>
+              <label htmlFor="">
+                <input
+                  type="radio"
+                  value={member.memberGrade}
+                  checked={member.memberGrade === 2}
+                  onChange={() => {
+                    setMember((prev) => ({ ...prev, memberGrade: 2 }));
+                  }}
+                />
+                관리자
+              </label>
             </li>
           </ul>
           <div className={styles.member_delete_button_wrap}>

@@ -13,6 +13,11 @@
   display: flex;
   justify-content: space-between;
 }
+.order_wrap {
+  width: 100%;
+  display: flex;
+  gap: 4px;
+}
 
 .search_wrap select {
   padding: 10px;

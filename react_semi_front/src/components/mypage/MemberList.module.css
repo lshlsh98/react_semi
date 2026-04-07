@@ -27,13 +27,16 @@
 }
 
 .member_id {
-  width: 30%;
+  width: 25%;
 }
 .member_name {
-  width: 30%;
+  width: 25%;
 }
 .member_email {
   width: 40%;
+}
+.member_grade {
+  width: 10%;
 }
 
 .member_item:hover {

@@ -10,6 +10,7 @@ const MemberManagement = () => {
   const [type, setType] = useState(1);
   const [keyword, setKeyword] = useState(""); // 검색어
   const [order, setOrder] = useState(1); // 정렬 조건
+  const [selectedGrade, setSelectedGrade] = useState(0); // 출력 조건
 
   const [searchType, setSearchType] = useState(0); // 제출할 검색 조건
   const [searchKeyword, setSearchKeyword] = useState("");
@@ -22,7 +23,7 @@ const MemberManagement = () => {
   useEffect(() => {
     axios
       .get(
-        `${import.meta.env.VITE_BACKSERVER}/members?page=${page}&size=${size}&order=${order}&searchType=${searchType}&searchKeyword=${searchKeyword}`,
+        `${import.meta.env.VITE_BACKSERVER}/members?page=${page}&size=${size}&order=${order}&selectedGrade=${selectedGrade}&searchType=${searchType}&searchKeyword=${searchKeyword}`,
       )
       .then((res) => {
         console.log(res);
@@ -32,24 +33,40 @@ const MemberManagement = () => {
       .catch((err) => {
         console.log(err);
       });
-  }, [page, order, searchType, searchKeyword]);
+  }, [page, order, searchType, searchKeyword, selectedGrade]);
 
   return (
     <div className={styles.member_management}>
       <h3 className="page-title">회원 관리</h3>
       <div className={styles.search_wrap}>
-        <select
-          className={styles.select}
-          value={order}
-          onChange={(e) => {
-            setOrder(e.target.value);
-          }}
-        >
-          <option value={1}>아이디 오름차순</option>
-          <option value={2}>아이디 내림차순</option>
-          <option value={3}>이름 오름차순</option>
-          <option value={4}>이름 내림차순</option>
-        </select>
+        <div className={styles.order_wrap}>
+          <select
+            className={styles.select}
+            value={order}
+            onChange={(e) => {
+              setOrder(e.target.value);
+            }}
+          >
+            <option value={1}>아이디 오름차순</option>
+            <option value={2}>아이디 내림차순</option>
+            <option value={3}>이름 오름차순</option>
+            <option value={4}>이름 내림차순</option>
+          </select>
+          <select
+            className={styles.select}
+            value={selectedGrade}
+            onChange={(e) => {
+              setSelectedGrade(e.target.value);
+            }}
+          >
+            <option value={0} disabled hidden>
+              등급별
+            </option>
+            <option value={1}>슈퍼 유저</option>
+            <option value={2}>관리자</option>
+            <option value={3}>일반회원</option>
+          </select>
+        </div>
         <form
           className={styles.search}
           onSubmit={(e) => {

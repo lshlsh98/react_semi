@@ -11,6 +11,7 @@ public class MemberListItem {
 	private Integer page;
 	private Integer size;
 	private Integer order;		
+	private Integer selectedGrade;
 	private Integer searchType;		
 	private String searchKeyword;	
 }
