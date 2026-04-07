@@ -13,6 +13,7 @@
   display: flex;
   justify-content: space-between;
 }
+
 .order_wrap {
   width: 100%;
   display: flex;
@@ -40,4 +41,9 @@
 
 .list_wrap {
   width: 100%;
+}
+
+.search span {
+  color: var(--gray8);
+  font-weight: 800;
 }

@@ -33,10 +33,10 @@ const MemberItem = ({ member }) => {
         <li className={styles.member_email}>{member.memberEmail}</li>
         <li className={styles.member_grade}>
           {member.memberGrade === 1
-            ? "슈퍼"
+            ? "슈퍼 유저"
             : member.memberGrade === 2
               ? "관리자"
-              : "일반"}
+              : "일반회원"}
         </li>
       </ul>
     </NavLink>

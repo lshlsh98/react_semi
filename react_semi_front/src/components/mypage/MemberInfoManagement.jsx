@@ -9,6 +9,7 @@ import Swal from "sweetalert2";
 import { useParams } from "react-router-dom";
 
 const MemberInfoManagement = () => {
+  const { memberGrade } = useAuthStore();
   const { memberId } = useParams();
 
   const navigate = useNavigate();
@@ -269,7 +270,7 @@ const MemberInfoManagement = () => {
           <ul className={`${styles.info_input_wrap} ${styles.member_grade}`}>
             <li>등급</li>
             <li>
-              <label htmlFor="">
+              <label>
                 <input
                   type="radio"
                   value={member.memberGrade}
@@ -277,12 +278,13 @@ const MemberInfoManagement = () => {
                   onChange={() => {
                     setMember((prev) => ({ ...prev, memberGrade: 3 }));
                   }}
+                  disabled={memberGrade === 2 ? true : false}
                 />
                 일반회원
               </label>
             </li>
             <li>
-              <label htmlFor="">
+              <label>
                 <input
                   type="radio"
                   value={member.memberGrade}

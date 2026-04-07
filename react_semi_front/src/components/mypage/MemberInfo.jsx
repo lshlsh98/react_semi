@@ -16,7 +16,7 @@ const MemberInfo = () => {
   const [file, setFile] = useState(null);
   const [preview, setPreview] = useState(null);
 
-  const { memberId, memberThumb } = useAuthStore();
+  const { memberId } = useAuthStore();
   const [member, setMember] = useState({ memberThumb: null });
   const [memberAuth, setMemberAuth] = useState({
     memberId: "",
