@@ -42,6 +42,11 @@
   		where community_no = #{communityNo}
 	</update>
 	
+	<delete id="deleteCommunity">
+		delete community_tbl
+			where community_no = #{communityNo}
+	</delete>
+	
 	<insert id="insertCommunityComment">
 		insert into community_comment_tbl values
 		(

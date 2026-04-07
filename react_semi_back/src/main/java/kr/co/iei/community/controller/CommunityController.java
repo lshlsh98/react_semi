@@ -35,7 +35,7 @@ public class CommunityController {
 	@Autowired
 	private CommunityService communityService;
 	
-	@PostMapping // 커뮤 글 등록
+	@PostMapping // 커뮤 게시글 등록
 	public ResponseEntity<?> insertCommunity(@ModelAttribute Community community){
 		System.out.println(community);
 		Document doc = Jsoup.parse(community.getCommunityContent());
@@ -43,10 +43,22 @@ public class CommunityController {
 	return ResponseEntity.ok(result);
 	}
 	
-	@GetMapping(value="/{communityNo}") // 커뮤 상세보기
+	@GetMapping(value="/{communityNo}") // 커뮤 게시글 상세보기
 	public ResponseEntity<?> selectOneCommunity(@PathVariable Integer communityNo){
 		Community community = communityService.selectOneCommunity(communityNo);
 		return ResponseEntity.ok(community);
+	}
+	
+	@PutMapping(value="/{communityNo}") // 커뮤 게시글 수정하기
+	public ResponseEntity<?> updateCommunity(@PathVariable Integer communityNo){
+		int result = communityService.updateCommunity(communityNo);
+		return ResponseEntity.ok(result);
+	}
+	
+	@DeleteMapping(value="/{communityNo}") // 커뮤 게시글 삭제하기
+	public ResponseEntity<?> deleteCommunity(@PathVariable Integer communityNo){
+		int result = communityService.deleteCommunity(communityNo);
+		return ResponseEntity.ok(result);
 	}
 	
 	@GetMapping(value="/{communityNo}/comments") // 커뮤 댓글 출력

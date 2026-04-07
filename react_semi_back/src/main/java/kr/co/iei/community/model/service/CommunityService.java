@@ -29,9 +29,22 @@ public class CommunityService {
 		return result;
 	}
 	
+	// 커뮤 상세 보기
 	public Community selectOneCommunity(int communityNo) {
 		Community community = communityDao.selectOneCommunity(communityNo);
 		return community;
+	}
+	
+	@Transactional // 커뮤 게시글 등록
+	public int updateCommunity(Integer communityNo) {
+		int result = communityDao.updateCommunity(communityNo);
+		return result;
+	}
+	
+	@Transactional // 커뮤 게시글 삭제
+	public int deleteCommunity(Integer communityNo) {
+		int result = communityDao.deleteCommunity(communityNo);
+		return result;
 	}
 
 	public List<CommunityComment> selectCommunityCommentList(Integer communityNo) {

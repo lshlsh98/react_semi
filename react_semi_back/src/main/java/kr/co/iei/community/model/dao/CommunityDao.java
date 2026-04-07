@@ -14,6 +14,10 @@ public interface CommunityDao {
 	int insertCommunity(Community community);
 	
 	Community selectOneCommunity(Integer communityNo);
+	
+	int deleteCommunity(Integer communityNo);
+
+	int updateCommunity(Integer communityNo);
 
 	int insertCommunityComment(CommunityComment communityComment);
 
@@ -48,7 +52,5 @@ public interface CommunityDao {
 	int insertReport(Map<String, Object> params);
 
 	int updateCommunityComment(CommunityComment comment);
-
-	
 
 }

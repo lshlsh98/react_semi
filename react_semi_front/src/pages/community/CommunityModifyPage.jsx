@@ -10,7 +10,6 @@ const CommunityModifyPage = () => {
   const navigate = useNavigate();
   const params = useParams();
   const communityNo = params.communityNo;
-
   const [community, setCommunity] = useState(null);
   useEffect(() => {
     axios
@@ -23,11 +22,6 @@ const CommunityModifyPage = () => {
         console.log(err);
       });
   }, []);
-
-  const isWriter =
-    community && loginUser
-      ? loginUser.username === community.communityWriter
-      : false;
 
   const inputCommunity = (e) => {
     const name = e.target.name;
@@ -44,7 +38,6 @@ const CommunityModifyPage = () => {
     const form = new FormData();
     form.append("communityTitle", community.communityTitle);
     form.append("communityContent", community.communityContent);
-    form.append("communityWriter", community.communityWriter);
 
     axios
       .put(
@@ -57,7 +50,7 @@ const CommunityModifyPage = () => {
           title: "게시물 수정 성공!",
           confirmButtonText: "확인",
         });
-        navigate(`/community/detail/${communityNo}`);
+        navigate(`/community/view/${communityNo}`);
       })
       .catch((err) => {
         console.log(err);
@@ -73,24 +66,19 @@ const CommunityModifyPage = () => {
           community={community}
           inputCommunity={inputCommunity}
           inputCommunityContent={inputCommunityContent}
-          isWriter={isWriter}
         />
       )}
 
       <div className={styles.btn_wrap}>
-        {isWriter && (
-          <>
-            <Button className="btn primary" onClick={modifyCommunity}>
-              수정
-            </Button>
-            <Button
-              className="btn light outline"
-              onClick={() => navigate("/community/view")}
-            >
-              취소
-            </Button>
-          </>
-        )}
+        <Button className="btn primary" onClick={modifyCommunity}>
+          수정
+        </Button>
+        <Button
+          className="btn light outline"
+          onClick={() => navigate(`/community/view/${communityNo}`)}
+        >
+          취소
+        </Button>
       </div>
     </section>
   );
