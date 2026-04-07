@@ -1,6 +1,5 @@
 import { Input, TextArea } from "../ui/Form";
 import styles from "./Community.module.css";
-import ClearIcon from "@mui/icons-material/Clear";
 import TextEditor from "../ui/TextEditor";
 const CommunityFrm = ({ community, inputCommunity, inputCommunityContent }) => {
   return (

@@ -1,10 +1,33 @@
+.community_wrap {
+  width: 1000px;
+  margin: 50px auto;
+  border-radius: 8px;
+  background-color: var(--gray8);
+  padding: 32px;
+}
+
+.community_view_wrap {
+  border: 1px solid var(--line);
+  padding: 16px;
+  border-radius: 8px;
+}
+
 .community_title {
   display: flex;
   align-items: center;
-  justify-content: center;
   padding: 15px 20px;
-  text-align: center;
   height: 50px;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+}
+
+.community_view_content {
+  margin-top: 20px;
+  padding: 20px;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  background-color: var(--soft);
+  line-height: 1.6;
 }
 
 .comment_list_wrap {
@@ -17,7 +40,4 @@
 }
 .comment_content {
   margin-top: 16px;
-}
-.comment_content > textarea {
-  min-height: 80px;
 }
