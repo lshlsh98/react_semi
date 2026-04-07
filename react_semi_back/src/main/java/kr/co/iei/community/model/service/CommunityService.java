@@ -102,6 +102,7 @@ public class CommunityService {
 		return result;
 	}
 
+	// 싫어요 표시
 	public Map<String, Object> selectDislikeInfo(Integer communityNo, String token) {
 		int dislikeCount = communityDao.selectDislikeCount(communityNo);
 		Map<String, Object> dislikeInfo = new HashMap<String,Object>();
@@ -149,25 +150,26 @@ public class CommunityService {
 		return result;
 	}
 	
+	// 신고 버튼 출력
 	public Map<String, Object> selectReportInfo(Integer communityNo, String token) {
 		int reportCount = communityDao.selectReportCount(communityNo);
-		Map<String, Object> result = new HashMap<String,Object>();
-		result.put("reportCount", reportCount);
+		Map<String, Object> reportInfo = new HashMap<String,Object>();
+		reportInfo.put("reportCount", reportCount);
 		if(token != null) {
-			Map<String, Object> params = new HashMap<String, Object>();
-			params.put("communityNo", communityNo);
 			LoginMember loginMember = jwtUtil.checkToken(token);
 			String memberId = loginMember.getMemberId();
+			Map<String, Object> params = new HashMap<String,Object>();
+			params.put("communityNo", communityNo);
 			params.put("memberId", memberId);
 			int isReport = communityDao.selectIsReport(params);
-			result.put("isReport", isReport);
+			reportInfo.put("isReport", isReport);
 		}else {
-			result.put("isReport", 0);
+			reportInfo.put("isReport", 0);
 		}
-		return result;
+		return reportInfo;
 	}
 	
-	@Transactional
+	@Transactional // 신고 클릭
 	public int insertReport(Integer communityNo, String token) {
 		LoginMember login = jwtUtil.checkToken(token);
 		Map<String, Object> params = new HashMap<String,Object>();

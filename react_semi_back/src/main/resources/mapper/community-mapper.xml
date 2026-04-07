@@ -102,32 +102,47 @@
   	</select>
   	
   	<insert id="insertLike">
-  		insert into community_like_tbl values(#{communityNo},#{memberId})
+  	insert into community_like_tbl (community_no, member_id)
+  		values (#{communityNo}, #{memberId})
   	</insert>
   	
   	<delete id="deleteLike">
-  		delete from community_like_tbl where community_no = #{communityNo} and member_id = #{memberId}
+  		delete from community_like_tbl 
+  		where community_no = #{communityNo} and member_id = #{memberId}
   	</delete>
   	
-  	<select id="selectDislikeCount">
-  		select count(*) from community_dislike_tbl where community_no = #{communityNo}
+  	<select id="selectDislikeCount" resultType="int">
+  		select count(*) 
+  		from community_dislike_tbl 
+  		where community_no = #{communityNo}
   	</select>
   	
-  	<select id="selectIsDislike">
-  		select count(*) from community_dislike_tbl
+  	<select id="selectIsDislike" resultType="int">
+  		select count(*) 
+  		from community_dislike_tbl
   		where community_no = #{communityNo} and member_id = #{memberId}
   	</select>
   	
   	<insert id="insertDislike">
-  		insert into community_dislike_tbl values(#{communityNo}, #{memberId})
+  	insert into community_dislike_tbl (community_no, member_id)
+  		values (#{communityNo}, #{memberId})
   	</insert>
   	
   	<delete id="deleteDislike">
-  		delete from community_dislike_tbl where community_no = #{communityNo} and member_id = #{memberId}
+  		delete from community_dislike_tbl 
+  		where community_no = #{communityNo} and member_id = #{memberId}
   	</delete>
   	
   	<select id="selectReportCount" resultType="int">
-  		select count(*) from community_report_tbl where community_no = #{communityNo}
+  		select count(*) 
+  		from community_report_tbl 
+  		where community_no = #{communityNo}
+  	</select>
+  	
+  	<select id="selectIsReport" resultType="int">
+  		select count(*) 
+  		from community_report_tbl
+  		where community_no = #{communityNo} and member_id = #{memberId}
   	</select>
   	
   	<insert id="insertReport">

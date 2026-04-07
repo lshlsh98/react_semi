@@ -94,8 +94,7 @@ const CommunityViewPage = () => {
           </div>
 
           <div className={styles.community_action_wrap}>
-            <LikeAndDislike communityNo={communityNo} />
-            <Report communityNo={communityNo} />
+            <LikeAndDislikeAndReport communityNo={communityNo} />
             {memberId && memberId === community.communityWriter && (
               <div>
                 <Button
@@ -123,10 +122,11 @@ const CommunityViewPage = () => {
   );
 };
 
-const LikeAndDislike = ({ communityNo }) => {
+const LikeAndDislikeAndReport = ({ communityNo }) => {
   const { memberId } = useAuthStore();
   const [likeInfo, setLikeInfo] = useState(null);
   const [dislikeInfo, setDislikeInfo] = useState(null);
+  const [reportInfo, setReportInfo] = useState(null);
   useEffect(() => {
     axios
       .get(
@@ -150,7 +150,18 @@ const LikeAndDislike = ({ communityNo }) => {
           dislikeCount: Number(res.data?.dislikeCount) || 0,
         });
       });
+    axios
+      .get(
+        `${import.meta.env.VITE_BACKSERVER}/commuities/${communityNo}/reports`,
+      )
+      .then((res) => {
+        setReportInfo({
+          isReport: res.data?.isReport ?? 0,
+          reportCount: Number(res.data?.reportCount) || 0,
+        });
+      });
   }, []);
+
   const likeOn = () => {
     axios
       .post(
@@ -200,7 +211,7 @@ const LikeAndDislike = ({ communityNo }) => {
         if (res.data === 1) {
           setDislikeInfo({
             ...dislikeInfo,
-            disisLike: 1,
+            isDislike: 1,
             dislikeCount: dislikeInfo.dislikeCount + 1,
           });
         }
@@ -212,7 +223,7 @@ const LikeAndDislike = ({ communityNo }) => {
 
   const dislikeOff = () => {
     axios
-      .post(
+      .delete(
         `${import.meta.env.VITE_BACKSERVER}/communities/${communityNo}/dislikes`,
       )
       .then((res) => {
@@ -220,8 +231,47 @@ const LikeAndDislike = ({ communityNo }) => {
         if (res.data === 1) {
           setDislikeInfo({
             ...dislikeInfo,
-            disisLike: 1,
-            dislikeCount: dislikeInfo.dislikeCount + 1,
+            isDislike: 0,
+            dislikeCount: dislikeInfo.dislikeCount - 1,
+          });
+        }
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  };
+
+  const reportOn = () => {
+    axios
+      .post(
+        `${import.meta.env.VITE_BACKSERVER}/communities/${communityNo}/reports`,
+      )
+      .then((res) => {
+        console.log(res);
+        if (res.data === 1) {
+          setReportInfo({
+            ...reportInfo,
+            isReport: 1,
+            reportCount: reportInfo.reportCount + 1,
+          });
+        }
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  };
+
+  const reportOff = () => {
+    axios
+      .delete(
+        `${import.meta.env.VITE_BACKSERVER}/communities/${communityNo}/reports`,
+      )
+      .then((res) => {
+        if (res.data === 1) {
+          setLikeInfo({
+            ...reportInfo,
+            isReport: 0,
+            reportCount: reportInfo.reportCount - 1,
           });
         }
       })
@@ -247,7 +297,7 @@ const LikeAndDislike = ({ communityNo }) => {
       )}
       {dislikeInfo && (
         <div className={styles.community_dislike_wrap}>
-          {dislikeInfo.isdisLike === 1 ? (
+          {dislikeInfo.isDislike === 1 ? (
             <ThumbDownAltIcon onClick={dislikeOff} />
           ) : (
             <ThumbDownOffAltIcon onClick={memberId ? dislikeOn : loginMsg} />
@@ -255,78 +305,12 @@ const LikeAndDislike = ({ communityNo }) => {
           <span>{dislikeInfo.dislikeCount}</span>
         </div>
       )}
-    </div>
-  );
-};
-
-const Report = ({ communityNo }) => {
-  const { memberId } = useAuthStore();
-  const [reportInfo, setReportInfo] = useState(null);
-  useEffect(() => {
-    axios
-      .get(
-        `${import.meta.env.VITE_BACKSERVER}/commuities/${communityNo}/reports`,
-      )
-      .then((res) => {
-        setReportInfo({
-          isReport: res.data?.isReport ?? 0,
-          reportCount: Number(res.data?.reportCount) || 0,
-        });
-      });
-  }, []);
-  const loginMsg = () => {
-    Swal.fire({ title: "로그인 후 이용 가능합니다.", icon: "info" });
-  };
-  return (
-    <div>
       {reportInfo && (
         <div className={styles.community_report_wrap}>
-          {reportInfo.isReport === 1 ? (
-            <ReportIcon
-              onClick={() => {
-                axios
-                  .delete(
-                    `${import.meta.env.VITE_BACKSERVER}/communities/${communityNo}/reports`,
-                  )
-                  .then((res) => {
-                    if (res.data === 1) {
-                      setReportInfo({
-                        ...reportInfo,
-                        isReport: 0,
-                        reportCount: reportInfo.reportCount - 1,
-                      });
-                    }
-                  })
-                  .catch((err) => {
-                    console.log(err);
-                  });
-              }}
-            />
+          {reportInfo.isreport === 1 ? (
+            <ReportIcon onClick={reportOff} />
           ) : (
-            <ReportGmailerrorredIcon
-              onClick={
-                memberId
-                  ? () => {
-                      axios
-                        .post(
-                          `${import.meta.env.VITE_BACKSERVER}/communities/${communityNo}/reports`,
-                        )
-                        .then((res) => {
-                          if (res.data === 1) {
-                            setReportInfo({
-                              ...reportInfo,
-                              isReport: 1,
-                              reportCount: reportInfo.reportCount + 1,
-                            });
-                          }
-                        })
-                        .catch((err) => {
-                          console.log(err);
-                        });
-                    }
-                  : loginMsg
-              }
-            />
+            <ReportGmailerrorredIcon onClick={memberId ? reportOn : loginMsg} />
           )}
           <span>{reportInfo.reportCount}</span>
         </div>
