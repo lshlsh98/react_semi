@@ -50,8 +50,11 @@ public class CommunityController {
 	}
 	
 	@PutMapping(value="/{communityNo}") // 커뮤 게시글 수정하기
-	public ResponseEntity<?> updateCommunity(@PathVariable Integer communityNo){
-		int result = communityService.updateCommunity(communityNo);
+	public ResponseEntity<?> updateCommunity(@PathVariable Integer communityNo,
+								@ModelAttribute Community community){
+		community.setCommunityNo(communityNo);
+		System.out.println(community);
+		int result = communityService.updateCommunity(community);
 		return ResponseEntity.ok(result);
 	}
 	
@@ -79,7 +82,7 @@ public class CommunityController {
 		return ResponseEntity.ok(result);
 	}
 	
-	@DeleteMapping(value="/comments/{communityCommentNo}")
+	@DeleteMapping(value="/comments/{communityCommentNo}") // 커뮤 댓글 삭제
 	public ResponseEntity<?> deleteCommunityComment(@PathVariable Integer communityCommentNo){
 		int result = communityService.deleteCommunityComment(communityCommentNo);
 		return ResponseEntity.ok(result);
@@ -140,6 +143,12 @@ public class CommunityController {
     return ResponseEntity.ok(result);
 	}
 	
+	@DeleteMapping(value="/{communityNo}/reports")
+	public ResponseEntity<?> deleteReport(@PathVariable Integer communityNo,
+						@RequestHeader(name="Authorization") String token){
+		int result = communityService.deleteReport(communityNo, token);
+		return ResponseEntity.ok(result);
+	}
 }
 
 

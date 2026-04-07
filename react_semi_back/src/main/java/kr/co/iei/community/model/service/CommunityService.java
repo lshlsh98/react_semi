@@ -35,9 +35,9 @@ public class CommunityService {
 		return community;
 	}
 	
-	@Transactional // 커뮤 게시글 등록
-	public int updateCommunity(Integer communityNo) {
-		int result = communityDao.updateCommunity(communityNo);
+	@Transactional // 커뮤 게시글 수정
+	public int updateCommunity(Community community) {
+		int result = communityDao.updateCommunity(community);
 		return result;
 	}
 	
@@ -61,6 +61,7 @@ public class CommunityService {
 		return newComment;
 	}
 
+	// 좋아요 표시
 	public Map<String, Object> selectLikeInfo(Integer communityNo, String token) {
 		int likeCount = communityDao.selectLikeCount(communityNo);
 		Map<String, Object> likeInfo = new HashMap<String,Object>();
@@ -79,15 +80,18 @@ public class CommunityService {
 		return likeInfo;
 	}
 
+	// 좋아요 클릭
+	@Transactional
 	public int insertLike(Integer communityNo, String token) {
 		LoginMember login = jwtUtil.checkToken(token);
-		Map<String, Object> map = new HashMap<String, Object>();
+		Map<String, Object> map = new HashMap<String,Object>();
 		map.put("communityNo", communityNo);
 		map.put("memberId", login.getMemberId());
 		int result = communityDao.insertLike(map);
 		return result;
 	}
 
+	// 좋아요 해제
 	@Transactional
 	public int deleteLike(Integer communityNo, String token) {
 		LoginMember login = jwtUtil.checkToken(token);
@@ -125,7 +129,7 @@ public class CommunityService {
 		return result;
 	}
 
-	@Transactional
+	@Transactional // 싫어요 해제
 	public int deleteDislike(Integer communityNo, String token) {
 		LoginMember login = jwtUtil.checkToken(token);
 		Map<String, Object> map = new HashMap<String, Object>();
@@ -135,6 +139,16 @@ public class CommunityService {
 		return result;
 	}
 
+	public int deleteCommunityComment(Integer communityCommentNo) {
+		int result = communityDao.deleteCommunityComment(communityCommentNo);
+		return result;
+	}
+
+	public int updateCommunityComment(CommunityComment comment) {
+		int result = communityDao.updateCommunityComment(comment);
+		return result;
+	}
+	
 	public Map<String, Object> selectReportInfo(Integer communityNo, String token) {
 		int reportCount = communityDao.selectReportCount(communityNo);
 		Map<String, Object> result = new HashMap<String,Object>();
@@ -152,7 +166,7 @@ public class CommunityService {
 		}
 		return result;
 	}
-
+	
 	@Transactional
 	public int insertReport(Integer communityNo, String token) {
 		LoginMember login = jwtUtil.checkToken(token);
@@ -163,13 +177,13 @@ public class CommunityService {
 		return result;
 	}
 
-	public int deleteCommunityComment(Integer communityCommentNo) {
-		int result = communityDao.deleteCommunityComment(communityCommentNo);
-		return result;
-	}
-
-	public int updateCommunityComment(CommunityComment comment) {
-		int result = communityDao.updateCommunityComment(comment);
+	@Transactional // 신고 해제
+	public int deleteReport(Integer communityNo, String token) {
+		LoginMember login = jwtUtil.checkToken(token);
+		Map<String, Object> params = new HashMap<String,Object>();
+		params.put("communityNo", communityNo);
+		params.put("memberId", login.getMemberId());
+		int result = communityDao.deleteReport(params);
 		return result;
 	}
 

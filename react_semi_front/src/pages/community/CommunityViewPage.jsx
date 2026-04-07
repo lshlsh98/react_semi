@@ -268,7 +268,6 @@ const Report = ({ communityNo }) => {
         `${import.meta.env.VITE_BACKSERVER}/commuities/${communityNo}/reports`,
       )
       .then((res) => {
-        console.log(res);
         setReportInfo({
           isReport: res.data?.isReport ?? 0,
           reportCount: Number(res.data?.reportCount) || 0,

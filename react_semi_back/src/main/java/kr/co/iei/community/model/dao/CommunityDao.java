@@ -15,9 +15,9 @@ public interface CommunityDao {
 	
 	Community selectOneCommunity(Integer communityNo);
 	
+	int updateCommunity(Community community);
+	
 	int deleteCommunity(Integer communityNo);
-
-	int updateCommunity(Integer communityNo);
 
 	int insertCommunityComment(CommunityComment communityComment);
 
@@ -45,12 +45,13 @@ public interface CommunityDao {
 
 	int deleteDislike(Map<String, Object> map);
 
+	int updateCommunityComment(CommunityComment comment);
+	
 	int selectReportCount(Integer communityNo);
-
+	
 	int selectIsReport(Map<String, Object> params);
-
+	
 	int insertReport(Map<String, Object> params);
 
-	int updateCommunityComment(CommunityComment comment);
-
+	int deleteReport(Map<String, Object> params);
 }

@@ -61,7 +61,7 @@ const CommunityModifyPage = () => {
     <section className={styles.community_wrap}>
       <h3 className="page-title">게시글 수정</h3>
 
-      {community?.communityWriter && (
+      {community && (
         <CommunityFrm
           community={community}
           inputCommunity={inputCommunity}

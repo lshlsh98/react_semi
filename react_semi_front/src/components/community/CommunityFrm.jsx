@@ -2,12 +2,7 @@ import { Input, TextArea } from "../ui/Form";
 import styles from "./Community.module.css";
 import ClearIcon from "@mui/icons-material/Clear";
 import TextEditor from "../ui/TextEditor";
-const CommunityFrm = ({
-  community,
-  inputCommunity,
-  inputCommunityContent,
-  isWriter,
-}) => {
+const CommunityFrm = ({ community, inputCommunity, inputCommunityContent }) => {
   return (
     <div className={styles.community_frm_wrap}>
       <div className={styles.input_wrap}>
@@ -26,7 +21,6 @@ const CommunityFrm = ({
         <TextEditor
           data={community.communityContent}
           setData={inputCommunityContent}
-          readOnly={!isWriter}
         ></TextEditor>
       </div>
     </div>
