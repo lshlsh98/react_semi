@@ -127,6 +127,7 @@ const LikeAndDislikeAndReport = ({ communityNo }) => {
   const [likeInfo, setLikeInfo] = useState(null);
   const [dislikeInfo, setDislikeInfo] = useState(null);
   const [reportInfo, setReportInfo] = useState(null);
+
   useEffect(() => {
     axios
       .get(
@@ -146,13 +147,13 @@ const LikeAndDislikeAndReport = ({ communityNo }) => {
       .then((res) => {
         console.log(res);
         setDislikeInfo({
-          isDisLike: res.data?.isDisLike ?? 0,
+          isDislike: res.data?.isDislike ?? 0,
           dislikeCount: Number(res.data?.dislikeCount) || 0,
         });
       });
     axios
       .get(
-        `${import.meta.env.VITE_BACKSERVER}/commuities/${communityNo}/reports`,
+        `${import.meta.env.VITE_BACKSERVER}/communities/${communityNo}/reports`,
       )
       .then((res) => {
         setReportInfo({
@@ -268,7 +269,7 @@ const LikeAndDislikeAndReport = ({ communityNo }) => {
       )
       .then((res) => {
         if (res.data === 1) {
-          setLikeInfo({
+          setReportInfo({
             ...reportInfo,
             isReport: 0,
             reportCount: reportInfo.reportCount - 1,
@@ -284,7 +285,7 @@ const LikeAndDislikeAndReport = ({ communityNo }) => {
     Swal.fire({ title: "로그인 후 이용 가능합니다.", icon: "info" });
   };
   return (
-    <div>
+    <div className={styles.community_like_dislike_report_wrap}>
       {likeInfo && (
         <div className={styles.community_like_wrap}>
           {likeInfo.isLike === 1 ? (
@@ -307,7 +308,7 @@ const LikeAndDislikeAndReport = ({ communityNo }) => {
       )}
       {reportInfo && (
         <div className={styles.community_report_wrap}>
-          {reportInfo.isreport === 1 ? (
+          {reportInfo.isReport === 1 ? (
             <ReportIcon onClick={reportOff} />
           ) : (
             <ReportGmailerrorredIcon onClick={memberId ? reportOn : loginMsg} />

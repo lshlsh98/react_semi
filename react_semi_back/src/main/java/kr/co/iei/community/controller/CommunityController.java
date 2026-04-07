@@ -101,7 +101,7 @@ public class CommunityController {
 		return ResponseEntity.ok(result);
 	}
 	
-	@DeleteMapping(value="/{communityNo}/likes") // 커뮤 좋아요 "삭제"
+	@DeleteMapping(value="/{communityNo}/likes") // 커뮤 좋아요 해제(된 상태)
 	public ResponseEntity<?> likeOff(@PathVariable Integer communityNo,
 			@RequestHeader(name="Authorization") String token){
 		int result = communityService.deleteLike(communityNo, token);
@@ -122,28 +122,28 @@ public class CommunityController {
 	return ResponseEntity.ok(result);
 	}
 	
-	@DeleteMapping(value="/{communityNo}/dislikes") // 커뮤 싫어요 "삭제"
+	@DeleteMapping(value="/{communityNo}/dislikes") // 커뮤 싫어요 해제(된 상태)
 	public ResponseEntity<?> dislikeOff(@PathVariable Integer communityNo,
 				@RequestHeader(name="Authorization") String token){
 		int result = communityService.deleteDislike(communityNo, token);
 		return ResponseEntity.ok(result);
 	}
 	
-	@GetMapping(value="/{communityNo}/reports") // 커뮤 신고 출력
+	@GetMapping(value="/{communityNo}/reports") // 커뮤 게시판 신고 출력
 	public ResponseEntity<?> selectReportInfo(@PathVariable Integer communityNo,
 				@RequestHeader(required = false, name="Authorization") String token){
 		Map<String, Object> reportInfo = communityService.selectReportInfo(communityNo, token);
 		return ResponseEntity.ok(reportInfo);
 	}
 	
-	@PostMapping(value="/{communityNo}/reports") // 커뮤 신고 클릭
+	@PostMapping(value="/{communityNo}/reports") // 커뮤 게시판 신고 클릭
 	public ResponseEntity<?> reportOn(@PathVariable Integer communityNo,
             	@RequestHeader(name="Authorization") String token){
     int result = communityService.insertReport(communityNo, token);
     return ResponseEntity.ok(result);
 	}
 	
-	@DeleteMapping(value="/{communityNo}/reports")
+	@DeleteMapping(value="/{communityNo}/reports") // 커뮤 게시판 신고 해제(된 상태)
 	public ResponseEntity<?> deleteReport(@PathVariable Integer communityNo,
 						@RequestHeader(name="Authorization") String token){
 		int result = communityService.deleteReport(communityNo, token);
