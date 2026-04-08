@@ -47,7 +47,7 @@ const MarketListPage = () => {
         `${import.meta.env.VITE_BACKSERVER}/markets?page=${page}&size=${size}&status=${status}&order=${order}&searchType=${searchType}&searchKeyword=${searchKeyword}&location=${location}`,
       )
       .then((res) => {
-        //console.log(res.data.items);
+        console.log(res.data.items);
         setMarketList(res.data.items);
         setTotalPage(res.data.totalPage);
       })
@@ -87,7 +87,7 @@ const MarketListPage = () => {
               }}
             ></input>
 
-            <Button className="btn primary.outline" type="submit">
+            <Button className="btn primary" type="submit">
               검색
             </Button>
             <select

@@ -12,40 +12,47 @@
 		<if test="searchType==2">
 			and market_writer = #{searchKeyword}
 		</if>
-		<!--  
-		<if test="order==0"> order by market_no desc</if>
-		<if test="order==1"> order by market_no asc</if>
-		<if test="order==2"> order by view_count desc </if>
-		<if test="order==4">order by sell_price desc</if>
-		-->
 	</select>
 
-	<!--Select ___ from market_tbl : 마켓 리스트 객체 생성 -->
+	<!--마켓게시판 목록 조회 -->
 	<select id="selectMarketList" resultType="market">
 		select
-				market_no,
-				market_title,
-				to_char(market_date, 'yyyy-mm-dd HH24:mi:ss') as
-				market_date,
-				market_writer,
-				view_count,
-				sell_addr,
-				sell_price,
-				(
-				select market_file_path
-					from (
-						select mf.market_file_path
-						from market_file_tbl  mf
-						where mf.market_no = market_tbl.market_no
-						order by mf.market_file_no asc
-						)
-				where rownum = 1
-				) as marketThumb
-		from
-		market_tbl
-		join member_tbl on (market_writer = member_id)
-		where
-		market_status = #{status}
+    		mt.market_no,
+    		mt.market_title,
+    		to_char(mt.market_date, 'yyyy-mm-dd HH24:mi:ss') as market_date,
+    		mt.market_writer,
+    		mt.view_count,
+    		mt.sell_addr,
+    		mt.sell_price,
+    		(
+        		select count(*)
+        		from market_like_tbl ml
+        		where ml.market_no = mt.market_no
+    		) as like_count,
+   			 (
+        		select count(*)
+        		from market_like_tbl ml
+        		where ml.market_no = mt.market_no
+        		and ml.member_id = 'q'
+    		) as is_like,
+   			 (
+      			select count(*)
+        		from market_report_tbl mr
+        		where mr.market_no = mt.market_no
+    		) as report_count,
+    		(
+        		select market_file_path
+        		from (
+            			select mf.market_file_path
+            			from market_file_tbl mf
+            			where mf.market_no = mt.market_no
+            			order by mf.market_file_no asc
+        			)
+        			where rownum = 1
+  			  ) as marketThumb
+		from market_tbl mt
+		join member_tbl m on (mt.market_writer = m.member_id)
+		where market_status = #{status}
 		<if test="searchType==1">
 			and market_title like '%'||#{searchKeyword}||'%'
 		</if>
@@ -69,7 +76,7 @@
 		from dual
 	</select>
 
-	<!-- Insert Market_tbl : 판매게시글 등록 -->
+	<!-- 판매게시글 등록 -->
 	<insert id="insertMarket">
 		insert into market_tbl values(
 		#{marketNo},
@@ -129,7 +136,7 @@
 		insert into market_like_tbl values (#{memberId},#{marketNo})
 	</insert>
 	
-	<!-- 로그인시 좋아요 해제 -->
+	<!-- 로그인후 좋아요 해제 -->
 	<delete id="likeOff">
 		delete from market_like_tbl
 			where market_no = #{marketNo}

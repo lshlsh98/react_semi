@@ -48,8 +48,6 @@ ol {
   border-radius: 12px;
 }
 
-/* market list wrap - grid 적용 */
-
 .market_list_wrap > ul {
   display: flex;
   flex-direction: column;

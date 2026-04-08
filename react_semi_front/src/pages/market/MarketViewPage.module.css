@@ -9,13 +9,16 @@
 /* 사진 */
 .photo_wrap {
   margin: 20px 0;
-  background-color: var(--light);
+  
   display: flex;
   justify-content: center;
   align-items: center;
 }
 .photo_wrap > ul {
   height: 100%;
+}
+.photo_wrap> ul> li{
+  background-color: var(--light);
 }
 
 /* 타이틀 : (제목 금액 작성일 조회수 좋아요)(지도)(버튼랩)*/

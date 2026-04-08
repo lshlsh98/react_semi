@@ -9,7 +9,6 @@ import { Input } from "../../components/ui/Form";
 import InsertPhotoIcon from "@mui/icons-material/InsertPhoto";
 import DeleteIcon from "@mui/icons-material/Delete";
 import { useKakaoPostcode } from "@clroot/react-kakao-postcode";
-//tip-tap editor
 import { useEditor, EditorContent } from "@tiptap/react";
 import StarterKit from "@tiptap/starter-kit";
 import { TextStyle } from "@tiptap/extension-text-style";
@@ -29,9 +28,10 @@ import RedoIcon from "@mui/icons-material/Redo";
 
 const MarketWritePage = () => {
   const { memberId, memberAddr } = useAuthStore();
-  //console.log(memberId, typeof memberId);
-  //console.log(memberAddr, typeof memberAddr);
   const navigate = useNavigate();
+  const mapDivRef = useRef(null);
+  const markerRef = useRef([]);
+  const mapObjRef = useRef(null);
 
   useEffect(() => {
     if (!memberId) {
@@ -44,8 +44,7 @@ const MarketWritePage = () => {
     }
   }, [memberId, memberAddr]);
 
-  /* 여기서부터 시작 */
-
+    
   const [market, setMarket] = useState({
     marketTitle: "",
     marketContent: "",
@@ -56,9 +55,8 @@ const MarketWritePage = () => {
   /* 파일 관리용 스테이트 */
   const [files, setFiles] = useState([]);
 
+  /* 파일 추가 함수 */
   const addFiles = (fileList) => {
-    /* 이미지 파일이 아니면 제외함 */
-
     const imageFiles = fileList.filter((file) =>
       file.type.startsWith("image/"),
     );
@@ -76,12 +74,11 @@ const MarketWritePage = () => {
       });
       return;
     }
-
     const newFiles = [...files, ...imageFiles];
     setFiles(newFiles);
   };
 
-  /* 파일 삭제용 스테이트 */
+  /* 파일 삭제용 함수*/
   const deleteFile = (file) => {
     const newFiles = files.filter((item) => {
       return item !== file;
@@ -89,7 +86,7 @@ const MarketWritePage = () => {
     setFiles(newFiles);
   };
 
-  /* */
+  /* INPUT 함수 */
   const inputMarket = (e) => {
     const name = e.target.name;
     const value = e.target.value;
@@ -138,6 +135,7 @@ const MarketWritePage = () => {
     setMarket({ ...market, marketContent: data });
   };
 
+  /* 글 등록 함수 */
   const registMarket = () => {
     if (
       market.marketTitle === "" ||
@@ -152,7 +150,7 @@ const MarketWritePage = () => {
       });
       return;
     }
-    console.log("작성하기 버튼클릭");
+    //console.log("작성하기 버튼클릭");
     const form = new FormData();
     form.append("marketTitle", market.marketTitle);
     form.append("marketContent", market.marketContent);
@@ -162,13 +160,11 @@ const MarketWritePage = () => {
     files.forEach((file) => {
       form.append("files", file);
     });
-    /* 폼데이터 콘솔 */
+    /*--------폼데이터 콘솔 확인---------
     for (let pair of form.entries()) {
       console.log(pair[0], pair[1]);
-    }
-    //console.log(market.marketContent.length);
-    /* 마켓 등록 요청 */
-
+    }----------------------------------*/
+    
     axios
       .post(`${import.meta.env.VITE_BACKSERVER}/markets`, form, {
         headers: {

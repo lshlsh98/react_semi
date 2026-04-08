@@ -28,7 +28,7 @@ const MarketViewPage = () => {
   const [open, setOpen] = useState(false);
   const [currentIndex, setCurrentIndex] = useState(0);
 
-  // market이 null일 때를 대비해 옵셔널 체이닝 사용
+  
   const images = market?.fileList || [];
 
   const handleOpen = (index) => {
@@ -177,7 +177,7 @@ const MarketViewPage = () => {
                   style={{
                     position: "absolute",
                     bottom: 20,
-                    color: "white",
+                    color: "var(--primary)",
                     fontWeight: "bold",
                   }}
                 >
@@ -225,7 +225,7 @@ const MarketViewPage = () => {
                     className="btn primary"
                     onClick={() => navigate("/member/login")}
                   >
-                    로그인하기
+                    거래요청
                   </Button>
                 )}
               </div>
@@ -241,6 +241,7 @@ const MarketViewPage = () => {
             <div className={styles.button_wrap}>
               <Button className="btn primary">수정</Button>
               <Button className="btn primary danger">삭제</Button>
+              <Button className="btn primary" style={{backgroundColor:"pink", border:"none"}}>거래완료</Button>
             </div>
           )}
           <MarketComment marketNo={marketNo} memberId={memberId} />
@@ -257,7 +258,8 @@ const LikeAndReport = ({ marketNo }) => {
   useEffect(() => {
     axios
       .get(`${import.meta.env.VITE_BACKSERVER}/markets/${marketNo}/likes`)
-      .then((res) => setLikeInfo(res.data))
+      .then((res) => 
+        setLikeInfo(res.data))
       .catch((err) => console.log(err));
   }, [marketNo]);
 
@@ -266,8 +268,7 @@ const LikeAndReport = ({ marketNo }) => {
       .post(`${import.meta.env.VITE_BACKSERVER}/markets/${marketNo}/likes`)
       .then((res) => {
         if (res.data === 1) {
-          // 기존 상태를 복사해서 isLike만 업데이트
-          setLikeInfo((prev) => ({
+            setLikeInfo((prev) => ({
             ...prev,
             isLike: 1,
             likeCount: prev.likeCount + 1,
