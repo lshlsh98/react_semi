@@ -9,6 +9,8 @@ import ChangePw from "../../components/mypage/ChangePw";
 import MyMarketPage from "../../components/mypage/MyMarketPage";
 import MyCommunityCommentPage from "../../components/mypage/MyCommunityCommentPage";
 import MyMarketCommentPage from "../../components/mypage/MyMarketCommentPage";
+import LikeDislike from "../../components/mypage/LikeDislike";
+
 const Mypage = () => {
   const navigate = useNavigate();
   const { memberId, isReady, isNotLogout } = useAuthStore();
@@ -35,6 +37,7 @@ const Mypage = () => {
         <div className={styles.mypage_content}>
           <Routes>
             <Route path="myinfo" element={<MemberInfo />} />
+            <Route path="likedislike" element={<LikeDislike />} />
             <Route
               path="market/:isAdminMode"
               element={<MyMarketPage />}
@@ -106,48 +109,17 @@ const SideBar = () => {
             비밀번호 변경
           </li>
         </NavLink>
-        <li
-          className={
-            selectMenu === "likehate" ||
-            selectMenu === "likehate_trade" ||
-            selectMenu === "likehate_community"
-              ? styles.active
-              : ""
-          }
-        >
-          <div
-            className={styles.menu_title}
+        <NavLink to="/member/mypage/likedislike">
+          <li
             onClick={() => {
-              toggleMenu("likehate");
-              setSelectMenu("likehate");
+              toggleMenu("likedislike");
+              setSelectMenu("likedislike");
             }}
+            className={selectMenu === "likedislike" ? styles.active : ""}
           >
-            <span
-              className={`material-icons ${styles.arrow} ${
-                openMenu === "likehate" ? styles.rotate : ""
-              }`}
-            >
-              chevron_right
-            </span>
             좋아요 / 싫어요 기록
-          </div>
-          <ul className={openMenu === "likehate" ? styles.open : ""}>
-            <li
-              className={selectMenu === "likehate_trade" ? styles.active : ""}
-              onClick={() => setSelectMenu("likehate_trade")}
-            >
-              거래
-            </li>
-            <li
-              className={
-                selectMenu === "likehate_community" ? styles.active : ""
-              }
-              onClick={() => setSelectMenu("likehate_community")}
-            >
-              커뮤니티
-            </li>
-          </ul>
-        </li>
+          </li>
+        </NavLink>
         <li
           className={
             selectMenu === "postManagement" ||
@@ -382,17 +354,19 @@ const SideBar = () => {
               </NavLink>
             </ul>
           </li>
-          <li
-            onClick={() => {
-              toggleMenu("reportedPostManagement");
-              setSelectMenu("reportedPostManagement");
-            }}
-            className={
-              selectMenu === "reportedPostManagement" ? styles.active : ""
-            }
-          >
-            거래 현황
-          </li>
+          <NavLink to="/member/mypage/myinfo">
+            <li
+              onClick={() => {
+                toggleMenu("reportedPostManagement");
+                setSelectMenu("reportedPostManagement");
+              }}
+              className={
+                selectMenu === "reportedPostManagement" ? styles.active : ""
+              }
+            >
+              거래 현황
+            </li>
+          </NavLink>
         </ul>
       )}
     </div>

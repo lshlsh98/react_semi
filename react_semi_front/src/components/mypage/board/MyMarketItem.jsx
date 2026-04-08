@@ -1,10 +1,8 @@
 import styles from "./MyBoardItem.module.css";
 import ThumbUpIcon from "@mui/icons-material/ThumbUp";
-import ThumbDownIcon from "@mui/icons-material/ThumbDown";
 import CommentIcon from "@mui/icons-material/Comment";
 import ReportIcon from "@mui/icons-material/Report";
 import { useState } from "react";
-import useAuthStore from "../../utils/useAuthStore";
 import Switch from "@mui/material/Switch";
 import axios from "axios";
 import Swal from "sweetalert2";
@@ -19,7 +17,6 @@ const MyMarketItem = ({
   isAdminMode,
 }) => {
   const [contentStatus, setContentStatus] = useState(board.contentStatus);
-  const memberGrade = useAuthStore((state) => state.memberGrade);
 
   const changeStatus = () => {
     const toggle = contentStatus === 1 ? 2 : 1;
@@ -82,6 +79,15 @@ const MyMarketItem = ({
       }}
     >
       <div className={styles.item_wrap}>
+        {board.boardType ? (
+          board.boardType === "market" ? (
+            <div className={styles.board_type}>거래 게시판</div>
+          ) : (
+            <div className={styles.board_type}>커뮤니티 게시판</div>
+          )
+        ) : (
+          ""
+        )}
         <div className={styles.item_title}>{board.title}</div>
         <div className={styles.item_info}>
           <div>{`${board.writerName} [${board.writerId}]`}</div>

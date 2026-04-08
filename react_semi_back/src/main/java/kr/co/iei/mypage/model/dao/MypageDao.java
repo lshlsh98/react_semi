@@ -54,9 +54,8 @@ public interface MypageDao {
 	List<ReportResponseDto> findMarketCommentReportAll(ReportRequestDto request);
 
 	List<ReportResponseDto> findCommunityCommentReportAll(ReportRequestDto request);
-	
-	
-	
 
-	
+	List<BoardSummary> findLikeDislikeAll(BoardListRequestDto request);
+
+	int findLikeDislikeCount(BoardListRequestDto request);
 }

@@ -33,5 +33,7 @@ public class BoardSummary {
 	
 	private Integer isCompleted;
 	private String completedDate;
+	
+	private String boardType;
 }
 

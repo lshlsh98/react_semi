@@ -1,7 +1,6 @@
 import MyBoardItem from "./MyBoardItem";
 
 const MyBoardList = ({ boardList, setBoardList, status, isAdminMode }) => {
-  boardList.map((b) => {});
   return (
     <div>
       {boardList.map((board, index) => (

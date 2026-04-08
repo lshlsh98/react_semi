@@ -131,6 +131,18 @@ public class MypageController {
 		
 		return ResponseEntity.ok(list);
 	}//
+	
+	@GetMapping("/board/likedislike")
+	public ResponseEntity<?> findLikeDislikeAll(@ModelAttribute BoardListRequestDto request){
+		List<BoardSummary> list = mypageService.findLikeDislikeAll(request);
+		
+		int count = mypageService.findLikeDislikeCount(request);
+		int totalPage = (int) Math.ceil(count / (double) request.getSize());
+		
+		BoardListResponseDto response = new BoardListResponseDto(list, totalPage);
+		
+		return ResponseEntity.ok(response);
+	}//
 }
 
 

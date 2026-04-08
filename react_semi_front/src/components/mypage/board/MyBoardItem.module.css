@@ -11,6 +11,9 @@
 
 .item_title {
   font-size: 24px;
+  white-space: nowrap; /* 한 줄로 유지 */
+  overflow: hidden; /* 넘치는 글자 숨기기 */
+  text-overflow: ellipsis; /* … 표시 */
 }
 
 .item_info {
@@ -142,4 +145,13 @@
   background: white;
   padding: 20px;
   border-radius: 8px;
+}
+
+.board_type {
+  background-color: #e0ffe0;
+  border: 1px solid #8eb18e;
+  border-radius: 8px;
+  display: inline-block;
+  align-self: flex-start; /* flex container 안에서 width 글자만큼 */
+  padding: 2px 6px; /* 글자 주변 여백 */
 }
