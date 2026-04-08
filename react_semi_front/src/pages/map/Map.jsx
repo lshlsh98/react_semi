@@ -145,10 +145,24 @@ const Map = () => {
           window.naver.maps.Event.addListener(marker, "click", () => {
             // 정보창에 뜰 내용
             const content = `
-              <div style="padding: 15px; min-width: 200px; line-height: 1.5;">
+              <div style="
+                padding: 15px; 
+                min-width: 250px; 
+                max-width: 350px; /* 가로가 너무 넓어지지 않게 제한 */
+                line-height: 1.5;
+              ">
                 <h4 style="margin: 0 0 8px 0; color: var(--secendary);">그린리턴 거점</h4>
-                <p style="margin: 0; font-size: 13px; font-weight: bold;">${item.positnRdnmAddr}</p>
-                <p style="margin: 5px 0 0 0; font-size: 12px; color: var(--gray4);">${item.positnIntdcCn || "상세정보 없음"}</p>
+                <p style="margin: 0; font-size: 14px; font-weight: bold; color: var(--gray1);">${item.positnRdnmAddr}</p>
+                <div style="
+                  margin: 8px 0 0 0; 
+                  font-size: 13px; 
+                  color: var(--gray2); 
+                  max-height: 120px;
+                  overflow-y: auto;  /* 넘치는 내용은 아래로 스크롤되게 만듦 */
+                  word-break: keep-all; /* 띄어쓰기 없어도 강제 줄바꿈 */
+                ">
+                  ${item.positnIntdcCn || "상세정보 없음"}
+                </div>
               </div>
             `;
 

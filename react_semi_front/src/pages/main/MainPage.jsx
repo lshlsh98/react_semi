@@ -101,7 +101,7 @@ const MainPage = () => {
       />
       <div className={styles.community_wrap}>
         {/* 왼쪽: 3. 인기글 */}
-        <CommunitySection title="이번 주 인기글" items={popularCommunity} />
+        <CommunitySection title="커뮤니티 인기글" items={popularCommunity} />
         {/* 오른쪽: 4. 공지사항 */}
         <CommunitySection title="커뮤니티 공지사항" items={noticeCommunity} />
       </div>
@@ -211,7 +211,8 @@ const CommunitySection = ({ title, items }) => {
             onClick={() => navigate(`/community/view/${item.communityNo}`)}
           >
             <h3 className={styles.comm_item_title}>{item.communityTitle}</h3>
-            <p className={styles.comm_item_content}>{item.communityContent}</p>
+
+            <ConvertContent communityContent={item.communityContent} />
 
             <div className={styles.comm_meta_box}>
               <span>작성자: {item.communityWriter}</span>
@@ -235,6 +236,16 @@ const CommunitySection = ({ title, items }) => {
       </ul>
     </section>
   );
+};
+
+// HTML 태그 제거 컴포넌트
+const ConvertContent = ({ communityContent }) => {
+  const parser = new DOMParser();
+  const doc = parser.parseFromString(communityContent, "text/html");
+  const text = doc.body.textContent || "";
+
+  // 메인 페이지의 CSS 클래스 styles.comm_item_content 적용
+  return <p className={styles.comm_item_content}>{text}</p>;
 };
 
 export default MainPage;
