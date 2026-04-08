@@ -31,21 +31,13 @@ import kr.co.iei.utils.FileUtils;
 @RequestMapping(value="/markets")
 
 public class MarketController {
-
-    private final JwtUtils jwtUtils;
-
-    private final WebConfig webConfig;
-	@Autowired
+   	@Autowired
 	private MarketService marketService;
 	@Value("${file.root}")
 	private String root;
 	@Autowired
 	private FileUtils fileUtil;
 
-    MarketController(WebConfig webConfig, JwtUtils jwtUtils) {
-        this.webConfig = webConfig;
-        this.jwtUtils = jwtUtils;
-    }
 	
 	///전체 마켓게시글 조회
 	@GetMapping
