@@ -3,7 +3,6 @@ package kr.co.iei.member.controller;
 import java.util.Map;
 import java.util.Random;
 
-import org.apache.ibatis.annotations.Delete;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
@@ -23,6 +22,8 @@ import org.springframework.web.multipart.MultipartFile;
 import kr.co.iei.member.model.service.MemberService;
 import kr.co.iei.member.model.vo.LoginMember;
 import kr.co.iei.member.model.vo.Member;
+import kr.co.iei.member.model.vo.MemberListItem;
+import kr.co.iei.member.model.vo.MemberListResponse;
 import kr.co.iei.utils.EmailSender;
 import kr.co.iei.utils.FileUtils;
 
@@ -192,43 +193,43 @@ public class MemberController {
 		m.setMemberThumb(memberThumb);
 		m.setMemberId(memberId);
 
-		int result = memberService.updateThumbnail(m);
+		int result = memberService.updateThumbnail(m, savepath);
 		return ResponseEntity.ok(memberThumb);
-	}
-
-	// 회원 프로필 썸네일 삭제
-	@PatchMapping(value = "/{memberId}/thumbnail/delete")
-	public ResponseEntity<?> deleteThumbnail(@PathVariable String memberId) {
-		Member member = new Member();
-		member.setMemberThumb(null);
-		member.setMemberId(memberId);
-
-		int result = memberService.deleteThumbnail(member);
-		return ResponseEntity.ok(0);
 	}
 
 	// 회원 정보 수정 완료
 	@PatchMapping(value = "/{memberId}")
-	public ResponseEntity<?> memberUpdate(@RequestBody Member member) {
-		int result = memberService.memberUpdate(member);
-		return ResponseEntity.ok(member.getMemberName());
+	public ResponseEntity<?> memberUpdate(@PathVariable String memberId, @RequestBody Member member) {
+		String savepath = root + "semi/";
+		int result = memberService.memberUpdate(memberId, member, savepath);
+		return ResponseEntity.ok(member);
 	}
-	
+
+	// 회원 탈퇴
 	@DeleteMapping(value = "/{memberId}")
 	public ResponseEntity<?> memberDelete(@PathVariable String memberId) {
-		int result = memberService.memberDelete(memberId);
+		String savepath = root + "semi/";
+		int result = memberService.memberDelete(memberId, savepath);
 		return ResponseEntity.ok(result);
 	}
-	
-	@PatchMapping(value="/update-pw")
-	public ResponseEntity<?> updatePw(@RequestBody Member member){
+
+	// 비밀번호 변경
+	@PatchMapping(value = "/update-pw")
+	public ResponseEntity<?> updatePw(@RequestBody Member member) {
 		int result = memberService.updatePw(member);
 
-		if (result > 0) { 
+		if (result > 0) {
 			return ResponseEntity.ok(result);
 		} else {
 			return ResponseEntity.status(404).build();
 		}
 	}
 	
+	// 전체 멤버 리스트
+	@GetMapping
+	public ResponseEntity<?> selectAllMember(@ModelAttribute MemberListItem request) {
+		MemberListResponse response= memberService.selectAllMember(request);
+		return ResponseEntity.ok(response);
+	}
+
 }
