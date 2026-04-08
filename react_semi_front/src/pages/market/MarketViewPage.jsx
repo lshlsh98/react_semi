@@ -3,12 +3,19 @@ import Button from "../../components/ui/Button";
 import useAuthStore from "../../components/utils/useAuthStore";
 import { useEffect, useState } from "react";
 import axios from "axios";
-import { useParams } from "react-router-dom";
+import { redirect, useParams } from "react-router-dom";
 import ImageList from "@mui/material/ImageList";
 import ImageListItem from "@mui/material/ImageListItem";
 
+import ThumbUpAltIcon from '@mui/icons-material/ThumbUpAlt'; 
+import ThumbUpOffAltIcon from '@mui/icons-material/ThumbUpOffAlt';
+import ReportIcon from '@mui/icons-material/Report';
+import ReportGmailerrorredIcon from '@mui/icons-material/ReportGmailerrorred';
+
+
+
 const MarketViewPage = () => {
-  const { memberId } = useAuthStore();
+  const { memberId,isReady } = useAuthStore();
   //console.log(memberId);
 
   const params = useParams();
@@ -18,7 +25,13 @@ const MarketViewPage = () => {
   const [market, setMarket] = useState(null);
   const imgUrl = "http://192.168.31.24:9999/market";
 
+  console.log("isReady 확인용 : ",isReady);
+
   useEffect(() => {
+    if(!isReady){
+      return;
+    }
+
     axios
       .get(`${import.meta.env.VITE_BACKSERVER}/markets/${marketNo}`)
       .then((res) => {
@@ -28,7 +41,7 @@ const MarketViewPage = () => {
       .catch((err) => {
         console.log(err);
       });
-  }, [memberId, marketNo]);
+  }, [memberId, marketNo,isReady]);
 
   const ImageClick = (filePath) => {
     const popup = window.open(
@@ -95,9 +108,10 @@ const MarketViewPage = () => {
                 <p>조회수 : {market.viewCount}</p>
                 <p>좋아요</p>
               </div>
+              <LikeAndReport marketNo={marketNo} /> 
             </div>
             <div className={styles.title_map}>지도가 들어갈 예정</div>
-            {memberId && (
+            {memberId && memberId !== market.marketWriter &&(
               <div className={styles.title_btn}>
                 <Button className="btn primary">거래하기</Button>
                 <Button
@@ -126,5 +140,28 @@ const MarketViewPage = () => {
     </main>
   );
 };
+
+const LikeAndReport = ({marketNo})=>{
+  const[likeInfo,setLikeInfo] = useState(null);
+  console.log("글번호 확인용 : ",marketNo)
+  
+  useEffect(()=>{
+    axios.get(`${import.meta.env.VITE_BACKSERVER}/markets/${marketNo}/likes`)
+    .then((res)=>{
+      console.log(res)
+    })
+    .catch((err)=>{
+      console.log(err)
+    })
+  },[])
+  return(<> 
+  
+  {likeInfo &&(<> <ThumbUpAltIcon sx={{fill:"var(--primary)"}} />
+  <span style={{color:"var(--primary)"}}>10</span></>)}
+  
+  <ReportGmailerrorredIcon sx={{fill:"var(--danger)"}}/>
+  <span style={{color:"var(--danger)"}}>3</span>
+  </>)
+}
 
 export default MarketViewPage;

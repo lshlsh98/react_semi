@@ -2,7 +2,9 @@ package kr.co.iei.market.controller;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
+import kr.co.iei.utils.JwtUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
@@ -11,6 +13,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -29,6 +32,8 @@ import kr.co.iei.utils.FileUtils;
 
 public class MarketController {
 
+    private final JwtUtils jwtUtils;
+
     private final WebConfig webConfig;
 	@Autowired
 	private MarketService marketService;
@@ -37,8 +42,9 @@ public class MarketController {
 	@Autowired
 	private FileUtils fileUtil;
 
-    MarketController(WebConfig webConfig) {
+    MarketController(WebConfig webConfig, JwtUtils jwtUtils) {
         this.webConfig = webConfig;
+        this.jwtUtils = jwtUtils;
     }
 	
 	///전체 마켓게시글 조회
@@ -89,5 +95,13 @@ public class MarketController {
 		Market m = marketService.selectOneMarket(marketNo);
 		//System.out.println(m);
 		return ResponseEntity.ok(m);
+	}
+	
+	@GetMapping(value="/{marketNo}/likes")
+	public ResponseEntity<?> selectLikeInfo(@PathVariable Integer marketNo, @RequestHeader(name="Authorization") String token){
+		System.out.println("글번호 확인 : " + marketNo);
+		System.out.println("토큰 확인" + token);
+		Map<String,Object> result = marketService.selectLikeInfo(marketNo,token);
+		return ResponseEntity.ok(1);
 	}
 }

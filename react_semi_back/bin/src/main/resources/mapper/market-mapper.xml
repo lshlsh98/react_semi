@@ -112,10 +112,6 @@
 		update market_tbl set view_count = view_count+1 where market_no = #{marketNo}
 		
 	</update>
-	<!-- 총 좋아요 수 조회 -->
-	<select id="selectLikeCount" resultType="int">
-		select count(*) from market_like_tbl where market_no = #{marketNo}
-	</select>
 	
 
 </mapper>

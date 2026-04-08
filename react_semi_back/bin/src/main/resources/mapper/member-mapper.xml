@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="kr.co.iei.member.model.dao.MemberDao">
+
+    <insert id="insertMember">
+        insert into member_tbl values (	
+            #{memberId}, #{memberPw}, #{memberName}, null, #{memberEmail}, 
+            3, sysdate, #{memberPostcode}, #{memberAddr}, #{memberDetailAddr}, 0
+        )
+    </insert>
+
+    <select id="selectOneMember" resultType="member">
+        select * from member_tbl where member_id = #{memberId}
+    </select>
+    
+    <select id="findId" resultType="string">
+        select member_id from member_tbl where member_name = #{memberName} and member_email = #{memberEmail}
+    </select>
+    
+    <update id="updateTempPw">
+        update member_tbl set member_pw = #{memberPw} where member_id = #{memberId} and member_email = #{memberEmail}
+    </update>
+    
+    <update id="updateThumbnail">
+		update member_tbl set
+		member_thumb = #{memberThumb}
+		where member_id = #{memberId}
+	</update>
+	
+	<update id="memberUpdate">
+		update member_tbl set
+		member_name = #{memberName},
+		member_email = #{memberEmail},
+		member_postcode = #{memberPostcode},
+		member_addr = #{memberAddr},
+		member_detail_addr = #{memberDetailAddr}
+		where member_id = #{memberId}
+	</update>
+	
+	<delete id="memberDelete">
+		delete from member_tbl
+		where member_id = #{memberId}
+	</delete>
+	
+	<update id="updatePw">
+        update member_tbl 
+        set member_pw = #{memberPw} 
+        where member_id = #{memberId}
+    </update>
+</mapper>
