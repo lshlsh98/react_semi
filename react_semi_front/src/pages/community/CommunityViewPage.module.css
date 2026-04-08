@@ -43,8 +43,7 @@
 }
 
 .community_like_wrap svg,
-.community_dislike_wrap svg,
-.community_report_wrap svg {
+.community_dislike_wrap svg {
   cursor: pointer;
 }
 

@@ -13,7 +13,6 @@ import ThumbDownAltIcon from "@mui/icons-material/ThumbDownAlt";
 import ThumbDownOffAltIcon from "@mui/icons-material/ThumbDownOffAlt";
 import ReportIcon from "@mui/icons-material/Report";
 import ReportGmailerrorredIcon from "@mui/icons-material/ReportGmailerrorred";
-import Pagination from "@mui/material/Pagination";
 
 const CommunityViewPage = () => {
   const navigate = useNavigate();
@@ -342,7 +341,7 @@ const LikeAndDislikeAndReport = ({ communityNo }) => {
       {likeInfo && (
         <div className={styles.community_like_wrap}>
           {likeInfo.isLike === 1 ? (
-            <ThumbUpAltIcon onClick={likeOff} />
+            <ThumbUpAltIcon sx={{ color: "#1976d2" }} onClick={likeOff} />
           ) : (
             <ThumbUpOffAltIcon onClick={memberId ? likeOn : loginMsg} />
           )}
@@ -361,10 +360,10 @@ const LikeAndDislikeAndReport = ({ communityNo }) => {
       )}
       {reportInfo && (
         <div className={styles.community_report_wrap}>
-          {reportInfo.isReport === 1 ? (
-            <ReportIcon onClick={reportOff} />
+          {Number(reportInfo.isReport) === 1 ? (
+            <ReportIcon style={{ color: "var(--danger)" }} />
           ) : (
-            <ReportGmailerrorredIcon onClick={memberId ? reportOn : loginMsg} />
+            <ReportGmailerrorredIcon />
           )}
           <span>{reportInfo.reportCount}</span>
 
@@ -376,7 +375,7 @@ const LikeAndDislikeAndReport = ({ communityNo }) => {
       {isReportModalOpen && (
         <div
           className={styles.overlay}
-          onClick={() => setIsReportModalOpen(false)}
+          // onClick={() => setIsReportModalOpen(false)}
         >
           <div
             className={styles.report_modal}
