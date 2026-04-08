@@ -1,19 +1,13 @@
 import { useState } from "react";
 import styles from "./Mypage.module.css";
 import { NavLink, Route, Routes, useNavigate } from "react-router-dom";
-import MemberInfo from "../../components/mypage/MemberInfo";
-import MyCommunityPage from "../../components/mypage/MyCommunityPage";
-import Swal from "sweetalert2";
 import useAuthStore from "../../components/utils/useAuthStore";
+import MemberInfo from "../../components/mypage/MemberInfo";
+import Swal from "sweetalert2";
 import ChangePw from "../../components/mypage/ChangePw";
-import MyMarketPage from "../../components/mypage/MyMarketPage";
-import MyCommunityCommentPage from "../../components/mypage/MyCommunityCommentPage";
-import MyMarketCommentPage from "../../components/mypage/MyMarketCommentPage";
-import LikeDislike from "../../components/mypage/LikeDislike";
 import MemberManagement from "../../components/mypage/MemberManagement";
 import MemberInfoManagement from "../../components/mypage/MemberInfoManagement";
 import CarbonContribution from "../../components/mypage/CarbonContribution";
-
 const Mypage = () => {
   const navigate = useNavigate();
   const { memberId, isReady, isNotLogout } = useAuthStore();
@@ -27,9 +21,7 @@ const Mypage = () => {
     });
     return;
   }
-
   window.scrollTo(0, 0); //페이지 이동 시 항상 가장 맨 위 화면으로
-
   return (
     memberId && (
       <div className={styles.mypage_wrap}>
@@ -40,28 +32,30 @@ const Mypage = () => {
         <div className={styles.mypage_content}>
           <Routes>
             <Route path="myinfo" element={<MemberInfo />} />
-            <Route path="likedislike" element={<LikeDislike />} />
-            <Route
-              path="market/:isAdminMode"
-              element={<MyMarketPage />}
-            ></Route>
-            <Route
-              path="community/:isAdminMode"
-              element={<MyCommunityPage />}
-            ></Route>
-            <Route
-              path="marketcomment/:isAdminMode"
-              element={<MyMarketCommentPage />}
-            ></Route>
-            <Route
-              path="communitycomment/:isAdminMode"
-              element={<MyCommunityCommentPage />}
-            ></Route>
             <Route path="pw" element={<ChangePw />} />
             <Route path="member-management" element={<MemberManagement />} />
             <Route path="member-management">
               <Route index element={<MemberManagement />} />
               <Route path=":memberId" element={<MemberInfoManagement />} />
+              <Route path="likedislike" element={<LikeDislike />} />
+              <Route
+                path="market/:isAdminMode"
+                element={<MyMarketPage />}
+              ></Route>
+              <Route
+                path="community/:isAdminMode"
+                element={<MyCommunityPage />}
+              ></Route>
+              <Route
+                path="marketcomment/:isAdminMode"
+                element={<MyMarketCommentPage />}
+              ></Route>
+              <Route
+                path="communitycomment/:isAdminMode"
+                element={<MyCommunityCommentPage />}
+              ></Route>
+              <Route path="pw" element={<ChangePw />} />
+              <Route path="tradestatus" element={<TradeStatus />} />
             </Route>
             <Route
               path="carbon-contribution"
@@ -263,10 +257,6 @@ const SideBar = () => {
             </li>
           </NavLink>
           <li
-            onClick={() => {
-              setSelectMenu("postManagementManager");
-              setOpenMenu(null);
-            }}
             className={
               selectMenu === "postManagement_admin" ||
               selectMenu === "postManagement_trade_admin" ||
@@ -323,10 +313,6 @@ const SideBar = () => {
             </ul>
           </li>
           <li
-            onClick={() => {
-              setSelectMenu("reportedPostManagement");
-              setOpenMenu(null);
-            }}
             className={
               selectMenu === "commentManagement_admin" ||
               selectMenu === "commentManagement_trade_admin" ||
@@ -384,7 +370,7 @@ const SideBar = () => {
               </NavLink>
             </ul>
           </li>
-          <NavLink to="/member/mypage/myinfo">
+          <NavLink to="/member/mypage/tradestatus">
             <li
               onClick={() => {
                 toggleMenu("reportedPostManagement");

@@ -145,7 +145,7 @@ const MarketSection = ({ title, highlightWord, items }) => {
           <li
             key={`main_market-${item.marketNo}`}
             className={styles.card}
-            onClick={() => navigate(`/market/${item.marketNo}`)}
+            onClick={() => navigate(`/market/view/${item.marketNo}`)}
           >
             <div className={styles.img_box}>
               {item.marketThumb ? (
