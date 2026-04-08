@@ -77,3 +77,11 @@
   gap: 10px;
   margin-top: 10px;
 }
+
+.community_like_wrap > svg {
+  fill: var(--primary);
+}
+
+.community_report_wrap > svg {
+  fill: var(--danger);
+}
