@@ -1,9 +1,7 @@
 .community_wrap {
-  width: 1000px;
-  margin: 50px auto;
+  width: 900px;
   border-radius: 8px;
   background-color: var(--gray8);
-  padding: 32px;
 }
 
 .community_view_wrap {
@@ -79,7 +77,12 @@
 }
 
 .community_like_wrap > svg {
-  fill: var(--primary);
+  fill: black;
+}
+
+/* ON 상태 */
+.active > svg {
+  fill: blue;
 }
 
 .community_report_wrap > svg {

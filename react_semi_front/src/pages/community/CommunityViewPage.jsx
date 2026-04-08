@@ -7,6 +7,10 @@ import Button from "../../components/ui/Button";
 import Swal from "sweetalert2";
 import { TextArea } from "../../components/ui/Form";
 
+import PersonIcon from "@mui/icons-material/Person";
+import CalendarTodayIcon from "@mui/icons-material/CalendarToday";
+import VisibilityIcon from "@mui/icons-material/Visibility";
+
 import ThumbUpAltIcon from "@mui/icons-material/ThumbUpAlt";
 import ThumbUpOffAltIcon from "@mui/icons-material/ThumbUpOffAlt";
 import ThumbDownAltIcon from "@mui/icons-material/ThumbDownAlt";
@@ -76,14 +80,17 @@ const CommunityViewPage = () => {
               </h2>
               <div className={styles.community_sub_info}>
                 <div className={styles.community_writer}>
+                  <PersonIcon className={styles.icon} />
                   <span>{community.communityWriter}</span>
                 </div>
                 <div className={styles.community_date}>
+                  <CalendarTodayIcon className={styles.icon} />
                   {community.communityDate}
                 </div>
               </div>
               <div className={styles.community_view_count}>
-                {community.communityViewCount}
+                <VisibilityIcon className={styles.icon} />
+                <span>{community.viewCount}</span>
               </div>
             </div>
             <div
@@ -304,9 +311,17 @@ const LikeAndDislikeAndReport = ({ communityNo }) => {
   const handleReportClick = () => {
     if (!memberId) {
       loginMsg();
-    } else {
-      setIsReportModalOpen(true);
+      return;
     }
+    if (reportInfo?.isReport === 1) {
+      Swal.fire({
+        title: "이미 신고된 게시물입니다.",
+        icon: "warning",
+      });
+      return;
+    }
+
+    setIsReportModalOpen(true);
   };
 
   const submitReport = () => {
@@ -339,9 +354,13 @@ const LikeAndDislikeAndReport = ({ communityNo }) => {
   return (
     <div className={styles.community_like_dislike_report_wrap}>
       {likeInfo && (
-        <div className={styles.community_like_wrap}>
+        <div
+          className={`${styles.community_like_wrap} ${
+            likeInfo.isLike === 1 ? styles.active : ""
+          }`}
+        >
           {likeInfo.isLike === 1 ? (
-            <ThumbUpAltIcon sx={{ color: "#1976d2" }} onClick={likeOff} />
+            <ThumbUpAltIcon onClick={likeOff} />
           ) : (
             <ThumbUpOffAltIcon onClick={memberId ? likeOn : loginMsg} />
           )}

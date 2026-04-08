@@ -35,6 +35,7 @@ public class CommunityController {
 	@Autowired
 	private CommunityService communityService;
 	
+
 	@PostMapping // 커뮤 게시글 등록
 	public ResponseEntity<?> insertCommunity(@ModelAttribute Community community){
 		System.out.println(community);
