@@ -11,8 +11,8 @@ public class LoginMember {
     private String token;
     private String memberId;
     private Integer memberGrade;
-    private String memberThumb;
-    private String memberAddr;	//마켓게시판 글작성시 필요
-    private Long endTime;
     private String memberName; 
+    private String memberThumb;
+    private String memberAddr;
+    private Long endTime;
 }

@@ -18,7 +18,7 @@ public class Member {
     private String memberEmail;
     private Integer memberGrade;
     private String enrollDate;
-    private String memberPostcode;    
+    private String memberPostcode;
     private String memberAddr;        
     private String memberDetailAddr;  
     private Integer memberScore;      

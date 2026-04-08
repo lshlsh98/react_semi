@@ -12,19 +12,15 @@ import ReportIcon from "@mui/icons-material/Report";
 import ReportGmailerrorredIcon from "@mui/icons-material/ReportGmailerrorred";
 import Swal from "sweetalert2";
 import { Modal, Box } from "@mui/material";
-
 const MarketViewPage = () => {
   const navigate = useNavigate();
   const { memberId, isReady } = useAuthStore();
   //console.log(memberId);
-
   const params = useParams();
   const marketNo = params.marketNo;
   //console.log("게시글번호 : " + marketNo);
-
   const [market, setMarket] = useState(null);
   const imgUrl = "http://192.168.31.24:9999/market";
-
   /* 모달용 스테이트 */
   const [open, setOpen] = useState(false);
   const [selectedImg, setSelectedImg] = useState("");
@@ -48,14 +44,11 @@ const MarketViewPage = () => {
     maxWidth: "90vw",
     maxHeight: "90vh",
   };
-
   console.log("isReady 확인용 : ", isReady);
-
   useEffect(() => {
     if (!isReady) {
       return;
     }
-
     axios
       .get(`${import.meta.env.VITE_BACKSERVER}/markets/${marketNo}`)
       .then((res) => {
@@ -66,7 +59,6 @@ const MarketViewPage = () => {
         console.log(err);
       });
   }, [memberId, marketNo, isReady]);
-
   const requestTrade = () => {
     Swal.fire({
       title: "거래요청 하시겠습니까?",
@@ -142,7 +134,6 @@ const MarketViewPage = () => {
               </Box>
             </Modal>
           </div>
-
           <div className={styles.title_wrap}>
             <div className={styles.title_info}>
               <p className={styles.title_info_title}>{market.marketTitle}</p>
@@ -186,7 +177,6 @@ const MarketViewPage = () => {
               )}
             </div>
           </div>
-
           <div
             className={styles.content_wrap}
             dangerouslySetInnerHTML={{ __html: market.marketContent }}
@@ -202,12 +192,10 @@ const MarketViewPage = () => {
     </main>
   );
 };
-
 const LikeAndReport = ({ marketNo }) => {
   const { memberId } = useAuthStore();
   const [likeInfo, setLikeInfo] = useState(null);
   console.log("글번호 확인용 : ", marketNo);
-
   useEffect(() => {
     axios
       .get(`${import.meta.env.VITE_BACKSERVER}/markets/${marketNo}/likes`)
@@ -219,7 +207,6 @@ const LikeAndReport = ({ marketNo }) => {
         console.log(err);
       });
   }, []);
-
   const likeOn = () => {
     alert("좋아요 승인합니다");
     axios
@@ -267,11 +254,9 @@ const LikeAndReport = ({ marketNo }) => {
               } /* 로그인되어있으면 likeOn 안되어있으면 loginMsg */
             />
           )}
-
           <span style={{ color: "var(--primary)" }}>{likeInfo.likeCount}</span>
         </>
       )}
-
       <ReportGmailerrorredIcon
         sx={{ fill: "var(--danger)" }}
         style={{ cursor: "pointer" }}
@@ -284,5 +269,4 @@ const LikeAndReport = ({ marketNo }) => {
     </>
   );
 };
-
 export default MarketViewPage;

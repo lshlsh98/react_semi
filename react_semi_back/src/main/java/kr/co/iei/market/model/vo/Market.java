@@ -25,6 +25,7 @@ public class Market {
 	private Integer completed;		//완료	(0:미완료 1:완료)
 	private String completedDate;	//거래완료시간
 	private String marketThumb;		//썸네일 파일로 market_file 에서 조인해서 첫번째 이미지미만 가져옴
+	private Integer likeCount;		//좋아요 수
 	private List<MarketFile> fileList;
 	private List<String> deleteFilePath;
 }

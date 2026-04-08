@@ -6,6 +6,7 @@ import Header from "./components/commons/Header";
 import Join from "./pages/member/Join";
 import Login from "./pages/member/Login";
 import Mypage from "./pages/mypage/Mypage";
+import CommunityWritePage from "./pages/community/CommunityWritePage";
 import Find_id from "./pages/member/Find_id";
 import MarketListPage from "./pages/market/MarketListPage";
 import MarketWritePage from "./pages/market/MarketWritePage";
@@ -14,7 +15,11 @@ import Find_pw from "./pages/member/Find_pw";
 import axios from "axios";
 import useAuthStore from "./components/utils/useAuthStore";
 import { useEffect } from "react";
+import Map from "./pages/map/Map";
 import CommunityListPage from "./pages/community/CommunityListPage";
+import MainPage from "./pages/main/MainPage";
+import CommunityModifyPage from "./pages/community/CommunityModifyPage";
+import CommunityViewPage from "./pages/community/CommunityViewPage";
 
 function App() {
   const { endTime, token } = useAuthStore(); // endTime = 만료시간, token = 걍 토큰
@@ -52,10 +57,12 @@ function App() {
       <Header />
       <div className="main">
         <Routes>
+          <Route path="/" element={<MainPage />} />
           <Route path="/member/join" element={<Join />} />
           <Route path="/member/login" element={<Login />} />
           <Route path="/member/find-id" element={<Find_id />} />
           <Route path="/member/find-pw" element={<Find_pw />} />
+          <Route path="/map" element={<Map />} />
           <Route path="/community" element={<CommunityListPage />} />
 
           {/* 진호 */}
@@ -64,6 +71,17 @@ function App() {
           <Route path="/market/view/:marketNo" element={<MarketViewPage />} />
 
           <Route path="/member/mypage/*" element={<Mypage />} />
+
+          <Route path="/community" element={<CommunityListPage />} />
+          <Route path="/community/write" element={<CommunityWritePage />} />
+          <Route
+            path="/community/view/:communityNo"
+            element={<CommunityViewPage />}
+          />
+          <Route
+            path="/community/modify/:communityNo"
+            element={<CommunityModifyPage />}
+          />
         </Routes>
       </div>
       <Footer />

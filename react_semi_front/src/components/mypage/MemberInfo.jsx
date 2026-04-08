@@ -13,8 +13,11 @@ const MemberInfo = () => {
   const inputRef = useRef(null);
   const detailRef = useRef(null);
 
-  const { memberId, memberThumb } = useAuthStore();
-  const [member, setMember] = useState(null);
+  const [file, setFile] = useState(null);
+  const [preview, setPreview] = useState(null);
+
+  const { memberId } = useAuthStore();
+  const [member, setMember] = useState({ memberThumb: null });
   const [memberAuth, setMemberAuth] = useState({
     memberId: "",
     memberPw: "",
@@ -41,6 +44,7 @@ const MemberInfo = () => {
       });
   }, []);
 
+  // 비밀번호 인증
   const auth = () => {
     if (memberAuth.memberPw === "") {
       alert("비밀번호를 입력해주세요.");
@@ -64,42 +68,49 @@ const MemberInfo = () => {
       });
   };
 
+  // 프로필 미리보기 설정
+  const previewChange = (e) => {
+    const selectedFile = e.target.files[0];
+    if (!selectedFile) return;
+
+    setFile(selectedFile);
+
+    const previewUrl = URL.createObjectURL(selectedFile);
+    setPreview(previewUrl);
+  };
+
   // 프로필 이미지 등록/수정
   const changeThumb = (e) => {
-    const file = inputRef.current.files && inputRef.current.files[0];
+    // 새로 선택된 이미지 있을 때
     if (!file) {
       return;
     }
-    const form = new FormData();
-    form.append("file", file);
-    axios
-      .patch(
-        `${import.meta.env.VITE_BACKSERVER}/members/${memberId}/thumbnail/update`,
-        form,
-        { headers: { "content-Type": "multipart/form-data" } },
-      )
-      .then((res) => {
-        console.log(res);
-        useAuthStore.getState().setThumb(res.data);
-      })
-      .catch((err) => {
-        console.log(err);
-      });
+    if (file) {
+      const file = inputRef.current.files && inputRef.current.files[0];
+
+      const form = new FormData();
+      form.append("file", file);
+      axios
+        .patch(
+          `${import.meta.env.VITE_BACKSERVER}/members/${memberId}/thumbnail/update`,
+          form,
+          { headers: { "content-Type": "multipart/form-data" } },
+        )
+        .then((res) => {
+          console.log(res);
+          useAuthStore.getState().setThumb(res.data);
+        })
+        .catch((err) => {
+          console.log(err);
+        });
+    }
   };
 
   // 프로필 이미지 삭제
   const deleteThumb = (e) => {
-    axios
-      .patch(
-        `${import.meta.env.VITE_BACKSERVER}/members/${memberId}/thumbnail/delete`,
-      )
-      .then((res) => {
-        console.log(res);
-        useAuthStore.getState().setThumb(res.data);
-      })
-      .catch((err) => {
-        console.log(err);
-      });
+    setFile(null);
+    setPreview(null);
+    setMember((prev) => ({ ...prev, memberThumb: null }));
   };
 
   // 인증 메일 전송
@@ -203,15 +214,17 @@ const MemberInfo = () => {
             `${import.meta.env.VITE_BACKSERVER}/members/${member.memberId}`,
           )
           .then((res) => {
-            Swal.fire({
-              title: "탈퇴 완료되었습니다.",
-              text: "이용해주셔서 감사합니다.",
-              icon: "success",
-            });
-            useAuthStore.getState().setReady(false);
-            useAuthStore.getState().logout(true);
-            delete axios.defaults.headers.common["Authorization"];
-            navigate("/");
+            if (res.date === 1) {
+              Swal.fire({
+                title: "탈퇴 완료되었습니다.",
+                text: "이용해주셔서 감사합니다.",
+                icon: "success",
+              });
+              useAuthStore.getState().setReady(false);
+              useAuthStore.getState().logout(true);
+              delete axios.defaults.headers.common["Authorization"];
+              navigate("/");
+            }
           })
           .catch((err) => {
             console.log(err);
@@ -229,7 +242,8 @@ const MemberInfo = () => {
       )
       .then((res) => {
         Swal.fire({ title: "수정완료", icon: "success" });
-        useAuthStore.getState().setName(res.data);
+        useAuthStore.getState().setThumb(res.data.memberThumb);
+        useAuthStore.getState().setName(res.data.memberName);
         navigate("/member/mypage");
       })
       .catch((err) => {
@@ -238,7 +252,7 @@ const MemberInfo = () => {
   };
 
   return (
-    <div className={styles.member_info_wrap}>
+    <section className={styles.member_info_wrap}>
       <h3 className="page-title">내 정보</h3>
 
       {member !== null && memberAuthSuccess ? (
@@ -247,6 +261,7 @@ const MemberInfo = () => {
             onSubmit={(e) => {
               e.preventDefault();
               if (mailAuth === 0 || mailAuth === 3) {
+                changeThumb();
                 memberUpdate();
               } else {
                 Swal.fire({ title: "이메일 인증을 완료하세요" });
@@ -259,17 +274,20 @@ const MemberInfo = () => {
               <div className={styles.member_thumb_img_wrap}>
                 <div
                   className={
-                    memberThumb
+                    member.memberThumb || preview
                       ? styles.member_thumb_exists
                       : styles.member_thumb
                   }
                 >
-                  {memberThumb ? (
+                  {preview ? (
+                    <img src={preview} alt="preview" />
+                  ) : member.memberThumb ? (
                     <img
-                      src={`${import.meta.env.VITE_BACKSERVER}/semi/${memberThumb}`}
+                      src={`${import.meta.env.VITE_BACKSERVER}/semi/${member.memberThumb}`}
+                      alt="member"
                     />
                   ) : (
-                    <span class="material-icons">account_circle</span>
+                    <span className="material-icons">account_circle</span>
                   )}
                 </div>
               </div>
@@ -278,9 +296,7 @@ const MemberInfo = () => {
               <Button
                 type="button"
                 className="btn primary"
-                onClick={() => {
-                  inputRef.current.click();
-                }}
+                onClick={() => inputRef.current.click()}
               >
                 이미지 변경
               </Button>
@@ -289,7 +305,7 @@ const MemberInfo = () => {
                 accept="image/*"
                 ref={inputRef}
                 style={{ display: "none" }}
-                onChange={changeThumb}
+                onChange={previewChange}
               ></input>
               <Button
                 type="button"
@@ -515,7 +531,7 @@ const MemberInfo = () => {
           </form>
         </div>
       )}
-    </div>
+    </section>
   );
 };
 

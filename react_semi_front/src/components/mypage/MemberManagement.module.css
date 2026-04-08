@@ -1,0 +1,49 @@
+.member_management {
+  display: flex;
+  flex-direction: column;
+  gap: 50px;
+  justify-content: center;
+  align-items: center;
+  padding: 50px;
+  width: 100%;
+}
+
+.search_wrap {
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+}
+
+.order_wrap {
+  width: 100%;
+  display: flex;
+  gap: 4px;
+}
+
+.search_wrap select {
+  padding: 10px;
+  appearance: none;
+  border-radius: 4px;
+  padding-right: 30px;
+  border: 1px solid var(--primary);
+  outline: none;
+  color: var(--line);
+}
+
+.search {
+  display: flex;
+  gap: 4px;
+}
+
+.search > input {
+  width: 250px;
+}
+
+.list_wrap {
+  width: 100%;
+}
+
+.search span {
+  color: var(--gray8);
+  font-weight: 800;
+}

@@ -12,6 +12,7 @@ import kr.co.iei.market.model.dao.MarketDao;
 import kr.co.iei.market.model.vo.ListItem;
 import kr.co.iei.market.model.vo.ListResponse;
 import kr.co.iei.market.model.vo.Market;
+import kr.co.iei.market.model.vo.MarketComment;
 import kr.co.iei.market.model.vo.MarketFile;
 import kr.co.iei.member.model.vo.LoginMember;
 import kr.co.iei.utils.JwtUtils;
@@ -55,6 +56,29 @@ public class MarketService {
 		}
 		return result;
 	}
+	
+	// 메인페이지
+	public List<Market> selectMainPageMarketList(Integer order) {
+		List<Market> list = marketDao.selectMainPageMarketList(order);
+		return list;
+	}
+	
+	// 댓글 조회
+	public List<MarketComment> selectMarketCommentList(Integer marketNo) {
+        return marketDao.selectMarketCommentList(marketNo);
+    }
+
+	// 댓글 작성
+    @Transactional
+    public int insertMarketComment(MarketComment marketComment) {
+        return marketDao.insertMarketComment(marketComment);
+    }
+
+    // 댓글 삭제
+    @Transactional
+    public int deleteMarketComment(Integer commentNo) {
+        return marketDao.deleteMarketComment(commentNo);
+    }
 	
 	@Transactional
 	public Market selectOneMarket(Integer marketNo) {

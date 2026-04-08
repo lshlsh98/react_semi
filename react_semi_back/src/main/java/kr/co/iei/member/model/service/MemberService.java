@@ -1,20 +1,18 @@
 package kr.co.iei.member.model.service;
 
+import java.io.File;
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PatchMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.multipart.MultipartFile;
 
 import kr.co.iei.member.model.dao.MemberDao;
 import kr.co.iei.member.model.vo.LoginMember;
 import kr.co.iei.member.model.vo.Member;
-import kr.co.iei.utils.FileUtils;
+import kr.co.iei.member.model.vo.MemberListItem;
+import kr.co.iei.member.model.vo.MemberListResponse;
 import kr.co.iei.utils.JwtUtils;
 
 @Service
@@ -47,7 +45,7 @@ public class MemberService {
 		Member loginMember = memberDao.selectOneMember(member.getMemberId());
 		
 		if (loginMember != null && bcrypt.matches(member.getMemberPw(), loginMember.getMemberPw())) {
-			LoginMember login = jwtUtil.createToken(loginMember.getMemberId(), loginMember.getMemberGrade());
+			LoginMember login = jwtUtil.createToken(loginMember.getMemberId(), loginMember.getMemberGrade(), loginMember.getMemberAddr());
 			login.setMemberThumb(loginMember.getMemberThumb());
 			login.setMemberName(loginMember.getMemberName());
 			login.setMemberAddr(loginMember.getMemberAddr());	//마켓게시판 글 작성시 불러올 주소정보 추가 : 한진호
@@ -72,23 +70,51 @@ public class MemberService {
 		return result;
 	}
 
-	public int updateThumbnail(Member m) {
-		int result = memberDao.updateThumbnail(m);
-		return result;
+	public int updateThumbnail(Member m, String root) {
+	    Member oldM = memberDao.selectOneMember(m.getMemberId());
+	    String oldThumb = oldM.getMemberThumb();
+
+	    int result = memberDao.updateThumbnail(m);
+
+	    if (result == 1 && oldThumb != null) {
+	        deleteFile(oldThumb, root);
+	    }
+
+	    return result;
 	}
 
-	public int deleteThumbnail(Member member) {
-		int result = memberDao.updateThumbnail(member);
-		return result;
-	}
+	public int memberUpdate(String memberId, Member member, String root) {
+		Member oldM = memberDao.selectOneMember(memberId);
 
-	public int memberUpdate(Member member) {
 		int result = memberDao.memberUpdate(member);
+
+		if (result == 1 && oldM.getMemberThumb() != null 
+		        && member.getMemberThumb() == null) {
+			deleteFile(oldM.getMemberThumb(), root);
+		}
+		
 		return result;
 	}
 
-	public int memberDelete(String memberId) {
+	private boolean deleteFile(String filename, String root) {
+		if (filename == null || filename.isEmpty())
+			return false;
+		File file = new File(root + filename);
+		if (file.exists()) {
+			return file.delete();
+		}
+		return false;
+	}
+
+	public int memberDelete(String memberId, String root) {
+		Member m = memberDao.selectOneMember(memberId);
+		
 		int result = memberDao.memberDelete(memberId);
+		
+		if (result == 1 && m.getMemberThumb() != null ) {
+			deleteFile(m.getMemberThumb(), root);
+		}
+		
 		return result;
 	}
 
@@ -100,13 +126,14 @@ public class MemberService {
 		return result;
 	}
 
-	/*
-	 * public Member mypage(String memberId, String token) { try { LoginMember login
-	 * = jwtUtil.checkToken(token); System.out.println(login); Member member =
-	 * memberDao.selectOneMember(memberId); return member; } catch (Exception e) {
-	 * // TODO: handle exception } return null; // 토큰 유효 시간 지났을 때 출력되는 부분 }
-	 */
+	public MemberListResponse selectAllMember(MemberListItem request) {
+		Integer totalCount = memberDao.selectMemberCount(request);
+		int totalPage = (int) Math.ceil(totalCount / (double) request.getSize());
+		
+		List<Member> list= memberDao.selectAllMember(request);
+		MemberListResponse response = new MemberListResponse(list,totalPage);
+		return response;
+	}
 
-	// 멤버 프로필 변경
 
 }
