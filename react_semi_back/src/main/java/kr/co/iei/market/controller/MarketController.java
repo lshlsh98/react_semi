@@ -5,10 +5,13 @@ import java.util.List;
 import java.util.Map;
 
 import kr.co.iei.utils.JwtUtils;
+
+import org.apache.ibatis.annotations.Delete;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -90,10 +93,22 @@ public class MarketController {
 	}
 	
 	@GetMapping(value="/{marketNo}/likes")
-	public ResponseEntity<?> selectLikeInfo(@PathVariable Integer marketNo, @RequestHeader(name="Authorization") String token){
-		System.out.println("글번호 확인 : " + marketNo);
-		System.out.println("토큰 확인" + token);
+	public ResponseEntity<?> selectLikeInfo(@PathVariable Integer marketNo, @RequestHeader(required = false,name="Authorization") String token){
+		//System.out.println("글번호 확인 : " + marketNo);	//정상 확인
+		//System.out.println("토큰 확인 : " + token);	//로그인 or 로그아웃 상황시 확인완료
 		Map<String,Object> result = marketService.selectLikeInfo(marketNo,token);
-		return ResponseEntity.ok("확인");
+		//System.out.println(result);
+		return ResponseEntity.ok(result);
+	}
+	
+	@PostMapping(value="/{marketNo}/likes")
+	public ResponseEntity<?> likeOn(@PathVariable Integer marketNo,@RequestHeader(name="Authorization") String token){
+		int result = marketService.likeOn(marketNo,token);
+		return ResponseEntity.ok(result);
+	}
+	@DeleteMapping(value="/{marketNo}/likes")
+	public ResponseEntity<?> likeOff(@PathVariable Integer marketNo,@RequestHeader(name="Authorization") String token){
+		int result = marketService.likeOff(marketNo,token);
+		return ResponseEntity.ok(result);
 	}
 }

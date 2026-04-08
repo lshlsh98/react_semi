@@ -132,12 +132,11 @@ const MarketListPage = () => {
             </Button>
           </form>
         </div>
-        <div className={styles.market_categoryAndlist}>
-          <div className={styles.market_category}>지역 카테고리</div>
-          <div className={styles.market_list_wrap}>
-            <MarketList marketList={marketList} />
-          </div>
+
+        <div className={styles.market_list_wrap}>
+          <MarketList marketList={marketList} />
         </div>
+
         {/* 로그인시 글쓰기 필드 */}
         <div className={styles.market_writebox}>
           {memberId && (
@@ -179,22 +178,29 @@ const MarketItem = ({ market }) => {
   return (
     <li
       onClick={() => {
-        navigate(`/market/${market.marketNo}`);
+        navigate(`/market/view/${market.marketNo}`);
       }}
     >
-      {market.marketThumb ? (
-        <img src={`${imgUrl}/${market.marketThumb}`} alt={market.marketTitle} />
-      ) : (
-        <ImageNotSupportedIcon className={styles.ImageNotSupportedIcon} />
-      )}
+      <div className={styles.market_info_wrap}>
+        {market.marketThumb ? (
+          <img
+            src={`${imgUrl}/${market.marketThumb}`}
+            alt={market.marketTitle}
+          />
+        ) : (
+          <ImageNotSupportedIcon
+            className={styles.ImageNotSupportedIcon}
+            style={{ fontSize: "72pt" }}
+          />
+        )}
+        <div className={styles.info}>
+          <p>제목 : {market.marketTitle}</p>
+          <p>작성일 : {market.marketDate.slice(0, 10)}</p>
+          <p>작성자 : {market.marketWriter}</p>
+          <p>조회수 : {market.viewCount}</p>
 
-      <div className={styles.info}>
-        <p>제목 : {market.marketTitle}</p>
-        <p>작성일 : {market.marketDate.slice(0, 10)}</p>
-        <p>작성자 : {market.marketWriter}</p>
-        <p>조회수 : {market.viewCount}</p>
-
-        <p>판매금액 : {market.sellPrice}</p>
+          <p>판매금액 : {market.sellPrice}</p>
+        </div>
       </div>
     </li>
   );

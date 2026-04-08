@@ -1,6 +1,7 @@
 package kr.co.iei.market.model.dao;
 
 import java.util.List;
+import java.util.Map;
 
 import org.apache.ibatis.annotations.Mapper;
 
@@ -28,6 +29,12 @@ public interface MarketDao {
 	int incrementViewCount(Integer marketNo);
 
 	int selectLikeCount(Integer marketNo);
+
+	int selectIsLike(Map<String, Object> params);
+
+	int likeOn(Map<String, Object> params);
+
+	int likeOff(Map<String, Object> params);
 
 	
 }

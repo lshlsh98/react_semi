@@ -117,5 +117,23 @@
 		select count(*) from market_like_tbl where market_no = #{marketNo}
 	</select>
 	
+	<!-- 좋아요 여부 조회 -->
+	<select id="selectIsLike" resultType="int">
+		select count(*) from market_like_tbl
+		where market_no = #{marketNo}
+		and member_id = #{memberId}
+	</select>
+	
+	<!-- 로그인후 좋아요 클릭 -->
+	<insert id="likeOn">
+		insert into market_like_tbl values (#{memberId},#{marketNo})
+	</insert>
+	
+	<!-- 로그인시 좋아요 해제 -->
+	<delete id="likeOff">
+		delete from market_like_tbl
+			where market_no = #{marketNo}
+			and member_id = #{memberId}
+	</delete>
 
 </mapper>
