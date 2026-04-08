@@ -53,13 +53,12 @@ public class MarketController {
 		//System.out.println(market);				//정상작동 확인
 		
 		/*---------------------files 정상작동 확인--------------------------
-		
-		--------------------------------------------------------------------*/
 		for (MultipartFile file : files) {
 			System.out.println("파일명: " + file.getOriginalFilename());
 			System.out.println("크기: " + file.getSize());
 			System.out.println("타입: " + file.getContentType());
 		}
+		--------------------------------------------------------------------*/
 		
 		List<MarketFile> fileList = new ArrayList<MarketFile>();
 		

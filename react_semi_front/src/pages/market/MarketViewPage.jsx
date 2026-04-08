@@ -43,7 +43,7 @@ const MarketViewPage = () => {
           <title>이미지 보기</title>
           <style>
             body { margin:0; display:flex; flex-direction:column; align-items:center; justify-content:center; background:#f0f0f0; }
-            img { max-width:100%; max-height:100%; }
+            img { max-width:100vh; max-height:100vh; }
             button { margin-top:20px; padding:8px 20px; font-size:16px; cursor:pointer; border-radius: 6px; background-color : #549849; color: #ffffff; border:1px solid #549849 }
           </style>
         </head>
