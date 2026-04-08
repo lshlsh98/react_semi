@@ -71,9 +71,17 @@ function App() {
           <Route path="/market/:marketNo" element={<MarketViewPage />} />
 
           <Route path="/member/mypage/*" element={<Mypage />} />
+
+          <Route path="/community" element={<CommunityListPage />} />
           <Route path="/community/write" element={<CommunityWritePage />} />
-          <Route path="/community/view" element={<CommunityViewPage />} />
-          <Route path="/community/modify/" element={<CommunityModifyPage />} />
+          <Route
+            path="/community/view/:communityNo"
+            element={<CommunityViewPage />}
+          />
+          <Route
+            path="/community/modify/:communityNo"
+            element={<CommunityModifyPage />}
+          />
         </Routes>
       </div>
       <Footer />

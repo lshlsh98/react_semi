@@ -1,0 +1,15 @@
+.community_frm_wrap {
+  width: 1000px;
+  margin: 30px auto;
+}
+
+.input_wrap {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-bottom: 30px;
+}
+
+.input_wrap > label {
+  font-size: 24px;
+}

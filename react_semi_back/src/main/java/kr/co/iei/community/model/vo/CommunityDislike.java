@@ -1,6 +1,6 @@
 package kr.co.iei.community.model.vo;
 
-import java.util.List;
+import org.apache.ibatis.type.Alias;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -9,7 +9,8 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 @Data
-public class CommunityListResponse {
-	private List<Community> items;
-	private Integer totalPage;
+@Alias(value="communityDislike")
+public class CommunityDislike {
+	private String memberId;
+	private Integer communityNo;
 }

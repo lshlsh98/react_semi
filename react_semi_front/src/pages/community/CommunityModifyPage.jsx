@@ -4,48 +4,24 @@ import { useEffect, useState } from "react";
 import axios from "axios";
 import CommunityFrm from "../../components/community/CommunityFrm";
 import Button from "../../components/ui/Button";
+import TextEditor from "../../components/ui/TextEditor";
 import Swal from "sweetalert2";
 
 const CommunityModifyPage = () => {
   const navigate = useNavigate();
   const params = useParams();
   const communityNo = params.communityNo;
-  const [community, setCommunity] = useState({
-    communityTitle: "",
-    communityContent: "",
-    fileList: [],
-  });
-
-  const [files, setFiles] = useState([]); // 새로 추가할 첨부파일
-  const addFiles = (fileList) => {
-    const newFiles = [...files, ...fileList];
-    setFiles(newFiles);
-  };
-
-  const deleteFile = (file) => {
-    const newFiles = files.filter((item) => {
-      return item !== file;
-    });
-    setFiles(newFiles);
-  };
-
+  const [community, setCommunity] = useState(null);
   useEffect(() => {
-    if (communityNo) {
-      axios
-        .put(`${import.meta.env.VITE_BACKSERVER}/community/${communityNo}`)
-        .then((res) => {
-          console.log(res.data);
-          setCommunity(res.data);
-          Swal.fire({
-            icon: "success",
-            title: "수정 완료!",
-          });
-        })
-        .catch((err) => {
-          console.log(err);
-        });
-    }
-  }, [communityNo]);
+    axios
+      .get(`${import.meta.env.VITE_BACKSERVER}/communities/${communityNo}`)
+      .then((res) => {
+        setCommunity(res.data);
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  }, []);
 
   const inputCommunity = (e) => {
     const name = e.target.name;
@@ -57,46 +33,49 @@ const CommunityModifyPage = () => {
   const inputCommunityContent = (data) => {
     setCommunity({ ...community, communityContent: data });
   };
-  const [deleteFileList, setDeleteFileList] = useState([]);
-  const addDeleteFileList = (file) => {
-    const newFileList = community.fileList.filter((item) => {
-      return item !== file;
-    });
-    setCommunity({ ...community, fileList: newFileList });
-    setDeleteFileList([...deleteFileList, file.communityFilePath]);
-  };
 
   const modifyCommunity = () => {
     const form = new FormData();
     form.append("communityTitle", community.communityTitle);
     form.append("communityContent", community.communityContent);
-    files.forEach((file) => {
-      form.append("files", file);
-    });
+
+    axios
+      .put(
+        `${import.meta.env.VITE_BACKSERVER}/communities/${communityNo}`,
+        form,
+      )
+      .then(() => {
+        Swal.fire({
+          icon: "success",
+          title: "게시물 수정 성공!",
+          confirmButtonText: "확인",
+        });
+        navigate(`/community/view/${communityNo}`);
+      })
+      .catch((err) => {
+        console.log(err);
+      });
   };
 
   return (
     <section className={styles.community_wrap}>
       <h3 className="page-title">게시글 수정</h3>
+
       {community && (
         <CommunityFrm
           community={community}
           inputCommunity={inputCommunity}
-          files={files}
-          addFiles={addFiles}
-          deleteFile={deleteFile}
           inputCommunityContent={inputCommunityContent}
-          addDeleteFileList={addDeleteFileList}
         />
       )}
+
       <div className={styles.btn_wrap}>
         <Button className="btn primary" onClick={modifyCommunity}>
           수정
         </Button>
-
         <Button
           className="btn light outline"
-          onClick={() => navigate(`/community/detail/${communityNo}`)}
+          onClick={() => navigate(`/community/view/${communityNo}`)}
         >
           취소
         </Button>
