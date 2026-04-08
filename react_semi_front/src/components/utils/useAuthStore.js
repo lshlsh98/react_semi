@@ -50,6 +50,9 @@ const useAuthStore = create(
       setThumb: (thumb) => {
         set({ memberThumb: thumb });
       },
+      setAddr: (addr) => {
+        set({ memberAddr: addr });
+      },
       setName: (name) => {
         set({ memberName: name });
       },

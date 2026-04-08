@@ -1,5 +1,7 @@
 package kr.co.iei.market.model.vo;
 
+import java.util.List;
+
 import org.apache.ibatis.type.Alias;
 
 import lombok.AllArgsConstructor;
@@ -24,4 +26,6 @@ public class Market {
 	private String completedDate;	//거래완료시간
 	private String marketThumb;		//썸네일 파일로 market_file 에서 조인해서 첫번째 이미지미만 가져옴
 	private Integer likeCount;		//좋아요 수
+	private List<MarketFile> fileList;
+	private List<String> deleteFilePath;
 }

@@ -174,27 +174,26 @@ const MarketList = ({ marketList }) => {
 
 const MarketItem = ({ market }) => {
   const navigate = useNavigate();
-  /* 이미지 업로드 매핑 */
-  const imgUrl = "http://192.168.31.4:9999/market";
+  /* 이미지 매핑 */
+  const imgUrl = "http://192.168.31.24:9999/market";
   return (
     <li
       onClick={() => {
-        navigate(`/market/view/${market.marketNo}`);
+        navigate(`/market/${market.marketNo}`);
       }}
     >
       {market.marketThumb ? (
         <img src={`${imgUrl}/${market.marketThumb}`} alt={market.marketTitle} />
       ) : (
-        <ImageNotSupportedIcon className={styles.iconFallback} />
+        <ImageNotSupportedIcon className={styles.ImageNotSupportedIcon} />
       )}
 
       <div className={styles.info}>
-        <p>번호 : {market.marketNo}</p>
         <p>제목 : {market.marketTitle}</p>
-        <p>작성일 : {market.marketDate}</p>
+        <p>작성일 : {market.marketDate.slice(0, 10)}</p>
         <p>작성자 : {market.marketWriter}</p>
         <p>조회수 : {market.viewCount}</p>
-        <p>판매지역 : {market.sellAddr}</p>
+
         <p>판매금액 : {market.sellPrice}</p>
       </div>
     </li>

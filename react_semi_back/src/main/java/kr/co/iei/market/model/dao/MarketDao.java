@@ -22,4 +22,14 @@ public interface MarketDao {
 	int insertMarketFile(MarketFile marketFile);
 	
 	List<Market> selectMainPageMarketList(Integer order);
+
+	Market selectOneMarket(Integer marketNo);
+
+	List<MarketFile> selectMarketFileList(Integer marketNo);
+
+	int incrementViewCount(Integer marketNo);
+
+	int selectLikeCount(Integer marketNo);
+
+	
 }
