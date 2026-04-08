@@ -1,0 +1,47 @@
+.trade_status_wrap {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-top: 10px;
+}
+
+.list_section {
+  width: 900px;
+}
+
+.trade_item {
+  list-style-type: none;
+  display: flex;
+  text-align: center;
+  padding: 5px;
+  border-bottom: 1px solid var(--gray6);
+}
+
+.title_ul {
+  border-top: 1px solid var(--gray6);
+  font-size: large;
+  padding: 10px 5px;
+  background-color: var(--secendary);
+}
+.title_ul > li {
+  color: var(--gray8);
+}
+
+.trade_no {
+  width: 9%;
+}
+.trade_title {
+  width: 33%;
+}
+.trade_addr {
+  width: 24%;
+}
+.trade_price {
+  width: 13%;
+}
+.trade_completed {
+  width: 9%;
+}
+.trade_completed_date {
+  width: 12%;
+}

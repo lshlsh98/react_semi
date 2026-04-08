@@ -1,0 +1,220 @@
+import useAuthStore from "../../utils/useAuthStore";
+import styles from "./MyCommentItem.module.css";
+import ThumbUpIcon from "@mui/icons-material/ThumbUp";
+import ThumbDownIcon from "@mui/icons-material/ThumbDown";
+import ReportIcon from "@mui/icons-material/Report";
+import { useEffect, useRef, useState } from "react";
+import axios from "axios";
+import Swal from "sweetalert2";
+import ReportModal from "../ReportModal";
+
+const MyCommentItem = ({
+  comment,
+  index,
+  commentList,
+  setCommentList,
+  type,
+  isAdminMode,
+  tblName,
+}) => {
+  const memberThumb = comment.writerThumb;
+
+  const memberGrade = useAuthStore((state) => state.memberGrade);
+  const [curComment, setCurComment] = useState(comment.commentContent);
+
+  const textareaRef = useRef(null);
+
+  useEffect(() => {
+    if (textareaRef.current) {
+      textareaRef.current.style.height = "auto"; // 초기화
+      textareaRef.current.style.height =
+        textareaRef.current.scrollHeight + "px"; // 내용만큼 늘리기
+    }
+  }, [curComment]); // comment 바뀔 때마다 실행
+
+  const [dis, setDis] = useState(true);
+  const updObj = {
+    commentNo: comment.commentNo,
+    newComment: curComment,
+    type: type,
+  };
+  const updateComment = () => {
+    if (!dis) {
+      axios
+        .patch(
+          `${import.meta.env.VITE_BACKSERVER}/mypages/comment/${comment.commentNo}`,
+          updObj,
+        )
+        .then((res) => {})
+        .catch((err) => {
+          console.log(err);
+        });
+    }
+
+    setDis(!dis);
+  };
+
+  const delObj = {
+    commentNo: comment.commentNo,
+    type: type,
+  };
+  const deleteComment = () => {
+    Swal.fire({
+      title: "삭제하시겠습니까?",
+      text: "삭제 시 정보를 복구할 수 없습니다",
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonText: "삭제",
+      cancelButtonText: "취소",
+    }).then((result) => {
+      if (result.isConfirmed) {
+        axios
+          .delete(
+            `${import.meta.env.VITE_BACKSERVER}/mypages/comment/${comment.commentNo}`,
+            { data: delObj },
+          )
+          .then((res) => {
+            if (res.data === 1) {
+              const newCommentList = commentList.filter((c, i) => {
+                return i !== index;
+              });
+
+              setCommentList(newCommentList);
+            }
+          })
+          .catch((err) => {
+            console.log(err);
+          });
+      }
+    });
+  };
+
+  return (
+    <div className={styles.item_wrap}>
+      <div className={styles.comment_wrap}>
+        <div className={styles.comment_writer}>
+          <div className={styles.comment_wrtier_thumb}>
+            <div
+              className={
+                memberThumb ? styles.member_thumb_exists : styles.member_thumb
+              }
+            >
+              {memberThumb ? (
+                <img
+                  src={`${import.meta.env.VITE_BACKSERVER}/semi/${memberThumb}`}
+                />
+              ) : (
+                <span className="material-icons">account_circle</span>
+              )}
+            </div>
+          </div>
+          <div className={styles.comment_writer_info}>
+            <div
+              className={styles.comment_name}
+            >{`${comment.writerName} [${comment.writerId}]`}</div>
+          </div>
+        </div>
+        <div className={styles.comment_content}>
+          <textarea
+            ref={textareaRef}
+            className={styles.textarea}
+            value={curComment}
+            onChange={(e) => setCurComment(e.target.value)}
+            disabled={dis}
+          />
+        </div>
+        <div className={styles.comment_actions}>
+          <Actions
+            comment={comment}
+            type={type}
+            isAdminMode={isAdminMode}
+            tblName={tblName}
+          />
+        </div>
+      </div>
+      <div className={styles.comment_btn_section}>
+        {isAdminMode === "false" ? (
+          <div className={styles.comment_btn} onClick={updateComment}>
+            {dis ? "수정" : "완료"}
+          </div>
+        ) : (
+          ""
+        )}
+        <div className={styles.comment_btn} onClick={deleteComment}>
+          삭제
+        </div>
+      </div>
+    </div>
+  );
+};
+
+const Actions = ({ comment, type, isAdminMode, tblName }) => {
+  const [open, setOpen] = useState(false);
+
+  const showReport = () => {
+    if (comment.reportCount <= 0 || isAdminMode === "false") {
+      return;
+    }
+
+    setOpen(true);
+  };
+
+  return (
+    <>
+      {type === "community" ? (
+        <>
+          <div
+            className={
+              comment.isLiked === 1 ? styles.isLiked : styles.action_default
+            }
+          >
+            <ThumbUpIcon />
+            <div>{comment.likeCount}</div>
+          </div>
+          <div
+            className={
+              comment.isDisliked === 1
+                ? styles.isDisliked
+                : styles.action_default
+            }
+          >
+            <ThumbDownIcon />
+            <div>{comment.dislikeCount}</div>
+          </div>
+        </>
+      ) : (
+        ""
+      )}
+      <div
+        className={`${styles.comment_actions_report} ${comment.isReported === 1 ? styles.isReported : styles.action_default}`}
+        onClick={(e) => {
+          e.stopPropagation();
+          showReport();
+        }}
+      >
+        <ReportIcon />
+        <div>{comment.reportCount}</div>
+      </div>
+
+      {/* 모달 */}
+      {open && (
+        <div
+          className={styles.modal_overlay}
+          onClick={(e) => {
+            e.stopPropagation();
+            setOpen(false);
+          }}
+        >
+          <div
+            className={styles.modal_content}
+            onClick={(e) => e.stopPropagation()}
+          >
+            <ReportModal board={comment} tblName={tblName} />
+          </div>
+        </div>
+      )}
+    </>
+  );
+};
+
+export default MyCommentItem;
