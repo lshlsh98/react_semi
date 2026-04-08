@@ -15,6 +15,7 @@ const CommunityListPage = () => {
   const [type, setType] = useState(1); // 1:제목 2:작성자
   const [keyword, setKeyword] = useState(""); // 검색어
   const [order, setOrder] = useState(1); // 정렬 조건
+  const [view, setView] = useState(1);
 
   const [searchType, setSearchType] = useState(1); // 제출할 검색 조건
   const [searchKeyword, setSearchKeyword] = useState(""); // 제출할 검색어
@@ -27,7 +28,7 @@ const CommunityListPage = () => {
   useEffect(() => {
     axios
       .get(
-        `${import.meta.env.VITE_BACKSERVER}/communities?page=${page}&size=${size}&status=1&order=${order}&searchType=${searchType}&searchKeyword=${searchKeyword}`,
+        `${import.meta.env.VITE_BACKSERVER}/communities?page=${page}&size=${size}&status=1&order=${order}&view=${view}&searchType=${searchType}&searchKeyword=${searchKeyword}`,
       )
       .then((res) => {
         console.log(res);
@@ -37,7 +38,7 @@ const CommunityListPage = () => {
       .catch((err) => {
         console.log(err);
       });
-  }, [page, order, searchType, searchKeyword]);
+  }, [page, order, searchType, searchKeyword, view]);
 
   return (
     <section className={styles.community_page_wrap}>
@@ -74,37 +75,50 @@ const CommunityListPage = () => {
             <span className="material-icons">search</span>
           </Button>
         </form>
-        <div className={styles.order_wrap}>
-          {memberId && (
-            <div className={styles.write_btn_zone}>
-              <Button
-                className="btn primary"
-                onClick={() => {
-                  navigete("/community/write");
-                }}
-              >
-                글쓰기
-              </Button>
-            </div>
-          )}
+        <div className={styles.order_item_wrap}>
           <select
             className={styles.select}
-            value={order}
+            value={view}
             onChange={(e) => {
-              setOrder(e.target.value);
+              setView(e.target.value);
+              setPage(0);
             }}
           >
-            <option value={1}>최신순</option>
-            <option value={2}>작성순</option>
-            <option value={3}>조회수</option>
-            <option value={4}>좋아요</option>
-            <option value={5}>싫어요</option>
-            <option value={6}>신고수</option>
+            <option value={1}>게시글</option>
+            <option value={2}>공지사항</option>
           </select>
+          <div className={styles.order_wrap}>
+            {memberId && (
+              <div className={styles.write_btn_zone}>
+                <Button
+                  className="btn primary"
+                  onClick={() => {
+                    navigete("/community/write");
+                  }}
+                >
+                  글쓰기
+                </Button>
+              </div>
+            )}
+            <select
+              className={styles.select}
+              value={order}
+              onChange={(e) => {
+                setOrder(e.target.value);
+              }}
+            >
+              <option value={1}>최신순</option>
+              <option value={2}>작성순</option>
+              <option value={3}>조회수</option>
+              <option value={4}>좋아요</option>
+              <option value={5}>싫어요</option>
+              <option value={6}>신고수</option>
+            </select>
+          </div>
         </div>
       </div>
       <div className={styles.list_wrap}>
-        <CommunityList communityList={communityList} />
+        <CommunityList communityList={communityList} view={view} />
         <div className={styles.community_list_pagination}>
           <Pagination
             page={page}

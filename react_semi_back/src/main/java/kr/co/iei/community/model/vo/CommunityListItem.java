@@ -13,6 +13,7 @@ public class CommunityListItem {
 	private Integer status;
 	private Integer order;
 	private Integer searchType;
+	private Integer view;
 	private String searchKeyword;
 	private String memberId;
 	
