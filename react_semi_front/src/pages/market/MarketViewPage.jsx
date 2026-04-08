@@ -12,6 +12,8 @@ import ReportIcon from "@mui/icons-material/Report";
 import ReportGmailerrorredIcon from "@mui/icons-material/ReportGmailerrorred";
 import Swal from "sweetalert2";
 import { Modal, Box } from "@mui/material";
+import MarketComment from "../../components/market/MarketComment";
+
 const MarketViewPage = () => {
   const navigate = useNavigate();
   const { memberId, isReady } = useAuthStore();
@@ -187,6 +189,7 @@ const MarketViewPage = () => {
               <Button className="btn primary danger">삭제</Button>
             </div>
           )}
+          <MarketComment marketNo={marketNo} memberId={memberId} />
         </>
       )}
     </main>

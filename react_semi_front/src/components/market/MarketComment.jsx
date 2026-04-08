@@ -40,10 +40,10 @@ const MarketComment = ({ marketNo, memberId }) => {
 
     const commentData = {
       marketNo: marketNo,
-      memberId: memberId,
+      marketCommentWriter: memberId, // 🚀 memberId -> marketCommentWriter로 변경
       marketCommentContent: newComment,
       isSecret: isSecret ? 1 : 0,
-      marketCommentRef: null, // 최상위 댓글이므로 null
+      marketRecommentNo: null, // 🚀 marketCommentRef -> marketRecommentNo로 변경
     };
 
     axios
@@ -58,17 +58,20 @@ const MarketComment = ({ marketNo, memberId }) => {
 
   // 대댓글 렌더링 함수 (재귀)
   const renderComments = (parentId) => {
-    return commentList
-      .filter((c) => c.marketCommentRef === parentId)
-      .map((comment) => (
-        <CommentItem
-          key={comment.marketCommentNo}
-          comment={comment}
-          memberId={memberId}
-          fetchComments={fetchComments} // 삭제/수정 후 새로고침을 위해 넘김
-          allComments={commentList} // 자식 대댓글을 찾기 위해 전체 리스트 넘김
-        />
-      ));
+    return (
+      commentList
+        // 🚀 필터링 기준 변경
+        .filter((c) => c.marketRecommentNo === parentId)
+        .map((comment) => (
+          <CommentItem
+            key={comment.marketCommentNo}
+            comment={comment}
+            memberId={memberId}
+            fetchComments={fetchComments} // 삭제/수정 후 새로고침을 위해 넘김
+            allComments={commentList} // 자식 대댓글을 찾기 위해 전체 리스트 넘김
+          />
+        ))
+    );
   };
 
   return (
@@ -134,13 +137,16 @@ const CommentItem = ({ comment, memberId, fetchComments, allComments }) => {
           ) : (
             <span className="material-icons">account_circle</span>
           )}
-          <span className={styles.writer_id}>{comment.memberId}</span>
+          {/* 🚀 렌더링되는 아이디 속성명 변경 */}
+          <span className={styles.writer_id}>
+            {comment.marketCommentWriter}
+          </span>
           <span className={styles.comment_date}>
             {comment.marketCommentDate}
           </span>
         </div>
-        {/* 수정/삭제 버튼 (내가 쓴 글일 때만) */}
-        {memberId === comment.memberId && (
+        {/* 🚀 수정/삭제 권한 체크 로직 변경 */}
+        {memberId === comment.marketCommentWriter && (
           <div className={styles.comment_actions}>
             <button>수정</button>
             <button onClick={deleteComment}>삭제</button>
@@ -175,7 +181,8 @@ const CommentItem = ({ comment, memberId, fetchComments, allComments }) => {
       {/* 자식 대댓글 렌더링 (재귀 호출) */}
       <ul className={styles.reply_list}>
         {allComments
-          .filter((c) => c.marketCommentRef === comment.marketCommentNo)
+          // 🚀 필터링 기준 변경
+          .filter((c) => c.marketRecommentNo === comment.marketCommentNo)
           .map((childComment) => (
             <CommentItem
               key={childComment.marketCommentNo}

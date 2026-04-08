@@ -169,33 +169,28 @@
         SELECT 
             c.market_comment_no,
             c.market_no,
-            c.member_id, 
-            m.member_thumb,
+            c.market_comment_writer,  m.member_thumb,
             c.market_comment_content,
             TO_CHAR(c.market_comment_date, 'YYYY-MM-DD HH24:MI') AS market_comment_date,
-            c.market_comment_ref, 
-            c.is_secret
+            c.market_recomment_no,    c.is_secret
         FROM market_comment_tbl c
-        LEFT JOIN member_tbl m ON (c.member_id = m.member_id)
-        WHERE c.market_no = #{marketNo}
+        LEFT JOIN member_tbl m ON (c.market_comment_writer = m.member_id) WHERE c.market_no = #{marketNo}
         ORDER BY c.market_comment_no ASC
     </select>
 
     <insert id="insertMarketComment">
         INSERT INTO market_comment_tbl (
             market_comment_no,
-            market_no,
-            member_id,
             market_comment_content,
             market_comment_date,
-            market_comment_ref,
-            is_secret
+            market_no,
+            market_comment_writer,   market_recomment_no,     is_secret
         ) VALUES (
             market_comment_seq.NEXTVAL,
-            #{marketNo},
-            #{memberId},  #{marketCommentContent},
+            #{marketCommentContent},
             SYSDATE,
-            #{marketCommentRef}, #{isSecret}
+            #{marketNo},
+            #{marketCommentWriter},  #{marketRecommentNo},    #{isSecret}
         )
     </insert>
 
