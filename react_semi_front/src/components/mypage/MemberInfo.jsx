@@ -16,7 +16,7 @@ const MemberInfo = () => {
   const [file, setFile] = useState(null);
   const [preview, setPreview] = useState(null);
 
-  const { memberId, memberThumb } = useAuthStore();
+  const { memberId } = useAuthStore();
   const [member, setMember] = useState({ memberThumb: null });
   const [memberAuth, setMemberAuth] = useState({
     memberId: "",
@@ -214,17 +214,16 @@ const MemberInfo = () => {
             `${import.meta.env.VITE_BACKSERVER}/members/${member.memberId}`,
           )
           .then((res) => {
-            console.log(res);
-            if (res.data === 1) {
-              useAuthStore.getState().setReady(false);
-              useAuthStore.getState().logout(true);
-              delete axios.defaults.headers.common["Authorization"];
-              navigate("/");
+            if (res.date === 1) {
               Swal.fire({
                 title: "탈퇴 완료되었습니다.",
                 text: "이용해주셔서 감사합니다.",
                 icon: "success",
               });
+              useAuthStore.getState().setReady(false);
+              useAuthStore.getState().logout(true);
+              delete axios.defaults.headers.common["Authorization"];
+              navigate("/");
             }
           })
           .catch((err) => {
@@ -253,7 +252,7 @@ const MemberInfo = () => {
   };
 
   return (
-    <div className={styles.member_info_wrap}>
+    <section className={styles.member_info_wrap}>
       <h3 className="page-title">내 정보</h3>
 
       {member !== null && memberAuthSuccess ? (
@@ -532,7 +531,7 @@ const MemberInfo = () => {
           </form>
         </div>
       )}
-    </div>
+    </section>
   );
 };
 

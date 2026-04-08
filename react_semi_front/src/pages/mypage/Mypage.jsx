@@ -10,6 +10,9 @@ import MyMarketPage from "../../components/mypage/MyMarketPage";
 import MyCommunityCommentPage from "../../components/mypage/MyCommunityCommentPage";
 import MyMarketCommentPage from "../../components/mypage/MyMarketCommentPage";
 import LikeDislike from "../../components/mypage/LikeDislike";
+import MemberManagement from "../../components/mypage/MemberManagement";
+import MemberInfoManagement from "../../components/mypage/MemberInfoManagement";
+import CarbonContribution from "../../components/mypage/CarbonContribution";
 
 const Mypage = () => {
   const navigate = useNavigate();
@@ -55,6 +58,15 @@ const Mypage = () => {
               element={<MyCommunityCommentPage />}
             ></Route>
             <Route path="pw" element={<ChangePw />} />
+            <Route path="member-management" element={<MemberManagement />} />
+            <Route path="member-management">
+              <Route index element={<MemberManagement />} />
+              <Route path=":memberId" element={<MemberInfoManagement />} />
+            </Route>
+            <Route
+              path="carbon-contribution"
+              element={<CarbonContribution />}
+            ></Route>
           </Routes>
         </div>
       </div>
@@ -64,7 +76,7 @@ const Mypage = () => {
 const Profile = () => {
   const { memberId, memberName, memberThumb } = useAuthStore();
   return (
-    <div className={styles.sidebar}>
+    <section className={styles.sidebar}>
       <div
         className={
           memberThumb ? styles.member_thumb_exists : styles.member_thumb
@@ -80,7 +92,7 @@ const Profile = () => {
         <p>{memberName}</p>
         <p>{memberId}</p>
       </div>
-    </div>
+    </section>
   );
 };
 const SideBar = () => {
@@ -91,12 +103,15 @@ const SideBar = () => {
     setOpenMenu(openMenu === menu ? null : menu);
   };
   return (
-    <div className={styles.sidebar}>
-      <ul>
+    <section className={styles.sidebar}>
+      <ul className={styles.normal_menu}>
         <NavLink to="/member/mypage/myinfo">
           <li
             className={selectMenu === "myinfo" ? styles.active : ""}
-            onClick={() => setSelectMenu("myinfo")}
+            onClick={() => {
+              setSelectMenu("myinfo");
+              setOpenMenu(null);
+            }}
           >
             내 정보
           </li>
@@ -104,7 +119,10 @@ const SideBar = () => {
         <NavLink to="/member/mypage/pw">
           <li
             className={selectMenu === "pw" ? styles.active : ""}
-            onClick={() => setSelectMenu("pw")}
+            onClick={() => {
+              setSelectMenu("pw");
+              setOpenMenu(null);
+            }}
           >
             비밀번호 변경
           </li>
@@ -218,29 +236,37 @@ const SideBar = () => {
             </NavLink>
           </ul>
         </li>
-        <li
-          onClick={() => {
-            toggleMenu("Contribution");
-            setSelectMenu("Contribution");
-          }}
-          className={selectMenu === "Contribution" ? styles.active : ""}
-        >
-          나의 탄소 기여도
-        </li>
+        <NavLink to="/member/mypage/carbon-contribution">
+          <li
+            onClick={() => {
+              setSelectMenu("Contribution");
+              setOpenMenu(null);
+            }}
+            className={selectMenu === "Contribution" ? styles.active : ""}
+          >
+            나의 탄소 기여도
+          </li>
+        </NavLink>
       </ul>
       {memberGrade !== 3 && (
         <ul className={styles.management}>
           <li>관리 페이지</li>
+          <NavLink to="/member/mypage/member-management">
+            <li
+              onClick={() => {
+                setSelectMenu("memberManagement");
+                setOpenMenu(null);
+              }}
+              className={selectMenu === "memberManagement" ? styles.active : ""}
+            >
+              회원 관리
+            </li>
+          </NavLink>
           <li
             onClick={() => {
-              toggleMenu("memberManagement");
-              setSelectMenu("memberManagement");
+              setSelectMenu("postManagementManager");
+              setOpenMenu(null);
             }}
-            className={selectMenu === "memberManagement" ? styles.active : ""}
-          >
-            회원 관리
-          </li>
-          <li
             className={
               selectMenu === "postManagement_admin" ||
               selectMenu === "postManagement_trade_admin" ||
@@ -297,6 +323,10 @@ const SideBar = () => {
             </ul>
           </li>
           <li
+            onClick={() => {
+              setSelectMenu("reportedPostManagement");
+              setOpenMenu(null);
+            }}
             className={
               selectMenu === "commentManagement_admin" ||
               selectMenu === "commentManagement_trade_admin" ||
@@ -369,7 +399,7 @@ const SideBar = () => {
           </NavLink>
         </ul>
       )}
-    </div>
+    </section>
   );
 };
 export default Mypage;

@@ -2,31 +2,38 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
 <mapper namespace="kr.co.iei.member.model.dao.MemberDao">
 
-    <insert id="insertMember">
-        insert into member_tbl values (	
-            #{memberId}, #{memberPw}, #{memberName}, null, #{memberEmail}, 
-            3, sysdate, #{memberPostcode}, #{memberAddr}, #{memberDetailAddr}, 0
-        )
-    </insert>
+	<insert id="insertMember">
+		insert into member_tbl values (
+		#{memberId},
+		#{memberPw}, #{memberName}, null, #{memberEmail},
+		3, sysdate,
+		#{memberPostcode}, #{memberAddr}, #{memberDetailAddr}, 0
+		)
+	</insert>
 
-    <select id="selectOneMember" resultType="member">
-        select * from member_tbl where member_id = #{memberId}
-    </select>
-    
-    <select id="findId" resultType="string">
-        select member_id from member_tbl where member_name = #{memberName} and member_email = #{memberEmail}
-    </select>
-    
-    <update id="updateTempPw">
-        update member_tbl set member_pw = #{memberPw} where member_id = #{memberId} and member_email = #{memberEmail}
-    </update>
-    
-    <update id="updateThumbnail">
+	<select id="selectOneMember" resultType="member">
+		select * from member_tbl
+		where member_id = #{memberId}
+	</select>
+
+	<select id="findId" resultType="string">
+		select member_id from member_tbl
+		where member_name = #{memberName} and
+		member_email = #{memberEmail}
+	</select>
+
+	<update id="updateTempPw">
+		update member_tbl set member_pw = #{memberPw} where
+		member_id = #{memberId}
+		and member_email = #{memberEmail}
+	</update>
+
+	<update id="updateThumbnail">
 		update member_tbl set
 		member_thumb = #{memberThumb}
 		where member_id = #{memberId}
 	</update>
-	
+
 	<update id="memberUpdate">
 		update member_tbl set
 		member_thumb = #{memberThumb},
@@ -34,18 +41,95 @@
 		member_email = #{memberEmail},
 		member_postcode = #{memberPostcode},
 		member_addr = #{memberAddr},
-		member_detail_addr = #{memberDetailAddr}
+		member_detail_addr = #{memberDetailAddr},
+		member_grade = #{memberGrade}
 		where member_id = #{memberId}
 	</update>
-	
+
 	<delete id="memberDelete">
 		delete from member_tbl
 		where member_id = #{memberId}
 	</delete>
-	
+
 	<update id="updatePw">
-        update member_tbl 
-        set member_pw = #{memberPw} 
-        where member_id = #{memberId}
-    </update>
+		update member_tbl
+		set member_pw = #{memberPw}
+		where
+		member_id = #{memberId}
+	</update>
+
+	<select id="selectAllMember" resultType="member">
+		select *
+		from member_tbl
+
+		<if test="searchKeyword != ''">
+			<where>
+				<if test="searchType==1">
+					member_name like '%'||#{searchKeyword}||'%'
+				</if>
+				<if test="searchType==2">
+					member_id like '%'||#{searchKeyword}||'%'
+				</if>
+				<if test="searchType==3">
+					member_email like '%'||#{searchKeyword}||'%'
+				</if>
+			</where>
+		</if>
+
+		<where>
+			<if test="selectedGrade==1">
+				and member_grade = 1
+			</if>
+			<if test="selectedGrade==2">
+				and member_grade = 2
+			</if>
+			<if test="selectedGrade==3">
+				and member_grade = 3
+			</if>
+		</where>
+
+
+		<if test="order==1">
+			order by member_id asc
+		</if>
+		<if test="order==2">
+			order by member_id desc
+		</if>
+		<if test="order==3">
+			order by member_name asc
+		</if>
+		<if test="order==4">
+			order by member_name desc
+		</if>
+
+		offset #{page}*#{size} rows fetch next #{size} rows only
+	</select>
+
+	<select id="selectMemberCount" resultType="Integer">
+		select count(*)
+		from member_tbl
+
+		<where>
+			<if test="searchType==1">
+				member_name like '%'||#{searchKeyword}||'%'
+			</if>
+			<if test="searchType==2">
+				member_id like '%'||#{searchKeyword}||'%'
+			</if>
+			<if test="searchType==3">
+				member_email like '%'||#{searchKeyword}||'%'
+			</if>
+		</where>
+		<where>
+			<if test="selectedGrade==1">
+				and member_grade = 1
+			</if>
+			<if test="selectedGrade==2">
+				and member_grade = 2
+			</if>
+			<if test="selectedGrade==3">
+				and member_grade = 3
+			</if>
+		</where>
+	</select>
 </mapper>

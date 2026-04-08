@@ -1,7 +1,12 @@
 package kr.co.iei.member.model.dao;
 
+import java.util.List;
+
 import org.apache.ibatis.annotations.Mapper;
+
 import kr.co.iei.member.model.vo.Member;
+import kr.co.iei.member.model.vo.MemberListItem;
+import kr.co.iei.member.model.vo.MemberListResponse;
 
 @Mapper
 public interface MemberDao {
@@ -21,4 +26,8 @@ public interface MemberDao {
 	int memberDelete(String memberId);
 
 	int updatePw(Member member);
+
+	List<Member> selectAllMember(MemberListItem request);
+
+	Integer selectMemberCount(MemberListItem request);
 }

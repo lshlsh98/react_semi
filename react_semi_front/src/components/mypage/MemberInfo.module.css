@@ -108,6 +108,10 @@
   align-self: center;
 }
 
+.member_grade > li > label > input {
+  margin-right: 4px;
+}
+
 .member_name > li:nth-child(2) {
   width: 30%;
 }
