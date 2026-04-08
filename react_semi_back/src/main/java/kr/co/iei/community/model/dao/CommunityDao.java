@@ -61,4 +61,5 @@ public interface CommunityDao {
 	int insertReport(Map<String, Object> params);
 
 	int deleteReport(Map<String, Object> params);
+
 }
