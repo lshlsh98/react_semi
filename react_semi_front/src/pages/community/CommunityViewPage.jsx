@@ -128,6 +128,9 @@ const LikeAndDislikeAndReport = ({ communityNo }) => {
   const [dislikeInfo, setDislikeInfo] = useState(null);
   const [reportInfo, setReportInfo] = useState(null);
 
+  const [isReportModalOpen, setIsReportModalOpen] = useState(false);
+  const [reportReason, setReportReason] = useState("");
+
   useEffect(() => {
     axios
       .get(
@@ -176,6 +179,13 @@ const LikeAndDislikeAndReport = ({ communityNo }) => {
             isLike: 1,
             likeCount: likeInfo.likeCount + 1,
           });
+
+          if (dislikeInfo?.isDislike === 1) {
+            setDislikeInfo({
+              isDislike: 0,
+              dislikeCount: dislikeInfo.dislikeCount - 1,
+            });
+          }
         }
       })
       .catch((err) => {
@@ -215,6 +225,13 @@ const LikeAndDislikeAndReport = ({ communityNo }) => {
             isDislike: 1,
             dislikeCount: dislikeInfo.dislikeCount + 1,
           });
+
+          if (likeInfo?.isLike === 1) {
+            setLikeInfo({
+              isLike: 0,
+              likeCount: likeInfo.likeCount - 1,
+            });
+          }
         }
       })
       .catch((err) => {
@@ -284,6 +301,42 @@ const LikeAndDislikeAndReport = ({ communityNo }) => {
   const loginMsg = () => {
     Swal.fire({ title: "로그인 후 이용 가능합니다.", icon: "info" });
   };
+
+  const handleReportClick = () => {
+    if (!memberId) {
+      loginMsg();
+    } else {
+      setIsReportModalOpen(true);
+    }
+  };
+
+  const submitReport = () => {
+    if (reportReason.trim() === "") {
+      Swal.fire("신고 사유를 입력해주세요.", "", "warning");
+      return;
+    }
+    axios
+      .post(
+        `${import.meta.env.VITE_BACKSERVER}/communities/${communityNo}/reports`,
+        {
+          reportReason: reportReason,
+        },
+      )
+      .then((res) => {
+        if (res.data === 1) {
+          setReportInfo({
+            ...reportInfo,
+            isReport: 1,
+            reportCount: reportInfo.reportCount + 1,
+          });
+          Swal.fire("신고가 접수되었습니다.", "", "success");
+          setIsReportModalOpen(false);
+          setReportReason("");
+        }
+      })
+      .catch((err) => console.log(err));
+  };
+
   return (
     <div className={styles.community_like_dislike_report_wrap}>
       {likeInfo && (
@@ -314,6 +367,58 @@ const LikeAndDislikeAndReport = ({ communityNo }) => {
             <ReportGmailerrorredIcon onClick={memberId ? reportOn : loginMsg} />
           )}
           <span>{reportInfo.reportCount}</span>
+
+          <Button className="btn danger" onClick={handleReportClick}>
+            신고하기
+          </Button>
+        </div>
+      )}
+      {isReportModalOpen && (
+        <div
+          className={styles.overlay}
+          onClick={() => setIsReportModalOpen(false)}
+        >
+          <div
+            className={styles.report_modal}
+            onClick={(e) => e.stopPropagation()}
+          >
+            <h3>신고하기</h3>
+
+            <TextArea
+              placeholder="신고 사유를 입력해주세요 (최대 200자 입력 가능)"
+              value={reportReason}
+              maxLength={200}
+              onChange={(e) => {
+                const value = e.target.value;
+
+                if (value.length > 200) {
+                  if (reportReason.length <= 200) {
+                    Swal.fire({
+                      icon: "warning",
+                      title: "최대 200자까지 입력 가능합니다",
+                    });
+                  }
+                  return;
+                }
+
+                setReportReason(value);
+              }}
+            />
+            <div className={styles.text_count}>{reportReason.length} / 200</div>
+
+            <div className={styles.modal_btn_wrap}>
+              <Button className="btn danger" onClick={submitReport}>
+                신고
+              </Button>
+
+              <Button
+                className="btn light outline"
+                onClick={() => setIsReportModalOpen(false)}
+              >
+                취소
+              </Button>
+            </div>
+          </div>
         </div>
       )}
     </div>

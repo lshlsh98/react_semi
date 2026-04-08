@@ -41,3 +41,40 @@
 .comment_content {
   margin-top: 16px;
 }
+
+.community_like_wrap svg,
+.community_dislike_wrap svg,
+.community_report_wrap svg {
+  cursor: pointer;
+}
+
+.overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.5);
+  z-index: 999;
+
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.report_modal {
+  background: white;
+  padding: 24px;
+  border-radius: 12px;
+  width: 350px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.modal_btn_wrap {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+  margin-top: 10px;
+}
