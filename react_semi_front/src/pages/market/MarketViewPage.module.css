@@ -15,6 +15,9 @@
   justify-content: center;
   align-items: center;
 }
+.photo_wrap > ul {
+  background-color: burlywood;
+}
 
 .photo_wrap img {
   width: 100%;

@@ -61,7 +61,7 @@ public class MarketService {
 		
 		int result = marketDao.incrementViewCount(marketNo);	//조회수증가
 		if(result>0) {
-			System.out.println("조회수증가");
+			//System.out.println("조회수증가");
 		}
 		Market m = marketDao.selectOneMarket(marketNo);
 		

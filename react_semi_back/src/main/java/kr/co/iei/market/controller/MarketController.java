@@ -94,6 +94,6 @@ public class MarketController {
 		System.out.println("글번호 확인 : " + marketNo);
 		System.out.println("토큰 확인" + token);
 		Map<String,Object> result = marketService.selectLikeInfo(marketNo,token);
-		return ResponseEntity.ok(1);
+		return ResponseEntity.ok("확인");
 	}
 }
