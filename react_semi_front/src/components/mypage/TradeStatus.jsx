@@ -1,5 +1,7 @@
 import { useEffect, useState } from "react";
 import styles from "./TradeStatus.module.css";
+import DateRangePicker from "../ui/DateRangePicker";
+import dayjs from "dayjs";
 
 const TradeStatus = () => {
   const [chartData, setChartData] = useState([]);
@@ -7,12 +9,27 @@ const TradeStatus = () => {
 
   const [complete, setComplete] = useState(0); // 0: 전체 / 1: 완료 / 2: 미완료
 
-  useEffect(() => {}, []);
+  const [start, setStart] = useState(null);
+  const [end, setEnd] = useState(null);
+  const [formStart, setFormStart] = useState(null);
+  const [formEnd, setFormEnd] = useState(null);
+
+  useEffect(() => {
+    setFormStart(dayjs(start).format("YYYY-MM-DD"));
+    setFormEnd(dayjs(end).format("YYYY-MM-DD"));
+  }, [start, end]);
 
   return (
     <div className={styles.trade_status_wrap}>
       <h3 className="page-title">거래 현황</h3>
-      <section className={styles.chart_filter_section}></section>
+      <section className={styles.chart_filter_section}>
+        <DateRangePicker
+          startDate={start}
+          setStartDate={setStart}
+          endDate={end}
+          setEndDate={setEnd}
+        />
+      </section>
       <section className={styles.chart_section}></section>
       <section className={styles.list_filter_section}></section>
       <section className={styles.list_section}>
