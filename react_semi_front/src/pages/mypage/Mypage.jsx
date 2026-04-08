@@ -262,17 +262,6 @@ const SideBar = () => {
             </li>
           </NavLink>
           <li
-            onClick={() => {
-              setSelectMenu("postManagementManager");
-              setOpenMenu(null);
-            }}
-            className={
-              selectMenu === "postManagementManager" ? styles.active : ""
-            }
-          >
-            게시글 관리
-          </li>
-          <li
             className={
               selectMenu === "postManagement_admin" ||
               selectMenu === "postManagement_trade_admin" ||
