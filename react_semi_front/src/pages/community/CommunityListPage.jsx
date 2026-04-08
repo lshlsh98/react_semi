@@ -81,6 +81,7 @@ const CommunityListPage = () => {
             value={view}
             onChange={(e) => {
               setView(e.target.value);
+              setPage(0);
             }}
           >
             <option value={1}>게시글</option>
