@@ -1,31 +1,132 @@
+// import Box from "@mui/material/Box";
+// import MenuItem from "@mui/material/MenuItem";
+// import FormControl from "@mui/material/FormControl";
+// import Select from "@mui/material/Select";
+// import { useState } from "react";
+
+// const BasicSelect = ({ state, setState, list }) => {
+//   return (
+//     <Box
+//       sx={{
+//         display: "inline-block",
+//         border: "1px solid",
+//         borderColor: "var(--primary)",
+//         borderRadius: 1,
+//       }}
+//     >
+//       <FormControl size="small">
+//         <Select
+//           value={state}
+//           onChange={(e) => setState(e.target.value)}
+//           sx={{
+//             fontSize: "0.8rem",
+//             fontFamily: "tr_r",
+//             color: "var(--primary)",
+//             height: 40,
+//             minWidth: 100,
+//             "& .MuiSelect-select": {
+//               padding: "4px 10px",
+//             },
+//             // 기본 테두리 제거 (중요)
+//             "& fieldset": {
+//               border: "none",
+//             },
+//           }}
+//           MenuProps={{
+//             disableScrollLock: true,
+//           }}
+//         >
+//           {list.map((item) => (
+//             <MenuItem
+//               key={item[0]}
+//               value={item[0]}
+//               sx={{
+//                 fontFamily: "궁서체",
+//                 color: "var(--primary)",
+//                 fontSize: "0.8rem",
+//               }}
+//             >
+//               {item[1]}
+//             </MenuItem>
+//           ))}
+//         </Select>
+//       </FormControl>
+//     </Box>
+//   );
+// };
+
+// export default BasicSelect;
 import Box from "@mui/material/Box";
 import MenuItem from "@mui/material/MenuItem";
 import FormControl from "@mui/material/FormControl";
 import Select from "@mui/material/Select";
+import { useState, useEffect } from "react";
 
 const BasicSelect = ({ state, setState, list }) => {
-  const handleChange = (event) => {
-    setState(event.target.value);
-  };
+  const [open, setOpen] = useState(false);
+  const [minWidth, setMinWidth] = useState(100); // 기본 최소 width
+
+  useEffect(() => {
+    // Canvas로 글자 길이 계산
+    const canvas = document.createElement("canvas");
+    const ctx = canvas.getContext("2d");
+    ctx.font = "0.8rem tr_r"; // Select와 같은 폰트
+
+    const maxWidth = list.reduce((max, item) => {
+      const width = ctx.measureText(item[1]).width;
+      return Math.max(max, width);
+    }, 0);
+
+    setMinWidth(maxWidth + 40); // padding 여유 포함
+  }, [list]);
 
   return (
-    <Box sx={{ width: 100, maxHeight: 60 }}>
-      <FormControl fullWidth>
+    <Box
+      sx={{
+        display: "inline-block",
+        border: "1px solid",
+        borderColor: "var(--primary)",
+        borderRadius: 1,
+        minWidth: minWidth, // 계산된 최소 너비 적용
+      }}
+    >
+      <FormControl size="small" fullWidth>
         <Select
-          labelId="demo-simple-select-label"
-          id="demo-simple-select"
           value={state}
-          onChange={handleChange}
-          MenuProps={{
-            disableScrollLock: true,
-            PaperProps: {
-              style: { maxHeight: 200 },
+          onChange={(e) => setState(e.target.value)}
+          // onOpen={() => setOpen(true)}
+          // onClose={() => setOpen(false)}
+          sx={{
+            fontSize: "0.8rem",
+            fontFamily: "tr_r",
+            color: "var(--primary)",
+            height: 40,
+            "& .MuiSelect-select": {
+              padding: "4px 10px",
+            },
+            "& fieldset": {
+              border: "none",
             },
           }}
-          sx={{ fontSize: "0.85rem", padding: "0px" }}
+          MenuProps={{
+            PaperProps: {
+              sx: {
+                minWidth: minWidth, // 드롭다운 메뉴도 동일하게
+              },
+            },
+            disableScrollLock: true,
+          }}
         >
           {list.map((item) => (
-            <MenuItem key={item[0]} value={item[0]}>
+            <MenuItem
+              key={item[0]}
+              value={item[0]}
+              sx={{
+                fontFamily: "궁서체",
+                color: "var(--primary)",
+                fontSize: "0.8rem",
+              }}
+            >
               {item[1]}
             </MenuItem>
           ))}
