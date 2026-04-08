@@ -1,9 +1,13 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import styles from "./TradeStatus.module.css";
 
 const TradeStatus = () => {
   const [chartData, setChartData] = useState([]);
   const [listData, setListData] = useState([]);
+
+  const [complete, setComplete] = useState(0); // 0: 전체 / 1: 완료 / 2: 미완료
+
+  useEffect(() => {}, []);
 
   return (
     <div className={styles.trade_status_wrap}>
