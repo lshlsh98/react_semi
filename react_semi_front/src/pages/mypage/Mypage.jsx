@@ -14,13 +14,10 @@ import TradeStatus from "../../components/mypage/TradeStatus";
 import MemberManagement from "../../components/mypage/MemberManagement";
 import MemberInfoManagement from "../../components/mypage/MemberInfoManagement";
 import CarbonContribution from "../../components/mypage/CarbonContribution";
-
 const Mypage = () => {
   const navigate = useNavigate();
   const { memberId, isReady, isNotLogout } = useAuthStore();
-
   console.log(useAuthStore());
-
   if (isReady && memberId == null && !isNotLogout) {
     Swal.fire({
       title: "로그인 후 이용 가능합니다.",
@@ -30,9 +27,7 @@ const Mypage = () => {
     });
     return;
   }
-
   window.scrollTo(0, 0); //페이지 이동 시 항상 가장 맨 위 화면으로
-
   return (
     memberId && (
       <div className={styles.mypage_wrap}>
@@ -77,10 +72,8 @@ const Mypage = () => {
     )
   );
 };
-
 const Profile = () => {
   const { memberId, memberName, memberThumb } = useAuthStore();
-
   return (
     <section className={styles.sidebar}>
       <div
@@ -101,17 +94,13 @@ const Profile = () => {
     </section>
   );
 };
-
 const SideBar = () => {
   const { memberGrade } = useAuthStore();
-
   const [selectMenu, setSelectMenu] = useState(null);
   const [openMenu, setOpenMenu] = useState(null);
-
   const toggleMenu = (menu) => {
     setOpenMenu(openMenu === menu ? null : menu);
   };
-
   return (
     <section className={styles.sidebar}>
       <ul className={styles.normal_menu}>
@@ -258,7 +247,6 @@ const SideBar = () => {
           </li>
         </NavLink>
       </ul>
-
       {memberGrade !== 3 && (
         <ul className={styles.management}>
           <li>관리 페이지</li>
@@ -405,5 +393,4 @@ const SideBar = () => {
     </section>
   );
 };
-
 export default Mypage;

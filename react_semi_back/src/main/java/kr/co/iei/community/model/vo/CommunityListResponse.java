@@ -5,10 +5,11 @@ import java.util.List;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+
 @NoArgsConstructor
 @AllArgsConstructor
 @Data
 public class CommunityListResponse {
-	private List<?> items;
+	private List<Community> items;
 	private Integer totalPage;
 }

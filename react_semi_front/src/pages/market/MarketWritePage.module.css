@@ -1,0 +1,149 @@
+/* 전체 적용*/
+ul,
+ol {
+  list-style: none;
+  padding: 0;
+}
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+/*컴포넌트 전체 랩*/
+.market_write_wrap {
+  width: 720px;
+  margin: 12px auto;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+/* 제목 , 판매금액 */
+.market_input_wrap {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+.market_input_wrap > label {
+  text-align: center;
+  padding: 12px;
+}
+/*거래장소 */
+.market_addr {
+  display: flex;
+  gap: 8px;
+}
+.market_addr > input {
+  flex-grow: 1;
+}
+.market_addr > button {
+  width: 150px;
+}
+
+/* 텍스트 에디터 */
+
+.editor_wrap {
+  border: 1px solid var(--secendary);
+  border-radius: 8px;
+  overflow: hidden;
+  background-color: var(--light);
+}
+.menu_bar {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  padding: 12px;
+  justify-content: center;
+}
+.menu_bar button,
+.menu_bar input {
+  width: 50px;
+  height: 50px;
+  padding: 8px 12px;
+  border: 1px solid var(--secendary);
+  border-radius: 4px;
+  font-size: 14px;
+  cursor: pointer;
+  background-color: var(--light); /*기본 배경*/
+  color: var(--primary); /*기본 글자*/
+}
+
+.menu_bar button:hover {
+  background-color: var(--secendary);
+}
+.menu_bar button:hover svg {
+  fill: var(--light);
+}
+.menu_bar button.active {
+  background-color: var(--primary);
+  border: 1px solid var(--primary);
+}
+
+.editor_content {
+  padding: 16px;
+}
+.editor_content > div {
+  min-height: 400px;
+  background-color: var(--light);
+  padding: 12px;
+  outline: none;
+  border: 1px solid var(--gray1);
+  border-radius: 12px;
+  line-height: 1.4;
+}
+.editor_content > div:hover {
+  background-color: var(--bg);
+}
+.editor_content > div ul {
+  padding-left: 20px;
+}
+
+/* 파일 첨부 */
+.market_file_wrap {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  gap: 8px;
+}
+
+.file_btn {
+  /*파일추가버튼*/
+  cursor: pointer;
+  font-size: 14px;
+  background-color: var(--secendary);
+  width: fit-content;
+  padding: 10px 20px;
+  color: var(--gray8);
+  border-radius: 8px;
+}
+.file_btn:hover {
+  background-color: var(--primary);
+}
+
+.file_wrap {
+  width: 100%;
+}
+.file_item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 12px 16px;
+  background-color: var(--secendary);
+  border-radius: 8px;
+  margin-bottom: 8px;
+}
+.file_name {
+  flex-grow: 1;
+  font-size: 14px;
+}
+.file_delete {
+  cursor: pointer;
+}
+
+/* 작성 취소*/
+.market_write_btn_wrap {
+  display: flex;
+  justify-content: center;
+  gap: 12px;
+}

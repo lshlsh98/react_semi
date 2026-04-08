@@ -15,7 +15,7 @@ public class Community {
 	private String communityTitle;		// 제목
 	private String communityContent;	// 내용
 	private String communityDate;		// 작성일
-	private Integer communityStatus;		// 글 공개 여부 (1:공개 2:비공개)
+	private Integer communityStatus;	// 글 공개 여부 (1:공개 2:비공개)
 	private String memberThumb;			// 글 작성자 프로필 이미지
 	private Integer memberGrade;		// 작성자 등급
 	private String communityWriter; 	// 글 작성자

@@ -1,0 +1,239 @@
+.main_wrap {
+  width: 100%;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 40px 0;
+  display: flex;
+  flex-direction: column;
+  gap: 40px;
+}
+
+.section_box {
+  background-color: var(--gray8);
+  border-radius: 20px;
+  padding: 30px;
+}
+
+.section_header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 25px;
+}
+
+.title {
+  font-size: 24px;
+  font-weight: bold;
+  color: var(--text1);
+  margin: 0;
+}
+
+.highlight {
+  color: var(--secendary);
+}
+
+.more_link {
+  font-size: 14px;
+  color: var(--gray4);
+  text-decoration: none;
+}
+
+.more_link:hover {
+  text-decoration: underline;
+}
+
+.card_list {
+  display: flex;
+  flex-wrap: wrap; /* 이건 없어도 되는데 나중에 카드(현재 5개)를 늘리거나 하면 순간적으로 css가 꼬여서 디자인 망가지는걸 방지*/
+  gap: 20px;
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.card {
+  width: calc((100% - 80px) / 5);
+  background-color: var(--gray8);
+  border-radius: 12px;
+  overflow: hidden;
+  cursor: pointer;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+  transition: transform 0.2s ease;
+  display: flex;
+  flex-direction: column;
+}
+
+.card:hover {
+  transform: translateY(-5px);
+}
+
+.img_box {
+  width: 100%;
+  aspect-ratio: 1 / 1; /* 정사각형 비율 유지 -> 가로 너비가 어떻게 변하든, 세로 높이도 똑같이 1:1 비율로 맞춰서 정사각형으로 만들기*/
+  background-color: var(--gray6);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  overflow: hidden;
+}
+
+.img_box img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.fallback_box {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  color: var(--gray4);
+  font-size: 14px;
+}
+
+.iconFallback {
+  margin-bottom: 5px;
+  color: var(--gray5);
+}
+
+.info_box {
+  padding: 15px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.item_title {
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--gray1);
+  margin: 0;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis; /* 글자 길면 ... 처리 */
+}
+
+.item_price {
+  font-size: 16px;
+  font-weight: bold;
+  color: var(--secendary);
+  margin: 0;
+}
+
+.price_free {
+  font-size: 16px;
+  font-weight: bold;
+  color: var(--danger);
+  margin: 0;
+}
+
+.meta_box {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 12px;
+  color: var(--gray4);
+  margin-top: 5px;
+}
+
+.time_view {
+  white-space: nowrap;
+  color: var(--gray2);
+}
+
+.like_count {
+  display: flex;
+  align-items: center;
+  gap: 3px;
+  color: var(--danger);
+  font-weight: 600;
+}
+
+.heart_icon {
+  font-size: 14px !important;
+}
+
+/* 커뮤니티 영역 (좌우로 배치하기 위해 flex) */
+.community_wrap {
+  display: flex;
+  gap: 30px;
+}
+
+/* 각 커뮤니티 (인기글 박스, 공지사항 박스) */
+.comm_section_box {
+  flex: 1;
+  min-width: 0;
+  background-color: var(--gray8);
+  border-radius: 20px;
+  padding: 30px 40px;
+  display: flex;
+  flex-direction: column;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.03);
+}
+
+.comm_list {
+  display: flex;
+  flex-direction: column;
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.comm_card {
+  padding: 18px 10px;
+  cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  border-bottom: 1px solid var(--gray6);
+  transition: all 0.2s ease;
+}
+
+.comm_card:last-child {
+  border-bottom: none;
+  padding-bottom: 0;
+}
+
+.comm_card:hover {
+  background-color: var(--gray7);
+  border-radius: 8px;
+}
+
+.comm_card:hover .comm_item_title {
+  color: var(--primary);
+}
+
+.comm_item_title {
+  font-size: 16px;
+  font-weight: bold;
+  color: var(--text1);
+  margin: 0;
+  min-width: 0;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  transition: color 0.2s ease;
+}
+
+.comm_item_content {
+  font-size: 14px;
+  color: var(--gray4);
+  margin: 0;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.comm_meta_box {
+  font-size: 13px;
+  color: var(--gray5);
+  display: flex;
+  align-items: center;
+  gap: 12px; /* 메타 정보 사이 간격 살짝 넓힘 */
+  margin-top: 4px;
+}
+
+.divider {
+  color: var(--gray6);
+  font-size: 12px;
+}

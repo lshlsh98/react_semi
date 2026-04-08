@@ -105,3 +105,25 @@
   font-size: 13px;
   font-weight: 600;
 }
+
+.pw_input_wrap {
+  position: relative; /* 눈 아이콘의 위치 기준점이 됨 */
+  display: flex;
+  align-items: center;
+}
+
+.pw_input_wrap > input {
+  padding-right: 40px;
+}
+
+.pw_icon {
+  position: absolute;
+  right: 15px;
+  color: var(--gray4);
+  cursor: pointer;
+  user-select: none; /* 아이콘 더블클릭, 드래그시 파랗게 드래그되는 현상 방지 (없어도 되는 디자인)*/
+}
+
+.pw_icon:hover {
+  color: var(--primary);
+}

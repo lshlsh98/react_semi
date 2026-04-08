@@ -1,0 +1,31 @@
+.map_wrap {
+  max-width: 1000px;
+  margin: 0 auto;
+  padding: 50px 20px;
+}
+
+.map_wrap > h3 {
+  text-align: center;
+  margin-bottom: 30px;
+}
+
+.search_area {
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 15px;
+}
+
+.input_box {
+  width: 300px;
+}
+
+.map_div {
+  width: 100%;
+  height: 500px;
+  background-color: var(--gray8);
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1); /* 큰 의미는 없는 그림자인데 있으니까 사각에서 볼때 더 잘보임 뭔가 차이가 확실히 있었음 */
+  overflow: hidden;
+}

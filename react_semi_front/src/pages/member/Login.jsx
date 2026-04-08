@@ -12,6 +12,8 @@ const Login = () => {
 
   const [member, setMember] = useState({ memberId: "", memberPw: "" }); // member 정보를 담는 용도의 state
 
+  const [pwVisible, setPwVisible] = useState(false); // 비번 숨김 / 보임용
+
   const inputMember = (e) => {
     // 이젠 너무 익숙한 value에 있는 값을 member에 넣는 방법
     setMember({ ...member, [e.target.name]: e.target.value });
@@ -85,13 +87,30 @@ const Login = () => {
             </label>
             <div className={styles.input_row}>
               <Input
-                type="password"
+                type={
+                  pwVisible ? "text" : "password"
+                } /* 💡 상태에 따라 text/password 전환 */
                 name="memberPw"
                 id="memberPw"
                 placeholder="비밀번호를 입력하세요."
                 value={member.memberPw}
                 onChange={inputMember}
               />
+              {pwVisible ? (
+                <span
+                  className={`material-icons ${styles.pw_icon}`}
+                  onClick={() => setPwVisible(false)}
+                >
+                  visibility_off
+                </span>
+              ) : (
+                <span
+                  className={`material-icons ${styles.pw_icon}`}
+                  onClick={() => setPwVisible(true)}
+                >
+                  visibility
+                </span>
+              )}
             </div>
           </div>
 
