@@ -267,7 +267,7 @@ const SideBar = () => {
             >
               <span
                 className={`material-icons ${styles.arrow} ${
-                  openMenu === "postManagement" ? styles.rotate : ""
+                  openMenu === "postManagement_admin" ? styles.rotate : ""
                 }`}
               >
                 chevron_right
