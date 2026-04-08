@@ -106,8 +106,12 @@
   padding-left: 15px;
 }
 
-.sidebar ul ul li:last-child {
+.sidebar ul ul li {
   border-bottom: none;
+}
+
+.sidebar ul ul > a:not(:last-child) li {
+  border-bottom: 1px solid var(--gray6);
 }
 
 .sidebar ul ul.open {
