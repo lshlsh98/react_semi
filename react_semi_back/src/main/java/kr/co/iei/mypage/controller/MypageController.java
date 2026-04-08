@@ -23,6 +23,7 @@ import kr.co.iei.mypage.model.vo.CommentListResponseDto;
 import kr.co.iei.mypage.model.vo.CommentSummary;
 import kr.co.iei.mypage.model.vo.ReportRequestDto;
 import kr.co.iei.mypage.model.vo.ReportResponseDto;
+import kr.co.iei.mypage.model.vo.TradeStatusReqDto;
 import kr.co.iei.mypage.model.vo.UpdateCommentDto;
 import kr.co.iei.mypage.model.vo.UpdateDto;
 
@@ -142,6 +143,14 @@ public class MypageController {
 		BoardListResponseDto response = new BoardListResponseDto(list, totalPage);
 		
 		return ResponseEntity.ok(response);
+	}//
+	
+
+	@GetMapping("/tradestatus")
+	public ResponseEntity<?> findTradeStatusAll(@ModelAttribute TradeStatusReqDto request){
+		
+		
+		return null;
 	}//
 }
 

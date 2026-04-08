@@ -2,6 +2,8 @@ import { useEffect, useState } from "react";
 import styles from "./TradeStatus.module.css";
 import DateRangePicker from "../ui/DateRangePicker";
 import dayjs from "dayjs";
+import axios from "axios";
+import BasicSelect from "../ui/BasicSelect";
 
 const TradeStatus = () => {
   const [chartData, setChartData] = useState([]);
@@ -15,20 +17,64 @@ const TradeStatus = () => {
   const [formEnd, setFormEnd] = useState(null);
 
   useEffect(() => {
-    setFormStart(dayjs(start).format("YYYY-MM-DD"));
-    setFormEnd(dayjs(end).format("YYYY-MM-DD"));
+    if (start && end && start.isAfter(end)) {
+      setEnd(null);
+    }
+  }, [start]);
+
+  useEffect(() => {
+    if (start && end && end.isBefore(start)) {
+      setStart(null);
+    }
+  }, [end]);
+
+  useEffect(() => {
+    setFormStart(start ? dayjs(start).format("YYYY-MM-DD") : null);
+    setFormEnd(end ? dayjs(end).format("YYYY-MM-DD") : null);
   }, [start, end]);
+
+  useEffect(() => {
+    if (!formStart || !formEnd) return;
+
+    axios
+      .get(`${import.meta.env.VITE_BACKSERVER}/mypages/tradestatus`, {
+        params: {
+          start: formStart,
+          end: formEnd,
+          complete: complete,
+        },
+      })
+      .then((res) => {
+        console.log(res);
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  }, [complete, formStart, formEnd]);
 
   return (
     <div className={styles.trade_status_wrap}>
       <h3 className="page-title">거래 현황</h3>
       <section className={styles.chart_filter_section}>
-        <DateRangePicker
-          startDate={start}
-          setStartDate={setStart}
-          endDate={end}
-          setEndDate={setEnd}
-        />
+        <div>
+          <DateRangePicker
+            startDate={start}
+            setStartDate={setStart}
+            endDate={end}
+            setEndDate={setEnd}
+          />
+        </div>
+        <div>
+          <BasicSelect
+            state={complete}
+            setState={setComplete}
+            list={[
+              [0, "전체"],
+              [1, "완료"],
+              [2, "미완료"],
+            ]}
+          />
+        </div>
       </section>
       <section className={styles.chart_section}></section>
       <section className={styles.list_filter_section}></section>
