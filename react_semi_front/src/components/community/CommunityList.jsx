@@ -62,7 +62,7 @@ const CommunityItem = ({ community }) => {
       >
         <p className={styles.community_title}>
           {community.memberGrade === 3
-            ? ""
+            ? community.communityTitle
             : "[공지] " + community.communityTitle}
         </p>
         <ConvertContent communityContent={community.communityContent} />
