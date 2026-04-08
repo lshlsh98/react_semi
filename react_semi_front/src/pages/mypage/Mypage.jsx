@@ -5,9 +5,15 @@ import useAuthStore from "../../components/utils/useAuthStore";
 import MemberInfo from "../../components/mypage/MemberInfo";
 import Swal from "sweetalert2";
 import ChangePw from "../../components/mypage/ChangePw";
+import MyMarketPage from "../../components/mypage/MyMarketPage";
+import MyCommunityCommentPage from "../../components/mypage/MyCommunityCommentPage";
+import MyMarketCommentPage from "../../components/mypage/MyMarketCommentPage";
+import LikeDislike from "../../components/mypage/LikeDislike";
+import TradeStatus from "../../components/mypage/TradeStatus";
 import MemberManagement from "../../components/mypage/MemberManagement";
 import MemberInfoManagement from "../../components/mypage/MemberInfoManagement";
 import CarbonContribution from "../../components/mypage/CarbonContribution";
+
 const Mypage = () => {
   const navigate = useNavigate();
   const { memberId, isReady, isNotLogout } = useAuthStore();
@@ -33,6 +39,7 @@ const Mypage = () => {
           <Routes>
             <Route path="myinfo" element={<MemberInfo />} />
             <Route path="pw" element={<ChangePw />} />
+            <Route path="tradestatus" element={<TradeStatus />} />
             <Route path="member-management" element={<MemberManagement />} />
             <Route path="member-management">
               <Route index element={<MemberManagement />} />
@@ -256,6 +263,17 @@ const SideBar = () => {
               회원 관리
             </li>
           </NavLink>
+          <li
+            onClick={() => {
+              setSelectMenu("postManagementManager");
+              setOpenMenu(null);
+            }}
+            className={
+              selectMenu === "postManagementManager" ? styles.active : ""
+            }
+          >
+            게시글 관리
+          </li>
           <li
             className={
               selectMenu === "postManagement_admin" ||
