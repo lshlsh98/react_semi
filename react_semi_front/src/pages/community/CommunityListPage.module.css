@@ -39,16 +39,21 @@
   font-size: 25px;
 }
 
+.order_item_wrap {
+  margin-top: 40px;
+  display: flex;
+  justify-content: space-between;
+}
+
 .order_wrap {
   display: flex;
   flex-direction: row;
   justify-content: end;
   gap: 16px;
-  margin-top: 40px;
 }
 
-.order_wrap > select {
-  padding: 10px;
+.order_item_wrap select {
+  padding: 9px;
   appearance: none;
   border-radius: 4px;
   padding-right: 30px;
