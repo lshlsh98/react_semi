@@ -1,9 +1,10 @@
 import { useState } from "react";
 import styles from "./Mypage.module.css";
 import { NavLink, Route, Routes, useNavigate } from "react-router-dom";
-import useAuthStore from "../../components/utils/useAuthStore";
 import MemberInfo from "../../components/mypage/MemberInfo";
+import MyCommunityPage from "../../components/mypage/MyCommunityPage";
 import Swal from "sweetalert2";
+import useAuthStore from "../../components/utils/useAuthStore";
 import ChangePw from "../../components/mypage/ChangePw";
 import MyMarketPage from "../../components/mypage/MyMarketPage";
 import MyCommunityCommentPage from "../../components/mypage/MyCommunityCommentPage";
@@ -13,7 +14,6 @@ import TradeStatus from "../../components/mypage/TradeStatus";
 import MemberManagement from "../../components/mypage/MemberManagement";
 import MemberInfoManagement from "../../components/mypage/MemberInfoManagement";
 import CarbonContribution from "../../components/mypage/CarbonContribution";
-
 const Mypage = () => {
   const navigate = useNavigate();
   const { memberId, isReady, isNotLogout } = useAuthStore();
@@ -38,31 +38,29 @@ const Mypage = () => {
         <div className={styles.mypage_content}>
           <Routes>
             <Route path="myinfo" element={<MemberInfo />} />
+            <Route path="likedislike" element={<LikeDislike />} />
+            <Route
+              path="market/:isAdminMode"
+              element={<MyMarketPage />}
+            ></Route>
+            <Route
+              path="community/:isAdminMode"
+              element={<MyCommunityPage />}
+            ></Route>
+            <Route
+              path="marketcomment/:isAdminMode"
+              element={<MyMarketCommentPage />}
+            ></Route>
+            <Route
+              path="communitycomment/:isAdminMode"
+              element={<MyCommunityCommentPage />}
+            ></Route>
             <Route path="pw" element={<ChangePw />} />
             <Route path="tradestatus" element={<TradeStatus />} />
             <Route path="member-management" element={<MemberManagement />} />
             <Route path="member-management">
               <Route index element={<MemberManagement />} />
               <Route path=":memberId" element={<MemberInfoManagement />} />
-              <Route path="likedislike" element={<LikeDislike />} />
-              <Route
-                path="market/:isAdminMode"
-                element={<MyMarketPage />}
-              ></Route>
-              <Route
-                path="community/:isAdminMode"
-                element={<MyCommunityPage />}
-              ></Route>
-              <Route
-                path="marketcomment/:isAdminMode"
-                element={<MyMarketCommentPage />}
-              ></Route>
-              <Route
-                path="communitycomment/:isAdminMode"
-                element={<MyCommunityCommentPage />}
-              ></Route>
-              <Route path="pw" element={<ChangePw />} />
-              <Route path="tradestatus" element={<TradeStatus />} />
             </Route>
             <Route
               path="carbon-contribution"
