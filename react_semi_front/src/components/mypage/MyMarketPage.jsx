@@ -31,6 +31,7 @@ const MyMarketPage = () => {
         `${import.meta.env.VITE_BACKSERVER}/mypages/board/market?isAdminMode=${isAdminMode}&page=${page}&size=${size}&order=${order}&status=${status}&completed=${completed}&searchKeyword=${searchKeyword}&memberId=${memberId}&memberGrade=${memberGrade}`,
       )
       .then((res) => {
+        console.log(res.data.list);
         setBoardList(res.data.list);
         setTotalPage(res.data.totalPage);
       })
