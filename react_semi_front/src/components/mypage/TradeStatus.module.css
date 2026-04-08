@@ -45,3 +45,10 @@
 .trade_completed_date {
   width: 12%;
 }
+
+.chart_filter_section {
+  width: 900px;
+  display: flex;
+  justify-content: space-between;
+  margin: 10px 0;
+}

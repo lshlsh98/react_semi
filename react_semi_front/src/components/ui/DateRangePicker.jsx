@@ -8,13 +8,26 @@ const DateRangePicker = ({ startDate, setStartDate, endDate, setEndDate }) => {
       <DatePicker
         label="시작일"
         value={startDate}
+        maxDate={endDate}
         onChange={(newValue) => setStartDate(newValue)}
+        slotProps={{
+          textField: {
+            size: "small",
+          },
+        }}
       />
       <span> </span>
       <DatePicker
         label="종료일"
         value={endDate}
+        minDate={startDate}
+        disabled={!startDate}
         onChange={(newValue) => setEndDate(newValue)}
+        slotProps={{
+          textField: {
+            size: "small",
+          },
+        }}
       />
     </LocalizationProvider>
   );
