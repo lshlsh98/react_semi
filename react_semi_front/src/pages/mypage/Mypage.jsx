@@ -10,6 +10,7 @@ import MyMarketPage from "../../components/mypage/MyMarketPage";
 import MyCommunityCommentPage from "../../components/mypage/MyCommunityCommentPage";
 import MyMarketCommentPage from "../../components/mypage/MyMarketCommentPage";
 import LikeDislike from "../../components/mypage/LikeDislike";
+import TradeStatus from "../../components/mypage/TradeStatus";
 
 const Mypage = () => {
   const navigate = useNavigate();
@@ -55,6 +56,7 @@ const Mypage = () => {
               element={<MyCommunityCommentPage />}
             ></Route>
             <Route path="pw" element={<ChangePw />} />
+            <Route path="tradestatus" element={<TradeStatus />} />
           </Routes>
         </div>
       </div>
@@ -361,7 +363,7 @@ const SideBar = () => {
               </NavLink>
             </ul>
           </li>
-          <NavLink to="/member/mypage/myinfo">
+          <NavLink to="/member/mypage/tradestatus">
             <li
               onClick={() => {
                 toggleMenu("reportedPostManagement");

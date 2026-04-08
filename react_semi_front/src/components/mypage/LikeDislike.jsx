@@ -1,13 +1,9 @@
 import { useEffect, useState } from "react";
 import Pagination from "../ui/Pagination";
-import MyBoardList from "./board/MyBoardList";
 import styles from "./MyBoardPage.module.css";
 import BasicSelect from "../ui/BasicSelect";
 import useAuthStore from "../utils/useAuthStore";
 import axios from "axios";
-import SearchIcon from "@mui/icons-material/Search";
-import { Input } from "../ui/Form";
-import { useParams } from "react-router-dom";
 import LikeDislikeList from "./board/LikeDislikeList";
 
 const LikeDislike = () => {
@@ -39,6 +35,7 @@ const LikeDislike = () => {
 
   return (
     <div className={styles.myboard_wrap}>
+      <h3 className="page-title">좋아요 / 싫어요 게시글</h3>
       <div className={styles.filter_section}>
         <div className={styles.filter_select}>
           <BasicSelect

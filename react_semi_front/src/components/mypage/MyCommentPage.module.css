@@ -4,6 +4,8 @@
   gap: 20px;
 
   padding: 10px;
+  align-items: center;
+  margin-top: 10px;
 }
 
 .filter_section {

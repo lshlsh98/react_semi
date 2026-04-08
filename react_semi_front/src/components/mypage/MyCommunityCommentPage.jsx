@@ -43,6 +43,7 @@ const MyCommunityCommentPage = () => {
 
   return (
     <div className={styles.mycomment_wrap}>
+      <h3 className="page-title">커뮤니티 게시글 댓글 관리</h3>
       <div className={styles.filter_section}>
         {isAdminMode === "false" ? (
           ""

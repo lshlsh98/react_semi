@@ -45,6 +45,7 @@ const MyMarketPage = () => {
 
   return (
     <div className={styles.myboard_wrap}>
+      <h3 className="page-title">거래 게시글 관리</h3>
       <div className={styles.filter_section}>
         {isAdminMode === "false" ? (
           ""
