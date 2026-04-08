@@ -146,4 +146,43 @@
 	
 		fetch first 5 rows only
 	</select>
+	
+	<select id="selectMarketCommentList" resultType="marketComment">
+        SELECT 
+            c.market_comment_no,
+            c.market_no,
+            c.member_id, 
+            m.member_thumb,
+            c.market_comment_content,
+            TO_CHAR(c.market_comment_date, 'YYYY-MM-DD HH24:MI') AS market_comment_date,
+            c.market_comment_ref, 
+            c.is_secret
+        FROM market_comment_tbl c
+        LEFT JOIN member_tbl m ON (c.member_id = m.member_id)
+        WHERE c.market_no = #{marketNo}
+        ORDER BY c.market_comment_no ASC
+    </select>
+
+    <insert id="insertMarketComment">
+        INSERT INTO market_comment_tbl (
+            market_comment_no,
+            market_no,
+            member_id,
+            market_comment_content,
+            market_comment_date,
+            market_comment_ref,
+            is_secret
+        ) VALUES (
+            market_comment_seq.NEXTVAL,
+            #{marketNo},
+            #{memberId},  #{marketCommentContent},
+            SYSDATE,
+            #{marketCommentRef}, #{isSecret}
+        )
+    </insert>
+
+    <delete id="deleteMarketComment">
+        DELETE FROM market_comment_tbl 
+        WHERE market_comment_no = #{commentNo}
+    </delete>
 </mapper>

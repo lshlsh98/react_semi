@@ -9,10 +9,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -24,6 +26,7 @@ import kr.co.iei.market.model.service.MarketService;
 import kr.co.iei.market.model.vo.ListItem;
 import kr.co.iei.market.model.vo.ListResponse;
 import kr.co.iei.market.model.vo.Market;
+import kr.co.iei.market.model.vo.MarketComment;
 import kr.co.iei.market.model.vo.MarketFile;
 import kr.co.iei.utils.FileUtils;
 
@@ -82,13 +85,36 @@ public class MarketController {
 		return ResponseEntity.ok(result);
 	}
 	
-	// 메인 페이지용 5개 리스트 조회
+	// 메인 페이지용 5개 리스트 조회 - 이영민
 	@GetMapping("/main")
 	public ResponseEntity<?> selectMainPageMarketList(@RequestParam Integer order){
 		// 저는 totalPage가 필요없어서 마켓 리스트 객체를 따로 만들게요 - 이영민
 		List<Market> list = marketService.selectMainPageMarketList(order);
 		return ResponseEntity.ok(list);
 	}
+	
+	// 1. 특정 게시글의 댓글 목록 조회 - 이영민
+    @GetMapping(value="/{marketNo}/comments")
+    public ResponseEntity<?> selectMarketCommentList(@PathVariable Integer marketNo) {
+        List<MarketComment> list = marketService.selectMarketCommentList(marketNo);
+        return ResponseEntity.ok(list);
+    }
+
+    // 2. 댓글 작성 (대댓글 포함) - 이영민
+    @PostMapping(value="/comments")
+    public ResponseEntity<?> insertMarketComment(@RequestBody MarketComment marketComment) {
+        // 💡 팁: 앞선 게시글 등록은 이미지가 있어서 @ModelAttribute를 썼지만, 
+        // 단순 텍스트인 댓글은 프론트에서 JSON으로 보내므로 @RequestBody를 써야 합니다!
+        int result = marketService.insertMarketComment(marketComment);
+        return ResponseEntity.ok(result);
+    }
+
+    // 3. 댓글 삭제 - 이영민
+    @DeleteMapping(value="/comments/{commentNo}")
+    public ResponseEntity<?> deleteMarketComment(@PathVariable Integer commentNo) {
+        int result = marketService.deleteMarketComment(commentNo);
+        return ResponseEntity.ok(result);
+    }
 	
 	@GetMapping(value="/{marketNo}")
 	public ResponseEntity<?> selectOneMarket(@PathVariable Integer marketNo){
