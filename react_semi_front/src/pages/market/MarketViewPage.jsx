@@ -11,70 +11,69 @@ import ThumbUpOffAltIcon from "@mui/icons-material/ThumbUpOffAlt";
 import ReportIcon from "@mui/icons-material/Report";
 import ReportGmailerrorredIcon from "@mui/icons-material/ReportGmailerrorred";
 import Swal from "sweetalert2";
-import { Modal, Box } from "@mui/material";
 import MarketComment from "../../components/market/MarketComment";
+import { Modal, Box, IconButton } from "@mui/material"; // IconButton 추가
+import { ChevronLeft, ChevronRight, Close } from "@mui/icons-material";
 
 const MarketViewPage = () => {
   const navigate = useNavigate();
   const { memberId, isReady } = useAuthStore();
-  //console.log(memberId);
   const params = useParams();
   const marketNo = params.marketNo;
-  //console.log("게시글번호 : " + marketNo);
+
   const [market, setMarket] = useState(null);
   const imgUrl = "http://192.168.31.24:9999/market";
+
   /* 모달용 스테이트 */
   const [open, setOpen] = useState(false);
-  const [selectedImg, setSelectedImg] = useState("");
-  const handleOpen = (filePath) => {
-    setSelectedImg(filePath);
+  const [currentIndex, setCurrentIndex] = useState(0);
+
+  // market이 null일 때를 대비해 옵셔널 체이닝 사용
+  const images = market?.fileList || [];
+
+  const handleOpen = (index) => {
+    setCurrentIndex(index);
     setOpen(true);
   };
+
   const handleClose = () => setOpen(false);
-  const modalStyle = {
-    position: "absolute",
-    top: "50%",
-    left: "50%",
-    transform: "translate(-50%, -50%)",
-    bgcolor: "background.paper",
-    boxShadow: 24,
-    p: 2,
-    outline: "none",
-    display: "flex",
-    flexDirection: "column",
-    alignItems: "center",
-    maxWidth: "90vw",
-    maxHeight: "90vh",
+
+  const prevImage = (e) => {
+    e.stopPropagation();
+    setCurrentIndex((prev) => (prev === 0 ? images.length - 1 : prev - 1));
   };
-  console.log("isReady 확인용 : ", isReady);
+
+  const nextImage = (e) => {
+    e.stopPropagation();
+    setCurrentIndex((prev) => (prev === images.length - 1 ? 0 : prev + 1));
+  };
+
   useEffect(() => {
-    if (!isReady) {
-      return;
-    }
+    if (!isReady) return;
     axios
       .get(`${import.meta.env.VITE_BACKSERVER}/markets/${marketNo}`)
       .then((res) => {
-        console.log(res.data);
         setMarket(res.data);
       })
-      .catch((err) => {
-        console.log(err);
-      });
+      .catch((err) => console.log(err));
   }, [memberId, marketNo, isReady]);
+
   const requestTrade = () => {
     Swal.fire({
       title: "거래요청 하시겠습니까?",
-      icon: "success",
+      icon: "question", // 아이콘을 question으로 변경하면 더 자연스럽습니다.
       showCancelButton: true,
       confirmButtonText: "요청",
       cancelButtonText: "취소",
       confirmButtonColor: "var(--primary)",
       cancelButtonColor: "var(--danger)",
-    }).then(() => {
-      console.log("거래요청 해봅시다.");
+    }).then((result) => {
+      if (result.isConfirmed) {
+        console.log("거래요청 로직 실행");
+      }
     });
   };
-  const likeOn = () => {};
+
   return (
     <main className={styles.main_wrap}>
       {market && (
@@ -89,10 +88,8 @@ const MarketViewPage = () => {
                 <ImageListItem key={index}>
                   <img
                     src={`${imgUrl}/${file.marketFilePath}?w=164&h=164&fit=crop&auto=format`}
-                    srcSet={`${imgUrl}/${file.marketFilePath}?w=164&h=164&fit=crop&auto=format&dpr=2 2x`}
                     alt="상품 이미지"
                     loading="lazy"
-                    title="클릭시 큰이미지로 볼 수 있어요"
                     style={{
                       cursor: "pointer",
                       width: "100%",
@@ -101,41 +98,95 @@ const MarketViewPage = () => {
                       borderRadius: "12px",
                       border: "1px solid var(--primary)",
                     }}
-                    onClick={() =>
-                      handleOpen(`${imgUrl}/${file.marketFilePath}`)
-                    } // 클릭 시 모달 열기
+                    onClick={() => handleOpen(index)}
                   />
                 </ImageListItem>
               ))}
             </ImageList>
+
+            {/* 이미지 상세 모달 */}
             <Modal open={open} onClose={handleClose}>
-              <Box sx={modalStyle}>
+              <Box
+                sx={{
+                  position: "absolute",
+                  top: "50%",
+                  left: "50%",
+                  transform: "translate(-50%, -50%)",
+                  bgcolor: "var(--light)",
+                  boxShadow: 24,
+                  outline: "none",
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  width: "90vw",
+                  height: "80vh",
+                  borderRadius: "8px",
+                  overflow: "hidden",
+                }}
+              >
+                <IconButton
+                  onClick={handleClose}
+                  sx={{
+                    position: "absolute",
+                    top: 10,
+                    right: 10,
+                    color: "var(--danger)",
+                    zIndex: 10,
+                  }}
+                >
+                  <Close />
+                </IconButton>
+
+                <IconButton
+                  onClick={prevImage}
+                  sx={{
+                    position: "absolute",
+                    left: 20,
+                    color: "var(--light)",
+                    bgcolor: "var(--secendary)",
+                    "&:hover": { bgcolor: "var(--primary)" },
+                  }}
+                >
+                  <ChevronLeft fontSize="large" />
+                </IconButton>
+
                 <img
-                  src={selectedImg}
-                  alt="상세이미지"
+                  src={`${imgUrl}/${images[currentIndex]?.marketFilePath}`}
+                  alt="상세보기"
                   style={{
                     maxWidth: "100%",
-                    maxHeight: "70vh",
+                    maxHeight: "100%",
                     objectFit: "contain",
                   }}
                 />
-                <button
-                  onClick={handleClose}
-                  style={{
-                    marginTop: "20px",
-                    padding: "8px 20px",
-                    backgroundColor: "#549849",
-                    color: "#fff",
-                    border: "none",
-                    borderRadius: "6px",
-                    cursor: "pointer",
+
+                <IconButton
+                  onClick={nextImage}
+                  sx={{
+                    position: "absolute",
+                    right: 20,
+                    color: "var(--light)",
+                    bgcolor: "var(--secendary)",
+                    "&:hover": { bgcolor: "var(--primary)" },
                   }}
                 >
-                  닫기
-                </button>
+                  <ChevronRight fontSize="large" />
+                </IconButton>
+
+                <div
+                  style={{
+                    position: "absolute",
+                    bottom: 20,
+                    color: "white",
+                    fontWeight: "bold",
+                  }}
+                >
+                  {currentIndex + 1} / {images.length}
+                </div>
               </Box>
             </Modal>
           </div>
+
           <div className={styles.title_wrap}>
             <div className={styles.title_info}>
               <p className={styles.title_info_title}>{market.marketTitle}</p>
@@ -150,9 +201,10 @@ const MarketViewPage = () => {
               <LikeAndReport marketNo={marketNo} />
             </div>
             <div className={styles.title_map}>지도가 들어갈 예정</div>
-            <div className={styles.title_btn}>
-              {memberId ? (
-                memberId !== market.marketWriter && (
+
+            {(!memberId || memberId !== market.marketWriter) && (
+              <div className={styles.title_btn}>
+                {memberId ? (
                   <>
                     <Button className="btn primary" onClick={requestTrade}>
                       거래요청
@@ -168,21 +220,23 @@ const MarketViewPage = () => {
                     </Button>
                     <Button className="btn primary danger">신고하기</Button>
                   </>
-                )
-              ) : (
-                <Button
-                  className="btn primary"
-                  onClick={() => navigate("/member/login")}
-                >
-                  로그인하기
-                </Button>
-              )}
-            </div>
+                ) : (
+                  <Button
+                    className="btn primary"
+                    onClick={() => navigate("/member/login")}
+                  >
+                    로그인하기
+                  </Button>
+                )}
+              </div>
+            )}
           </div>
+
           <div
             className={styles.content_wrap}
             dangerouslySetInnerHTML={{ __html: market.marketContent }}
           ></div>
+
           {memberId && memberId === market.marketWriter && (
             <div className={styles.button_wrap}>
               <Button className="btn primary">수정</Button>
@@ -195,81 +249,78 @@ const MarketViewPage = () => {
     </main>
   );
 };
+
 const LikeAndReport = ({ marketNo }) => {
   const { memberId } = useAuthStore();
   const [likeInfo, setLikeInfo] = useState(null);
-  console.log("글번호 확인용 : ", marketNo);
+
   useEffect(() => {
     axios
       .get(`${import.meta.env.VITE_BACKSERVER}/markets/${marketNo}/likes`)
-      .then((res) => {
-        console.log(res);
-        setLikeInfo(res.data);
-      })
-      .catch((err) => {
-        console.log(err);
-      });
-  }, []);
+      .then((res) => setLikeInfo(res.data))
+      .catch((err) => console.log(err));
+  }, [marketNo]);
+
   const likeOn = () => {
-    alert("좋아요 승인합니다");
     axios
       .post(`${import.meta.env.VITE_BACKSERVER}/markets/${marketNo}/likes`)
       .then((res) => {
-        console.log(res);
         if (res.data === 1) {
-          setLikeInfo.isLike(1);
+          // 기존 상태를 복사해서 isLike만 업데이트
+          setLikeInfo((prev) => ({
+            ...prev,
+            isLike: 1,
+            likeCount: prev.likeCount + 1,
+          }));
         }
       })
-      .catch((err) => {
-        console.log(err);
-      });
+      .catch((err) => console.log(err));
   };
+
   const likeOff = () => {
-    alert("좋아요 해제합니다");
     axios
       .delete(`${import.meta.env.VITE_BACKSERVER}/markets/${marketNo}/likes`)
       .then((res) => {
-        console.log(res);
+        if (res.data === 1) {
+          setLikeInfo((prev) => ({
+            ...prev,
+            isLike: 0,
+            likeCount: prev.likeCount - 1,
+          }));
+        }
       })
-      .catch((err) => {
-        console.log(err);
-      });
+      .catch((err) => console.log(err));
   };
-  const loginMsg = () => {
-    alert("로그인하세요");
-  };
+
+  const loginMsg = () =>
+    Swal.fire("알림", "로그인 후 이용 가능합니다.", "info");
+
   return (
     <>
       {likeInfo && (
         <>
           {likeInfo.isLike === 1 ? (
             <ThumbUpAltIcon
-              sx={{ fill: "var(--primary)" }}
-              style={{ cursor: "pointer" }}
+              sx={{ fill: "var(--primary)", cursor: "pointer" }}
               onClick={likeOff}
             />
           ) : (
             <ThumbUpOffAltIcon
-              sx={{ fill: "var(--primary)" }}
-              style={{ cursor: "pointer" }}
-              onClick={
-                memberId ? likeOn : loginMsg
-              } /* 로그인되어있으면 likeOn 안되어있으면 loginMsg */
+              sx={{ fill: "var(--primary)", cursor: "pointer" }}
+              onClick={memberId ? likeOn : loginMsg}
             />
           )}
-          <span style={{ color: "var(--primary)" }}>{likeInfo.likeCount}</span>
+          <span style={{ color: "var(--primary)", marginRight: "10px" }}>
+            {likeInfo.likeCount}
+          </span>
         </>
       )}
       <ReportGmailerrorredIcon
-        sx={{ fill: "var(--danger)" }}
-        style={{ cursor: "pointer" }}
-      />
-      <ReportIcon
-        sx={{ fill: "var(--danger)" }}
-        style={{ cursor: "pointer" }}
+        sx={{ fill: "var(--danger)", cursor: "pointer" }}
       />
       <span style={{ color: "var(--danger)" }}>3</span>
     </>
   );
 };
+
 export default MarketViewPage;
