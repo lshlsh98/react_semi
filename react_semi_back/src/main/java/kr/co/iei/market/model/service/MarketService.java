@@ -85,24 +85,17 @@ public class MarketService {
 	public Market selectOneMarket(Integer marketNo, String token) {
 		/// 마켓 게시글 조회
 
-		int result = marketDao.incrementViewCount(marketNo); // 조회수증가
-		if (result > 0) {
-			// System.out.println("조회수증가");
-		}
-		System.out.println(token);
+		marketDao.incrementViewCount(marketNo); 								//조회수증가로직
 		
 		String memberId = null;
 		if (token != null) {
-			LoginMember loginMember = jwtUtil.checkToken(token);
-			memberId = loginMember.getMemberId();
+			LoginMember loginMember = jwtUtil.checkToken(token);				//토큰으로 로그인 객체 생성
+			memberId = loginMember.getMemberId();								//로그인 객체에서 아이디 추출
 		}
 		
-		
-		
-		Market m = marketDao.selectOneMarket(marketNo,memberId);
-
-		List<MarketFile> fileList = marketDao.selectMarketFileList(marketNo);
-		m.setFileList(fileList);
+		Market m = marketDao.selectOneMarket(marketNo,memberId);				//market 객체 생성
+		List<MarketFile> fileList = marketDao.selectMarketFileList(marketNo);	//파일 리스트 조회
+		m.setFileList(fileList);												//객체에 파일리스트 추가
 		return m;
 	}
 
