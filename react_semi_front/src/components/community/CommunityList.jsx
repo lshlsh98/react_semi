@@ -1,5 +1,7 @@
 import { useNavigate } from "react-router-dom";
 import styles from "./CommunityList.module.css";
+import { useEffect } from "react";
+import axios from "axios";
 
 const CommunityList = ({ communityList }) => {
   return (
@@ -18,6 +20,35 @@ const CommunityList = ({ communityList }) => {
 
 const CommunityItem = ({ community }) => {
   const navigate = useNavigate();
+
+  const timeAgo = (dateString) => {
+    // 받은 시간값이 없으면 return
+    if (!dateString) {
+      return "";
+    }
+
+    const postDate = new Date(dateString); // postDate : 게시글 올린 date(날짜, 시간등)
+    const now = new Date(); // now : 지금(현재 날짜, 시간등)
+
+    const diffInSeconds = Math.floor((now - postDate) / 1000); // 현재 시간과 게시글 시간의 차이를 초 단위로 계산
+
+    if (diffInSeconds < 60) {
+      return "방금 전";
+    } else if (diffInSeconds < 3600) {
+      const minutes = Math.floor(diffInSeconds / 60);
+      return `${minutes}분 전`;
+    } else if (diffInSeconds < 86400) {
+      const hours = Math.floor(diffInSeconds / 3600);
+      return `${hours}시간 전`;
+    } else if (diffInSeconds < 2592000) {
+      const days = Math.floor(diffInSeconds / 86400);
+      return `${days}일 전`;
+    } else {
+      // __.split(" ") : " " 즉 공백을 기준을 자름. 현재 dateString은 예시로 ["2026-04-03", "15:30:00"] 이런식으로 찍힘. 즉 날짜와 시간 사이에 공백이 있음.
+      // 그중에 0번 즉 첫번쨰 값을 가져옴 -> 날짜 예시에서의 "2026-04-03"
+      return dateString.split(" ")[0];
+    }
+  };
 
   return (
     <li
@@ -56,7 +87,15 @@ const CommunityItem = ({ community }) => {
       </div>
       <div
         className={styles.community_content_wrap}
-        onClick={() => {
+        onClick={async () => {
+          try {
+            await axios.patch(
+              `${import.meta.env.VITE_BACKSERVER}/communities/view/${community.communityNo}`,
+              community,
+            );
+          } catch (e) {
+            console.error(e);
+          }
           navigate(`/community/view/${community.communityNo}`);
         }}
       >
@@ -89,19 +128,9 @@ const CommunityItem = ({ community }) => {
             <span className="material-icons">thumb_down_off_alt</span>
             <p>{community.dislikeCount}</p>
           </div>
-          <div
-            className={
-              community.reportCount === 0
-                ? styles.community_info_report_wrap
-                : styles.community_info_report_wrap_on
-            }
-          >
-            <span className="material-icons">report_gmailerrorred</span>
-            <p>{community.reportCount}</p>
-          </div>
         </div>
         <div className={styles.community_date_wrap}>
-          <p>{community.communityDate}</p>
+          <p>{timeAgo(community.communityDate)}</p>
         </div>
       </div>
     </li>

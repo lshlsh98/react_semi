@@ -2,6 +2,7 @@
   width: 900px;
   border-radius: 8px;
   background-color: var(--gray8);
+  margin: 50px auto;
 }
 
 .community_view_wrap {
