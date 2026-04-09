@@ -1,6 +1,8 @@
 package kr.co.iei.mypage.controller;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -19,11 +21,13 @@ import kr.co.iei.mypage.model.service.MypageService;
 import kr.co.iei.mypage.model.vo.BoardListRequestDto;
 import kr.co.iei.mypage.model.vo.BoardListResponseDto;
 import kr.co.iei.mypage.model.vo.BoardSummary;
+import kr.co.iei.mypage.model.vo.ChartResDto;
 import kr.co.iei.mypage.model.vo.CommentListResponseDto;
 import kr.co.iei.mypage.model.vo.CommentSummary;
 import kr.co.iei.mypage.model.vo.ReportRequestDto;
 import kr.co.iei.mypage.model.vo.ReportResponseDto;
 import kr.co.iei.mypage.model.vo.TradeStatusReqDto;
+import kr.co.iei.mypage.model.vo.TradeStatusResDto;
 import kr.co.iei.mypage.model.vo.UpdateCommentDto;
 import kr.co.iei.mypage.model.vo.UpdateDto;
 
@@ -146,11 +150,25 @@ public class MypageController {
 	}//
 	
 
-	@GetMapping("/tradestatus")
-	public ResponseEntity<?> findTradeStatusAll(@ModelAttribute TradeStatusReqDto request){
+	@GetMapping("/tradestatus/chart")
+	public ResponseEntity<?> findChartAll(@ModelAttribute TradeStatusReqDto request){
+		List<ChartResDto> chart = mypageService.findChartAll(request);
 		
+		return ResponseEntity.ok(chart);
+	}//
+	
+	@GetMapping("/tradestatus/list")
+	public ResponseEntity<?> findListAll(@ModelAttribute TradeStatusReqDto request){
+		List<TradeStatusResDto> list = mypageService.findListAll(request);
 		
-		return null;
+		int count = mypageService.findListAllCount(request);
+		int totalPage = (int) Math.ceil(count / (double) request.getSize());
+		
+		Map<String, Object> map = new HashMap<>();
+		map.put("list", list);
+		map.put("totalPage", totalPage);
+		
+		return ResponseEntity.ok(map);
 	}//
 }
 
