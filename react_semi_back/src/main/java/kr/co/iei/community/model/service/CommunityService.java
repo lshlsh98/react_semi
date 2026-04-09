@@ -40,7 +40,7 @@ public class CommunityService {
 		return result;
 	}
 	
-	// 커뮤 상세 보기
+	// 커뮤 상세 보기 (특정 게시글)
 	public Community selectOneCommunity(int communityNo) {
 		Community community = communityDao.selectOneCommunity(communityNo);
 		return community;
@@ -203,6 +203,7 @@ public class CommunityService {
 	public List<Community> selectMainPageCommunityList(String type) {
 		return communityDao.selectMainPageCommunityList(type);
 	}
+	
 }
 
 

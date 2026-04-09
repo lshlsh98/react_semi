@@ -6,9 +6,12 @@ import org.apache.ibatis.annotations.Mapper;
 
 import kr.co.iei.mypage.model.vo.BoardListRequestDto;
 import kr.co.iei.mypage.model.vo.BoardSummary;
+import kr.co.iei.mypage.model.vo.ChartResDto;
 import kr.co.iei.mypage.model.vo.CommentSummary;
 import kr.co.iei.mypage.model.vo.ReportRequestDto;
 import kr.co.iei.mypage.model.vo.ReportResponseDto;
+import kr.co.iei.mypage.model.vo.TradeStatusReqDto;
+import kr.co.iei.mypage.model.vo.TradeStatusResDto;
 import kr.co.iei.mypage.model.vo.UpdateCommentDto;
 import kr.co.iei.mypage.model.vo.UpdateDto;
 
@@ -58,4 +61,10 @@ public interface MypageDao {
 	List<BoardSummary> findLikeDislikeAll(BoardListRequestDto request);
 
 	int findLikeDislikeCount(BoardListRequestDto request);
+
+	List<ChartResDto> findChartAll(TradeStatusReqDto request);
+
+	List<TradeStatusResDto> findListAll(TradeStatusReqDto request);
+
+	int findListAllCount(TradeStatusReqDto request);
 }

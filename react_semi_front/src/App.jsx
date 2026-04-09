@@ -68,7 +68,7 @@ function App() {
           {/* 진호 */}
           <Route path="/market" element={<MarketListPage />} />
           <Route path="/market/writeFrm" element={<MarketWritePage />} />
-          <Route path="/market/:marketNo" element={<MarketViewPage />} />
+          <Route path="/market/view/:marketNo" element={<MarketViewPage />} />
 
           <Route path="/member/mypage/*" element={<Mypage />} />
 

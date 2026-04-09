@@ -1,5 +1,5 @@
 .main_wrap {
-  width: 720px;
+  width: 900px;
   margin: 0 auto;
   display: flex;
   flex-direction: column;
@@ -9,32 +9,28 @@
 /* 사진 */
 .photo_wrap {
   margin: 20px 0;
-  border: 1px solid black;
   background-color: var(--light);
   display: flex;
   justify-content: center;
   align-items: center;
 }
 .photo_wrap > ul {
-  background-color: burlywood;
+  height: 100%;
 }
 
-.photo_wrap img {
-  width: 100%;
-  cursor: pointer;
-}
 /* 타이틀 : (제목 금액 작성일 조회수 좋아요)(지도)(버튼랩)*/
 .title_wrap {
+  border-radius: 12px;
+  padding: 12px;
   margin: 20px 0;
+
   background-color: var(--light);
-  height: 360px;
-  border: 1px solid black;
+
   display: flex;
   flex-direction: column;
 }
 /*타이틀 (제목 금액 작성일 조회수 좋아요 */
 .title_info {
-  margin: 10px;
   border: 1px solid black;
 }
 /*마켓 제목*/
@@ -47,7 +43,6 @@
 }
 /*(작성일 조회수 좋아요)*/
 .date_view_like {
-  margin: 10px;
   border: 1px solid black;
   display: flex;
   justify-content: space-between;
@@ -57,13 +52,10 @@
   text-align: center;
 }
 .title_map {
-  margin: 10px;
   border: 1px solid black;
   height: 100px;
 }
 .title_btn {
-  margin: 10px;
-  border: 1px solid black;
   display: flex;
   gap: 24px;
   justify-content: center;
@@ -75,10 +67,11 @@
 
 /* 내용*/
 .content_wrap {
+  border-radius: 12px;
+  padding: 12px;
   margin: 20px 0;
   background-color: var(--light);
   height: 720px;
-  border: 1px solid black;
 }
 
 /*수정 삭제 버튼*/

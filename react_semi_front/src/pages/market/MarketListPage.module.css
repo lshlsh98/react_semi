@@ -7,7 +7,7 @@ ol {
 
 /* 전체 랩 */
 .market_wrap {
-  width: 1200px;
+  width: 900px;
   margin: 0 auto;
   display: flex;
   flex-direction: column;
@@ -40,12 +40,6 @@ ol {
   box-shadow: 0 0 0 0.25rem rgba(37, 99, 235, 0.3);
 }
 
-/* 카테고리 and 리스트 */
-.market_categoryAndlist {
-  flex-grow: 1;
-  display: flex;
-  gap: 12px;
-}
 .market_category {
   width: 200px;
   flex-shrink: 0;
@@ -55,78 +49,35 @@ ol {
 }
 
 /* market list wrap - grid 적용 */
-.market_list_wrap {
-  flex-grow: 1;
-}
+
 .market_list_wrap > ul {
-  display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  grid-template-rows: 250px; /* li 높이 고정 */
+  display: flex;
+  flex-direction: column;
   gap: 12px;
 }
 .market_list_wrap > ul > li {
-  position: relative; /* 오버레이 위해 필요 */
+  border-radius: 8px;
+  border: 1px solid var(--primary);
   background-color: var(--light);
-  border-radius: 6px;
-  overflow: hidden; /* 오버레이 넘침 방지 */
+  padding: 12px;
   cursor: pointer;
-  transition:
-    transform 0.2s,
-    box-shadow 0.2s;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  border-radius: 6px;
 }
-.market_list_wrap > ul > li:hover {
-  transform: translateY(-4px);
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+.market_info_wrap {
+  display: flex;
+  gap: 12px; /*사진과 정보 간격*/
 }
 
 /* 이미지 */
-.market_list_wrap > ul > li img {
-  width: 100%;
-  height: 100%;
+.market_info_wrap > img {
+  height: 200px;
+  width: 200px;
   object-fit: cover;
-  display: block;
-  transition: transform 0.3s;
-}
-/* hover 시 이미지 확대 */
-.market_list_wrap > ul > li:hover img {
-  transform: scale(1.1);
-}
-
-/* 정보 박스 */
-.market_list_wrap > ul > li .info {
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background: rgba(0, 0, 0, 0.9);
-  display: flex;
-  flex-direction: column;
-  justify-content: flex-end;
-  padding: 12px;
-  opacity: 0;
-  transition: all 0.3s ease;
-  box-sizing: border-box;
-}
-/* 정보 박스 P태그 글자색 지정 */
-.info > p {
-  color: var(--light);
-}
-/* hover 시 정보 보이기 */
-.market_list_wrap > ul > li:hover .info {
-  opacity: 1;
 }
 
 /* 이미지 없을 때 아이콘 */
 .ImageNotSupportedIcon {
   width: 100%; /* li 가로 전체 */
   height: 100%; /* li 세로 전체 */
-
-  font-size: 5rem; /* 크기, px/ rem 단위 필요 */
 }
 
 /* 텍스트 정보 */

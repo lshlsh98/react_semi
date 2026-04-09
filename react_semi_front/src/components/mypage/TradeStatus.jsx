@@ -4,15 +4,28 @@ import DateRangePicker from "../ui/DateRangePicker";
 import dayjs from "dayjs";
 import axios from "axios";
 import BasicSelect from "../ui/BasicSelect";
+import Pagination from "../ui/Pagination";
+import {
+  LineChart,
+  Line,
+  XAxis,
+  YAxis,
+  CartesianGrid,
+  Tooltip,
+  Legend,
+  ResponsiveContainer,
+} from "recharts";
 
 const TradeStatus = () => {
-  const [chartData, setChartData] = useState([]);
-  const [listData, setListData] = useState([]);
+  const [chart, setChart] = useState([]);
+  const [list, setList] = useState([]);
+  const [complete, setComplete] = useState(2); // 2: 전체 / 1: 완료 / 0: 미완료
+  const [page, setPage] = useState(0);
+  const [size, setSize] = useState(10);
+  const [totalPage, setTotalPage] = useState(null);
 
-  const [complete, setComplete] = useState(0); // 0: 전체 / 1: 완료 / 2: 미완료
-
-  const [start, setStart] = useState(null);
-  const [end, setEnd] = useState(null);
+  const [start, setStart] = useState(dayjs().subtract(30, "day"));
+  const [end, setEnd] = useState(dayjs());
   const [formStart, setFormStart] = useState(null);
   const [formEnd, setFormEnd] = useState(null);
 
@@ -37,7 +50,7 @@ const TradeStatus = () => {
     if (!formStart || !formEnd) return;
 
     axios
-      .get(`${import.meta.env.VITE_BACKSERVER}/mypages/tradestatus`, {
+      .get(`${import.meta.env.VITE_BACKSERVER}/mypages/tradestatus/chart`, {
         params: {
           start: formStart,
           end: formEnd,
@@ -46,11 +59,34 @@ const TradeStatus = () => {
       })
       .then((res) => {
         console.log(res);
+        setChart(res.data);
       })
       .catch((err) => {
         console.log(err);
       });
   }, [complete, formStart, formEnd]);
+
+  useEffect(() => {
+    if (!formStart || !formEnd) return;
+
+    axios
+      .get(`${import.meta.env.VITE_BACKSERVER}/mypages/tradestatus/list`, {
+        params: {
+          start: formStart,
+          end: formEnd,
+          complete: complete,
+          page: page,
+          size: size,
+        },
+      })
+      .then((res) => {
+        setList(res.data.list);
+        setTotalPage(res.data.totalPage);
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  }, [complete, formStart, formEnd, page]);
 
   return (
     <div className={styles.trade_status_wrap}>
@@ -69,14 +105,60 @@ const TradeStatus = () => {
             state={complete}
             setState={setComplete}
             list={[
-              [0, "전체"],
-              [1, "완료"],
-              [2, "미완료"],
+              [2, "전체"],
+              [1, "완료11111"],
+              [0, "미완료"],
             ]}
           />
         </div>
       </section>
-      <section className={styles.chart_section}></section>
+      <section className={styles.chart_section}>
+        <ResponsiveContainer width="100%" height="100%">
+          <LineChart data={chart}>
+            <CartesianGrid strokeDasharray="3 3" />
+            <XAxis dataKey="marketDate" />
+            <YAxis />
+            <Tooltip />
+            <Legend />
+
+            {/* 전체 거래 */}
+            {complete === 2 ? (
+              <Line
+                dataKey="totalCount"
+                stroke="gray"
+                name="전체 거래"
+                dot={false}
+              />
+            ) : (
+              ""
+            )}
+
+            {/* 완료 거래 */}
+            {complete === 2 || complete === 1 ? (
+              <Line
+                dataKey="completedCount"
+                stroke="rgb(37, 136, 37)"
+                name="완료된 거래"
+                dot={false}
+              />
+            ) : (
+              ""
+            )}
+
+            {/* 미완료 거래 */}
+            {complete === 2 || complete === 0 ? (
+              <Line
+                dataKey="incompletedCount"
+                stroke="rgb(211, 81, 81)"
+                name="미완료 거래"
+                dot={false}
+              />
+            ) : (
+              ""
+            )}
+          </LineChart>
+        </ResponsiveContainer>
+      </section>
       <section className={styles.list_filter_section}></section>
       <section className={styles.list_section}>
         <ul className={`${styles.trade_item} ${styles.title_ul}`}>
@@ -87,18 +169,30 @@ const TradeStatus = () => {
           <li className={styles.trade_completed}>완료 여부</li>
           <li className={styles.trade_completed_date}>완료된 날짜</li>
         </ul>
-        {listData.map((list) => (
-          <ul className={styles.trade_item}>
-            <li className={styles.trade_no}>{list.market_no}</li>
-            <li className={styles.trade_title}>{list.market_title}</li>
-            <li className={styles.trade_addr}>{list.sell_addr}</li>
-            <li className={styles.trade_price}>{list.sell_price}</li>
-            <li className={styles.trade_completed}>{list.completed}</li>
+        {list.map((item) => (
+          <ul className={styles.trade_item} key={item.marketNo}>
+            <li className={styles.trade_no}>{item.marketNo}</li>
+            <li className={styles.trade_title}>{item.marketTitle}</li>
+            <li className={styles.trade_addr}>{item.sellAddr}</li>
+            <li className={styles.trade_price}>{item.sellPrice}</li>
+            <li className={styles.trade_completed}>
+              {item.completed === 0 ? "미완료" : "완료"}
+            </li>
             <li className={styles.trade_completed_date}>
-              {list.completed_date}
+              {item.completedDate || "-"}
             </li>
           </ul>
         ))}
+        <div className={styles.pagination}>
+          {!formStart || !formEnd || (
+            <Pagination
+              totalPage={totalPage}
+              page={page}
+              setPage={setPage}
+              naviSize={5}
+            />
+          )}
+        </div>
       </section>
     </div>
   );
