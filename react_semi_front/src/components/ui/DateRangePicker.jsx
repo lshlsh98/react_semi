@@ -9,7 +9,10 @@ const DateRangePicker = ({ startDate, setStartDate, endDate, setEndDate }) => {
         label="시작일"
         value={startDate}
         maxDate={endDate}
-        onChange={(newValue) => setStartDate(newValue)}
+        onChange={(newValue) => {
+          setStartDate(newValue);
+          setEndDate(null);
+        }}
         slotProps={{
           textField: {
             size: "small",

@@ -5,7 +5,6 @@ import Select from "@mui/material/Select";
 import { useState, useEffect } from "react";
 
 const BasicSelect = ({ state, setState, list }) => {
-  const [open, setOpen] = useState(false);
   const [minWidth, setMinWidth] = useState(50); // 기본 최소 width
 
   useEffect(() => {
@@ -36,8 +35,6 @@ const BasicSelect = ({ state, setState, list }) => {
         <Select
           value={state}
           onChange={(e) => setState(e.target.value)}
-          // onOpen={() => setOpen(true)}
-          // onClose={() => setOpen(false)}
           sx={{
             fontSize: "0.8rem",
             fontFamily: "tr_r",

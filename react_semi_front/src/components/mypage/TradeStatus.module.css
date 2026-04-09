@@ -27,7 +27,7 @@
 .title_ul {
   border-top: 1px solid var(--gray6);
   font-size: large;
-  padding: 10px 5px;
+  padding: 0px 5px;
   background-color: var(--secendary);
 }
 .title_ul > li {

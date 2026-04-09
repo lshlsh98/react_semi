@@ -24,8 +24,8 @@ const TradeStatus = () => {
   const [size, setSize] = useState(10);
   const [totalPage, setTotalPage] = useState(null);
 
-  const [start, setStart] = useState(null);
-  const [end, setEnd] = useState(null);
+  const [start, setStart] = useState(dayjs().subtract(30, "day"));
+  const [end, setEnd] = useState(dayjs());
   const [formStart, setFormStart] = useState(null);
   const [formEnd, setFormEnd] = useState(null);
 
