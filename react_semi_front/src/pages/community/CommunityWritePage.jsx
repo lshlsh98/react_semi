@@ -32,9 +32,10 @@ const CommunityWritePage = () => {
 
   const registCommunity = () => {
     if (
-      community.communityTitle === "제목" ||
-      community.communityContent === "내용"
+      community.communityTitle.trim() === "" ||
+      community.communityContent.trim() === ""
     ) {
+      Swal.fire("제목과 내용을 입력해주세요.", "", "warning");
       return;
     }
     const form = new FormData();

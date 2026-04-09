@@ -181,11 +181,14 @@ public class MarketController {
 		return ResponseEntity.ok(result);
 	}
 	
+	// 좋아요 누르기
 	@PostMapping(value="/{marketNo}/likes")
 	public ResponseEntity<?> likeOn(@PathVariable Integer marketNo,@RequestHeader(name="Authorization") String token){
 		int result = marketService.likeOn(marketNo,token);
 		return ResponseEntity.ok(result);
 	}
+	
+	// 좋아요 삭제
 	@DeleteMapping(value="/{marketNo}/likes")
 	public ResponseEntity<?> likeOff(@PathVariable Integer marketNo,@RequestHeader(name="Authorization") String token){
 		int result = marketService.likeOff(marketNo,token);
