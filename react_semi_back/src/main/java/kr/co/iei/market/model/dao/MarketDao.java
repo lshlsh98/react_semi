@@ -25,6 +25,12 @@ public interface MarketDao {
 	
 	List<Market> selectMainPageMarketList(Integer order);
 	
+	int updateMarket(Market market);
+	
+	int deleteMarketFileList(List<String> deleteFilePath);
+	
+	int deleteMarket(Integer marketNo);
+	
 	List<MarketComment> selectMarketCommentList(Integer marketNo);
 	
     int insertMarketComment(MarketComment marketComment);
@@ -44,6 +50,4 @@ public interface MarketDao {
 	int likeOn(Map<String, Object> params);
 
 	int likeOff(Map<String, Object> params);
-
-	
 }

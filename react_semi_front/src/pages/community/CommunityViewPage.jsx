@@ -59,6 +59,7 @@ const CommunityViewPage = () => {
           .then((res) => {
             console.log(res);
             if (res.data === 1) {
+              Swal.fire("삭제 성공", "게시글이 삭제되었습니다.", "success");
               navigate("/community");
             }
           })

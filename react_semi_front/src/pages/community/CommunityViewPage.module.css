@@ -1,10 +1,12 @@
 .community_wrap {
   width: 900px;
+  margin: 0 auto;
   border-radius: 8px;
   background-color: var(--gray8);
 }
 
 .community_view_wrap {
+  margin-top: 50px;
   border: 1px solid var(--line);
   padding: 16px;
   border-radius: 8px;

@@ -1,5 +1,6 @@
 package kr.co.iei.market.controller;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -7,6 +8,9 @@ import java.util.Map;
 import kr.co.iei.utils.JwtUtils;
 
 import org.apache.ibatis.annotations.Delete;
+import org.jsoup.Jsoup;
+import org.jsoup.nodes.Document;
+import org.jsoup.nodes.Element;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
@@ -16,6 +20,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.CrossOrigin;
@@ -84,6 +89,47 @@ public class MarketController {
 		}
 		int result = marketService.insertMarket(market, fileList);
 		
+		return ResponseEntity.ok(result);
+	}
+	
+	// 거래 게시글 수정하기 - 장지혁
+	@PutMapping(value="/{marketNo}")
+	public ResponseEntity<?> updateMarket(@PathVariable Integer marketNo,
+								@ModelAttribute Market market,
+							@ModelAttribute List<MultipartFile> files){
+			market.setMarketNo(marketNo);
+			System.out.println(market);
+		Document doc = Jsoup.parse(market.getMarketContent());
+		Element ele = doc.selectFirst("img");
+		String marketThumb = ele == null ? null : ele.attr("src");
+		market.setMarketThumb(marketThumb);
+		List<MarketFile> addFileList = new ArrayList<MarketFile>();
+		String savepath = root + "market/";
+		if(files != null) {
+			for(MultipartFile file : files) {
+				String marketFileName = file.getOriginalFilename();
+				String marketFilePath = fileUtil.upload(savepath, file);
+				MarketFile marketFile = new MarketFile();
+				marketFile.setMarketFileName(marketFileName);
+				marketFile.setMarketFilePath(marketFilePath);
+				marketFile.setMarketNo(marketNo);
+				addFileList.add(marketFile);
+			}
+		}
+		int result = marketService.updateMarket(market,addFileList);
+		if(result > 0 && market.getDeleteFilePath() != null) {
+			for(String marketFilePath : market.getDeleteFilePath()) {
+				File deleteFile = new File(savepath + marketFilePath);
+				deleteFile.delete();
+			}
+		}
+		return ResponseEntity.ok(result);
+	}
+	
+	// 거래 게시글 삭제하기 - 장지혁
+	@DeleteMapping(value="/{marketNo}")
+	public ResponseEntity<?> deleteMarket(@PathVariable Integer marketNo){
+		int result = marketService.deleteMarket(marketNo);
 		return ResponseEntity.ok(result);
 	}
 	
