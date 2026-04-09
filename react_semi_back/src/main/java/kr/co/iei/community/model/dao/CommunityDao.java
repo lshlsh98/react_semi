@@ -62,4 +62,6 @@ public interface CommunityDao {
 
 	int deleteReport(Map<String, Object> params);
 
+	int updateViewCountCommunity(Community community);
+
 }

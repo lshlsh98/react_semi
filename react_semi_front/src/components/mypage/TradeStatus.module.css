@@ -17,10 +17,17 @@
   border-bottom: 1px solid var(--gray6);
 }
 
+.trade_item > li {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 50px;
+}
+
 .title_ul {
   border-top: 1px solid var(--gray6);
   font-size: large;
-  padding: 10px 5px;
+  padding: 0px 5px;
   background-color: var(--secendary);
 }
 .title_ul > li {
@@ -51,4 +58,14 @@
   display: flex;
   justify-content: space-between;
   margin: 10px 0;
+}
+
+.pagination {
+  margin: 20px 0;
+}
+
+.chart_section {
+  width: 900px;
+  height: 400px;
+  margin: 10px auto;
 }

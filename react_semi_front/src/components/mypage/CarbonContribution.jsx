@@ -8,6 +8,14 @@ const CarbonContribution = () => {
       <div className={styles.carbon_contribution}>
         <p>1600P</p>
       </div>
+      <div className={styles.carbon_contribution_list_wrap}>
+        <ul className={styles.carbon_contribution_list_title}>
+          <li className={styles.m}>거래 목록</li>
+          <li className={styles.m}>상태</li>
+          <li className={styles.m}>기여도 획득량</li>
+          <li className={styles.m}>거래일</li>
+        </ul>
+      </div>
     </section>
   );
 };

@@ -19,3 +19,19 @@
   font-size: 40px;
   color: var(--primary);
 }
+
+.carbon_contribution_list_wrap {
+  width: 100%;
+}
+
+.carbon_contribution_list_title {
+  width: 100%;
+  list-style-type: none;
+  display: flex;
+  padding: 20px;
+  background-color: var(--primary);
+  border-radius: 4px 4px 0 0;
+}
+.carbon_contribution_list_title > li {
+  color: var(--gray8);
+}

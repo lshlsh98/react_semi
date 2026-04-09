@@ -1,5 +1,7 @@
 package kr.co.iei.mypage.model.vo;
 
+import java.time.LocalDate;
+
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -9,7 +11,10 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class TradeStatusReqDto {
 	
-	private String start;
-	private String end;
+	private LocalDate start;
+	private LocalDate end;
 	private Integer complete;
+	
+	private Integer size;
+	private Integer page;
 }
