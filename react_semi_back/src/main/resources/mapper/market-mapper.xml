@@ -138,64 +138,85 @@
 
 	<select id="selectMainPageMarketList" resultType="market">
 		select
-				market_no,
-				market_title,
-				to_char(market_date, 'yyyy-mm-dd HH24:mi:ss') as market_date,
-				market_writer,
-				view_count,
-				sell_addr,
-				sell_price,
-				(
+			m.market_no,
+			m.market_title,
+			to_char(m.market_date, 'yyyy-mm-dd hh24:mi:ss') market_date,
+			m.market_writer,
+			m.view_count,
+			m.sell_addr,
+			m.sell_price,
+			(
 				select market_file_path
-					from (
+				from (
 						select mf.market_file_path
-						from market_file_tbl  mf
-						where mf.market_no = market_tbl.market_no
+						from market_file_tbl mf
+						where mf.market_no = m.market_no
 						order by mf.market_file_no asc
-						)
+					)
 				where rownum = 1
-				) as marketThumb
-		from
-		market_tbl
-		where market_status = 1
-			
-		<if test="order==0"> order by market_no desc</if>
-		<if test="order==2"> order by view_count desc </if>
+			) marketThumb
+		from market_tbl m
+		where m.market_status = 1
+		
+		<if test="order==0">
+		order by m.market_no desc
+		</if>
+		
+		<if test="order==2">
+		order by m.view_count desc
+		</if>
 	
-		fetch first 5 rows only
+		offset 0 rows fetch next 5 rows only
 	</select>
 	
 	<select id="selectMarketCommentList" resultType="marketComment">
-        SELECT 
-            c.market_comment_no,
-            c.market_no,
-            c.market_comment_writer,  m.member_thumb,
-            c.market_comment_content,
-            TO_CHAR(c.market_comment_date, 'YYYY-MM-DD HH24:MI') AS market_comment_date,
-            c.market_recomment_no,    c.is_secret
-        FROM market_comment_tbl c
-        LEFT JOIN member_tbl m ON (c.market_comment_writer = m.member_id) WHERE c.market_no = #{marketNo}
-        ORDER BY c.market_comment_no ASC
+        select 
+            c.market_comment_no, 
+            c.market_no, 
+            c.market_comment_writer, 
+            c.market_comment_content, 
+            to_char(c.market_comment_date, 'yyyy-mm-dd hh24:mi') market_comment_date,
+            c.market_recomment_no, 
+            c.is_secret, 
+            c.is_edited,
+            m.member_thumb
+        from market_comment_tbl c
+        left join member_tbl m on (c.market_comment_writer = m.member_id)
+        where c.market_no = #{marketNo}
+        order by c.market_comment_no asc
     </select>
-
+    
     <insert id="insertMarketComment">
-        INSERT INTO market_comment_tbl (
-            market_comment_no,
-            market_comment_content,
-            market_comment_date,
-            market_no,
-            market_comment_writer,   market_recomment_no,     is_secret
-        ) VALUES (
+        insert into market_comment_tbl values (
             market_comment_seq.NEXTVAL,
             #{marketCommentContent},
-            SYSDATE,
+            sysdate,
             #{marketNo},
-            #{marketCommentWriter},  #{marketRecommentNo},    #{isSecret}
+            #{marketCommentWriter},  
+            #{marketRecommentNo},   
+			#{isSecret},
+			0
         )
     </insert>
 
     <delete id="deleteMarketComment">
-        DELETE FROM market_comment_tbl 
-        WHERE market_comment_no = #{commentNo}
+        delete from market_comment_tbl where market_comment_no = #{commentNo}
     </delete>
+    
+    <update id="updateMarketComment">
+        update market_comment_tbl 
+        set 
+            market_comment_content = #{marketCommentContent},
+            is_secret = #{isSecret},
+            is_edited = 1
+        where market_comment_no = #{marketCommentNo}
+    </update>
+    
+    <insert id="insertMarketCommentReport">
+        insert into market_comment_report_tbl values (
+            #{marketCommentNo}, 
+            #{memberId}, 
+            #{marketCommentReportReason}
+        )
+    </insert>
 </mapper>

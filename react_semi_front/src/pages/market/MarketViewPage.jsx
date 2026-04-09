@@ -243,7 +243,11 @@ const MarketViewPage = () => {
               <Button className="btn primary danger">삭제</Button>
             </div>
           )}
-          <MarketComment marketNo={marketNo} memberId={memberId} />
+          <MarketComment
+            marketNo={marketNo}
+            memberId={memberId}
+            marketWriter={market.marketWriter}
+          />
         </>
       )}
     </main>

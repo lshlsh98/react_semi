@@ -8,6 +8,7 @@ import org.apache.ibatis.annotations.Mapper;
 import kr.co.iei.market.model.vo.ListItem;
 import kr.co.iei.market.model.vo.Market;
 import kr.co.iei.market.model.vo.MarketComment;
+import kr.co.iei.market.model.vo.MarketCommentReport;
 import kr.co.iei.market.model.vo.MarketFile;
 
 @Mapper
@@ -30,6 +31,10 @@ public interface MarketDao {
     int insertMarketComment(MarketComment marketComment);
     
     int deleteMarketComment(Integer commentNo);
+    
+    int updateMarketComment(MarketComment marketComment);
+    
+    int insertMarketCommentReport(MarketCommentReport report);
 
 	Market selectOneMarket(Integer marketNo);
 

@@ -13,6 +13,7 @@ import kr.co.iei.market.model.vo.ListItem;
 import kr.co.iei.market.model.vo.ListResponse;
 import kr.co.iei.market.model.vo.Market;
 import kr.co.iei.market.model.vo.MarketComment;
+import kr.co.iei.market.model.vo.MarketCommentReport;
 import kr.co.iei.market.model.vo.MarketFile;
 import kr.co.iei.member.model.vo.LoginMember;
 import kr.co.iei.utils.JwtUtils;
@@ -65,19 +66,36 @@ public class MarketService {
 	
 	// 댓글 조회
 	public List<MarketComment> selectMarketCommentList(Integer marketNo) {
-        return marketDao.selectMarketCommentList(marketNo);
+		List<MarketComment> list = marketDao.selectMarketCommentList(marketNo);
+        return list;
     }
 
 	// 댓글 작성
     @Transactional
     public int insertMarketComment(MarketComment marketComment) {
-        return marketDao.insertMarketComment(marketComment);
+    	int result = marketDao.insertMarketComment(marketComment);
+        return result;
     }
 
     // 댓글 삭제
     @Transactional
     public int deleteMarketComment(Integer commentNo) {
-        return marketDao.deleteMarketComment(commentNo);
+    	int result = marketDao.deleteMarketComment(commentNo);
+        return result;
+    }
+    
+    // 댓글 수정
+    @Transactional
+    public int updateMarketComment(MarketComment marketComment) {
+    	int result = marketDao.updateMarketComment(marketComment);
+        return result;
+    }
+    
+    // 댓글 신고
+    @Transactional
+    public int insertMarketCommentReport(MarketCommentReport report) {
+    	int result = marketDao.insertMarketCommentReport(report);
+        return result;
     }
 	
 	@Transactional
