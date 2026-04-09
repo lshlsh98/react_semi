@@ -97,6 +97,7 @@ const MarketWritePage = () => {
     const newMarket = { ...market, [name]: value };
     setMarket(newMarket);
   };
+
   /* 판매 제목 함수 */
   const inputMarketTitle = (e) => {
     const name = e.target.name;
@@ -119,14 +120,14 @@ const MarketWritePage = () => {
     if (num < 0) {
       Swal.fire({
         icon: "warning",
-        title: "0원 보다 작게 설정하실수는 없어요!",
+        title: "0원 보다 작게 설정하실 수는 없어요!",
       });
       setMarket({ ...market, [name]: "" });
       return;
     } else if (num > 10000000) {
       Swal.fire({
         icon: "warning",
-        title: "최대 1000만원까지 설정 가능해요!",
+        title: "최대 1,000만원까지 설정 가능해요!",
       });
       setMarket({ ...market, [name]: "" });
       return;
@@ -229,7 +230,7 @@ const MarketWritePage = () => {
           id="sellPrice"
           value={market.sellPrice}
           onChange={inputMarketPrice}
-          placeholder="숫자만입력가능"
+          placeholder="숫자만 입력 가능"
         ></Input>
       </div>
 
@@ -269,14 +270,15 @@ const MarketWritePage = () => {
       </div>
       {/* MAP API 영역 */}
       <div className={styles.market_input_wrap}>
-        <label>API 등록예정</label>
+        <label>API 등록 예정</label>
       </div>
+
       {/* 내용 필드 */}
       <div>
         <TextEditor data={market.marketContent} setData={inputMarketContent} />
       </div>
-      {/* 파일첨부 필드 */}
 
+      {/* 파일첨부 필드 */}
       <div className={styles.market_file_wrap}>
         <label
           htmlFor="files"
@@ -332,7 +334,7 @@ const MarketWritePage = () => {
           className="btn primary danger"
           onClick={() => {
             Swal.fire({
-              title: "작성을 취소하시겠어요?.",
+              title: "작성을 취소하시겠어요?",
               icon: "warning",
               showCancelButton: true,
               confirmButtonText: "네",
