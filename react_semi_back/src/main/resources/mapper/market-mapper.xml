@@ -244,4 +244,10 @@
     <delete id="deleteOneMarket">
     	delete from market_tbl where market_no = #{marketNo}
     </delete>
+    
+    <!--거래요청 리스트 조회-->
+    <select id="selectAllTradeRequest" resultType="tradeRequest">
+    	select * from trade_request_tbl where market_no = #{marketNo} and status = 1
+    	
+    </select>
 </mapper>

@@ -11,6 +11,7 @@ import ThumbUpOffAltIcon from "@mui/icons-material/ThumbUpOffAlt";
 import ReportIcon from "@mui/icons-material/Report";
 import ReportGmailerrorredIcon from "@mui/icons-material/ReportGmailerrorred";
 import Swal from "sweetalert2";
+import withReactContent from 'sweetalert2-react-content';
 import MarketComment from "../../components/market/MarketComment";
 import { Modal, Box, IconButton } from "@mui/material"; // IconButton 추가
 import { ChevronLeft, ChevronRight, Close } from "@mui/icons-material";
@@ -20,6 +21,7 @@ const MarketViewPage = () => {
   const { memberId, isReady } = useAuthStore();
   const params = useParams();
   const marketNo = params.marketNo;
+  const MySwal = withReactContent(Swal);
 
   const [market, setMarket] = useState(null);
   const imgUrl = "http://192.168.31.24:9999/market";
@@ -47,6 +49,8 @@ const MarketViewPage = () => {
     setCurrentIndex((prev) => (prev === images.length - 1 ? 0 : prev + 1));
   };
 
+  /* 거래요청 리스트용 스테잍트 */
+  const [tradeRequestList,setTradeRequestList] = useState([]);
   /* F5키 ctrl+r 제한 */
   useEffect(() => {
     const handleKeyDown = (e) => {
@@ -73,7 +77,7 @@ const MarketViewPage = () => {
       .catch((err) => {
         console.log(err);
       });
-  }, [memberId, marketNo, isReady]);
+  }, [memberId, marketNo, isReady,tradeRequestList]);
 
   const requestTrade = () => {
     Swal.fire({
@@ -90,6 +94,8 @@ const MarketViewPage = () => {
       }
     });
   };
+
+  /* 게시글삭제 함수 */
   const deleteMarket = () => {
     Swal.fire({
       title: "삭제 하시겠습니까?",
@@ -130,6 +136,54 @@ const MarketViewPage = () => {
     });
   };
 
+  /* 거래완료 함수 */
+  const tradeComplete = ()=>{
+    console.log("거래완료 로직 실행");
+    console.log(market.marketNo)
+    axios.get(`${import.meta.env.VITE_BACKSERVER}/markets/${market.marketNo}/complete`)
+    .then((res)=>{
+      console.log("거래요청리스트 호출 성공")
+      console.log(res)
+      setTradeRequestList(res.data);
+      if (res.data.length === 0) {
+        MySwal.fire("알림", "대기 중인 거래 요청이 없습니다.", "info");
+        return;
+      }
+MySwal.fire({
+        title: '거래 요청 목록',
+        html: (
+          <ul style={{ listStyle: 'none', padding: 0 }}>
+            {/* setTradeRequestList 대신 받아온 res.data를 직접 맵핑 */}
+            {res.data.map((trade) => (
+              <li key={trade.tradeNo} style={{ marginBottom: '15px', borderBottom: '1px solid #ddd', paddingBottom: '10px' }}>
+                <p><b>{trade.buyerId}</b></p>
+                <p>{trade.message}</p>
+                <button 
+                  className="btn-primary" 
+                  onClick={() => {
+                    MySwal.close();
+                    requestAccepted(trade.marketNo, trade.buyerId);
+                  }}
+                >
+                  거래 확정
+                </button>
+              </li>
+            ))}
+          </ul>
+        ),
+        showConfirmButton: false,
+        showCloseButton: true
+      });
+    })
+      
+      
+    
+    .catch((err)=>{
+      console.log(err)
+
+    })
+
+  }
   return (
     <main className={styles.main_wrap}>
       {market && (
@@ -174,7 +228,7 @@ const MarketViewPage = () => {
                   display: "flex",
                   alignItems: "center",
                   justifyContent: "center",
-                  width: "90vw",
+                  width: "60vw",
                   height: "80vh",
                   borderRadius: "8px",
                   overflow: "hidden",
@@ -302,6 +356,7 @@ const MarketViewPage = () => {
               <Button
                 className="btn primary"
                 style={{ backgroundColor: "pink", border: "none" }}
+                onClick={tradeComplete}
               >
                 거래완료
               </Button>

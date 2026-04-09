@@ -15,6 +15,7 @@ import kr.co.iei.market.model.vo.ListResponse;
 import kr.co.iei.market.model.vo.Market;
 import kr.co.iei.market.model.vo.MarketComment;
 import kr.co.iei.market.model.vo.MarketFile;
+import kr.co.iei.market.model.vo.TradeRequest;
 import kr.co.iei.member.model.vo.LoginMember;
 import kr.co.iei.utils.JwtUtils;
 
@@ -159,6 +160,11 @@ public class MarketService {
 	public int deleteOneMarket(Integer marketNo) {
 		int result = marketDao.deleteOneMarket(marketNo);
 		return result;
+	}
+
+	public List<TradeRequest> selectAllTradeRequest(Integer marketNo) {
+		List<TradeRequest> list = marketDao.selectAllTradeRequest(marketNo);
+		return list;
 	}
 
 	

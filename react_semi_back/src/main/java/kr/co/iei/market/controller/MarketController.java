@@ -32,6 +32,7 @@ import kr.co.iei.market.model.vo.ListResponse;
 import kr.co.iei.market.model.vo.Market;
 import kr.co.iei.market.model.vo.MarketComment;
 import kr.co.iei.market.model.vo.MarketFile;
+import kr.co.iei.market.model.vo.TradeRequest;
 import kr.co.iei.member.model.vo.LoginMember;
 import kr.co.iei.utils.FileUtils;
 
@@ -200,5 +201,13 @@ public class MarketController {
 	public ResponseEntity<?> likeOff(@PathVariable Integer marketNo,@RequestHeader(name="Authorization") String token){
 		int result = marketService.likeOff(marketNo,token);
 		return ResponseEntity.ok(result);
+	}
+	//거래완료시 거래요청 리스트 조회
+	@GetMapping(value="/{marketNo}/complete")
+	public ResponseEntity<?> selectAllTradeRequest(@PathVariable Integer marketNo){
+		//System.out.println("글번호확인 : " + marketNo);
+		List<TradeRequest> list = marketService.selectAllTradeRequest(marketNo);
+		//System.out.println(list);
+		return ResponseEntity.ok(list);
 	}
 }

@@ -9,6 +9,7 @@ import kr.co.iei.market.model.vo.ListItem;
 import kr.co.iei.market.model.vo.Market;
 import kr.co.iei.market.model.vo.MarketComment;
 import kr.co.iei.market.model.vo.MarketFile;
+import kr.co.iei.market.model.vo.TradeRequest;
 
 @Mapper
 public interface MarketDao {
@@ -50,6 +51,9 @@ public interface MarketDao {
 	int deleteFileTbl(Integer marketNo);
 
 	int deleteOneMarket(Integer marketNo);
+
+	List<TradeRequest> selectAllTradeRequest(Integer marketNo);
+
 	
 
 	
