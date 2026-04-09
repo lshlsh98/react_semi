@@ -203,6 +203,12 @@ public class CommunityService {
 	public List<Community> selectMainPageCommunityList(String type) {
 		return communityDao.selectMainPageCommunityList(type);
 	}
+
+	public int updateViewCountCommunity(Integer communityNo) {
+		Community community = selectOneCommunity(communityNo);
+		int result = communityDao.updateViewCountCommunity(community);
+		return result;
+	}
 	
 }
 

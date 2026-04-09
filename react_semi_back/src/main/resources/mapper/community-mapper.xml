@@ -23,8 +23,11 @@
 		c.community_no = d.community_no) as dislike_count,
 		(select count(*)
 		from community_report_tbl r
-		where c.community_no = r.community_no) as
-		report_count
+		where c.community_no = r.community_no) as report_count,
+		(select count(*)
+		from community_comment_tbl cc
+		where
+		c.community_no = cc.community_no) as comment_count
 		from community_tbl c
 		join member_tbl on (community_writer =
 		member_id)
@@ -39,14 +42,14 @@
 		<if test="searchType==2">
 			and community_writer = #{searchKeyword}
 		</if>
-		
+
 		<if test="view==1">
 			and member_grade=3
 		</if>
 		<if test="view==2">
 			and member_grade in (1, 2)
 		</if>
-		
+
 		<if test="order == 1">order by community_no desc</if>
 		<if test="order == 2">order by community_no asc</if>
 		<if test="order == 3">order by view_count desc</if>
@@ -63,7 +66,7 @@
 		(community_writer = m.member_id)
 		where
 		community_status = 1
-		
+
 		<if test="searchType==1">
 			and (community_title like '%'||#{searchKeyword}||'%'
 			or
@@ -72,7 +75,7 @@
 		<if test="searchType==2">
 			and community_writer = #{searchKeyword}
 		</if>
-		
+
 		<if test="view==1">
 			and member_grade=3
 		</if>
@@ -80,186 +83,197 @@
 			and member_grade in (1, 2)
 		</if>
 	</select>
-	
+
 	<insert id="insertCommunity">
 		insert into community_tbl (
-        community_no,
-        community_title,
-        community_content,
-        community_date,
-        community_status,
-        community_writer,
-        view_count
-    ) values (
-        community_seq.nextval,
-        #{communityTitle},
-        #{communityContent},
-        sysdate,
-        1,
-        #{communityWriter},
-        0
-    )
+		community_no,
+		community_title,
+		community_content,
+		community_date,
+		community_status,
+		community_writer,
+		view_count
+		) values (
+		community_seq.nextval,
+		#{communityTitle},
+		#{communityContent},
+		sysdate,
+		1,
+		#{communityWriter},
+		0
+		)
 	</insert>
-	
+
 	<select id="selectOneCommunity" resultType="community">
 		select
-			community_no,
-			community_title,
-			community_content,
-			community_writer,
-			view_count,
-			to_char(community_date,'yyyy-mm-dd') as community_date
+		community_no,
+		community_title,
+		community_content,
+		community_writer,
+		view_count,
+		to_char(community_date,'yyyy-mm-dd') as community_date
 		from community_tbl
-		join member_tbl on (community_writer = member_id)
+		join member_tbl on
+		(community_writer = member_id)
 		where community_no = #{communityNo}
 	</select>
-	
+
 	<update id="updateCommunity">
 		update community_tbl set
-			community_title = #{communityTitle},
-  			community_content = #{communityContent}
-  		where community_no = #{communityNo}
+		community_title = #{communityTitle},
+		community_content = #{communityContent}
+		where community_no = #{communityNo}
 	</update>
-	
+
 	<select id="selectMainPageCommunityList" resultType="community">
-		select 
-			c.community_no,
-			c.community_title,
-			c.community_content,
-			c.community_writer,
-			to_char(c.community_date, 'yyyy-mm-dd hh24:mi:ss') community_date,
-			c.view_count,
-			(
-				select count(*)
-				from community_like_tbl l
-				where c.community_no = l.community_no
-			) like_count
+		select
+		c.community_no,
+		c.community_title,
+		c.community_content,
+		c.community_writer,
+		to_char(c.community_date, 'yyyy-mm-dd hh24:mi:ss') as community_date,
+		c.view_count,
+		(select count(*)
+		from community_like_tbl l
+		where c.community_no = l.community_no) as like_count
 		from community_tbl c
-		join member_tbl m on (c.community_writer = m.member_id)
-		where c.community_status = 1
-		
+		join member_tbl m on (c.community_writer = m.member_id) where
+		c.community_status = 1
+
 		<if test="type == 'popular'">
 			order by like_count desc, c.community_no desc
 		</if>
-		
+
 		<if test="type == 'notice'">
 			and m.member_grade in (1, 2) 
 			order by c.community_no desc
 		</if>
-		
+
 		offset 0 rows fetch next 5 rows only
 	</select>
-	
+
 	<delete id="deleteCommunity">
 		delete community_tbl
-			where community_no = #{communityNo}
+		where community_no = #{communityNo}
 	</delete>
-	
+
 	<insert id="insertCommunityComment">
 		insert into community_comment_tbl values
 		(
-			#{communityCommentNo},
-			#{communityCommentContent},
-			sysdate,
-			#{communityNo},
-			#{communityCommentWriter},
-			#{communityCommentNo2}
+		#{communityCommentNo},
+		#{communityCommentContent},
+		sysdate,
+		#{communityNo},
+		#{communityCommentWriter},
+		#{communityCommentNo2}
 		)
 	</insert>
-	
-	<select id="selectOneCommunityComment" resultType="communityComment">
+
+	<select id="selectOneCommunityComment"
+		resultType="communityComment">
 		select
-			community_comment_no
+		community_comment_no
 	</select>
-	
-	<select id="selectCommunityCommentList" resultType="communityComment">
+
+	<select id="selectCommunityCommentList"
+		resultType="communityComment">
 		select
-			community_comment_no,
-			community_comment_content,
-			community_comment_date,
-			community_no,
-			community_comment_writer,
-			community_comment_no2
+		community_comment_no,
+		community_comment_content,
+		community_comment_date,
+		community_no,
+		community_comment_writer,
+		community_comment_no2
 		from community_comment_tbl
-		join member_tbl on(community_comment_writer = member_id)
+		join member_tbl on(community_comment_writer
+		= member_id)
 		where community_no = #{communityNo}
-		order by community_comment_no
+		order by
+		community_comment_no
 	</select>
-	
+
 	<select id="selectNewCommunityCommentNo" resultType="int">
-   		select community_comment_seq.NEXTVAL from dual
+		select community_comment_seq.NEXTVAL from dual
 	</select>
-	
+
 	<update id="updateCommunityComment">
 		update community_comment_tbl set
-  			community_comment_content = #{communityCommentContent}
-  		where community_comment_no = #{communityCommentNo}
+		community_comment_content = #{communityCommentContent}
+		where community_comment_no = #{communityCommentNo}
 	</update>
-	
+
 	<delete id="deleteCommunityComment">
-		delete from community_comment_tbl where community_comment_no = #{communityCommentNo}
+		delete from community_comment_tbl where
+		community_comment_no = #{communityCommentNo}
 	</delete>
-	
+
 	<select id="selectLikeCount" resultType="int">
-  		select count(*) from community_like_tbl where community_no = #{communityNo}
-  	</select>
-  	
-  	<select id="selectIsLike" resultType="int">
-  		select count(*) from community_like_tbl
-  		where community_no = #{communityNo} and member_id = #{memberId}
-  	</select>
-  	
-  	<insert id="insertLike">
-  	insert into community_like_tbl (community_no, member_id)
-  		values (#{communityNo}, #{memberId})
-  	</insert>
-  	
-  	<delete id="deleteLike">
-  		delete from community_like_tbl 
-  		where community_no = #{communityNo} and member_id = #{memberId}
-  	</delete>
-  	
-  	<select id="selectDislikeCount" resultType="int">
-  		select count(*) 
-  		from community_dislike_tbl 
-  		where community_no = #{communityNo}
-  	</select>
-  	
-  	<select id="selectIsDislike" resultType="int">
-  		select count(*) 
-  		from community_dislike_tbl
-  		where community_no = #{communityNo} and member_id = #{memberId}
-  	</select>
-  	
-  	<insert id="insertDislike">
-  	insert into community_dislike_tbl (community_no, member_id)
-  		values (#{communityNo}, #{memberId})
-  	</insert>
-  	
-  	<delete id="deleteDislike">
-  		delete from community_dislike_tbl 
-  		where community_no = #{communityNo} and member_id = #{memberId}
-  	</delete>
-  	
-  	<select id="selectReportCount" resultType="int">
-  		select count(*) 
-  		from community_report_tbl 
-  		where community_no = #{communityNo}
-  	</select>
-  	
-  	<select id="selectIsReport" resultType="int">
-  		select count(*) 
-  		from community_report_tbl
-  		where community_no = #{communityNo} and member_id = #{memberId}
-  	</select>
-  	
-  	<insert id="insertReport">
-  		insert into community_report_tbl (community_no, member_id) 
-        	values (#{communityNo}, #{memberId}
-    )
-  	</insert>
-  	
-  	<delete id="deleteReport">
-  		delete from community_report_tbl where community_no=#{communityNo} and member_id = #{memberId}
-  	</delete>
+		select count(*) from community_like_tbl where community_no = #{communityNo}
+	</select>
+
+	<select id="selectIsLike" resultType="int">
+		select count(*) from community_like_tbl
+		where community_no = #{communityNo} and member_id = #{memberId}
+	</select>
+
+	<insert id="insertLike">
+		insert into community_like_tbl (community_no, member_id)
+		values (#{communityNo}, #{memberId})
+	</insert>
+
+	<delete id="deleteLike">
+		delete from community_like_tbl
+		where community_no = #{communityNo} and member_id = #{memberId}
+	</delete>
+
+	<select id="selectDislikeCount" resultType="int">
+		select count(*)
+		from community_dislike_tbl
+		where community_no = #{communityNo}
+	</select>
+
+	<select id="selectIsDislike" resultType="int">
+		select count(*)
+		from community_dislike_tbl
+		where community_no = #{communityNo} and member_id = #{memberId}
+	</select>
+
+	<insert id="insertDislike">
+		insert into community_dislike_tbl (community_no, member_id)
+		values (#{communityNo}, #{memberId})
+	</insert>
+
+	<delete id="deleteDislike">
+		delete from community_dislike_tbl
+		where community_no = #{communityNo} and member_id = #{memberId}
+	</delete>
+
+	<select id="selectReportCount" resultType="int">
+		select count(*)
+		from community_report_tbl
+		where community_no = #{communityNo}
+	</select>
+
+	<select id="selectIsReport" resultType="int">
+		select count(*)
+		from community_report_tbl
+		where community_no = #{communityNo} and member_id = #{memberId}
+	</select>
+
+	<insert id="insertReport">
+		insert into community_report_tbl (community_no, member_id)
+		values (#{communityNo}, #{memberId}
+		)
+	</insert>
+
+	<delete id="deleteReport">
+		delete from community_report_tbl where community_no=#{communityNo} and
+		member_id = #{memberId}
+	</delete>
+
+	<update id="updateViewCountCommunity">
+		update community_tbl 
+		set view_count = #{viewCount} + 1
+		where community_no = #{communityNo}
+	</update>
 </mapper>
