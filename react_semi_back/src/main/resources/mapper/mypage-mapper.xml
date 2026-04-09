@@ -721,4 +721,62 @@
    		</where>
 	</select>
 	
+	<select id="findChartAll" resultType="chart">
+		SELECT 
+    		TO_CHAR(market_date, 'YYYY-MM-DD') AS market_date,
+    		COUNT(*) AS total_count,
+    		SUM(CASE WHEN completed = 1 THEN 1 ELSE 0 END) AS completed_count,
+    		SUM(CASE WHEN completed = 0 THEN 1 ELSE 0 END) AS incompleted_count
+		FROM market_tbl
+		<where>
+			<![CDATA[
+			market_date >= #{start} AND market_date < #{end} + 1
+			]]>
+			<if test="complete != 2">
+				AND completed = #{complete}
+			</if>
+		</where>
+		
+		GROUP BY TO_CHAR(market_date, 'YYYY-MM-DD')
+		ORDER BY market_date ASC
+	</select>
+	
+	<select id="findListAll" resultType="tradeStatus">
+		SELECT 
+    		market_no,
+    		market_title,
+    		sell_addr,
+    		sell_price,
+    		completed,
+    		TO_CHAR(completed_date, 'yyyy-mm-dd') AS completed_date
+
+		FROM market_tbl 
+		<where>
+			<![CDATA[
+			market_date >= #{start} AND market_date < #{end} + 1
+			]]>
+			<if test="complete != 2">
+				AND completed = #{complete}
+			</if>
+		</where>
+		
+		ORDER BY market_no DESC
+		
+		OFFSET #{page} * #{size} ROWS FETCH NEXT #{size} ROWS ONLY
+	</select>
+	
+	<select id="findListAllCount" resultType="int">
+		SELECT 
+    		COUNT(*) AS count
+		FROM market_tbl 
+		<where>
+			<![CDATA[
+			market_date >= #{start} AND market_date < #{end} + 1
+			]]>
+			<if test="complete != 2">
+				AND completed = #{complete}
+			</if>
+		</where>
+	</select>
+	
 </mapper>
