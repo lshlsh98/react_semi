@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -29,6 +30,7 @@ import kr.co.iei.market.model.vo.ListItem;
 import kr.co.iei.market.model.vo.ListResponse;
 import kr.co.iei.market.model.vo.Market;
 import kr.co.iei.market.model.vo.MarketComment;
+import kr.co.iei.market.model.vo.MarketCommentReport;
 import kr.co.iei.market.model.vo.MarketFile;
 import kr.co.iei.utils.FileUtils;
 
@@ -105,8 +107,6 @@ public class MarketController {
     // 2. 댓글 작성 (대댓글 포함) - 이영민
     @PostMapping(value="/comments")
     public ResponseEntity<?> insertMarketComment(@RequestBody MarketComment marketComment) {
-        // 💡 팁: 앞선 게시글 등록은 이미지가 있어서 @ModelAttribute를 썼지만, 
-        // 단순 텍스트인 댓글은 프론트에서 JSON으로 보내므로 @RequestBody를 써야 합니다!
         int result = marketService.insertMarketComment(marketComment);
         return ResponseEntity.ok(result);
     }
@@ -117,7 +117,21 @@ public class MarketController {
         int result = marketService.deleteMarketComment(commentNo);
         return ResponseEntity.ok(result);
     }
+    
+    // 4. 댓글 수정 - 이영민
+    @PatchMapping(value="/comments")
+    public ResponseEntity<?> updateMarketComment(@RequestBody MarketComment marketComment) {
+        int result = marketService.updateMarketComment(marketComment);
+        return ResponseEntity.ok(result);
+    }
 	
+    // 5. 댓글 신고 - 이영민
+    @PostMapping(value="/comments/reports")
+    public ResponseEntity<?> insertMarketCommentReport(@RequestBody MarketCommentReport report) {
+        int result = marketService.insertMarketCommentReport(report);
+        return ResponseEntity.ok(result);
+    }
+    
 	@GetMapping(value="/{marketNo}")
 	public ResponseEntity<?> selectOneMarket(@PathVariable Integer marketNo){
 		//System.out.println(marketNo);
