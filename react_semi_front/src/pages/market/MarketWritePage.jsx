@@ -9,6 +9,7 @@ import { Input } from "../../components/ui/Form";
 import InsertPhotoIcon from "@mui/icons-material/InsertPhoto";
 import DeleteIcon from "@mui/icons-material/Delete";
 import { useKakaoPostcode } from "@clroot/react-kakao-postcode";
+
 //tip-tap editor
 import { useEditor, EditorContent } from "@tiptap/react";
 import StarterKit from "@tiptap/starter-kit";
@@ -68,7 +69,7 @@ const MarketWritePage = () => {
         title: "이미지 파일만 업로드 가능합니다.",
       });
     }
-    /* 최대 이미지 갯수 설정 */
+    /* 최대 이미지 개수 설정 */
     if (files.length + imageFiles.length > 10) {
       Swal.fire({
         icon: "warning",
@@ -96,21 +97,21 @@ const MarketWritePage = () => {
     const newMarket = { ...market, [name]: value };
     setMarket(newMarket);
   };
-  /* 판매제목 함수 */
+  /* 판매 제목 함수 */
   const inputMarketTitle = (e) => {
     const name = e.target.name;
     const value = e.target.value;
     if (value.length > 50) {
       Swal.fire({
         icon: "warning",
-        title: "50자 이상 쓸수 없어요.",
+        title: "50자 이상 쓸 수 없어요.",
       });
       return;
     }
     setMarket({ ...market, [name]: value });
   };
 
-  /* 판매금액 함수 */
+  /* 판매 금액 함수 */
   const inputMarketPrice = (e) => {
     const name = e.target.name;
     const value = e.target.value;
@@ -191,7 +192,7 @@ const MarketWritePage = () => {
       });
   };
 
-  /* 판매주소*/
+  /* 판매 주소*/
   const detailRef = useRef(null);
 
   const { open } = useKakaoPostcode({
@@ -232,7 +233,7 @@ const MarketWritePage = () => {
         ></Input>
       </div>
 
-      {/* 거래장소 필드 */}
+      {/* 거래 장소 필드 */}
       <div className={styles.market_input_wrap}>
         <label htmlFor="marketTitle">거래장소</label>
         {/* <input
