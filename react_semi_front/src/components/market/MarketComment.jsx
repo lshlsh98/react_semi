@@ -142,7 +142,7 @@ const MarketComment = ({ marketNo, memberId, marketWriter }) => {
 
           {/* 버튼 옆에 글자 수 카운터와 묶어주기 위해 div로 감쌈 */}
           <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
-            {/* 🚀 2. 글자 수 카운터 UX 추가 (300자 꽉 차면 빨간색으로 경고!) */}
+            {/* 글자 수 카운터 UX 추가 (300자 꽉 차면 빨간색으로 경고!) */}
             <span
               style={{
                 fontSize: "13px",
