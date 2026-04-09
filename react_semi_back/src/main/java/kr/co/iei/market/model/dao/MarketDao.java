@@ -31,7 +31,7 @@ public interface MarketDao {
     
     int deleteMarketComment(Integer commentNo);
 
-	Market selectOneMarket(Integer marketNo);
+	Market selectOneMarket(Integer marketNo, String memberId);
 
 	List<MarketFile> selectMarketFileList(Integer marketNo);
 
@@ -44,6 +44,13 @@ public interface MarketDao {
 	int likeOn(Map<String, Object> params);
 
 	int likeOff(Map<String, Object> params);
+
+	List<String> getFilePath(Integer marketNo);
+
+	int deleteFileTbl(Integer marketNo);
+
+	int deleteOneMarket(Integer marketNo);
+	
 
 	
 }

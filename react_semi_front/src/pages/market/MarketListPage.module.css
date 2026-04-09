@@ -28,6 +28,16 @@ ol {
   gap: 4px;
   justify-content: center;
 }
+.market_searchbox select {
+  padding: 10px;
+  appearance: none;
+  border-radius: 4px;
+  padding-right: 30px;
+  border: 1px solid var(--primary);
+  outline: none;
+  color: var(--line);
+}
+
 .market_searchbox > form > input {
   flex-grow: 1;
   outline: none;
@@ -59,6 +69,10 @@ ol {
   background-color: var(--light);
   padding: 12px;
   cursor: pointer;
+  transition: 0.5s;
+}
+.market_list_wrap > ul > li:hover {
+  background-color: var(--gray6);
 }
 .market_info_wrap {
   display: flex;
@@ -67,22 +81,58 @@ ol {
 
 /* 이미지 */
 .market_info_wrap > img {
+  /*background-color: var(--gray6);*/
+  border-radius: 8px;
   height: 200px;
   width: 200px;
+  min-width: 200px;
+  min-height: 200px;
   object-fit: cover;
 }
+/* 정보 */
+.info {
+  border-radius: 8px;
 
-/* 이미지 없을 때 아이콘 */
-.ImageNotSupportedIcon {
-  width: 100%; /* li 가로 전체 */
-  height: 100%; /* li 세로 전체 */
+  flex-grow: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-evenly; /* 세로정렬 */
+  min-width: 0;
 }
-
-/* 텍스트 정보 */
-.market_list_wrap > ul > li .info p {
-  margin: 4px 0;
-  font-size: 14px;
-  word-break: break-word;
+.info_title {
+  /* 제목 */
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  width: 100%;
+}
+.info_price {
+  /*가격*/
+  color: var(--primary);
+  font-size: 16px;
+  font-weight: 700;
+}
+.info_price_free {
+  font-size: 16px;
+  font-weight: bold;
+  color: var(--danger);
+}
+.info_date,
+.info_writer,
+.info_viewCount,
+.info_sellAddr {
+  font-size: 12px;
+}
+.info_likeCount {
+  display: flex;
+  align-items: center;
+  gap: 3px;
+  color: var(--danger);
+  font-weight: 600;
+  font-size: 12px;
+}
+.info_likeCount_icon {
+  font-size: 14px !important;
 }
 
 /* 페이지네이션 */

@@ -1,6 +1,8 @@
 package kr.co.iei.market.controller;
 
+import java.io.File;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -30,6 +32,7 @@ import kr.co.iei.market.model.vo.ListResponse;
 import kr.co.iei.market.model.vo.Market;
 import kr.co.iei.market.model.vo.MarketComment;
 import kr.co.iei.market.model.vo.MarketFile;
+import kr.co.iei.member.model.vo.LoginMember;
 import kr.co.iei.utils.FileUtils;
 
 @CrossOrigin(value="*")
@@ -119,11 +122,64 @@ public class MarketController {
     }
 	
 	@GetMapping(value="/{marketNo}")
-	public ResponseEntity<?> selectOneMarket(@PathVariable Integer marketNo){
+	public ResponseEntity<?> selectOneMarket(@PathVariable Integer marketNo ,@RequestHeader(required = false,name="Authorization") String token){
 		//System.out.println(marketNo);
-		Market m = marketService.selectOneMarket(marketNo);
+		
+		Market m = marketService.selectOneMarket(marketNo,token);
 		//System.out.println(m);
 		return ResponseEntity.ok(m);
+	}
+	
+	
+	/// 파일삭제 메소드 (출처 : MemberService)
+		private boolean deleteFile(String filename, String root) {
+			if (filename == null || filename.isEmpty())
+				return false;
+			File file = new File(root + filename);
+			if (file.exists()) {
+				return file.delete();
+				// 파일 삭제 성공시 true 리턴
+			}
+			return false;
+		}
+	@DeleteMapping(value="/{marketNo}") //게시글삭제
+	public ResponseEntity<?> deleteOneMarket(@PathVariable Integer marketNo){
+		System.out.println("글번호 확인 " + marketNo);
+		String savepath = root + "market/";
+		System.out.println(savepath);
+		
+		//1. 파일패스 가져오기
+		List<String> fileList = marketService.getFilePath(marketNo);
+		System.out.println(fileList);
+		
+		//2. 파일TBL 삭제 (삭제한 row 만큼 result 반환)
+		int fileCount= marketService.deleteFileTbl(marketNo);
+		System.out.println("파일TBL 삭제 결과 (1~10) : " + fileCount);
+		
+		//3. 마켓TBL 삭제
+		int result = marketService.deleteOneMarket(marketNo);
+		System.out.println("마켓TBL 삭제 결과 (0~1) : " + result);
+		
+		//4. 파일 삭제
+		boolean allDeleted = true;
+		if(fileList != null) {
+			for(String fileName : fileList) {
+				System.out.println("삭제합니다 : " + fileName);
+				boolean bool = deleteFile(fileName, savepath);
+				System.out.println("삭제결과 : " + bool);
+				if(!bool) {
+					allDeleted = false;
+				}
+			}
+		}
+		System.out.println("전체파일 삭제결과 : " + allDeleted);
+		
+		Map<String,Object> response = new HashMap<String,Object>();
+		response.put("fileCount",fileCount);	//프론트에 전달할 삭제파일 갯수
+		response.put("allDeleted", allDeleted);	//프론트에 전달할 전체 삭제 정상 여부
+		response.put("result", result);			//프론트에 전달할 게시물 삭제 여부
+		return ResponseEntity.ok(response);
+		
 	}
 	
 	@GetMapping(value="/{marketNo}/likes")

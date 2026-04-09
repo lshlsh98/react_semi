@@ -6,6 +6,7 @@ import styles from "./MarketListPage.module.css";
 import Pagination from "../../components/ui/Pagination";
 import Button from "../../components/ui/Button";
 import ImageNotSupportedIcon from "@mui/icons-material/ImageNotSupported";
+import FavoriteIcon from "@mui/icons-material/Favorite";
 
 const MarketListPage = () => {
   const navigate = useNavigate();
@@ -15,7 +16,7 @@ const MarketListPage = () => {
   /* 사이즈 셋팅 */
   const [totalPage, setTotalPage] = useState(null);
   const [page, setPage] = useState(0);
-  const [size, setSize] = useState(8);
+  const [size, setSize] = useState(10);
 
   /* 공개상태 관리 스테이트 1 : 공개 2 : 비공개 */
   const [status, setStatus] = useState(1);
@@ -97,11 +98,11 @@ const MarketListPage = () => {
                 setPage(0);
               }}
             >
-              <option value={0}>최신↓</option>
-              <option value={1}>오래된↓</option>
-              <option value={2}>조회수↓</option>
-              <option value={3}>좋아요↓</option>
-              <option value={4}>금액↓</option>
+              <option value={0}>최신순</option>
+              <option value={1}>작성순</option>
+              <option value={2}>조회수</option>
+              <option value={3}>좋아요</option>
+              <option value={4}>금액순</option>
             </select>
 
             <select
@@ -111,9 +112,9 @@ const MarketListPage = () => {
                 setPage(0);
               }}
             >
-              <option value={8}>8개씩보기</option>
-              <option value={16}>16개씩보기</option>
-              <option value={32}>32개씩보기</option>
+              <option value={10}>10개씩보기</option>
+              <option value={20}>20개씩보기</option>
+              <option value={50}>50개씩보기</option>
             </select>
             <Button
               className="btn primary danger"
@@ -123,7 +124,7 @@ const MarketListPage = () => {
                 setLocation(0);
                 setType(1);
                 setKeyword("");
-                setSize(8);
+                setSize(10);
                 setSearchType(1);
                 setSearchKeyword("");
               }}
@@ -175,6 +176,13 @@ const MarketItem = ({ market }) => {
   const navigate = useNavigate();
   /* 이미지 매핑 */
   const imgUrl = "http://192.168.31.24:9999/market";
+
+  const formatPrice = (price) => {
+    if (price === 0) {
+      return "무료나눔";
+    }
+    return price.toLocaleString() + "원"; // toLocaleString하면 현재 본인의 국가에 해당하는 숫자 표기법을 적용 (예 : 1000000 -> 1,000,000)
+  };
   return (
     <li
       onClick={() => {
@@ -190,16 +198,29 @@ const MarketItem = ({ market }) => {
         ) : (
           <ImageNotSupportedIcon
             className={styles.ImageNotSupportedIcon}
-            style={{ fontSize: "72pt" }}
+            style={{ height: "200px", width: "200px", fill: "var(--primary)" }}
           />
         )}
         <div className={styles.info}>
-          <p>제목 : {market.marketTitle}</p>
-          <p>작성일 : {market.marketDate.slice(0, 10)}</p>
-          <p>작성자 : {market.marketWriter}</p>
-          <p>조회수 : {market.viewCount}</p>
+          <h3 className={styles.info_title}>{market.marketTitle}</h3>
+          <p
+            className={
+              market.sellPrice === 0
+                ? styles.info_price_free
+                : styles.info_price
+            }
+          >
+            {formatPrice(market.sellPrice)}
+          </p>
+          <p className={styles.info_date}>{market.marketDate.slice(0, 10)}</p>
+          <p className={styles.info_writer}>{market.marketWriter}</p>
+          <span className={styles.info_likeCount}>
+            <FavoriteIcon className={styles.info_likeCount_icon} />
+            {market.likeCount}
+          </span>
+          <p className={styles.info_viewCount}>조회수 : {market.viewCount}</p>
 
-          <p>판매금액 : {market.sellPrice}</p>
+          <p className={styles.info_sellAddr}>{market.sellAddr}</p>
         </div>
       </div>
     </li>

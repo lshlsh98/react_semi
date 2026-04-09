@@ -28,7 +28,6 @@ const MarketViewPage = () => {
   const [open, setOpen] = useState(false);
   const [currentIndex, setCurrentIndex] = useState(0);
 
-  
   const images = market?.fileList || [];
 
   const handleOpen = (index) => {
@@ -48,20 +47,38 @@ const MarketViewPage = () => {
     setCurrentIndex((prev) => (prev === images.length - 1 ? 0 : prev + 1));
   };
 
+  /* F5키 ctrl+r 제한 */
+  useEffect(() => {
+    const handleKeyDown = (e) => {
+      if (e.key === "F5" || (e.ctrlKey && e.key === "r")) {
+        e.preventDefault();
+      }
+    };
+
+    window.addEventListener("keydown", handleKeyDown);
+
+    return () => {
+      window.removeEventListener("keydown", handleKeyDown);
+    };
+  }, []);
+
   useEffect(() => {
     if (!isReady) return;
     axios
       .get(`${import.meta.env.VITE_BACKSERVER}/markets/${marketNo}`)
       .then((res) => {
+        console.log(res.data);
         setMarket(res.data);
       })
-      .catch((err) => console.log(err));
+      .catch((err) => {
+        console.log(err);
+      });
   }, [memberId, marketNo, isReady]);
 
   const requestTrade = () => {
     Swal.fire({
       title: "거래요청 하시겠습니까?",
-      icon: "question", // 아이콘을 question으로 변경하면 더 자연스럽습니다.
+      icon: "question",
       showCancelButton: true,
       confirmButtonText: "요청",
       cancelButtonText: "취소",
@@ -70,6 +87,45 @@ const MarketViewPage = () => {
     }).then((result) => {
       if (result.isConfirmed) {
         console.log("거래요청 로직 실행");
+      }
+    });
+  };
+  const deleteMarket = () => {
+    Swal.fire({
+      title: "삭제 하시겠습니까?",
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonText: "삭제",
+      cancelButtonText: "취소",
+      confirmButtonColor: "var(--danger)",
+      cancelButtonColor: "var(--primary)",
+    }).then((result) => {
+      if (result.isConfirmed) {
+        axios
+          .delete(`${import.meta.env.VITE_BACKSERVER}/markets/${marketNo}`)
+          .then((res) => {
+            console.log(res.data);
+            const { fileCount, allDeleted, result } = res.data;
+
+            Swal.fire({
+              title: "삭제확인",
+              html: `
+              게시글 삭제: ${result === 1 ? "성공" : "실패"}<br/>
+              삭제된 파일 수: ${fileCount}개<br/>
+              파일 전체 삭제 여부: ${allDeleted ? "성공" : "일부실패"}
+              `,
+              icon: result === 1 ? "success" : "error",
+              confirmButtonText: "확인",
+              confirmButtonColor: "pink",
+            }).then((result) => {
+              if (result.isConfirmed) {
+                navigate("/market");
+              }
+            });
+          })
+          .catch((err) => {
+            console.log(err);
+          });
       }
     });
   };
@@ -196,7 +252,7 @@ const MarketViewPage = () => {
               <div className={styles.date_view_like}>
                 <p>{market.marketDate.slice(0, 10)}</p>
                 <p>조회수 : {market.viewCount}</p>
-                <p>좋아요 : </p>
+                <p>좋아요 : {market.likeCount}</p>
               </div>
               <LikeAndReport marketNo={marketNo} />
             </div>
@@ -240,8 +296,15 @@ const MarketViewPage = () => {
           {memberId && memberId === market.marketWriter && (
             <div className={styles.button_wrap}>
               <Button className="btn primary">수정</Button>
-              <Button className="btn primary danger">삭제</Button>
-              <Button className="btn primary" style={{backgroundColor:"pink", border:"none"}}>거래완료</Button>
+              <Button className="btn primary danger" onClick={deleteMarket}>
+                삭제
+              </Button>
+              <Button
+                className="btn primary"
+                style={{ backgroundColor: "pink", border: "none" }}
+              >
+                거래완료
+              </Button>
             </div>
           )}
           <MarketComment marketNo={marketNo} memberId={memberId} />
@@ -258,8 +321,7 @@ const LikeAndReport = ({ marketNo }) => {
   useEffect(() => {
     axios
       .get(`${import.meta.env.VITE_BACKSERVER}/markets/${marketNo}/likes`)
-      .then((res) => 
-        setLikeInfo(res.data))
+      .then((res) => setLikeInfo(res.data))
       .catch((err) => console.log(err));
   }, [marketNo]);
 
@@ -268,7 +330,7 @@ const LikeAndReport = ({ marketNo }) => {
       .post(`${import.meta.env.VITE_BACKSERVER}/markets/${marketNo}/likes`)
       .then((res) => {
         if (res.data === 1) {
-            setLikeInfo((prev) => ({
+          setLikeInfo((prev) => ({
             ...prev,
             isLike: 1,
             likeCount: prev.likeCount + 1,
