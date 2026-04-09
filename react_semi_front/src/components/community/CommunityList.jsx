@@ -128,6 +128,16 @@ const CommunityItem = ({ community }) => {
             <span className="material-icons">thumb_down_off_alt</span>
             <p>{community.dislikeCount}</p>
           </div>
+          <div
+            className={
+              community.commentCount === 0
+                ? styles.community_info_comment_count_wrap
+                : styles.community_info_comment_count_wrap_on
+            }
+          >
+            <span className="material-icons">comment</span>
+            <p>{community.commentCount}</p>
+          </div>
         </div>
         <div className={styles.community_date_wrap}>
           <p>{timeAgo(community.communityDate)}</p>
