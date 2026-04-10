@@ -53,7 +53,6 @@
 /* 수정/삭제 버튼 + 좋아요/싫어요/신고 아이콘 + 신고하기 버튼 */
 .community_action_btn_wrap {
   display: flex;
-  justify-content: space-between; /* 서로 가장자리 정렬 */
   align-items: center;
   margin-top: 20px;
 }
@@ -65,12 +64,13 @@
   gap: 20px;
 }
 
-/* 좋아요, 싫어요, 신고 아이콘 */
+/* 좋아요/싫어요/신고 아이콘 + 신고하기 버튼 */
 .community_like_dislike_report_wrap {
   display: flex;
   align-items: center;
   gap: 15px; /* 아이콘 간격 */
   margin-top: 0;
+  margin-left: auto; /* 작성자 및 로그인 여부 떠나서 항상 오른쪽에 배치해놓음*/
 }
 
 /* 좋아요/싫어요 숫자 표시 cursor: pointer 해제 */
@@ -98,9 +98,10 @@
   margin-left: 15px;
 }
 
-/* 아래부터는 댓글*/
+/* 아래부터는 댓글 관련*/
+/* 댓글 등록을 간격 두기*/
 .comment_regist_wrap > h3 {
-  margin-top: 20px;
+  margin-top: 50px;
 }
 
 /* 댓글 등록 밑에 상자 크기 조정 + 패딩으로 조절 */

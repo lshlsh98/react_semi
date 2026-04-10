@@ -332,7 +332,7 @@ const LikeAndDislikeAndReport = ({ communityNo }) => {
       return;
     }
     Swal.fire({
-      title: "정말로 신고하시겠습니까?",
+      title: "해당 게시글을 \n 정말로 신고하시겠습니까?",
       text: "신고 후에는 취소할 수 없습니다.",
       icon: "warning",
       showCancelButton: true,
