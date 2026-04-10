@@ -80,20 +80,49 @@ const MarketViewPage = () => {
   /* 거래요청 함수 */
   const requestTrade = () => {
     Swal.fire({
-      title: "거래요청 하시겠습니까?",
-      icon: "question",
+      title: "거래요청",
+      html: `
+          <textarea id="report-reason" class="swal2-textarea"
+          placeholder="요청 메시지를 입력해주세요 (최대 200자)"
+          maxlength="200"
+          style="width: 85%; height: 100px; resize: none; font-size: 14px; margin-top: 10px;"></textarea>
+          `,
       showCancelButton: true,
       confirmButtonText: "요청",
-      cancelButtonText: "닫기",
+      cancelButtonText: "취소",
       confirmButtonColor: "var(--primary)",
       cancelButtonColor: "var(--danger)",
+      preConfirm: () => {
+        // 확인 버튼 눌렀을 때 텍스트 박스 내용 긁어오기 외부 - 라이브러리여서 찾아보고 이렇게 사용
+        const reason = document.getElementById("report-reason").value; // 신고 사유(신고의 텍스트 박스 내용)가 없다면 쓰라고 하기
+
+        if (!reason.trim()) {
+          Swal.showValidationMessage("요청 메시지를 입력해주세요."); // 빈칸이면 못 넘어가게 막기
+          // sweetalert 스타일 맞추기 위해
+
+          const validationMsg = Swal.getValidationMessage();
+          if (validationMsg) {
+            validationMsg.style.backgroundColor = "transparent";
+            validationMsg.style.color = "var(--danger)";
+          }
+        }
+        return reason;
+      },
     }).then((result) => {
       if (result.isConfirmed) {
+        const requestData = {
+          marketNo: marketNo,
+          buyerId: memberId,
+          message: result.value, // 아까 긁어온 내용
+        };
+
         axios
           .post(
             `${import.meta.env.VITE_BACKSERVER}/markets/${marketNo}/request`,
+            requestData,
           )
           .then((res) => {
+            console.log(res);
             if (res.data === 1) {
               setMarket({ ...market, isRequest: 1 });
               Swal.fire({
@@ -105,8 +134,7 @@ const MarketViewPage = () => {
             }
           })
           .catch((err) => {
-            console.log("거래요청 실패");
-            console.log(err.data);
+            console.log("거래요청 실패:", err);
           });
       }
     });
@@ -141,7 +169,7 @@ const MarketViewPage = () => {
           })
           .catch((err) => {
             console.log("거래요청취소 실패");
-            console.log(err.data);
+            console.log(err);
           });
       }
     });
@@ -190,7 +218,6 @@ const MarketViewPage = () => {
 
   /* 거래완료버튼 클릭시 요청리스트 띄우기 */
   const tradeComplete = () => {
-    console.log("거래완료 로직 실행");
     console.log(market.marketNo);
     axios
       .get(`${import.meta.env.VITE_BACKSERVER}/markets/${marketNo}/complete`)
@@ -306,11 +333,11 @@ const MarketViewPage = () => {
     Swal.fire({
       title: "신고하기",
       html: `
-       <textarea id="report-reason" class="swal2-textarea"
-       placeholder="신고 사유를 입력해주세요 (최대 200자)"
-       maxlength="200"
-       style="width: 85%; height: 100px; resize: none; font-size: 14px; margin-top: 10px;"></textarea>
-      `,
+          <textarea id="report-reason" class="swal2-textarea"
+          placeholder="신고 사유를 입력해주세요 (최대 200자)"
+          maxlength="200"
+          style="width: 85%; height: 100px; resize: none; font-size: 14px; margin-top: 10px;"></textarea>
+          `,
       showCancelButton: true,
       confirmButtonText: "신고",
       cancelButtonText: "취소",
@@ -345,15 +372,19 @@ const MarketViewPage = () => {
 
         axios
           .post(
-            `${import.meta.env.VITE_BACKSERVER}/markets/comments/reports`,
+            `${import.meta.env.VITE_BACKSERVER}/markets/reports`,
             reportData,
           )
           .then((res) => {
-            Swal.fire({
-              icon: "success",
-              title: "신고 완료",
-              text: "정상적으로 접수되었습니다.",
-            });
+            if (res.data === 1) {
+              setMarket({ ...market, isReport: 1 });
+              Swal.fire({
+                icon: "success",
+                title: "신고완료",
+                confirmButtonText: "닫기",
+                confirmButtonColor: "var(--primary)",
+              });
+            }
           })
           .catch((err) => {
             console.log("신고 실패:", err);
@@ -380,7 +411,8 @@ const MarketViewPage = () => {
           )
           .then((res) => {
             console.log(res.data);
-            if (res.data > 1) {
+            if (res.data === 1) {
+              setMarket({ ...market, isReport: 0 });
               Swal.fire({
                 icon: "success", //
                 title: "신고가 취소되었습니다",
@@ -391,7 +423,7 @@ const MarketViewPage = () => {
           })
           .catch((err) => {
             console.log("신고취소 실패");
-            console.log(err.data);
+            console.log(err);
           });
       }
     });

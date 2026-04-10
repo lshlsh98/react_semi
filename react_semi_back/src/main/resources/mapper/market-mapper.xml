@@ -262,7 +262,7 @@
     	trade_request_seq.NEXTVAL,
     	#{marketNo},
     	#{buyerId},
-    	'구매희망합니다',
+    	#{message},
     	1,
     	SYSDATE,
     	NULL
@@ -303,6 +303,14 @@
             completed_date = sysdate
         where market_no = #{marketNo}
     </update>
+    <!-- 신고등록 -->
+    <insert id="pushReport">
+    	insert into market_report_tbl values(
+    	#{marketNo},
+    	#{memberId},
+    	#{marketReportReason}
+    	)
+    </insert>
     
     <!-- 신고취소 -->
     <delete id="cancelReport">

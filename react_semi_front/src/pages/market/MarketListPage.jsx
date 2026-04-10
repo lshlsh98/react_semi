@@ -54,7 +54,7 @@ const MarketListPage = () => {
       })
       .catch((err) => {
         console.log("리스트 조회 실패");
-        console.log(err.data);
+        console.log(err);
       });
   }, [page, size, status, order, searchType, searchKeyword, location]);
 
@@ -211,12 +211,26 @@ const MarketItem = ({ market }) => {
     }
     return price.toLocaleString() + "원"; // toLocaleString하면 현재 본인의 국가에 해당하는 숫자 표기법을 적용 (예 : 1000000 -> 1,000,000)
   };
-  return (
-    <li
-      onClick={() => {
+  const viewCountUpAndMove = () => {
+    console.log("조회수증가");
+    axios
+      .patch(
+        `${import.meta.env.VITE_BACKSERVER}/markets/${market.marketNo}/incrementViewCount`,
+      )
+      .then((res) => {
+        if (res.data === 1) {
+          navigate(`/market/view/${market.marketNo}`);
+        }
+      })
+      .catch((err) => {
+        console.log("조회수 증가 실패");
         navigate(`/market/view/${market.marketNo}`);
-      }}
-    >
+        console.log(err);
+      });
+  };
+
+  return (
+    <li onClick={viewCountUpAndMove}>
       <div className={styles.market_info_wrap}>
         {market.marketThumb ? (
           <img

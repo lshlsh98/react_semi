@@ -9,6 +9,7 @@ import kr.co.iei.market.model.vo.ListItem;
 import kr.co.iei.market.model.vo.Market;
 import kr.co.iei.market.model.vo.MarketComment;
 import kr.co.iei.market.model.vo.MarketFile;
+import kr.co.iei.market.model.vo.MarketReport;
 import kr.co.iei.market.model.vo.TradeRequest;
 
 @Mapper
@@ -60,11 +61,14 @@ public interface MarketDao {
 
 	int marketCompleted(Integer marketNo);
 
-	int tradeRequest(Integer marketNo, String buyerId);
+	int tradeRequest(TradeRequest request);
 
 	int tradeRequestCancel(Integer marketNo, String buyerId);
 
 	int cancelReport(Integer marketNo, String memberId);
+
+	int pushReport(MarketReport marketReport);
+	
 
 	
 
