@@ -12,6 +12,7 @@
   border-radius: 8px;
 }
 
+/* 제목 */
 .community_title {
   display: flex;
   align-items: center;
@@ -19,8 +20,27 @@
   height: 50px;
   border: 1px solid #ccc;
   border-radius: 6px;
+  margin-bottom: 20px;
 }
 
+/* 작성자, 날짜, 조회수 */
+.community_writer,
+.community_date,
+.community_view_count {
+  display: flex;
+  align-items: center;
+  gap: 12px; /* 아이콘과 글자 사이 간격 */
+  font-size: 20px;
+}
+
+/* 아이콘 자체의 크기나 위치 미세 조정 */
+.icon {
+  font-size: 20px !important; /* 아이콘 크기가 너무 크면 조정 */
+  display: flex;
+  align-items: center;
+}
+
+/* 내용 */
 .community_view_content {
   margin-top: 20px;
   padding: 20px;
@@ -30,12 +50,66 @@
   line-height: 1.6;
 }
 
+/* 수정/삭제 버튼 + 좋아요/싫어요/신고 아이콘 + 신고하기 버튼 */
+.community_action_btn_wrap {
+  display: flex;
+  justify-content: space-between; /* 서로 가장자리 정렬 */
+  align-items: center;
+  margin-top: 20px;
+}
+
+/* 수정/삭제 버튼 사이의 간격 */
+.button_group {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+}
+
+/* 좋아요, 싫어요, 신고 아이콘 */
+.community_like_dislike_report_wrap {
+  display: flex;
+  align-items: center;
+  gap: 15px; /* 아이콘 간격 */
+  margin-top: 0;
+}
+
+/* 좋아요/싫어요 숫자 표시 cursor: pointer 해제 */
+.community_like_wrap span,
+.community_dislike_wrap span {
+  cursor: default;
+}
+
+.community_like_wrap,
+.community_dislike_wrap,
+.community_report_btn_wrap {
+  display: inline-flex; /* 아이콘과 텍스트를 한 줄로 묶기 */
+  align-items: center;
+  gap: 6px; /* 아이콘과 숫자 사이 간격 */
+  cursor: pointer;
+  font-size: 14px;
+}
+
+.community_report_btn_wrap {
+  cursor: default; /* 신고 아이콘만 cursor: pointer 제외 */
+}
+
+/* 신고 아이콘이랑 신고하기 버튼 간격 */
+.community_report_btn_wrap button {
+  margin-left: 15px;
+}
+
+/* 아래부터는 댓글*/
+.comment_regist_wrap > h3 {
+  margin-top: 20px;
+}
+
 /* 댓글 등록 밑에 상자 크기 조정 + 패딩으로 조절 */
 .comment_regist_wrap textarea {
   height: 100px !important;
   min-height: 50px;
   resize: none;
   padding: 12px;
+  margin-top: 10px;
 }
 
 /* 등록 버튼 (오른쪽으로 배치) */
@@ -43,7 +117,7 @@
   display: flex;
   flex-direction: column;
   align-items: flex-end;
-  gap: 10px; /* 입력창과 등록 버튼 사이의 간격 */
+  gap: 20px; /* 입력창과 등록 버튼 사이의 간격 */
 }
 
 .comment_list_wrap {
@@ -102,7 +176,7 @@
 .modal_btn_wrap {
   display: flex;
   justify-content: flex-end;
-  gap: 10px;
+  gap: 15px;
   margin-top: 10px;
 }
 

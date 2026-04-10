@@ -1,0 +1,25 @@
+.community_wrap {
+  width: 900px;
+  margin: 0 auto;
+}
+
+.community_wrap > h3 {
+  margin-top: 50px;
+  text-align: center;
+}
+
+/* 버튼 */
+.btn_wrap {
+  display: flex;
+  justify-content: center;
+  gap: 45px;
+  margin-top: 30px;
+  margin-bottom: 30px;
+}
+
+.btn {
+  width: 80px;
+  height: 36px;
+  border: none;
+  cursor: pointer;
+}

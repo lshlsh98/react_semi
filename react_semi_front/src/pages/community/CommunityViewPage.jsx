@@ -33,7 +33,6 @@ const CommunityViewPage = () => {
     axios
       .get(`${import.meta.env.VITE_BACKSERVER}/communities/${communityNo}`)
       .then((res) => {
-        console.log(res);
         setCommunity(res.data);
       })
       .catch((err) => {
@@ -84,14 +83,16 @@ const CommunityViewPage = () => {
                   <PersonIcon className={styles.icon} />
                   <span>{community.communityWriter}</span>
                 </div>
+
                 <div className={styles.community_date}>
                   <CalendarTodayIcon className={styles.icon} />
                   {community.communityDate}
                 </div>
-              </div>
-              <div className={styles.community_view_count}>
-                <VisibilityIcon className={styles.icon} />
-                <span>{community.viewCount}</span>
+
+                <div className={styles.community_view_count}>
+                  <VisibilityIcon className={styles.icon} />
+                  <span>{community.viewCount}</span>
+                </div>
               </div>
             </div>
             <div
@@ -100,10 +101,9 @@ const CommunityViewPage = () => {
             ></div>
           </div>
 
-          <div className={styles.community_action_wrap}>
-            <LikeAndDislikeAndReport communityNo={communityNo} />
+          <div className={styles.community_action_btn_wrap}>
             {memberId && memberId === community.communityWriter && (
-              <div>
+              <div className={styles.button_group}>
                 <Button
                   className="btn primary"
                   onClick={() => {
@@ -121,6 +121,7 @@ const CommunityViewPage = () => {
                 </Button>
               </div>
             )}
+            <LikeAndDislikeAndReport communityNo={communityNo} />
           </div>
           <CommunityCommentComponent communityNo={communityNo} />
         </>
@@ -144,7 +145,6 @@ const LikeAndDislikeAndReport = ({ communityNo }) => {
         `${import.meta.env.VITE_BACKSERVER}/communities/${communityNo}/likes`,
       )
       .then((res) => {
-        console.log(res);
         setLikeInfo({
           isLike: res.data?.isLike ?? 0,
           likeCount: Number(res.data?.likeCount) || 0,
@@ -155,7 +155,6 @@ const LikeAndDislikeAndReport = ({ communityNo }) => {
         `${import.meta.env.VITE_BACKSERVER}/communities/${communityNo}/dislikes`,
       )
       .then((res) => {
-        console.log(res);
         setDislikeInfo({
           isDislike: res.data?.isDislike ?? 0,
           dislikeCount: Number(res.data?.dislikeCount) || 0,
@@ -266,6 +265,7 @@ const LikeAndDislikeAndReport = ({ communityNo }) => {
       });
   };
 
+  /*
   const reportOn = () => {
     axios
       .post(
@@ -304,6 +304,7 @@ const LikeAndDislikeAndReport = ({ communityNo }) => {
         console.log(err);
       });
   };
+  */
 
   const loginMsg = () => {
     Swal.fire({ title: "로그인 후 이용 가능합니다.", icon: "info" });
@@ -392,7 +393,7 @@ const LikeAndDislikeAndReport = ({ communityNo }) => {
         </div>
       )}
       {reportInfo && (
-        <div className={styles.community_report_wrap}>
+        <div className={styles.community_report_btn_wrap}>
           {Number(reportInfo.isReport) === 1 ? (
             <ReportIcon style={{ color: "var(--danger)" }} />
           ) : (

@@ -1,5 +1,5 @@
 import { useNavigate, useParams } from "react-router-dom";
-import styles from "./Community.module.css";
+import styles from "./CommunityModifyPage.module.css";
 import { useEffect, useState } from "react";
 import axios from "axios";
 import CommunityFrm from "../../components/community/CommunityFrm";
