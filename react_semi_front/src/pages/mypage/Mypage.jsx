@@ -81,7 +81,7 @@ const Profile = () => {
           memberThumb ? styles.member_thumb_exists : styles.member_thumb
         }
       >
-        {memberThumb ? (
+        {memberThumb ? ( //여기확인
           <img src={`${import.meta.env.VITE_BACKSERVER}/semi/${memberThumb}`} />
         ) : (
           <span className="material-icons">account_circle</span>

@@ -54,7 +54,7 @@ const MemberInfoManagement = () => {
 
       const form = new FormData();
       form.append("file", file);
-      axios
+      axios //여기 확인
         .patch(
           `${import.meta.env.VITE_BACKSERVER}/members/${memberId}/thumbnail/update`,
           form,
@@ -62,7 +62,7 @@ const MemberInfoManagement = () => {
         )
         .then((res) => {
           console.log(res);
-          useAuthStore.getState().setThumb(res.data);
+          //useAuthStore.getState().setThumb(res.data); 이거지우면될듯 확인
         })
         .catch((err) => {
           console.log(err);
