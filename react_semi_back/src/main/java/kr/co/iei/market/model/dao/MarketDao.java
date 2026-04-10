@@ -54,6 +54,16 @@ public interface MarketDao {
 
 	List<TradeRequest> selectAllTradeRequest(Integer marketNo);
 
+	int tradeAccepted(Integer marketNo, String buyerId);
+
+	int tradeReject(Integer marketNo, String buyerId);
+
+	int marketCompleted(Integer marketNo);
+
+	int tradeRequest(Integer marketNo, String buyerId);
+
+	int tradeRequestCancel(Integer marketNo, String buyerId);
+
 	
 
 	

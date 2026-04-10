@@ -9,7 +9,7 @@
 /* 사진 */
 .photo_wrap {
   margin: 20px 0;
-  
+
   display: flex;
   justify-content: center;
   align-items: center;
@@ -17,7 +17,7 @@
 .photo_wrap > ul {
   height: 100%;
 }
-.photo_wrap> ul> li{
+.photo_wrap > ul > li {
   background-color: var(--light);
 }
 
@@ -88,4 +88,36 @@
 }
 .button_wrap > button {
   width: 200px;
+}
+
+/* 거래완료창 */
+.trade_ul {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+.trade_li {
+  border: 1px solid var(--primary);
+  border-radius: 8px;
+  display: flex;
+  justify-content: space-between;
+  padding: 12px;
+  gap: 12px;
+}
+.trade_buyerId {
+  width: 150px;
+}
+.trade_message {
+  flex-grow: 1;
+}
+
+.trade_btn {
+  cursor: pointer;
+  font-size: 14px;
+  padding: 8px 20px;
+  border: none;
+  border-radius: 6px;
+  background-color: var(--primary);
+  border: 1px solid var(--primary);
+  color: var(--gray8);
 }

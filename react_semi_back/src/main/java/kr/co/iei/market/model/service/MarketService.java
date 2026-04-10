@@ -144,7 +144,7 @@ public class MarketService {
 		return result;
 	}
 
-	
+	//거래삭제시 파일패스 리스트 가져오기
 	public List<String> getFilePath(Integer marketNo) {
 		List<String> fileList = marketDao.getFilePath(marketNo);
 		return fileList;
@@ -156,15 +156,50 @@ public class MarketService {
 		return result;
 	}
 	
+	
 	@Transactional
 	public int deleteOneMarket(Integer marketNo) {
 		int result = marketDao.deleteOneMarket(marketNo);
 		return result;
 	}
-
+	//거래요청 목록조회
 	public List<TradeRequest> selectAllTradeRequest(Integer marketNo) {
 		List<TradeRequest> list = marketDao.selectAllTradeRequest(marketNo);
 		return list;
+	}
+	
+	//거래확정
+	@Transactional
+	public int tradeComplete(Integer marketNo, String buyerId) {
+		//1. buyerId = 거래완료(Status = 2) completed_date = sysdate
+		int result1 = marketDao.tradeAccepted(marketNo,buyerId);
+		//2. !buyerId = 거래거절(Status = 3) completed_date = sysdate (거래요청 수만큼 반환)
+		int result2 = marketDao.tradeReject(marketNo,buyerId);
+		
+		//3. marketNo completed = 1, completed_date = sysdate
+		int result3 = marketDao.marketCompleted(marketNo);
+		
+		int result = result1 + result2 + result3;
+		//4. 파일삭제 여부??
+		
+		return result;
+	}
+
+	//거래요청
+	@Transactional
+	public int tradeRequest(Integer marketNo, String token) {
+		LoginMember loginMember = jwtUtil.checkToken(token);
+		String buyerId = loginMember.getMemberId();
+		int result = marketDao.tradeRequest(marketNo,buyerId);
+		return result;
+	}
+	//거래요청 취소
+	@Transactional
+	public int tradeRequestCancel(Integer marketNo, String token) {
+		LoginMember loginMember = jwtUtil.checkToken(token);
+		String buyerId = loginMember.getMemberId();
+		int result = marketDao.tradeRequestCancel(marketNo,buyerId);
+		return result;
 	}
 
 	

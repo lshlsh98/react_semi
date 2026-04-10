@@ -12,6 +12,7 @@
 		<if test="searchType==2">
 			and market_writer = #{searchKeyword}
 		</if>
+		and completed = 0
 	</select>
 
 	<!--마켓게시판 목록 조회 -->
@@ -48,6 +49,7 @@
 		from market_tbl mt
 		join member_tbl m on (mt.market_writer = m.member_id)
 		where market_status = #{status}
+		and completed = 0
 		<if test="searchType==1">
 			and market_title like '%'||#{searchKeyword}||'%'
 		</if>
@@ -59,6 +61,7 @@
 		<if test="order==2"> order by view_count desc </if>
 		<if test="order==3"> order by like_count desc</if>
 		<if test="order==4">order by sell_price desc</if>
+		
 
 		offset #{page}*#{size} rows fetch next #{size} rows only
 	</select>
@@ -129,6 +132,13 @@
           	WHERE market_no = m.market_no 
             AND member_id = #{memberId}) AS is_report
     	</if>
+    	<if test="memberId != null">
+    		,(select count(*)
+    		from trade_request_tbl
+    		where market_no = m.market_no
+    		and buyer_id = #{memberId}) as is_request
+    	
+    	</if>
 	FROM market_tbl m
 	WHERE m.market_no = #{marketNo}
 	</select>
@@ -189,6 +199,7 @@
 		from
 		market_tbl
 		where market_status = 1
+		and completed = 0
 			
 		<if test="order==0"> order by market_no desc</if>
 		<if test="order==2"> order by view_count desc </if>
@@ -245,9 +256,51 @@
     	delete from market_tbl where market_no = #{marketNo}
     </delete>
     
+    <!-- 거래요청 -->
+    <insert id="tradeRequest">
+     insert into trade_request_tbl values(
+    	trade_request_seq.NEXTVAL,
+    	#{marketNo},
+    	#{buyerId},
+    	'구매희망합니다',
+    	1,
+    	SYSDATE,
+    	NULL
+    	)
+    </insert>
+    <!-- 거래요청 취소 -->
+    <delete id="tradeRequestCancel">
+    	delete from trade_request_tbl where market_no = #{marketNo} and buyer_id= #{buyerId}
+    </delete>
+    
+   
     <!--거래요청 리스트 조회-->
     <select id="selectAllTradeRequest" resultType="tradeRequest">
     	select * from trade_request_tbl where market_no = #{marketNo} and status = 1
     	
     </select>
+    
+    <!-- 거래확정시  -->
+    <update id="tradeAccepted">
+    	update trade_request_tbl set
+    		status = 2,
+    		complete_date = sysdate
+    	where market_no = #{marketNo}
+    	and buyer_id = #{buyerId}
+    </update>
+    
+    <update id="tradeReject">
+   		update trade_request_tbl set 
+   			status = 3,
+   			complete_date = sysdate
+   		where market_no = #{marketNo}
+   		and buyer_id != #{buyerId}
+    </update>
+    
+    <update id="marketCompleted">
+        update market_tbl set
+            completed = 1,
+            completed_date = sysdate
+        where market_no = #{marketNo}
+    </update>
 </mapper>

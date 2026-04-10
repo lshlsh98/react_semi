@@ -8,6 +8,7 @@ import java.util.Map;
 
 import kr.co.iei.utils.JwtUtils;
 
+import org.apache.catalina.connector.Response;
 import org.apache.ibatis.annotations.Delete;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -16,6 +17,7 @@ import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -161,6 +163,11 @@ public class MarketController {
 		int result = marketService.deleteOneMarket(marketNo);
 		System.out.println("마켓TBL 삭제 결과 (0~1) : " + result);
 		
+		
+		Map<String,Object> serviceResponse = new HashMap<String,Object>();
+		serviceResponse = marketService.deleteOneMarketAndFileTbl(marketNo);
+		
+		
 		//4. 파일 삭제
 		boolean allDeleted = true;
 		if(fileList != null) {
@@ -202,6 +209,19 @@ public class MarketController {
 		int result = marketService.likeOff(marketNo,token);
 		return ResponseEntity.ok(result);
 	}
+	
+	//거래요청
+	@PostMapping(value="{marketNo}/request")
+	public ResponseEntity<?> tradeRequest(@PathVariable Integer marketNo,@RequestHeader(name="Authorization") String token){
+		int result = marketService.tradeRequest(marketNo,token);
+		return ResponseEntity.ok(result);
+	}
+	//거래요청취소
+	@DeleteMapping(value="{marketNo}/cancel")
+	public ResponseEntity<?> tradeRequestCancel(@PathVariable Integer marketNo,@RequestHeader(name="Authorization") String token){
+		int result = marketService.tradeRequestCancel(marketNo,token);
+		return ResponseEntity.ok(result);
+	}
 	//거래완료시 거래요청 리스트 조회
 	@GetMapping(value="/{marketNo}/complete")
 	public ResponseEntity<?> selectAllTradeRequest(@PathVariable Integer marketNo){
@@ -210,4 +230,14 @@ public class MarketController {
 		//System.out.println(list);
 		return ResponseEntity.ok(list);
 	}
+	
+	//거래확정
+	@PatchMapping(value="{marketNo}/complete/{buyerId}")
+	public ResponseEntity<?> tradeComplete(@PathVariable Integer marketNo,@PathVariable String buyerId){
+		System.out.println("거래번호 : " + marketNo);
+		System.out.println("구매자아이디" + buyerId);
+		int result = marketService.tradeComplete(marketNo,buyerId);
+		return ResponseEntity.ok(result);
+	}
+	
 }

@@ -6,12 +6,8 @@ import axios from "axios";
 import { useNavigate, useParams } from "react-router-dom";
 import ImageList from "@mui/material/ImageList";
 import ImageListItem from "@mui/material/ImageListItem";
-import ThumbUpAltIcon from "@mui/icons-material/ThumbUpAlt";
-import ThumbUpOffAltIcon from "@mui/icons-material/ThumbUpOffAlt";
-import ReportIcon from "@mui/icons-material/Report";
-import ReportGmailerrorredIcon from "@mui/icons-material/ReportGmailerrorred";
 import Swal from "sweetalert2";
-import withReactContent from 'sweetalert2-react-content';
+import withReactContent from "sweetalert2-react-content";
 import MarketComment from "../../components/market/MarketComment";
 import { Modal, Box, IconButton } from "@mui/material"; // IconButton 추가
 import { ChevronLeft, ChevronRight, Close } from "@mui/icons-material";
@@ -38,7 +34,6 @@ const MarketViewPage = () => {
   };
 
   const handleClose = () => setOpen(false);
-
   const prevImage = (e) => {
     e.stopPropagation();
     setCurrentIndex((prev) => (prev === 0 ? images.length - 1 : prev - 1));
@@ -49,9 +44,10 @@ const MarketViewPage = () => {
     setCurrentIndex((prev) => (prev === images.length - 1 ? 0 : prev + 1));
   };
 
-  /* 거래요청 리스트용 스테잍트 */
-  const [tradeRequestList,setTradeRequestList] = useState([]);
+  /* 거래요청 리스트용 스테이트 */
+  const [tradeRequestList, setTradeRequestList] = useState([]);
   /* F5키 ctrl+r 제한 */
+  /*
   useEffect(() => {
     const handleKeyDown = (e) => {
       if (e.key === "F5" || (e.ctrlKey && e.key === "r")) {
@@ -65,7 +61,9 @@ const MarketViewPage = () => {
       window.removeEventListener("keydown", handleKeyDown);
     };
   }, []);
+  */
 
+  /* 게시글 불러오기 */
   useEffect(() => {
     if (!isReady) return;
     axios
@@ -77,20 +75,77 @@ const MarketViewPage = () => {
       .catch((err) => {
         console.log(err);
       });
-  }, [memberId, marketNo, isReady,tradeRequestList]);
+  }, [memberId, marketNo, isReady, tradeRequestList]);
 
+  /* 거래요청 함수 */
   const requestTrade = () => {
     Swal.fire({
       title: "거래요청 하시겠습니까?",
       icon: "question",
       showCancelButton: true,
       confirmButtonText: "요청",
-      cancelButtonText: "취소",
+      cancelButtonText: "닫기",
       confirmButtonColor: "var(--primary)",
       cancelButtonColor: "var(--danger)",
     }).then((result) => {
       if (result.isConfirmed) {
-        console.log("거래요청 로직 실행");
+        axios
+          .post(
+            `${import.meta.env.VITE_BACKSERVER}/markets/${marketNo}/request`,
+          )
+          .then((res) => {
+            console.log(res.data);
+            if (res.data === 1) {
+              setMarket({ ...market, isRequest: 1 });
+              Swal.fire({
+                icon: "success", // 성공 아이콘 (체크 표시)
+                title: "거래요청완료",
+                confirmButtonText: "닫기",
+                confirmButtonColor: "var(--primary)",
+              });
+            }
+          })
+          .catch((err) => {
+            console.log("거래요청 실패");
+            console.log(err.data);
+          });
+      }
+    });
+  };
+
+  /* 거래 요청취소 함수 */
+  const cancelTrade = () => {
+    console.log("거래취소요청");
+    Swal.fire({
+      title: "거래요청 취소 하시겠습니까?",
+      icon: "question",
+      showCancelButton: true,
+      confirmButtonText: "취소",
+      cancelButtonText: "닫기",
+      confirmButtonColor: "var(--danger)",
+      cancelButtonColor: "var(--primary)",
+    }).then((result) => {
+      if (result.isConfirmed) {
+        axios
+          .delete(
+            `${import.meta.env.VITE_BACKSERVER}/markets/${marketNo}/cancel`,
+          )
+          .then((res) => {
+            console.log(res.data);
+            if (res.data === 1) {
+              setMarket({ ...market, isRequest: 0 });
+              Swal.fire({
+                icon: "success", // 성공 아이콘 (체크 표시)
+                title: "취소완료",
+                confirmButtonText: "닫기",
+                confirmButtonColor: "var(--primary)",
+              });
+            }
+          })
+          .catch((err) => {
+            console.log("거래요청취소 실패");
+            console.log(err.data);
+          });
       }
     });
   };
@@ -136,54 +191,120 @@ const MarketViewPage = () => {
     });
   };
 
-  /* 거래완료 함수 */
-  const tradeComplete = ()=>{
+  /* 거래완료버튼 클릭시 요청리스트 띄우기 */
+  const tradeComplete = () => {
     console.log("거래완료 로직 실행");
-    console.log(market.marketNo)
-    axios.get(`${import.meta.env.VITE_BACKSERVER}/markets/${market.marketNo}/complete`)
-    .then((res)=>{
-      console.log("거래요청리스트 호출 성공")
-      console.log(res)
-      setTradeRequestList(res.data);
-      if (res.data.length === 0) {
-        MySwal.fire("알림", "대기 중인 거래 요청이 없습니다.", "info");
-        return;
-      }
-MySwal.fire({
-        title: '거래 요청 목록',
-        html: (
-          <ul style={{ listStyle: 'none', padding: 0 }}>
-            {/* setTradeRequestList 대신 받아온 res.data를 직접 맵핑 */}
-            {res.data.map((trade) => (
-              <li key={trade.tradeNo} style={{ marginBottom: '15px', borderBottom: '1px solid #ddd', paddingBottom: '10px' }}>
-                <p><b>{trade.buyerId}</b></p>
-                <p>{trade.message}</p>
-                <button 
-                  className="btn-primary" 
-                  onClick={() => {
-                    MySwal.close();
-                    requestAccepted(trade.marketNo, trade.buyerId);
-                  }}
-                >
-                  거래 확정
-                </button>
-              </li>
-            ))}
-          </ul>
-        ),
-        showConfirmButton: false,
-        showCloseButton: true
+    console.log(market.marketNo);
+    axios
+      .get(`${import.meta.env.VITE_BACKSERVER}/markets/${marketNo}/complete`)
+      .then((res) => {
+        console.log("거래요청리스트 호출 성공");
+        console.log(res);
+        setTradeRequestList(res.data);
+        if (res.data.length === 0) {
+          MySwal.fire("알림", "대기 중인 거래 요청이 없습니다.", "info");
+          return;
+        }
+        MySwal.fire({
+          title: "거래 요청 목록",
+          html: (
+            <ul className={styles.trade_ul}>
+              {/* setTradeRequestList 대신 받아온 res.data를 직접 맵핑 */}
+              {res.data.map((trade) => (
+                <li className={styles.trade_li} key={trade.tradeNo}>
+                  <p className={styles.trade_buyerId}>{trade.buyerId}</p>
+                  <p className={styles.trade_message}>{trade.message}</p>
+                  <button
+                    className={styles.trade_btn}
+                    onClick={() => {
+                      MySwal.close();
+                      requestAccepted(trade.buyerId);
+                    }}
+                  >
+                    거래 확정
+                  </button>
+                </li>
+              ))}
+            </ul>
+          ),
+          width: "900px",
+          showConfirmButton: false,
+          showCloseButton: true,
+        });
+      })
+
+      .catch((err) => {
+        console.log(err);
       });
-    })
-      
-      
-    
-    .catch((err)=>{
-      console.log(err)
+  };
+  /* 거래 확정 함수 */
+  const requestAccepted = (buyerId) => {
+    console.log(buyerId);
+    Swal.fire({
+      title: `${buyerId} 님과 거래완료 하시겠습니까?`,
+      icon: "question",
+      width: "720px",
+      showCancelButton: true,
+      confirmButtonText: "확정",
+      cancelButtonText: "취소",
+      confirmButtonColor: "var(--primary)",
+      cancelButtonColor: "var(--danger)",
+    }).then((result) => {
+      if (result.isConfirmed) {
+        axios
+          .patch(
+            `${import.meta.env.VITE_BACKSERVER}/markets/${marketNo}/complete/${buyerId}`,
+          )
+          .then((res) => {
+            console.log(res.data);
+            if (res.data > 1) {
+              Swal.fire({
+                icon: "success", // 성공 아이콘 (체크 표시)
+                title: "거래가 완료되었습니다",
+                confirmButtonText: "닫기",
+                confirmButtonColor: "var(--primary)",
+              });
 
-    })
+              navigate("/market");
+            }
+          })
+          .catch((err) => {
+            console.log("거래확정실패");
+            console.log(err);
+          });
+      }
+    });
+  };
+  /* 좋아요 함수 */
+  const likeOn = () => {
+    axios
+      .post(`${import.meta.env.VITE_BACKSERVER}/markets/${marketNo}/likes`)
+      .then((res) => {
+        if (res.data === 1) {
+          console.log("좋아요 완료");
+          setMarket({ ...market, isLike: 1, likeCount: market.likeCount + 1 });
+        }
+      })
+      .catch((err) => console.log(err));
+  };
+  /* 좋아요 취소 함수 */
+  const likeOff = () => {
+    axios
+      .delete(`${import.meta.env.VITE_BACKSERVER}/markets/${marketNo}/likes`)
+      .then((res) => {
+        if (res.data === 1) {
+          console.log("좋아요 취소");
+          setMarket({ ...market, isLike: 0, likeCount: market.likeCount - 1 });
+        }
+      })
+      .catch((err) => console.log(err));
+  };
+  /* 로그인이 필요합니다 */
+  const loginMsg = () => {
+    Swal.fire("알림", "로그인 후 이용 가능합니다.", "info");
+    navigate("/member/login");
+  };
 
-  }
   return (
     <main className={styles.main_wrap}>
       {market && (
@@ -308,7 +429,6 @@ MySwal.fire({
                 <p>조회수 : {market.viewCount}</p>
                 <p>좋아요 : {market.likeCount}</p>
               </div>
-              <LikeAndReport marketNo={marketNo} />
             </div>
             <div className={styles.title_map}>지도가 들어갈 예정</div>
 
@@ -316,26 +436,67 @@ MySwal.fire({
               <div className={styles.title_btn}>
                 {memberId ? (
                   <>
-                    <Button className="btn primary" onClick={requestTrade}>
-                      거래요청
-                    </Button>
-                    <Button
-                      className="btn primary"
-                      style={{
-                        backgroundColor: "pink",
-                        border: "1px solid pink",
-                      }}
-                    >
-                      좋아요
-                    </Button>
+                    {market.completed === 0 && (
+                      <>
+                        {market.isRequest === 0 && (
+                          <Button
+                            className="btn primary"
+                            onClick={requestTrade}
+                          >
+                            거래요청
+                          </Button>
+                        )}
+
+                        {market.isRequest === 1 && (
+                          <Button
+                            className="btn primary"
+                            onClick={cancelTrade}
+                            style={{
+                              backgroundColor: "var(--soft)",
+                              color: "black",
+                            }}
+                          >
+                            요청취소
+                          </Button>
+                        )}
+                      </>
+                    )}
+
+                    {market.isLike === 0 ? (
+                      <Button
+                        className="btn primary"
+                        style={{
+                          backgroundColor: "white",
+                          color: "pink",
+                          border: "1px solid pink",
+                        }}
+                        onClick={likeOn}
+                      >
+                        좋아요
+                      </Button>
+                    ) : (
+                      <Button
+                        className="btn primary"
+                        style={{
+                          backgroundColor: "pink",
+                          color: "white",
+                          border: "1px solid pink",
+                        }}
+                        onClick={likeOff}
+                      >
+                        좋아요 취소
+                      </Button>
+                    )}
+
                     <Button className="btn primary danger">신고하기</Button>
                   </>
                 ) : (
                   <Button
                     className="btn primary"
-                    onClick={() => navigate("/member/login")}
+                    onClick={loginMsg}
+                    style={{ width: "200px" }}
                   >
-                    거래요청
+                    거래요청(로그인필요)
                   </Button>
                 )}
               </div>
@@ -347,97 +508,27 @@ MySwal.fire({
             dangerouslySetInnerHTML={{ __html: market.marketContent }}
           ></div>
 
-          {memberId && memberId === market.marketWriter && (
-            <div className={styles.button_wrap}>
-              <Button className="btn primary">수정</Button>
-              <Button className="btn primary danger" onClick={deleteMarket}>
-                삭제
-              </Button>
-              <Button
-                className="btn primary"
-                style={{ backgroundColor: "pink", border: "none" }}
-                onClick={tradeComplete}
-              >
-                거래완료
-              </Button>
-            </div>
-          )}
+          {memberId &&
+            memberId === market.marketWriter &&
+            market.completed === 0 && (
+              <div className={styles.button_wrap}>
+                <Button className="btn primary">수정</Button>
+                <Button className="btn primary danger" onClick={deleteMarket}>
+                  삭제
+                </Button>
+                <Button
+                  className="btn primary"
+                  style={{ backgroundColor: "pink", border: "none" }}
+                  onClick={tradeComplete}
+                >
+                  거래완료
+                </Button>
+              </div>
+            )}
           <MarketComment marketNo={marketNo} memberId={memberId} />
         </>
       )}
     </main>
-  );
-};
-
-const LikeAndReport = ({ marketNo }) => {
-  const { memberId } = useAuthStore();
-  const [likeInfo, setLikeInfo] = useState(null);
-
-  useEffect(() => {
-    axios
-      .get(`${import.meta.env.VITE_BACKSERVER}/markets/${marketNo}/likes`)
-      .then((res) => setLikeInfo(res.data))
-      .catch((err) => console.log(err));
-  }, [marketNo]);
-
-  const likeOn = () => {
-    axios
-      .post(`${import.meta.env.VITE_BACKSERVER}/markets/${marketNo}/likes`)
-      .then((res) => {
-        if (res.data === 1) {
-          setLikeInfo((prev) => ({
-            ...prev,
-            isLike: 1,
-            likeCount: prev.likeCount + 1,
-          }));
-        }
-      })
-      .catch((err) => console.log(err));
-  };
-
-  const likeOff = () => {
-    axios
-      .delete(`${import.meta.env.VITE_BACKSERVER}/markets/${marketNo}/likes`)
-      .then((res) => {
-        if (res.data === 1) {
-          setLikeInfo((prev) => ({
-            ...prev,
-            isLike: 0,
-            likeCount: prev.likeCount - 1,
-          }));
-        }
-      })
-      .catch((err) => console.log(err));
-  };
-
-  const loginMsg = () =>
-    Swal.fire("알림", "로그인 후 이용 가능합니다.", "info");
-
-  return (
-    <>
-      {likeInfo && (
-        <>
-          {likeInfo.isLike === 1 ? (
-            <ThumbUpAltIcon
-              sx={{ fill: "var(--primary)", cursor: "pointer" }}
-              onClick={likeOff}
-            />
-          ) : (
-            <ThumbUpOffAltIcon
-              sx={{ fill: "var(--primary)", cursor: "pointer" }}
-              onClick={memberId ? likeOn : loginMsg}
-            />
-          )}
-          <span style={{ color: "var(--primary)", marginRight: "10px" }}>
-            {likeInfo.likeCount}
-          </span>
-        </>
-      )}
-      <ReportGmailerrorredIcon
-        sx={{ fill: "var(--danger)", cursor: "pointer" }}
-      />
-      <span style={{ color: "var(--danger)" }}>3</span>
-    </>
   );
 };
 
