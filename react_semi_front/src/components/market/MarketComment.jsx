@@ -1,13 +1,79 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import axios from "axios";
 import styles from "./MarketComment.module.css";
 import Button from "../ui/Button";
 import Swal from "sweetalert2";
+import useAuthStore from "../utils/useAuthStore";
+import Pagination from "../../components/ui/Pagination";
+import BasicSelect from "../../components/ui/BasicSelect";
+
+// 메인페이지의 함수 그대로 가져옴
+const timeAgo = (dateString) => {
+  // 받은 시간값이 없으면 return
+  if (!dateString) {
+    return "";
+  }
+
+  const postDate = new Date(dateString); // postDate : 게시글 올린 date(날짜, 시간등)
+  const now = new Date(); // now : 지금(현재 날짜, 시간등)
+
+  const diffInSeconds = Math.floor((now - postDate) / 1000); // 현재 시간과 게시글 시간의 차이를 초 단위로 계산
+
+  if (diffInSeconds < 60) {
+    return "방금 전";
+  } else if (diffInSeconds < 3600) {
+    const minutes = Math.floor(diffInSeconds / 60);
+    return `${minutes}분 전`;
+  } else if (diffInSeconds < 86400) {
+    const hours = Math.floor(diffInSeconds / 3600);
+    return `${hours}시간 전`;
+  } else if (diffInSeconds < 2592000) {
+    const days = Math.floor(diffInSeconds / 86400);
+    return `${days}일 전`;
+  } else {
+    // __.split(" ") : " " 즉 공백을 기준을 자름. 현재 dateString은 예시로 ["2026-04-03", "15:30:00"] 이런식으로 찍힘. 즉 날짜와 시간 사이에 공백이 있음.
+    // 그중에 0번 즉 첫번쨰 값을 가져옴 -> 날짜 예시에서의 "2026-04-03"
+    return dateString.split(" ")[0];
+  }
+};
 
 const MarketComment = ({ marketNo, memberId, marketWriter }) => {
   const [commentList, setCommentList] = useState([]); // 전체 댓글 목록 리스트
   const [newComment, setNewComment] = useState(""); // 새 댓글 내용
   const [isSecret, setIsSecret] = useState(false); // 비밀댓글 체크박스 상태
+
+  // 페이지네이션용 State 추가
+  const [page, setPage] = useState(0); // 현재 페이지 (0부터 시작)
+  const [totalPage, setTotalPage] = useState(0); // 전체 페이지 수
+
+  const [filterType, setFilterType] = useState("all"); // 기본값: 전체
+  const [orderType, setOrderType] = useState("newest"); // 기본값: 최신순
+
+  const filterList = [
+    ["all", "전체"],
+    ["normal", "일반댓글"],
+    ["secret", "비밀댓글"],
+  ];
+
+  const orderList = [
+    ["newest", "최신순"],
+    ["oldest", "오래된순"],
+  ];
+
+  // 셀렉터 값 변경 시 1페이지로 돌아가는 함수들
+  const handleFilterChange = (value) => {
+    setFilterType(value);
+    setPage(0);
+  };
+
+  const handleOrderChange = (value) => {
+    setOrderType(value);
+    setPage(0);
+  };
+
+  const { memberThumb } = useAuthStore(); // 새 댓글 작성할때 프사뜨게 하기 위해 가져옴
+
+  const commentWrapRef = useRef(null); // 댓글 입력시 댓글 상단으로 스크롤하기위해 스크롤할 위치를 잡을 Ref
 
   // 댓글 목록 가져오기
   const fetchComments = () => {
@@ -17,9 +83,13 @@ const MarketComment = ({ marketNo, memberId, marketWriter }) => {
     }
 
     axios
-      .get(`${import.meta.env.VITE_BACKSERVER}/markets/${marketNo}/comments`)
+      .get(
+        `${import.meta.env.VITE_BACKSERVER}/markets/${marketNo}/comments?page=${page}&filterType=${filterType}&orderType=${orderType}`,
+      )
       .then((res) => {
-        setCommentList(res.data);
+        // backend에서 response에 list로 넣긴하는데 vo에서 객체 선언할때부터 items로 받음.
+        setCommentList(res.data.items);
+        setTotalPage(res.data.totalPage);
       })
       .catch((err) => {
         console.log("댓글 로딩 실패:", err);
@@ -29,7 +99,7 @@ const MarketComment = ({ marketNo, memberId, marketWriter }) => {
   // 페이지가 처음 켜질 때(혹은 marketNo가 바뀔 때) 댓글 목록 불러오기
   useEffect(() => {
     fetchComments();
-  }, [marketNo]);
+  }, [marketNo, page, filterType, orderType]);
 
   // 댓글 작성 로직
   const submitComment = () => {
@@ -67,7 +137,30 @@ const MarketComment = ({ marketNo, memberId, marketWriter }) => {
       .then((res) => {
         setNewComment(""); // 입력창 비우기
         setIsSecret(false); // 비밀댓글 체크박스 풀기
+
+        setPage(0); // 1페이지로 가기
+        setFilterType("all");
+        setOrderType("newest");
+
         fetchComments(); // 화면 갱신을 위해 목록 다시 불러오기
+
+        // 화면 갱신이후에 상단으로 부드럽게 스크롤
+        if (commentWrapRef.current) {
+          // 헤더 + 메뉴바의 전체 높이
+          const headerOffset = 148;
+
+          // 현재 요소의 위치를 계산해서 헤더 높이만큼 빼줌
+          const elementPosition =
+            commentWrapRef.current.getBoundingClientRect().top; // getBoundingCliendRect().top : 내 브라우저 화면 맨 위를 기준으로, 이 댓글창이 얼마나 아래에 있는지를 픽셀단위로 가져옴( ref를 현재 댓글 컴포넌트 상단에 두었으니 내 브라우저에서부터의 거리를 상단이랑 잼)
+          const offsetPosition =
+            elementPosition + window.scrollY - headerOffset; // window.scrollY : 웹페이지 맨 꼭대기에서부터 얼마나 스크롤을 내렸는지 값 가져옴.
+
+          // 계산된 위치로 부드럽게 이동
+          window.scrollTo({
+            top: offsetPosition,
+            behavior: "smooth",
+          });
+        }
       })
       .catch((err) => {
         console.log("댓글 작성 실패:", err);
@@ -94,21 +187,45 @@ const MarketComment = ({ marketNo, memberId, marketWriter }) => {
             fetchComments={fetchComments} // 자식쪽에서 삭제/수정 시 화면 렌더링을 할수있게 함수도 통째로 넘겨줌
             allComments={commentList} // 자식이 자기 밑에 달린 답글 찾을 수 있게 전체 리스트도 넘겨줌
             marketNo={marketNo} // 게시글 번호
+            memberThumb={memberThumb} // 답글 작성할때 프사뜨게 하기 위해 넘겨줌
           />
         ))
     );
   };
 
   return (
-    <div className={styles.comment_wrap}>
-      <h4 className={styles.comment_title}>댓글</h4>
+    <div className={styles.comment_wrap} ref={commentWrapRef}>
+      <div className={styles.comment_header_wrap}>
+        <h4 className={styles.comment_title}>댓글</h4>
+        <div className={styles.filter_wrap}>
+          {/* 일반/비밀 필터 */}
+          <BasicSelect
+            state={filterType}
+            setState={handleFilterChange}
+            list={filterList}
+          />
+          {/* 최신/오래된순 정렬 */}
+          <BasicSelect
+            state={orderType}
+            setState={handleOrderChange}
+            list={orderList}
+          />
+        </div>
+      </div>
 
       {/* 최상위 댓글 렌더링 시작 (부모 번호가 null인 애들부터 그림) */}
       <ul className={styles.comment_list}>{renderComments(null)}</ul>
 
       <div className={styles.comment_write_wrap}>
         <div className={styles.write_header}>
-          <span className="material-icons">account_circle</span>
+          {memberId && memberThumb ? (
+            <img
+              src={`${import.meta.env.VITE_BACKSERVER}/semi/${memberThumb}`}
+              alt="프로필사진"
+            />
+          ) : (
+            <span className="material-icons">account_circle</span>
+          )}
           <span>{memberId ? memberId : "비회원"}</span>
         </div>
 
@@ -124,7 +241,7 @@ const MarketComment = ({ marketNo, memberId, marketWriter }) => {
             setNewComment(e.target.value);
           }}
           disabled={!memberId} // memberId가 없으면(비회원이면) true가 되어 비활성화
-          maxLength={300} // 300자 제한
+          maxLength={1000} // 1000자 제한
         />
 
         <div className={styles.write_footer}>
@@ -136,21 +253,22 @@ const MarketComment = ({ marketNo, memberId, marketWriter }) => {
                 setIsSecret(e.target.checked);
               }}
               disabled={!memberId} // 비회원은 체크도 못하게 막음
+              maxLength={1000} // 1000자 제한 -> 개발자도구로 disable 해제할 경우를 생각해서 넣어둠
             />
             비밀댓글
           </label>
 
           {/* 버튼 옆에 글자 수 카운터와 묶어주기 위해 div로 감쌈 */}
-          <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
-            {/* 글자 수 카운터 UX 추가 (300자 꽉 차면 빨간색으로 경고!) */}
+          <div className={styles.write_actions}>
+            {/* 글자 수 카운터 UX 추가 (1000자 꽉 차면 빨간색으로 경고!) */}
             <span
+              className={styles.char_counter}
               style={{
-                fontSize: "13px",
                 color:
-                  newComment.length >= 300 ? "var(--danger)" : "var(--gray4)",
+                  newComment.length >= 1000 ? "var(--danger)" : "var(--gray4)",
               }}
             >
-              {newComment.length}/300
+              {newComment.length}/1000
             </span>
 
             <Button
@@ -162,6 +280,14 @@ const MarketComment = ({ marketNo, memberId, marketWriter }) => {
             </Button>
           </div>
         </div>
+      </div>
+      <div className={styles.pagination_area}>
+        <Pagination
+          page={page}
+          setPage={setPage}
+          totalPage={totalPage}
+          naviSize={5} // 아래쪽에 1 2 3 4 5 처럼 5개씩 띄우기
+        />
       </div>
     </div>
   );
@@ -175,6 +301,7 @@ const CommentItem = ({
   fetchComments, // 부모가 준 렌더링 함수
   allComments, // 전체 댓글 리스트, commentList로 하고 싶었는데 위에서 한번 쓴 변수명이니 혹시몰라 이렇게..
   marketNo,
+  memberThumb,
 }) => {
   // 답글(대댓글) 작성 관련 State
   const [showReplyInput, setShowReplyInput] = useState(false); // 답글달기 입력창 열림/닫힘 여부
@@ -236,6 +363,15 @@ const CommentItem = ({
   const updateComment = () => {
     // 댓글에 내용이 없으면 리턴 (.trim()은 앞뒤 공백을 없애고 글자만 남겨주는 함수)
     if (editContent.trim() === "") {
+      return;
+    }
+
+    // 수정한 내용과 비밀댓글 여부가 기존과 완전히 똑같으면 서버 요청 안하고 바로 리턴
+    if (
+      editContent === comment.marketCommentContent &&
+      isSecretEdit === (comment.isSecret === 1)
+    ) {
+      setIsEditing(false); // 수정창만 닫아버림
       return;
     }
 
@@ -354,6 +490,13 @@ const CommentItem = ({
           })
           .catch((err) => {
             console.log("신고 실패:", err);
+            // 복합 유니크 제약조건(뒤의 컬럼1, 컬럼2를 동시에 중복으로 가질수 없음)으로 댓글 신고 테이블에 UNIQUE (컬럼1, 컬럼2)를 이용해서 (댓글번호, 회원아이디)로 한 댓글당 한번만 신고할 수 있게 제약조건으로 막음
+            // 위의 이유가 아니어도 그냥 오류로 실패할수도 있으니 text에 처리중 오류가 발생했다고 알림
+            Swal.fire({
+              icon: "error",
+              title: "신고 불가",
+              text: "이미 신고한 댓글이거나, 처리 중 오류가 발생했습니다.",
+            });
           });
       }
     });
@@ -376,7 +519,7 @@ const CommentItem = ({
             {comment.marketCommentWriter}
           </span>
           <span className={styles.comment_date}>
-            {comment.marketCommentDate}
+            {timeAgo(comment.marketCommentDate)}
             {/* isEdited가 1이면 (수정됨) 마크 붙여주기 */}
             {comment.isEdited === 1 && (
               <span className={styles.edited_mark}>(수정됨)</span>
@@ -402,6 +545,7 @@ const CommentItem = ({
               className={styles.comment_textarea}
               value={editContent}
               onChange={(e) => setEditContent(e.target.value)}
+              maxLength={1000} // 수정창도 1000자 제한
             />
             <div className={styles.write_footer}>
               <label className={styles.secret_check}>
@@ -412,14 +556,31 @@ const CommentItem = ({
                 />
                 비밀댓글
               </label>
-              {/* css를 여기서 주는 이유는.. 없어 classname이 더이상 안 떠올라 ai한테 좋은 classname 물어봐도 이상한것만 나와 이제 classname 너무 많단 말이야 여기 그냥 이렇게 할래. 짧은 디자인이니까.. ㅎ 뒤에두 조금 그런거 있음 ㅎ */}
-              <div style={{ display: "flex", gap: "8px" }}>
-                <Button className="btn sm" onClick={() => setIsEditing(false)}>
-                  취소
-                </Button>
-                <Button className="btn primary sm" onClick={updateComment}>
-                  완료
-                </Button>
+
+              <div className={styles.write_actions}>
+                <span
+                  className={styles.char_counter}
+                  style={{
+                    color:
+                      editContent.length >= 1000
+                        ? "var(--danger)"
+                        : "var(--gray4)",
+                  }}
+                >
+                  {editContent.length}/1000
+                </span>
+
+                <div className={styles.btn_group}>
+                  <Button
+                    className="btn sm"
+                    onClick={() => setIsEditing(false)}
+                  >
+                    취소
+                  </Button>
+                  <Button className="btn primary sm" onClick={updateComment}>
+                    완료
+                  </Button>
+                </div>
               </div>
             </div>
           </div>
@@ -435,14 +596,7 @@ const CommentItem = ({
               <p>
                 {/* 비밀댓글이지만 내가 볼 권한이 있어서 내용이 보이는 경우 자물쇠 아이콘만 살짝 띄워줌 */}
                 {isSecretComment && (
-                  <span
-                    className="material-icons"
-                    style={{
-                      fontSize: "14px",
-                      marginRight: "4px",
-                      color: "var(--gray4)",
-                    }}
-                  >
+                  <span className={`material-icons ${styles.lock_icon}`}>
                     lock
                   </span>
                 )}
@@ -456,9 +610,12 @@ const CommentItem = ({
       {/* 푸터 영역 : 답글달기, 신고 버튼 (수정 중이 아니고 볼 권한이 있을 때만 노출) */}
       {!isEditing && canInteract && (
         <div className={styles.comment_footer}>
-          <button onClick={() => setShowReplyInput(!showReplyInput)}>
-            {showReplyInput ? "답글취소" : "답글달기"}
-          </button>
+          {/* 로그인되어 있지 않으면 답글달기 버튼 안뜨게 */}
+          {memberId && (
+            <button onClick={() => setShowReplyInput(!showReplyInput)}>
+              {showReplyInput ? "답글취소" : "답글달기"}
+            </button>
+          )}
           {/* 내가 쓴 댓글이 아닐 때만 신고 버튼 노출 */}
           {!isMyComment && (
             <button className={styles.report_btn} onClick={reportComment}>
@@ -475,9 +632,19 @@ const CommentItem = ({
           <div className={styles.comment_write_wrap}>
             <div className={styles.write_header}>
               {/* 답글 꺾쇠 화살표 아이콘 */}
-              <span className="material-icons" style={{ fontSize: "20px" }}>
+              <span className={`material-icons ${styles.reply_arrow_icon}`}>
                 subdirectory_arrow_right
               </span>
+
+              {memberThumb ? (
+                <img
+                  src={`${import.meta.env.VITE_BACKSERVER}/semi/${memberThumb}`}
+                  alt="프로필사진"
+                  className={styles.reply_profile_img}
+                />
+              ) : (
+                <span className="material-icons">account_circle</span>
+              )}
               <span>{memberId ? memberId : "비회원"}</span>
             </div>
             <textarea
@@ -487,6 +654,7 @@ const CommentItem = ({
               onChange={(e) => {
                 setReplyContent(e.target.value);
               }}
+              maxLength={1000} // 답글창 1000자 제한 추가
             />
             <div className={styles.write_footer}>
               <label className={styles.secret_check}>
@@ -499,9 +667,24 @@ const CommentItem = ({
                 />
                 비밀답글
               </label>
-              <Button className="btn primary sm" onClick={submitReply}>
-                등록
-              </Button>
+              <div
+                style={{ display: "flex", alignItems: "center", gap: "10px" }}
+              >
+                <span
+                  style={{
+                    fontSize: "13px",
+                    color:
+                      replyContent.length >= 1000
+                        ? "var(--danger)"
+                        : "var(--gray4)",
+                  }}
+                >
+                  {replyContent.length}/1000
+                </span>
+                <Button className="btn primary sm" onClick={submitReply}>
+                  등록
+                </Button>
+              </div>
             </div>
           </div>
         </div>
@@ -515,10 +698,15 @@ const CommentItem = ({
             setShowReplies(!showReplies);
           }}
         >
-          <span className="material-icons" style={{ fontSize: "18px" }}>
+          <span className="material-icons">
             {showReplies ? "expand_less" : "expand_more"}
           </span>
-          {showReplies ? "답글 숨기기" : `답글 ${childComments.length}개 보기`}
+
+          <span className={styles.toggle_text}>
+            {showReplies
+              ? "답글 숨기기"
+              : `답글 ${childComments.length}개 보기`}
+          </span>
         </button>
       )}
 
