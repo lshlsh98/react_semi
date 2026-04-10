@@ -118,11 +118,34 @@
   display: flex;
   flex-direction: column;
   align-items: flex-end;
-  gap: 20px; /* 입력창과 등록 버튼 사이의 간격 */
+  gap: 12px; /* 입력창과 등록 버튼 사이의 간격 */
+  margin-bottom: 50px;
+}
+
+.community_comment_count_wrap {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  border-bottom: 1px solid green;
+  flex-grow: 1; /* 남는 공간을 꽉 채우게 함 */
+}
+
+/* 댓글 N개 현황 */
+.community_comment_count_wrap > h3 {
+  margin: 0;
+  padding-bottom: 10px;
+  font-size: 24px;
+}
+
+/* 아이콘 크기 조정 + 댓글 개수랑 세로 정렬이 안 맞아서 미세하게 5px 조절함 */
+.community_comment_count_wrap .icon {
+  margin-bottom: 5px;
+  width: 30px;
+  height: 30px;
 }
 
 .comment_list_wrap {
-  margin-top: 32px;
+  margin-top: 12px;
 }
 
 /* 등록된 댓글 상자 크기 조절 */

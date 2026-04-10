@@ -10,6 +10,7 @@ import { TextArea } from "../../components/ui/Form";
 import PersonIcon from "@mui/icons-material/Person";
 import CalendarTodayIcon from "@mui/icons-material/CalendarToday";
 import VisibilityIcon from "@mui/icons-material/Visibility";
+import Comment from "@mui/icons-material/Comment";
 
 import ThumbUpAltIcon from "@mui/icons-material/ThumbUpAlt";
 import ThumbUpOffAltIcon from "@mui/icons-material/ThumbUpOffAlt";
@@ -557,6 +558,11 @@ const CommunityCommentComponent = ({ communityNo }) => {
             <Button className="btn primary" onClick={registComment}>
               등록
             </Button>
+          </div>
+
+          <div className={styles.community_comment_count_wrap}>
+            <Comment className={styles.icon} />
+            <h3>댓글 {communityCommentList.length}개</h3>
           </div>
         </div>
       )}
