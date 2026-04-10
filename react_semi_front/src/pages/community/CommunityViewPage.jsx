@@ -330,26 +330,39 @@ const LikeAndDislikeAndReport = ({ communityNo }) => {
       Swal.fire("신고 사유를 입력해주세요.", "", "warning");
       return;
     }
-    axios
-      .post(
-        `${import.meta.env.VITE_BACKSERVER}/communities/${communityNo}/reports`,
-        {
-          reportReason: reportReason,
-        },
-      )
-      .then((res) => {
-        if (res.data === 1) {
-          setReportInfo({
-            ...reportInfo,
-            isReport: 1,
-            reportCount: reportInfo.reportCount + 1,
-          });
-          Swal.fire("신고가 접수되었습니다.", "", "success");
-          setIsReportModalOpen(false);
-          setReportReason("");
-        }
-      })
-      .catch((err) => console.log(err));
+    Swal.fire({
+      title: "정말로 신고하시겠습니까?",
+      text: "신고 후에는 취소할 수 없습니다.",
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonText: "신고",
+      cancelButtonText: "취소",
+      confirmButtonColor: "var(--danger)",
+      cancelButtonColor: "var(--primary)",
+    }).then((result) => {
+      if (!result.isConfirmed) return;
+
+      axios
+        .post(
+          `${import.meta.env.VITE_BACKSERVER}/communities/${communityNo}/reports`,
+          {
+            reportReason: reportReason,
+          },
+        )
+        .then((res) => {
+          if (res.data === 1) {
+            setReportInfo({
+              ...reportInfo,
+              isReport: 1,
+              reportCount: reportInfo.reportCount + 1,
+            });
+            Swal.fire("신고가 접수되었습니다.", "", "success");
+            setIsReportModalOpen(false);
+            setReportReason("");
+          }
+        })
+        .catch((err) => console.log(err));
+    });
   };
 
   return (

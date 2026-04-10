@@ -30,16 +30,44 @@
   line-height: 1.6;
 }
 
+/* 댓글 등록 밑에 상자 크기 조정 + 패딩으로 조절 */
+.comment_regist_wrap textarea {
+  height: 100px !important;
+  min-height: 50px;
+  resize: none;
+  padding: 12px;
+}
+
+/* 등록 버튼 (오른쪽으로 배치) */
+.input_item {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 10px; /* 입력창과 등록 버튼 사이의 간격 */
+}
+
 .comment_list_wrap {
   margin-top: 32px;
 }
+
+/* 등록된 댓글 상자 크기 조절 */
+.comment_content textarea {
+  width: 100% !important; /* 가로를 꽉 채우도록 강제 */
+  height: 100px !important;
+  min-height: 100px;
+  resize: none;
+  box-sizing: border-box; /* 패딩이 너비를 벗어나지 않게 함 */
+  padding: 12px;
+}
+
 .comment_item {
   list-style-type: none;
-  padding: 12px;
+  padding: 16px 0; /* 좌우 패딩을 0으로 해서 본문 끝선에 맞춤 */
   border-bottom: none;
 }
 .comment_content {
   margin-top: 16px;
+  width: 100%;
 }
 
 .community_like_wrap svg,

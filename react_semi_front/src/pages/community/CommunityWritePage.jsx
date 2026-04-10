@@ -88,9 +88,11 @@ const CommunityWritePage = () => {
         console.log(res);
         if (res.data > 0) {
           Swal.fire({ title: "게시글 작성 완료", icon: "success" }).then(() => {
+            /* 관리자나 슈퍼 유저일 때 공지사항으로 등록 */
             if (member === 1 || member === 2) {
               navigate("/community/notice");
             } else {
+              /* 일반 유저일 때 */
               navigate("/community");
             }
           });
@@ -152,6 +154,7 @@ const CommunityWritePage = () => {
   );
 };
 
+/* 에디터 */
 const MenuBar = ({ editor }) => {
   if (!editor) return null;
 
