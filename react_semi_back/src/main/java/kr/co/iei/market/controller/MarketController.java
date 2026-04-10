@@ -28,6 +28,7 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 import kr.co.iei.WebConfig;
 import kr.co.iei.market.model.service.MarketService;
+import kr.co.iei.market.model.vo.CommentListItem;
 import kr.co.iei.market.model.vo.ListItem;
 import kr.co.iei.market.model.vo.ListResponse;
 import kr.co.iei.market.model.vo.Market;
@@ -101,11 +102,12 @@ public class MarketController {
 	}
 	
 	// 1. 특정 게시글의 댓글 목록 조회 - 이영민
-    @GetMapping(value="/{marketNo}/comments")
-    public ResponseEntity<?> selectMarketCommentList(@PathVariable Integer marketNo) {
-        List<MarketComment> list = marketService.selectMarketCommentList(marketNo);
-        return ResponseEntity.ok(list);
-    }
+	@GetMapping(value="/{marketNo}/comments")
+	public ResponseEntity<?> selectMarketCommentList(@PathVariable Integer marketNo, @ModelAttribute CommentListItem item) {
+		item.setMarketNo(marketNo);
+		ListResponse response = marketService.selectMarketCommentList(item);
+		return ResponseEntity.ok(response);
+	}
 
     // 2. 댓글 작성 (대댓글 포함) - 이영민
     @PostMapping(value="/comments")

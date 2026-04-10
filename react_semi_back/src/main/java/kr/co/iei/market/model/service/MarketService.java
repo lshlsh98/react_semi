@@ -10,6 +10,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import kr.co.iei.market.model.dao.MarketDao;
+import kr.co.iei.market.model.vo.CommentListItem;
 import kr.co.iei.market.model.vo.ListItem;
 import kr.co.iei.market.model.vo.ListResponse;
 import kr.co.iei.market.model.vo.Market;
@@ -66,10 +67,17 @@ public class MarketService {
 	}
 
 	// 댓글 조회
-	public List<MarketComment> selectMarketCommentList(Integer marketNo) {
-		List<MarketComment> list = marketDao.selectMarketCommentList(marketNo);
-        return list;
-    }
+	public ListResponse selectMarketCommentList(CommentListItem item) {
+			
+		int totalCount = marketDao.selectParentCommentCount(item);	// 총 부모 댓글 수 구하기 (자식 답글은 페이지 계산에서 제외)
+		int totalPage = (int) Math.ceil(totalCount / (double) item.getSize());	// 총 페이지 수 계산
+			
+		List<MarketComment> list = marketDao.selectMarketCommentList(item);
+			
+		ListResponse response = new ListResponse(list, totalPage);
+			
+		return response;
+	}
 
 	// 댓글 작성
     @Transactional
@@ -178,7 +186,5 @@ public class MarketService {
 		int result = marketDao.deleteOneMarket(marketNo);
 		return result;
 	}
-
 	
-
 }
