@@ -94,7 +94,6 @@ const MarketViewPage = () => {
             `${import.meta.env.VITE_BACKSERVER}/markets/${marketNo}/request`,
           )
           .then((res) => {
-            console.log(res.data);
             if (res.data === 1) {
               setMarket({ ...market, isRequest: 1 });
               Swal.fire({
@@ -115,7 +114,6 @@ const MarketViewPage = () => {
 
   /* 거래 요청취소 함수 */
   const cancelTrade = () => {
-    console.log("거래취소요청");
     Swal.fire({
       title: "거래요청 취소 하시겠습니까?",
       icon: "question",
@@ -131,7 +129,6 @@ const MarketViewPage = () => {
             `${import.meta.env.VITE_BACKSERVER}/markets/${marketNo}/cancel`,
           )
           .then((res) => {
-            console.log(res.data);
             if (res.data === 1) {
               setMarket({ ...market, isRequest: 0 });
               Swal.fire({
@@ -304,6 +301,101 @@ const MarketViewPage = () => {
     Swal.fire("알림", "로그인 후 이용 가능합니다.", "info");
     navigate("/member/login");
   };
+  /*신고하기 함수*/
+  const pushReport = () => {
+    Swal.fire({
+      title: "신고하기",
+      html: `
+       <textarea id="report-reason" class="swal2-textarea"
+       placeholder="신고 사유를 입력해주세요 (최대 200자)"
+       maxlength="200"
+       style="width: 85%; height: 100px; resize: none; font-size: 14px; margin-top: 10px;"></textarea>
+      `,
+      showCancelButton: true,
+      confirmButtonText: "신고",
+      cancelButtonText: "취소",
+      confirmButtonColor: "var(--danger)",
+      cancelButtonColor: "var(--gray5)",
+      preConfirm: () => {
+        // 확인 버튼 눌렀을 때 텍스트 박스 내용 긁어오기 외부 - 라이브러리여서 찾아보고 이렇게 사용
+        const reason = document.getElementById("report-reason").value; // 신고 사유(신고의 텍스트 박스 내용)가 없다면 쓰라고 하기
+
+        if (!reason.trim()) {
+          Swal.showValidationMessage("신고 사유를 입력해주세요."); // 빈칸이면 못 넘어가게 막기
+          // sweetalert 스타일 맞추기 위해
+
+          const validationMsg = Swal.getValidationMessage();
+          if (validationMsg) {
+            validationMsg.style.backgroundColor = "transparent";
+            validationMsg.style.color = "var(--danger)";
+          }
+        }
+        return reason;
+      },
+    }).then((result) => {
+      // 확인(신고) 눌렀으면 backend로 전송
+
+      if (result.isConfirmed) {
+        // 신고 data
+        const reportData = {
+          marketNo: marketNo,
+          memberId: memberId,
+          marketReportReason: result.value, // 아까 긁어온 내용
+        };
+
+        axios
+          .post(
+            `${import.meta.env.VITE_BACKSERVER}/markets/comments/reports`,
+            reportData,
+          )
+          .then((res) => {
+            Swal.fire({
+              icon: "success",
+              title: "신고 완료",
+              text: "정상적으로 접수되었습니다.",
+            });
+          })
+          .catch((err) => {
+            console.log("신고 실패:", err);
+          });
+      }
+    });
+  };
+
+  /*신고취소 함수*/
+  const cancelReport = () => {
+    Swal.fire({
+      title: "신고내역을 취소 하시겠습니까?",
+      icon: "question",
+      showCancelButton: true,
+      confirmButtonText: "취소",
+      cancelButtonText: "닫기",
+      confirmButtonColor: "var(--danger)",
+      cancelButtonColor: "var(--primary)",
+    }).then((result) => {
+      if (result.isConfirmed) {
+        axios
+          .delete(
+            `${import.meta.env.VITE_BACKSERVER}/markets/${marketNo}/reports`,
+          )
+          .then((res) => {
+            console.log(res.data);
+            if (res.data > 1) {
+              Swal.fire({
+                icon: "success", //
+                title: "신고가 취소되었습니다",
+                confirmButtonText: "닫기",
+                confirmButtonColor: "var(--primary)",
+              });
+            }
+          })
+          .catch((err) => {
+            console.log("신고취소 실패");
+            console.log(err.data);
+          });
+      }
+    });
+  };
 
   return (
     <main className={styles.main_wrap}>
@@ -349,8 +441,8 @@ const MarketViewPage = () => {
                   display: "flex",
                   alignItems: "center",
                   justifyContent: "center",
-                  width: "60vw",
-                  height: "80vh",
+                  width: "900px",
+                  height: "720px",
                   borderRadius: "8px",
                   overflow: "hidden",
                 }}
@@ -438,6 +530,7 @@ const MarketViewPage = () => {
                   <>
                     {market.completed === 0 && (
                       <>
+                        {/*거래요청 버튼*/}
                         {market.isRequest === 0 && (
                           <Button
                             className="btn primary"
@@ -452,8 +545,9 @@ const MarketViewPage = () => {
                             className="btn primary"
                             onClick={cancelTrade}
                             style={{
-                              backgroundColor: "var(--soft)",
-                              color: "black",
+                              backgroundColor: "var(--gray8)",
+                              fontWeight: "900",
+                              color: "var(--primary)",
                             }}
                           >
                             요청취소
@@ -461,14 +555,14 @@ const MarketViewPage = () => {
                         )}
                       </>
                     )}
-
+                    {/*좋아요 버튼*/}
                     {market.isLike === 0 ? (
                       <Button
                         className="btn primary"
                         style={{
-                          backgroundColor: "white",
-                          color: "pink",
-                          border: "1px solid pink",
+                          backgroundColor: "var(--pink1)",
+                          color: "white",
+                          border: "1px solid var(--pink1)",
                         }}
                         onClick={likeOn}
                       >
@@ -478,17 +572,43 @@ const MarketViewPage = () => {
                       <Button
                         className="btn primary"
                         style={{
-                          backgroundColor: "pink",
-                          color: "white",
-                          border: "1px solid pink",
+                          backgroundColor: "white",
+                          color: "var(--pink1)",
+                          fontWeight: "900",
+                          border: "1px solid var(--pink1)",
                         }}
                         onClick={likeOff}
                       >
                         좋아요 취소
                       </Button>
                     )}
-
-                    <Button className="btn primary danger">신고하기</Button>
+                    {/*신고하기 버튼*/}
+                    {market.isReport === 0 ? (
+                      <Button
+                        className="btn primary"
+                        style={{
+                          backgroundColor: "var(--danger)",
+                          color: "white",
+                          border: "1px solid var(--danger)",
+                        }}
+                        onClick={pushReport}
+                      >
+                        신고하기
+                      </Button>
+                    ) : (
+                      <Button
+                        className="btn primary"
+                        style={{
+                          backgroundColor: "white",
+                          color: "var(--danger)",
+                          fontWeight: "900",
+                          border: "1px solid var(--danger)",
+                        }}
+                        onClick={cancelReport}
+                      >
+                        신고취소
+                      </Button>
+                    )}
                   </>
                 ) : (
                   <Button

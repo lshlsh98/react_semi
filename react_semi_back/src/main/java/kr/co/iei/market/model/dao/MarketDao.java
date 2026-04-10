@@ -64,6 +64,8 @@ public interface MarketDao {
 
 	int tradeRequestCancel(Integer marketNo, String buyerId);
 
+	int cancelReport(Integer marketNo, String memberId);
+
 	
 
 	

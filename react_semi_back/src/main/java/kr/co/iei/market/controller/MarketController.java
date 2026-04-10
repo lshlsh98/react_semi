@@ -154,31 +154,26 @@ public class MarketController {
 		//1. 파일패스 가져오기
 		List<String> fileList = marketService.getFilePath(marketNo);
 		System.out.println(fileList);
-		
-		//2. 파일TBL 삭제 (삭제한 row 만큼 result 반환)
-		int fileCount= marketService.deleteFileTbl(marketNo);
-		System.out.println("파일TBL 삭제 결과 (1~10) : " + fileCount);
-		
-		//3. 마켓TBL 삭제
-		int result = marketService.deleteOneMarket(marketNo);
-		System.out.println("마켓TBL 삭제 결과 (0~1) : " + result);
-		
-		
+				
+		//2.서비스 처리 (market_file_tbl 삭제, market_tbl 삭제)
 		Map<String,Object> serviceResponse = new HashMap<String,Object>();
 		serviceResponse = marketService.deleteOneMarketAndFileTbl(marketNo);
-		
+		int fileCount = (int) serviceResponse.get("fileCount");
+		int result = (int) serviceResponse.get("result");
+		System.out.println("파일TBL 삭제 결과 (1~10) : " + fileCount);
+		System.out.println("마켓TBL 삭제 결과 (0~1) : " + result);
 		
 		//4. 파일 삭제
 		boolean allDeleted = true;
-		if(fileList != null) {
-			for(String fileName : fileList) {
-				System.out.println("삭제합니다 : " + fileName);
-				boolean bool = deleteFile(fileName, savepath);
-				System.out.println("삭제결과 : " + bool);
-				if(!bool) {
-					allDeleted = false;
-				}
-			}
+		if (result == 1) {
+		    if (fileList != null && !fileList.isEmpty()) {
+		        for (String fileName : fileList) {
+		            boolean bool = deleteFile(fileName, savepath);
+		            if (!bool) {
+		                allDeleted = false;
+		            }
+		        }
+		    }
 		}
 		System.out.println("전체파일 삭제결과 : " + allDeleted);
 		
@@ -190,23 +185,24 @@ public class MarketController {
 		
 	}
 	
-	@GetMapping(value="/{marketNo}/likes")
-	public ResponseEntity<?> selectLikeInfo(@PathVariable Integer marketNo, @RequestHeader(required = false,name="Authorization") String token){
-		//System.out.println("글번호 확인 : " + marketNo);	//정상 확인
-		//System.out.println("토큰 확인 : " + token);	//로그인 or 로그아웃 상황시 확인완료
-		Map<String,Object> result = marketService.selectLikeInfo(marketNo,token);
-		//System.out.println(result);
-		return ResponseEntity.ok(result);
-	}
 	
+	
+	//좋아요
 	@PostMapping(value="/{marketNo}/likes")
 	public ResponseEntity<?> likeOn(@PathVariable Integer marketNo,@RequestHeader(name="Authorization") String token){
 		int result = marketService.likeOn(marketNo,token);
 		return ResponseEntity.ok(result);
 	}
+	//좋아요 취소
 	@DeleteMapping(value="/{marketNo}/likes")
 	public ResponseEntity<?> likeOff(@PathVariable Integer marketNo,@RequestHeader(name="Authorization") String token){
 		int result = marketService.likeOff(marketNo,token);
+		return ResponseEntity.ok(result);
+	}
+	//신고 취소
+	@DeleteMapping(value="/{marketNo}/reports")
+	public ResponseEntity<?> cancelReport (@PathVariable Integer marketNo,@RequestHeader(name="Authorization") String token ){
+		int result = marketService.cancelReport(marketNo,token);
 		return ResponseEntity.ok(result);
 	}
 	
@@ -239,5 +235,6 @@ public class MarketController {
 		int result = marketService.tradeComplete(marketNo,buyerId);
 		return ResponseEntity.ok(result);
 	}
+	
 	
 }

@@ -126,7 +126,6 @@ public class MarketService {
 	@Transactional // 좋아요 클릭
 	public int likeOn(Integer marketNo, String token) {
 		LoginMember loginMember = jwtUtil.checkToken(token);
-
 		Map<String, Object> params = new HashMap<String, Object>();
 		params.put("marketNo", marketNo);
 		params.put("memberId", loginMember.getMemberId());
@@ -150,18 +149,6 @@ public class MarketService {
 		return fileList;
 	}
 
-	@Transactional
-	public int deleteFileTbl(Integer marketNo) {
-		int result = marketDao.deleteFileTbl(marketNo);
-		return result;
-	}
-	
-	
-	@Transactional
-	public int deleteOneMarket(Integer marketNo) {
-		int result = marketDao.deleteOneMarket(marketNo);
-		return result;
-	}
 	//거래요청 목록조회
 	public List<TradeRequest> selectAllTradeRequest(Integer marketNo) {
 		List<TradeRequest> list = marketDao.selectAllTradeRequest(marketNo);
@@ -180,7 +167,7 @@ public class MarketService {
 		int result3 = marketDao.marketCompleted(marketNo);
 		
 		int result = result1 + result2 + result3;
-		//4. 파일삭제 여부??
+		
 		
 		return result;
 	}
@@ -199,6 +186,26 @@ public class MarketService {
 		LoginMember loginMember = jwtUtil.checkToken(token);
 		String buyerId = loginMember.getMemberId();
 		int result = marketDao.tradeRequestCancel(marketNo,buyerId);
+		return result;
+	}
+
+	//마켓 삭제시 market_tbl 삭제,market_file_tbl 삭제
+	@Transactional
+	public Map<String, Object> deleteOneMarketAndFileTbl(Integer marketNo) {
+		Map<String,Object> serviceResponse = new HashMap<String,Object>();
+		int fileCount = marketDao.deleteFileTbl(marketNo);
+		int result = marketDao.deleteOneMarket(marketNo);
+		serviceResponse.put("fileCount",fileCount);
+		serviceResponse.put("result",result);
+		return serviceResponse;
+	}
+	
+	//신고 취소
+	@Transactional
+	public int cancelReport(Integer marketNo, String token) {
+		LoginMember loginMember = jwtUtil.checkToken(token);
+		String memberId = loginMember.getMemberId();
+		int result = marketDao.cancelReport(marketNo,memberId);
 		return result;
 	}
 
