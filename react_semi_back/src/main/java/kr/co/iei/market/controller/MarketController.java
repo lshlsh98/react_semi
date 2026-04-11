@@ -2,6 +2,7 @@ package kr.co.iei.market.controller;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -21,6 +22,10 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
+
+import jakarta.servlet.http.Cookie;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import kr.co.iei.market.model.service.MarketService;
 import kr.co.iei.market.model.vo.ListItem;
 import kr.co.iei.market.model.vo.ListResponse;
@@ -32,7 +37,9 @@ import kr.co.iei.market.model.vo.TradeRequest;
 
 import kr.co.iei.utils.FileUtils;
 
-@CrossOrigin(value = "*")
+@CrossOrigin(
+	    origins = "http://localhost:5173",
+	    allowCredentials = "true")
 @RestController
 @RequestMapping(value = "/markets")
 
@@ -117,21 +124,39 @@ public class MarketController {
 		return ResponseEntity.ok(result);
 	}
 	
-	//마켓 조회수 업데이트
-	@PatchMapping(value="/{marketNo}/incrementViewCount")
-	public ResponseEntity<?> increamentViewCount(@PathVariable Integer marketNo){
-		int result = marketService.incrementViewCount(marketNo);
-		return ResponseEntity.ok(result);
-	}
-	
 	//마켓 게시물 조회
 	@GetMapping(value = "/{marketNo}")
 	public ResponseEntity<?> selectOneMarket(@PathVariable Integer marketNo,
-			@RequestHeader(required = false, name = "Authorization") String token) {
-		// System.out.println(marketNo);
-
+			@RequestHeader(required = false, name = "Authorization") String token,
+			HttpServletRequest request,
+    		HttpServletResponse response
+			
+			) {
+		// 쿠키 확인
+		Cookie[] cookies = request.getCookies();
+		boolean alreadyViewed = false;
+		if (cookies != null) {
+	        for (Cookie c : cookies) {
+	            if (c.getName().equals("view_" + marketNo)) {
+	                alreadyViewed = true;
+	                break;
+	            }
+	        }
+	    }
+		
+		if(!alreadyViewed) {
+			marketService.incrementViewCount(marketNo);
+			 Cookie cookie = new Cookie("view_" + marketNo, "true");
+		     cookie.setMaxAge(60 * 60); // 1시간 유지
+		     cookie.setPath("/"); // 중요 (전체 경로 적용)
+		     response.addCookie(cookie);
+		}
+		System.out.println("cookies: " + Arrays.toString(cookies));
 		Market m = marketService.selectOneMarket(marketNo, token);
 		// System.out.println(m);
+		if (m == null) {
+	        return ResponseEntity.notFound().build(); // 404
+	    }
 		return ResponseEntity.ok(m);
 	}
 
@@ -152,11 +177,15 @@ public class MarketController {
 		String savepath = root + "market/";
 		// 1. 파일패스 가져오기
 		List<String> fileList = marketService.getFilePath(marketNo);
+		
 		// 2.서비스 처리 (market_file_tbl 삭제, market_tbl 삭제)
 		Map<String, Object> serviceResponse = new HashMap<String, Object>();
+		//2-1 두 쿼리문의 결과를 담아올 객체 생성
 		serviceResponse = marketService.deleteOneMarketAndFileTbl(marketNo);
+		
 		int fileCount = (int) serviceResponse.get("fileCount");
 		int result = (int) serviceResponse.get("result");
+		
 		System.out.println("파일TBL 삭제 결과 (1~10) : " + fileCount);
 		System.out.println("마켓TBL 삭제 결과 (0~1) : " + result);
 		// 3. 파일 삭제

@@ -17,7 +17,7 @@ ol {
 .market_searchbox {
   margin: 24px 0;
   padding: 24px;
-  border-radius: 12px;
+  border-radius: 8px;
   background-color: var(--light);
   display: flex;
   justify-content: center;
@@ -55,13 +55,24 @@ ol {
   flex-shrink: 0;
   padding: 24px;
   background-color: var(--light);
-  border-radius: 12px;
+  border-radius: 8px;
 }
 
+/* 마켓 게시물이 없을때 */
+.no_result{
+  padding : 16px 0;
+  text-align: center; 
+  border-radius: 8px;
+  background-color:  var(--light);
+  color : var(--primary);
+  font-weight: 900;
+}
+
+/* 마켓리스트*/
 .market_list_wrap > ul {
   display: flex;
   flex-direction: column;
-  gap: 12px;
+  gap:12px
 }
 .market_list_wrap > ul > li {
   border-radius: 8px;

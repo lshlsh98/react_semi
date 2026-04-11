@@ -135,7 +135,11 @@ const MarketListPage = () => {
         </div>
 
         <div className={styles.market_list_wrap}>
-          <MarketList marketList={marketList} />
+          {marketList.length === 0 ? (
+            <div className={styles.no_result}>조회된 게시물이 없습니다</div>
+          ) : (
+            <MarketList marketList={marketList} />
+          )}
         </div>
 
         {/* 로그인시 글쓰기 필드 */}
@@ -146,14 +150,17 @@ const MarketListPage = () => {
             </Link>
           )}
         </div>
-        <div className={styles.market_pagination}>
-          <Pagination
-            page={page}
-            totalPage={totalPage}
-            naviSize={5}
-            setPage={setPage}
-          ></Pagination>
-        </div>
+
+        {marketList.length !== 0 && (
+          <div className={styles.market_pagination}>
+            <Pagination
+              page={page}
+              totalPage={totalPage}
+              naviSize={5}
+              setPage={setPage}
+            ></Pagination>
+          </div>
+        )}
       </section>
     </>
   );
@@ -211,26 +218,13 @@ const MarketItem = ({ market }) => {
     }
     return price.toLocaleString() + "원"; // toLocaleString하면 현재 본인의 국가에 해당하는 숫자 표기법을 적용 (예 : 1000000 -> 1,000,000)
   };
-  const viewCountUpAndMove = () => {
-    console.log("조회수증가");
-    axios
-      .patch(
-        `${import.meta.env.VITE_BACKSERVER}/markets/${market.marketNo}/incrementViewCount`,
-      )
-      .then((res) => {
-        if (res.data === 1) {
-          navigate(`/market/view/${market.marketNo}`);
-        }
-      })
-      .catch((err) => {
-        console.log("조회수 증가 실패");
-        navigate(`/market/view/${market.marketNo}`);
-        console.log(err);
-      });
-  };
 
   return (
-    <li onClick={viewCountUpAndMove}>
+    <li
+      onClick={() => {
+        navigate(`/market/view/${market.marketNo}`);
+      }}
+    >
       <div className={styles.market_info_wrap}>
         {market.marketThumb ? (
           <img

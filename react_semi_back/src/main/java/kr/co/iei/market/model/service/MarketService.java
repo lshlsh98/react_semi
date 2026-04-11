@@ -83,7 +83,7 @@ public class MarketService {
 		return marketDao.deleteMarketComment(commentNo);
 	}
 
-	@Transactional
+	
 	public Market selectOneMarket(Integer marketNo, String token) {
 		String memberId = null;
 		if (token != null) {
@@ -92,6 +92,11 @@ public class MarketService {
 		}
 		
 		Market m = marketDao.selectOneMarket(marketNo,memberId);				//market 객체 생성
+		
+		if(m == null) {															//
+		 return null;
+		}
+		
 		List<MarketFile> fileList = marketDao.selectMarketFileList(marketNo);	//파일 리스트 조회
 		m.setFileList(fileList);												//객체에 파일리스트 추가
 		return m;
@@ -206,9 +211,9 @@ public class MarketService {
 	}
 	//조회수 증가
 	@Transactional
-	public int incrementViewCount(Integer marketNo) {
+	public void incrementViewCount(Integer marketNo) {
 		int result = marketDao.incrementViewCount(marketNo);
-		return result;
+		System.out.println("조화수증가 : " + result);
 	}
 	
 	//신고 등록

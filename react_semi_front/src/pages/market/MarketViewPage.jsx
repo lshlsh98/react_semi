@@ -67,12 +67,28 @@ const MarketViewPage = () => {
   useEffect(() => {
     if (!isReady) return;
     axios
-      .get(`${import.meta.env.VITE_BACKSERVER}/markets/${marketNo}`)
+      .get(`${import.meta.env.VITE_BACKSERVER}/markets/${marketNo}`, {
+        withCredentials: true,
+      })
       .then((res) => {
         console.log(res.data);
         setMarket(res.data);
       })
       .catch((err) => {
+        console.log(err);
+        if (err.response && err.response.status === 404) {
+          console.log("존재하지 않는 게시물입니다");
+          Swal.fire({
+            title: "잘못된 요청입니다",
+            icon: "warning",
+            confirmButtonText: "닫기",
+            confirmButtonColor: "var(--primary)",
+          }).then((result) => {
+            if (result.isConfirmed) {
+              navigate("/market");
+            }
+          });
+        }
         console.log(err);
       });
   }, [memberId, marketNo, isReady, tradeRequestList]);
