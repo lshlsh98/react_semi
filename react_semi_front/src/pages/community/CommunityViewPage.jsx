@@ -91,7 +91,7 @@ const CommunityViewPage = () => {
                       src={
                         community.memberThumb
                           ? `${import.meta.env.VITE_BACKSERVER}/member/thumb/${community.memberThumb}`
-                          : userImg
+                          : null
                       }
                     ></img>
                   </div>
@@ -410,9 +410,11 @@ const LikeAndDislikeAndReport = ({ communityNo, communityWriter }) => {
         </div>
       )}
       {memberId !== communityWriter && (
-        <Button className="btn danger" onClick={handleReportClick}>
-          신고하기
-        </Button>
+        <div className={styles.report_btn}>
+          <Button className="btn danger" onClick={handleReportClick}>
+            신고하기
+          </Button>
+        </div>
       )}
       {isReportModalOpen && (
         <div
@@ -431,16 +433,6 @@ const LikeAndDislikeAndReport = ({ communityNo, communityWriter }) => {
               maxLength={200}
               onChange={(e) => {
                 const value = e.target.value;
-
-                if (value.length > 200) {
-                  if (reportReason.length <= 200) {
-                    Swal.fire({
-                      icon: "warning",
-                      title: "최대 200자까지 입력 가능합니다",
-                    });
-                  }
-                  return;
-                }
 
                 setReportReason(value);
               }}

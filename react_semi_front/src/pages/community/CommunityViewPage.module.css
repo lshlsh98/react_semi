@@ -107,17 +107,12 @@
 }
 
 .community_like_wrap,
-.community_dislike_wrap,
-.community_report_btn_wrap {
+.community_dislike_wrap {
   display: inline-flex; /* 아이콘과 텍스트를 한 줄로 묶기 */
   align-items: center;
   gap: 6px; /* 아이콘과 숫자 사이 간격 */
   cursor: pointer;
   font-size: 14px;
-}
-
-.community_report_btn_wrap {
-  cursor: default; /* 신고 아이콘만 cursor: pointer 제외 */
 }
 
 /* 신고 아이콘이랑 신고하기 버튼 간격 */
