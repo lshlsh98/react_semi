@@ -9,6 +9,8 @@ import { Input } from "../../components/ui/Form";
 import InsertPhotoIcon from "@mui/icons-material/InsertPhoto";
 import DeleteIcon from "@mui/icons-material/Delete";
 import { useKakaoPostcode } from "@clroot/react-kakao-postcode";
+
+//tip-tap editor
 import { useEditor, EditorContent } from "@tiptap/react";
 import StarterKit from "@tiptap/starter-kit";
 import { TextStyle } from "@tiptap/extension-text-style";
@@ -44,7 +46,6 @@ const MarketWritePage = () => {
     }
   }, [memberId, memberAddr]);
 
-    
   const [market, setMarket] = useState({
     marketTitle: "",
     marketContent: "",
@@ -66,7 +67,7 @@ const MarketWritePage = () => {
         title: "이미지 파일만 업로드 가능합니다.",
       });
     }
-    /* 최대 이미지 갯수 설정 */
+    /* 최대 이미지 개수 설정 */
     if (files.length + imageFiles.length > 10) {
       Swal.fire({
         icon: "warning",
@@ -93,21 +94,22 @@ const MarketWritePage = () => {
     const newMarket = { ...market, [name]: value };
     setMarket(newMarket);
   };
-  /* 판매제목 함수 */
+
+  /* 판매 제목 함수 */
   const inputMarketTitle = (e) => {
     const name = e.target.name;
     const value = e.target.value;
     if (value.length > 50) {
       Swal.fire({
         icon: "warning",
-        title: "50자 이상 쓸수 없어요.",
+        title: "50자 이상 쓸 수 없어요.",
       });
       return;
     }
     setMarket({ ...market, [name]: value });
   };
 
-  /* 판매금액 함수 */
+  /* 판매 금액 함수 */
   const inputMarketPrice = (e) => {
     const name = e.target.name;
     const value = e.target.value;
@@ -115,14 +117,14 @@ const MarketWritePage = () => {
     if (num < 0) {
       Swal.fire({
         icon: "warning",
-        title: "0원 보다 작게 설정하실수는 없어요!",
+        title: "0원 보다 작게 설정하실 수는 없어요!",
       });
       setMarket({ ...market, [name]: "" });
       return;
     } else if (num > 10000000) {
       Swal.fire({
         icon: "warning",
-        title: "최대 1000만원까지 설정 가능해요!",
+        title: "최대 1,000만원까지 설정 가능해요!",
       });
       setMarket({ ...market, [name]: "" });
       return;
@@ -164,7 +166,7 @@ const MarketWritePage = () => {
     for (let pair of form.entries()) {
       console.log(pair[0], pair[1]);
     }----------------------------------*/
-    
+
     axios
       .post(`${import.meta.env.VITE_BACKSERVER}/markets`, form, {
         headers: {
@@ -187,7 +189,7 @@ const MarketWritePage = () => {
       });
   };
 
-  /* 판매주소*/
+  /* 판매 주소*/
   const detailRef = useRef(null);
 
   const { open } = useKakaoPostcode({
@@ -224,11 +226,11 @@ const MarketWritePage = () => {
           id="sellPrice"
           value={market.sellPrice}
           onChange={inputMarketPrice}
-          placeholder="숫자만입력가능"
+          placeholder="숫자만 입력 가능"
         ></Input>
       </div>
 
-      {/* 거래장소 필드 */}
+      {/* 거래 장소 필드 */}
       <div className={styles.market_input_wrap}>
         <label htmlFor="marketTitle">거래장소</label>
         {/* <input
@@ -264,14 +266,15 @@ const MarketWritePage = () => {
       </div>
       {/* MAP API 영역 */}
       <div className={styles.market_input_wrap}>
-        <label>API 등록예정</label>
+        <label>API 등록 예정</label>
       </div>
+
       {/* 내용 필드 */}
       <div>
         <TextEditor data={market.marketContent} setData={inputMarketContent} />
       </div>
-      {/* 파일첨부 필드 */}
 
+      {/* 파일첨부 필드 */}
       <div className={styles.market_file_wrap}>
         <label
           htmlFor="files"
@@ -327,7 +330,7 @@ const MarketWritePage = () => {
           className="btn primary danger"
           onClick={() => {
             Swal.fire({
-              title: "작성을 취소하시겠어요?.",
+              title: "작성을 취소하시겠어요?",
               icon: "warning",
               showCancelButton: true,
               confirmButtonText: "네",

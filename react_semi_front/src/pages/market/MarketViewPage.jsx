@@ -130,6 +130,33 @@ const MarketViewPage = () => {
     });
   };
 
+  const deleteMarket = () => {
+    Swal.fire({
+      title: "게시글을 삭제하시겠습니까?",
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonText: "삭제",
+      cancelButtonText: "취소",
+      confirmButtonColor: "var(--primary)",
+      cancelButtonColor: "var(--danger)",
+    }).then((result) => {
+      if (result.isConfirmed) {
+        axios
+          .delete(`${import.meta.env.VITE_BACKSERVER}/markets/${marketNo}`)
+          .then((res) => {
+            console.log(res);
+            if (res.data === 1) {
+              Swal.fire("삭제 성공", "게시글이 삭제되었습니다.", "success");
+              navigate("/market");
+            }
+          })
+          .catch((err) => {
+            console.log(err);
+          });
+      }
+    });
+  };
+
   return (
     <main className={styles.main_wrap}>
       {market && (

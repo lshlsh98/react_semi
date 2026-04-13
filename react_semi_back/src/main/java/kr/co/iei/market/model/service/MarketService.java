@@ -65,7 +65,25 @@ public class MarketService {
 		List<Market> list = marketDao.selectMainPageMarketList(order);
 		return list;
 	}
-
+	
+	@Transactional // 거래 게시글 수정 - 장지혁
+	public int updateMarket(Market market, List<MarketFile> addFileList) {
+		int result = marketDao.updateMarket(market);
+		for(MarketFile marketFile : addFileList) {
+			result += marketDao.insertMarketFile(marketFile);
+		}
+		if(market.getDeleteFilePath() != null) {
+			result += marketDao.deleteMarketFileList(market.getDeleteFilePath());
+		}
+		return result;
+	}
+	
+	@Transactional // 거래 게시글 삭제 - 장지혁
+	public int deleteMarket(Integer marketNo) {
+		int result = marketDao.deleteMarket(marketNo);
+		return result;
+	}
+	
 	// 댓글 조회
 	public ListResponse selectMarketCommentList(CommentListItem item) {
 			

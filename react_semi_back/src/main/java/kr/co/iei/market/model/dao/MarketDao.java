@@ -27,9 +27,13 @@ public interface MarketDao {
 	
 	List<Market> selectMainPageMarketList(Integer order);
 	
-	int selectParentCommentCount(CommentListItem req);
-
-	List<MarketComment> selectMarketCommentList(CommentListItem req);
+	int updateMarket(Market market);
+	
+	int deleteMarketFileList(List<String> deleteFilePath);
+	
+	int deleteMarket(Integer marketNo);
+	
+	List<MarketComment> selectMarketCommentList(Integer marketNo);
 	
     int insertMarketComment(MarketComment marketComment);
     

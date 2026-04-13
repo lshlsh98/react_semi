@@ -7,9 +7,9 @@ import Button from "../../components/ui/Button";
 import Swal from "sweetalert2";
 import { TextArea } from "../../components/ui/Form";
 
-import PersonIcon from "@mui/icons-material/Person";
 import CalendarTodayIcon from "@mui/icons-material/CalendarToday";
 import VisibilityIcon from "@mui/icons-material/Visibility";
+import Comment from "@mui/icons-material/Comment";
 
 import ThumbUpAltIcon from "@mui/icons-material/ThumbUpAlt";
 import ThumbUpOffAltIcon from "@mui/icons-material/ThumbUpOffAlt";
@@ -33,7 +33,6 @@ const CommunityViewPage = () => {
     axios
       .get(`${import.meta.env.VITE_BACKSERVER}/communities/${communityNo}`)
       .then((res) => {
-        console.log(res);
         setCommunity(res.data);
       })
       .catch((err) => {
@@ -59,6 +58,7 @@ const CommunityViewPage = () => {
           .then((res) => {
             console.log(res);
             if (res.data === 1) {
+              Swal.fire("삭제 성공", "게시글이 삭제되었습니다.", "success");
               navigate("/community");
             }
           })
@@ -80,17 +80,33 @@ const CommunityViewPage = () => {
               </h2>
               <div className={styles.community_sub_info}>
                 <div className={styles.community_writer}>
-                  <PersonIcon className={styles.icon} />
+                  <div
+                    className={
+                      community.memberThumb
+                        ? styles.member_thumb_exists
+                        : styles.member_thumb
+                    }
+                  >
+                    <img
+                      src={
+                        community.memberThumb
+                          ? `${import.meta.env.VITE_BACKSERVER}/member/thumb/${community.memberThumb}`
+                          : userImg
+                      }
+                    ></img>
+                  </div>
                   <span>{community.communityWriter}</span>
                 </div>
+
                 <div className={styles.community_date}>
                   <CalendarTodayIcon className={styles.icon} />
                   {community.communityDate}
                 </div>
-              </div>
-              <div className={styles.community_view_count}>
-                <VisibilityIcon className={styles.icon} />
-                <span>{community.viewCount}</span>
+
+                <div className={styles.community_view_count}>
+                  <VisibilityIcon className={styles.icon} />
+                  <span>{community.viewCount}</span>
+                </div>
               </div>
             </div>
             <div
@@ -99,10 +115,9 @@ const CommunityViewPage = () => {
             ></div>
           </div>
 
-          <div className={styles.community_action_wrap}>
-            <LikeAndDislikeAndReport communityNo={communityNo} />
+          <div className={styles.community_action_btn_wrap}>
             {memberId && memberId === community.communityWriter && (
-              <div>
+              <div className={styles.button_group}>
                 <Button
                   className="btn primary"
                   onClick={() => {
@@ -120,6 +135,10 @@ const CommunityViewPage = () => {
                 </Button>
               </div>
             )}
+            <LikeAndDislikeAndReport
+              communityNo={communityNo}
+              communityWriter={community.communityWriter}
+            />
           </div>
           <CommunityCommentComponent communityNo={communityNo} />
         </>
@@ -128,7 +147,7 @@ const CommunityViewPage = () => {
   );
 };
 
-const LikeAndDislikeAndReport = ({ communityNo }) => {
+const LikeAndDislikeAndReport = ({ communityNo, communityWriter }) => {
   const { memberId } = useAuthStore();
   const [likeInfo, setLikeInfo] = useState(null);
   const [dislikeInfo, setDislikeInfo] = useState(null);
@@ -143,7 +162,6 @@ const LikeAndDislikeAndReport = ({ communityNo }) => {
         `${import.meta.env.VITE_BACKSERVER}/communities/${communityNo}/likes`,
       )
       .then((res) => {
-        console.log(res);
         setLikeInfo({
           isLike: res.data?.isLike ?? 0,
           likeCount: Number(res.data?.likeCount) || 0,
@@ -154,7 +172,6 @@ const LikeAndDislikeAndReport = ({ communityNo }) => {
         `${import.meta.env.VITE_BACKSERVER}/communities/${communityNo}/dislikes`,
       )
       .then((res) => {
-        console.log(res);
         setDislikeInfo({
           isDislike: res.data?.isDislike ?? 0,
           dislikeCount: Number(res.data?.dislikeCount) || 0,
@@ -265,6 +282,7 @@ const LikeAndDislikeAndReport = ({ communityNo }) => {
       });
   };
 
+  /*
   const reportOn = () => {
     axios
       .post(
@@ -303,6 +321,7 @@ const LikeAndDislikeAndReport = ({ communityNo }) => {
         console.log(err);
       });
   };
+  */
 
   const loginMsg = () => {
     Swal.fire({ title: "로그인 후 이용 가능합니다.", icon: "info" });
@@ -329,26 +348,39 @@ const LikeAndDislikeAndReport = ({ communityNo }) => {
       Swal.fire("신고 사유를 입력해주세요.", "", "warning");
       return;
     }
-    axios
-      .post(
-        `${import.meta.env.VITE_BACKSERVER}/communities/${communityNo}/reports`,
-        {
-          reportReason: reportReason,
-        },
-      )
-      .then((res) => {
-        if (res.data === 1) {
-          setReportInfo({
-            ...reportInfo,
-            isReport: 1,
-            reportCount: reportInfo.reportCount + 1,
-          });
-          Swal.fire("신고가 접수되었습니다.", "", "success");
-          setIsReportModalOpen(false);
-          setReportReason("");
-        }
-      })
-      .catch((err) => console.log(err));
+    Swal.fire({
+      title: "해당 게시글을 \n 정말로 신고하시겠습니까?",
+      text: "신고 후에는 취소할 수 없습니다.",
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonText: "신고",
+      cancelButtonText: "취소",
+      confirmButtonColor: "var(--danger)",
+      cancelButtonColor: "var(--primary)",
+    }).then((result) => {
+      if (!result.isConfirmed) return;
+
+      axios
+        .post(
+          `${import.meta.env.VITE_BACKSERVER}/communities/${communityNo}/reports`,
+          {
+            reportReason: reportReason,
+          },
+        )
+        .then((res) => {
+          if (res.data === 1) {
+            setReportInfo({
+              ...reportInfo,
+              isReport: 1,
+              reportCount: reportInfo.reportCount + 1,
+            });
+            Swal.fire("신고가 접수되었습니다.", "", "success");
+            setIsReportModalOpen(false);
+            setReportReason("");
+          }
+        })
+        .catch((err) => console.log(err));
+    });
   };
 
   return (
@@ -377,19 +409,10 @@ const LikeAndDislikeAndReport = ({ communityNo }) => {
           <span>{dislikeInfo.dislikeCount}</span>
         </div>
       )}
-      {reportInfo && (
-        <div className={styles.community_report_wrap}>
-          {Number(reportInfo.isReport) === 1 ? (
-            <ReportIcon style={{ color: "var(--danger)" }} />
-          ) : (
-            <ReportGmailerrorredIcon />
-          )}
-          <span>{reportInfo.reportCount}</span>
-
-          <Button className="btn danger" onClick={handleReportClick}>
-            신고하기
-          </Button>
-        </div>
+      {memberId !== communityWriter && (
+        <Button className="btn danger" onClick={handleReportClick}>
+          신고하기
+        </Button>
       )}
       {isReportModalOpen && (
         <div
@@ -400,7 +423,7 @@ const LikeAndDislikeAndReport = ({ communityNo }) => {
             className={styles.report_modal}
             onClick={(e) => e.stopPropagation()}
           >
-            <h3>신고하기</h3>
+            <h3>게시글 신고하기</h3>
 
             <TextArea
               placeholder="신고 사유를 입력해주세요 (최대 200자 입력 가능)"
@@ -542,6 +565,11 @@ const CommunityCommentComponent = ({ communityNo }) => {
             <Button className="btn primary" onClick={registComment}>
               등록
             </Button>
+          </div>
+
+          <div className={styles.community_comment_count_wrap}>
+            <Comment className={styles.icon} />
+            <h3>댓글 {communityCommentList.length}개</h3>
           </div>
         </div>
       )}

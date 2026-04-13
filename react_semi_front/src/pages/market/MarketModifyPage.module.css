@@ -1,0 +1,6 @@
+/*컴포넌트 전체 랩*/
+.market_modify_wrap {
+  width: 900px;
+  margin: 12px auto;
+  gap: 12px;
+}
