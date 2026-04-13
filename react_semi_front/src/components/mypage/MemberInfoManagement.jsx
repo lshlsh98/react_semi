@@ -62,7 +62,6 @@ const MemberInfoManagement = () => {
         )
         .then((res) => {
           console.log(res);
-          //useAuthStore.getState().setThumb(res.data); 이거지우면될듯 확인
         })
         .catch((err) => {
           console.log(err);

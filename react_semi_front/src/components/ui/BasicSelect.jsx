@@ -62,7 +62,7 @@ import FormControl from "@mui/material/FormControl";
 import Select from "@mui/material/Select";
 import { useState, useEffect } from "react";
 
-const BasicSelect = ({ state, setState, list }) => {
+const BasicSelect = ({ state, setState, list, onChange }) => {
   const [open, setOpen] = useState(false);
   const [minWidth, setMinWidth] = useState(100); // 기본 최소 width
 
@@ -93,7 +93,10 @@ const BasicSelect = ({ state, setState, list }) => {
       <FormControl size="small" fullWidth>
         <Select
           value={state}
-          onChange={(e) => setState(e.target.value)}
+          onChange={(e) => {
+            setState(e.target.value);
+            onChange?.(e);
+          }}
           // onOpen={() => setOpen(true)}
           // onClose={() => setOpen(false)}
           sx={{

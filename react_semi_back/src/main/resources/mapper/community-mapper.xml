@@ -35,9 +35,12 @@
 		community_status = 1
 
 		<if test="searchType==1">
-			and (community_title like '%'||#{searchKeyword}||'%'
-			or
-			community_content like '%'||#{searchKeyword}||'%')
+			<![CDATA[
+				and (
+       				community_title like '%'||#{searchKeyword}||'%'
+       				or REGEXP_REPLACE(community_content, '<[^>]*>', '')
+          		 	like '%'||#{searchKeyword}||'%'
+      		)]]>
 		</if>
 		<if test="searchType==2">
 			and community_writer = #{searchKeyword}
@@ -68,9 +71,12 @@
 		community_status = 1
 
 		<if test="searchType==1">
-			and (community_title like '%'||#{searchKeyword}||'%'
-			or
-			community_content like '%'||#{searchKeyword}||'%')
+			<![CDATA[
+				and (
+       				community_title like '%'||#{searchKeyword}||'%'
+       				or REGEXP_REPLACE(community_content, '<[^>]*>', '')
+          		 	like '%'||#{searchKeyword}||'%'
+      		)]]>
 		</if>
 		<if test="searchType==2">
 			and community_writer = #{searchKeyword}
