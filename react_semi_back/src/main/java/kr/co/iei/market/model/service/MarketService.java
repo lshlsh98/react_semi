@@ -62,11 +62,6 @@ public class MarketService {
 		return result;
 	}
 
-	// 메인페이지
-	public List<Market> selectMainPageMarketList(Integer order) {
-		List<Market> list = marketDao.selectMainPageMarketList(order);
-		return list;
-	}
 	
 	@Transactional // 거래 게시글 수정 - 장지혁
 	public int updateMarket(Market market, List<MarketFile> addFileList) {
@@ -84,6 +79,12 @@ public class MarketService {
 	public int deleteMarket(Integer marketNo) {
 		int result = marketDao.deleteMarket(marketNo);
 		return result;
+	}
+	
+	// 메인페이지
+	public List<Market> selectMainPageMarketList(Integer order) {
+		List<Market> list = marketDao.selectMainPageMarketList(order);
+		return list;
 	}
 	
 	// 댓글 조회
