@@ -102,30 +102,6 @@ public class MarketService {
 		return m;
 	}
 
-	///사용안함
-	public Map<String, Object> selectLikeInfo(Integer marketNo, String token) {
-
-		int likeCount = marketDao.selectLikeCount(marketNo); // 총 좋아요 수 조회
-		// System.out.println("총 좋아요 수 확인 : " + likeCount);
-
-		Map<String, Object> result = new HashMap<String, Object>();
-		result.put("likeCount", likeCount);
-		if (token != null) {
-			LoginMember loginMember = jwtUtil.checkToken(token);
-			String memberId = loginMember.getMemberId();
-			Map<String, Object> params = new HashMap<String, Object>(); // marketNo,memberId 를 담을 객체 (VO대신)
-			params.put("marketNo", marketNo);
-			params.put("memberId", memberId);
-			int isLike = marketDao.selectIsLike(params);
-			// System.out.println("나의 좋아요 상태 : "+isLike);
-			result.put("isLike", isLike);
-		} else {
-			result.put("isLike", 0);
-		}
-
-		return result;
-	}
-
 	@Transactional // 좋아요 클릭
 	public int likeOn(Integer marketNo, String token) {
 		LoginMember loginMember = jwtUtil.checkToken(token);
