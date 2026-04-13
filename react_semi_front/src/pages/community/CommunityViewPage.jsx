@@ -7,9 +7,8 @@ import Button from "../../components/ui/Button";
 import Swal from "sweetalert2";
 import { TextArea } from "../../components/ui/Form";
 
-import CalendarTodayIcon from "@mui/icons-material/CalendarToday";
+import CalendarMonthIcon from "@mui/icons-material/CalendarMonth";
 import VisibilityIcon from "@mui/icons-material/Visibility";
-import Comment from "@mui/icons-material/Comment";
 
 import ThumbUpAltIcon from "@mui/icons-material/ThumbUpAlt";
 import ThumbUpOffAltIcon from "@mui/icons-material/ThumbUpOffAlt";
@@ -43,10 +42,10 @@ const CommunityViewPage = () => {
       title: "게시글을 삭제하시겠습니까?",
       icon: "warning",
       showCancelButton: true,
-      confirmButtonText: "삭제",
-      cancelButtonText: "취소",
-      confirmButtonColor: "var(--primary)",
-      cancelButtonColor: "var(--danger)",
+      confirmButtonText: "네",
+      cancelButtonText: "아니오",
+      confirmButtonColor: "var(--danger)",
+      cancelButtonColor: "var(--primary)",
     }).then((result) => {
       if (result.isConfirmed) {
         axios
@@ -85,20 +84,20 @@ const CommunityViewPage = () => {
                         : styles.member_thumb
                     }
                   >
-                    <img
-                      src={
-                        community.memberThumb
-                          ? `${import.meta.env.VITE_BACKSERVER}/member/thumb/${community.memberThumb}`
-                          : null
-                      }
-                    ></img>
+                    {community.memberThumb ? (
+                      <img
+                        src={`${import.meta.env.VITE_BACKSERVER}/semi/${community.memberThumb}`}
+                      ></img>
+                    ) : (
+                      <span className="material-icons">account_circle</span>
+                    )}
                   </div>
                   <span>{community.communityWriter}</span>
                 </div>
 
                 <div className={styles.community_date}>
-                  <CalendarTodayIcon className={styles.icon} />
-                  {community.communityDate}
+                  <CalendarMonthIcon className={styles.icon} />
+                  <span>{community.communityDate}</span>
                 </div>
 
                 <div className={styles.community_view_count}>
@@ -313,8 +312,8 @@ const LikeAndDislikeAndReport = ({ communityNo, communityWriter }) => {
       text: "신고 후에는 취소할 수 없습니다.",
       icon: "warning",
       showCancelButton: true,
-      confirmButtonText: "신고",
-      cancelButtonText: "취소",
+      confirmButtonText: "네",
+      cancelButtonText: "아니오",
       confirmButtonColor: "var(--danger)",
       cancelButtonColor: "var(--primary)",
     }).then((result) => {
@@ -389,16 +388,18 @@ const LikeAndDislikeAndReport = ({ communityNo, communityWriter }) => {
             <h3>게시글 신고하기</h3>
 
             <TextArea
-              placeholder="신고 사유를 입력해주세요 (최대 200자 입력 가능)"
+              placeholder="신고 사유를 입력해주세요 (최대 1,000자 입력 가능)"
               value={reportReason}
-              maxLength={200}
+              maxLength={1000}
               onChange={(e) => {
                 const value = e.target.value;
 
                 setReportReason(value);
               }}
             />
-            <div className={styles.text_count}>{reportReason.length} / 200</div>
+            <div className={styles.text_count}>
+              {reportReason.length} / 1000
+            </div>
 
             <div className={styles.modal_btn_wrap}>
               <Button className="btn danger" onClick={submitReport}>
