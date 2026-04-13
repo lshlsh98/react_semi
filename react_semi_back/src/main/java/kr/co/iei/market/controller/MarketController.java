@@ -132,6 +132,12 @@ public class MarketController {
     		HttpServletResponse response
 			
 			) {
+		
+		Market m = marketService.selectOneMarket(marketNo, token);
+		// System.out.println(m);
+		if (m == null) {
+	        return ResponseEntity.notFound().build(); 					// err.response.status 404 전달 및 프론트에서 처리 
+	    }
 		// 쿠키 확인
 		Cookie[] cookies = request.getCookies();
 		boolean alreadyViewed = false;
@@ -143,20 +149,16 @@ public class MarketController {
 	            }
 	        }
 	    }
-		
+		String message = alreadyViewed ? "봤음" : "안봤음";
+		System.out.println("게시글 확인 체크 : " + message);
+				
 		if(!alreadyViewed) {
 			marketService.incrementViewCount(marketNo);
 			 Cookie cookie = new Cookie("view_" + marketNo, "true");
-		     cookie.setMaxAge(60 * 60); // 1시간 유지
-		     cookie.setPath("/"); // 중요 (전체 경로 적용)
+		     cookie.setMaxAge(60 * 60); 								// 1시간 유지
+		     cookie.setPath("/"); 										// (전체 경로 적용)
 		     response.addCookie(cookie);
 		}
-		System.out.println("cookies: " + Arrays.toString(cookies));
-		Market m = marketService.selectOneMarket(marketNo, token);
-		// System.out.println(m);
-		if (m == null) {
-	        return ResponseEntity.notFound().build(); // 404
-	    }
 		return ResponseEntity.ok(m);
 	}
 
@@ -236,7 +238,6 @@ public class MarketController {
 	public ResponseEntity<?> cancelReport(@PathVariable Integer marketNo,
 			@RequestHeader(name = "Authorization") String token) {
 		int result = marketService.cancelReport(marketNo, token);
-		System.out.println("신고취소 결과 : " + result);
 		return ResponseEntity.ok(result);
 	}
 

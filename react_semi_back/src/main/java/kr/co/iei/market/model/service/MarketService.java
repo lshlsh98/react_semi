@@ -170,8 +170,7 @@ public class MarketService {
 		int result3 = marketDao.marketCompleted(marketNo);
 		
 		int result = result1 + result2 + result3;
-		
-		
+				
 		return result;
 	}
 
@@ -212,8 +211,7 @@ public class MarketService {
 	//조회수 증가
 	@Transactional
 	public void incrementViewCount(Integer marketNo) {
-		int result = marketDao.incrementViewCount(marketNo);
-		System.out.println("조화수증가 : " + result);
+		marketDao.incrementViewCount(marketNo);
 	}
 	
 	//신고 등록

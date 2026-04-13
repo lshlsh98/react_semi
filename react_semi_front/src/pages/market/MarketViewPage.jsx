@@ -321,7 +321,6 @@ const MarketViewPage = () => {
       .post(`${import.meta.env.VITE_BACKSERVER}/markets/${marketNo}/likes`)
       .then((res) => {
         if (res.data === 1) {
-          console.log("좋아요 완료");
           setMarket({ ...market, isLike: 1, likeCount: market.likeCount + 1 });
         }
       })
@@ -333,7 +332,6 @@ const MarketViewPage = () => {
       .delete(`${import.meta.env.VITE_BACKSERVER}/markets/${marketNo}/likes`)
       .then((res) => {
         if (res.data === 1) {
-          console.log("좋아요 취소");
           setMarket({ ...market, isLike: 0, likeCount: market.likeCount - 1 });
         }
       })
