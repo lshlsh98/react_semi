@@ -31,8 +31,13 @@ const LikeDislike = () => {
   }, [page, order, status]);
 
   useEffect(() => {
-    setPage(0);
-  }, [order, status]);
+    window.scrollTo({
+      top: 0,
+      behavior: "smooth",
+    });
+  }, [page]);
+
+  useEffect(() => {}, [page]);
 
   return (
     <div className={styles.myboard_wrap}>

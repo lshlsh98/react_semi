@@ -7,17 +7,19 @@
   width: 700px;
   display: flex;
   flex-direction: column;
-  gap: 5px;
-  margin-bottom: 30px;
-  border: 1px solid var(--gray4);
-  border-radius: 8px;
+  border-bottom: 1px solid var(--gray4);
   padding: 10px;
+}
+
+.item_wrap:first-child .comment_wrap {
+  border-top: 1px solid var(--gray4);
 }
 
 .comment_writer {
   display: flex;
   gap: 5px;
   align-items: center;
+  justify-content: space-between;
 }
 
 .member_thumb {
@@ -83,9 +85,7 @@
 
 .comment_btn_section {
   display: flex;
-  flex-direction: column;
   gap: 10px;
-  height: 141px;
 }
 
 .comment_actions div {
@@ -96,19 +96,16 @@
 }
 
 .comment_btn {
-  width: 50px;
-  height: 50px;
-  border: 1px solid black;
-  border-radius: 8px;
   cursor: pointer;
   display: flex;
   align-items: center;
   justify-content: center;
+  font-size: 15px;
+  color: var(--gray2);
 }
 
 .comment_btn:hover {
-  background-color: var(--gray0);
-  color: var(--gray8);
+  text-decoration: underline;
 }
 
 .textarea {
@@ -189,4 +186,20 @@
   background: white;
   padding: 20px;
   border-radius: 8px;
+}
+
+.comment_date {
+  font-size: 13px;
+  color: var(--gray5);
+}
+
+.edited {
+  font-size: 13px;
+  color: var(--gray5);
+}
+
+.writer {
+  display: flex;
+  gap: 5px;
+  align-items: center;
 }

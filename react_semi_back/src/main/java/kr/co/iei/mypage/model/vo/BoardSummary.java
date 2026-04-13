@@ -35,5 +35,6 @@ public class BoardSummary {
 	private String completedDate;
 	
 	private String boardType;
+	private Integer writerGrade;
 }
 

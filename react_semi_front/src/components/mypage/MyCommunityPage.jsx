@@ -43,6 +43,13 @@ const MyCommunityPage = () => {
     setPage(0);
   }, [order, status, notice, searchKeyword]);
 
+  useEffect(() => {
+    window.scrollTo({
+      top: 0,
+      behavior: "smooth",
+    });
+  }, [page]);
+
   return (
     <div className={styles.myboard_wrap}>
       <h3 className="page-title">커뮤니티 게시글 관리</h3>
