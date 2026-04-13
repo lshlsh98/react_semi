@@ -79,7 +79,7 @@ const MarketViewPage = () => {
         if (err.response && err.response.status === 404) {
           console.log("존재하지 않는 게시물입니다");
           Swal.fire({
-            title: "잘못된 요청입니다",
+            title: "잘못된 요청입니다.",
             icon: "warning",
             confirmButtonText: "닫기",
             confirmButtonColor: "var(--primary)",

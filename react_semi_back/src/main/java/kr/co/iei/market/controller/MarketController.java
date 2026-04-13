@@ -116,15 +116,22 @@ public class MarketController {
 	@GetMapping(value = "/{marketNo:\\d+}")
 	public ResponseEntity<?> selectOneMarket(@PathVariable Integer marketNo,
 			@RequestHeader(required = false, name = "Authorization") String token, HttpServletRequest request,
-			HttpServletResponse response
-
-	) {
+			HttpServletResponse response) {
 
 		Market m = marketService.selectOneMarket(marketNo, token);
 		if (m == null) {
 			return ResponseEntity.notFound().build();
-			// err.response.status 404 전달 및 프론트에서 처리
+			// err.response.status 404 전달 및 프론트에서 alert 후 목록으로 이동처리
 		}
+
+		int completed = m.getCompleted(); // 거래완료여부 -> 0 :거래미완료 1 : 거래완료 (not null)
+		int status = m.getMarketStatus(); // 공개상태 -> 1 : 공개 2: 비공개 (not null)
+
+		if (completed == 1 || status == 2) {
+			System.out.println("\n완료여부 : "+ completed + " / 공개상태 : "+status);
+			return ResponseEntity.ok(m); // 거래완료 or 비공개 게시글은 조회수 증가없이 리턴
+		}
+
 		// 쿠키 확인
 		Cookie[] cookies = request.getCookies();
 		boolean alreadyViewed = false;
@@ -137,20 +144,21 @@ public class MarketController {
 			}
 		}
 		String message = alreadyViewed ? "본게시글" : "안본 게시글";
-		System.out.println("\n(쿠키시간 "+(cookieTime)/60+"분)게시글 확인 체크 : " + message);
+		System.out.println("\n"+marketNo+" 번글 - (쿠키시간 " + (cookieTime) / 60 + "분)게시글 확인 체크 : " + message);
 
 		if (!alreadyViewed) {
-			marketService.incrementViewCount(marketNo);
+			int result = marketService.incrementViewCount(marketNo);
+			if (result == 1) {
+				System.out.println("\n"+marketNo + " 번글 : 조회수 증가");
+			}
 			Cookie cookie = new Cookie("view_" + marketNo, "true");
 			cookie.setMaxAge(cookieTime); // 쿠키시간설정
 			cookie.setPath("/"); // (전체 경로 적용)
 			response.addCookie(cookie);
-			//m.setViewCount(m.getViewCount() +1); 잘못된 보정
-			//증가된 조회수값 전송
-			m = marketService.selectOneMarket(marketNo, token);
+			m.setViewCount(m.getViewCount() +1);
+			
 		}
-		
-		
+
 		return ResponseEntity.ok(m);
 	}
 
@@ -164,13 +172,13 @@ public class MarketController {
 		}
 		return false;
 	}
-	
-	//게시글 삭제
+
+	// 게시글 삭제
 	@DeleteMapping(value = "/{marketNo}")
 	public ResponseEntity<?> deleteOneMarket(@PathVariable Integer marketNo) {
 		// 1. 파일패스 가져오기
 		List<String> fileList = marketService.getFilePath(marketNo);
-		
+
 		// 2.서비스 처리 (market_file_tbl 삭제, market_tbl 삭제)
 		Map<String, Object> serviceResponse = new HashMap<String, Object>();
 		serviceResponse = marketService.deleteOneMarketAndFileTbl(marketNo);
@@ -178,7 +186,7 @@ public class MarketController {
 		int result = (int) serviceResponse.get("result");
 		System.out.println("\n 파일TBL 삭제 결과 (1~10) : " + fileCount);
 		System.out.println("마켓TBL 삭제 결과 (0~1) : " + result);
-		
+
 		// 3. 파일 삭제
 		String savepath = root + "market/";
 		boolean allDeleted = true;

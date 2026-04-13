@@ -192,8 +192,9 @@ public class MarketService {
 	}
 	//조회수 증가
 	@Transactional
-	public void incrementViewCount(Integer marketNo) {
-		marketDao.incrementViewCount(marketNo);
+	public int incrementViewCount(Integer marketNo) {
+		int result = marketDao.incrementViewCount(marketNo);
+		return result;
 	}
 	
 	//신고 등록
