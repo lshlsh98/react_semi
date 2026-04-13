@@ -16,6 +16,7 @@ const MyBoardItem = ({
   setBoardList,
   status,
   isAdminMode,
+  timeAgo,
 }) => {
   const [contentStatus, setContentStatus] = useState(board.contentStatus);
 
@@ -89,7 +90,7 @@ const MyBoardItem = ({
         <div className={styles.item_title}>{board.title}</div>
         <div className={styles.item_info}>
           <div>{`${board.writerName} [${board.writerId}]`}</div>
-          <div>{board.contentDate}</div>
+          <div>{timeAgo(board.contentDate)}</div>
         </div>
         <div className={styles.item_actions}>
           <Actions board={board} isAdminMode={isAdminMode} />
