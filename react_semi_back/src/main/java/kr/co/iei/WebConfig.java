@@ -17,7 +17,7 @@ public class WebConfig implements WebMvcConfigurer {
         // "file:///" 대신 "file:" 로 바꿨습니다
     	registry 
         .addResourceHandler("/editor/**")						// 요청 패턴
-        .addResourceLocations("file:///" + root + "editor/");		// 실제 경로
+        .addResourceLocations("file:///" + root + "editor/");	// 실제 경로
     
     registry
         .addResourceHandler("/semi/**")							// 요청 패턴

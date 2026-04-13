@@ -35,9 +35,12 @@
 		community_status = 1
 
 		<if test="searchType==1">
-			and (community_title like '%'||#{searchKeyword}||'%'
-			or
-			community_content like '%'||#{searchKeyword}||'%')
+			<![CDATA[
+				and (
+       				community_title like '%'||#{searchKeyword}||'%'
+       				or REGEXP_REPLACE(community_content, '<[^>]*>', '')
+          		 	like '%'||#{searchKeyword}||'%'
+      		)]]>
 		</if>
 		<if test="searchType==2">
 			and community_writer = #{searchKeyword}
@@ -68,9 +71,12 @@
 		community_status = 1
 
 		<if test="searchType==1">
-			and (community_title like '%'||#{searchKeyword}||'%'
-			or
-			community_content like '%'||#{searchKeyword}||'%')
+			<![CDATA[
+				and (
+       				community_title like '%'||#{searchKeyword}||'%'
+       				or REGEXP_REPLACE(community_content, '<[^>]*>', '')
+          		 	like '%'||#{searchKeyword}||'%'
+      		)]]>
 		</if>
 		<if test="searchType==2">
 			and community_writer = #{searchKeyword}
@@ -106,12 +112,13 @@
 
 	<select id="selectOneCommunity" resultType="community">
 		select
-		community_no,
-		community_title,
-		community_content,
-		community_writer,
-		view_count,
-		to_char(community_date,'yyyy-mm-dd') as community_date
+			community_no,
+			community_title,
+			community_content,
+			community_writer,
+			view_count,
+			member_thumb,
+			to_char(community_date,'yyyy-mm-dd') as community_date
 		from community_tbl
 		join member_tbl on
 		(community_writer = member_id)

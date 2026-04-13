@@ -11,6 +11,8 @@ import kr.co.iei.market.model.vo.Market;
 import kr.co.iei.market.model.vo.MarketComment;
 import kr.co.iei.market.model.vo.MarketCommentReport;
 import kr.co.iei.market.model.vo.MarketFile;
+import kr.co.iei.market.model.vo.MarketReport;
+import kr.co.iei.market.model.vo.TradeRequest;
 
 @Mapper
 public interface MarketDao {
@@ -27,9 +29,13 @@ public interface MarketDao {
 	
 	List<Market> selectMainPageMarketList(Integer order);
 	
-	int selectParentCommentCount(CommentListItem req);
-
-	List<MarketComment> selectMarketCommentList(CommentListItem req);
+	int updateMarket(Market market);
+	
+	int deleteMarketFileList(List<String> deleteFilePath);
+	
+	int deleteMarket(Integer marketNo);
+	
+	List<MarketComment> selectMarketCommentList(Integer marketNo);
 	
     int insertMarketComment(MarketComment marketComment);
     
@@ -58,5 +64,27 @@ public interface MarketDao {
 	int deleteFileTbl(Integer marketNo);
 
 	int deleteOneMarket(Integer marketNo);
+
+	List<TradeRequest> selectAllTradeRequest(Integer marketNo);
+
+	int tradeAccepted(Integer marketNo, String buyerId);
+
+	int tradeReject(Integer marketNo, String buyerId);
+
+	int marketCompleted(Integer marketNo);
+
+	int tradeRequest(TradeRequest request);
+
+	int tradeRequestCancel(Integer marketNo, String buyerId);
+
+	int cancelReport(Integer marketNo, String memberId);
+
+	int pushReport(MarketReport marketReport);
+
+	int selectParentCommentCount(CommentListItem item);
+
+	List<MarketComment> selectMarketCommentList(CommentListItem item);
+	
+
 	
 }

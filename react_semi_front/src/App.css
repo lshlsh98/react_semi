@@ -30,6 +30,11 @@ body {
   --gray6: #d6d6d6;
   --gray7: #efefef;
   --gray8: #ffffff;
+
+  /* 좋아요 버튼용 pink 추가*/
+  --pink1: #f48fb1; /*벚꽃*/
+  --pink2: #f06292; /*코랄벚꽃*/
+  --pink3: #ec407a; /*파스텔로즈*/
 }
 
 body {

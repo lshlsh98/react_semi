@@ -53,8 +53,8 @@ const MarketListPage = () => {
         setTotalPage(res.data.totalPage);
       })
       .catch((err) => {
-        console.log("에러발생");
-        console.log(err.data);
+        console.log("리스트 조회 실패");
+        console.log(err);
       });
   }, [page, size, status, order, searchType, searchKeyword, location]);
 
@@ -135,7 +135,11 @@ const MarketListPage = () => {
         </div>
 
         <div className={styles.market_list_wrap}>
-          <MarketList marketList={marketList} />
+          {marketList.length === 0 ? (
+            <div className={styles.no_result}>조회된 게시물이 없습니다</div>
+          ) : (
+            <MarketList marketList={marketList} />
+          )}
         </div>
 
         {/* 로그인시 글쓰기 필드 */}
@@ -146,14 +150,17 @@ const MarketListPage = () => {
             </Link>
           )}
         </div>
-        <div className={styles.market_pagination}>
-          <Pagination
-            page={page}
-            totalPage={totalPage}
-            naviSize={5}
-            setPage={setPage}
-          ></Pagination>
-        </div>
+
+        {marketList.length !== 0 && (
+          <div className={styles.market_pagination}>
+            <Pagination
+              page={page}
+              totalPage={totalPage}
+              naviSize={5}
+              setPage={setPage}
+            ></Pagination>
+          </div>
+        )}
       </section>
     </>
   );
@@ -177,12 +184,41 @@ const MarketItem = ({ market }) => {
   /* 이미지 매핑 */
   const imgUrl = "http://192.168.31.24:9999/market";
 
+  const timeAgo = (dateString) => {
+    if (!dateString) {
+      return "";
+    }
+
+    const postDate = new Date(dateString); // postDate : 게시글 올린 date(날짜, 시간등)
+    const now = new Date(); // now : 지금(현재 날짜, 시간등)
+
+    const diffInSeconds = Math.floor((now - postDate) / 1000); // 현재 시간과 게시글 시간의 차이를 초 단위로 계산
+
+    if (diffInSeconds < 60) {
+      return "방금 전";
+    } else if (diffInSeconds < 3600) {
+      const minutes = Math.floor(diffInSeconds / 60);
+      return `${minutes}분 전`;
+    } else if (diffInSeconds < 86400) {
+      const hours = Math.floor(diffInSeconds / 3600);
+      return `${hours}시간 전`;
+    } else if (diffInSeconds < 2592000) {
+      const days = Math.floor(diffInSeconds / 86400);
+      return `${days}일 전`;
+    } else {
+      // __.split(" ") : " " 즉 공백을 기준을 자름. 현재 dateString은 예시로 ["2026-04-03", "15:30:00"] 이런식으로 찍힘. 즉 날짜와 시간 사이에 공백이 있음.
+      // 그중에 0번 즉 첫번쨰 값을 가져옴 -> 날짜 예시에서의 "2026-04-03"
+      return dateString.split(" ")[0];
+    }
+  };
+
   const formatPrice = (price) => {
     if (price === 0) {
       return "무료나눔";
     }
     return price.toLocaleString() + "원"; // toLocaleString하면 현재 본인의 국가에 해당하는 숫자 표기법을 적용 (예 : 1000000 -> 1,000,000)
   };
+
   return (
     <li
       onClick={() => {
@@ -212,7 +248,7 @@ const MarketItem = ({ market }) => {
           >
             {formatPrice(market.sellPrice)}
           </p>
-          <p className={styles.info_date}>{market.marketDate.slice(0, 10)}</p>
+          <p className={styles.info_date}>{timeAgo(market.marketDate)}</p>
           <p className={styles.info_writer}>{market.marketWriter}</p>
           <span className={styles.info_likeCount}>
             <FavoriteIcon className={styles.info_likeCount_icon} />

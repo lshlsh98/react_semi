@@ -98,6 +98,7 @@ public class CommunityService {
 		Map<String, Object> map = new HashMap<String,Object>();
 		map.put("communityNo", communityNo);
 		map.put("memberId", login.getMemberId());
+		communityDao.deleteDislike(map);
 		int result = communityDao.insertLike(map);
 		return result;
 	}
@@ -137,6 +138,7 @@ public class CommunityService {
 		Map<String, Object> map = new HashMap<String, Object>();
 		map.put("communityNo", communityNo);
 		map.put("memberId", login.getMemberId());
+		communityDao.deleteLike(map);
 		int result = communityDao.insertDislike(map);
 		return result;
 	}

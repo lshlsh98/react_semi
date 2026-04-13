@@ -20,6 +20,7 @@ import CommunityListPage from "./pages/community/CommunityListPage";
 import MainPage from "./pages/main/MainPage";
 import CommunityModifyPage from "./pages/community/CommunityModifyPage";
 import CommunityViewPage from "./pages/community/CommunityViewPage";
+import MarketModifyPage from "./pages/market/MarketModifyPage";
 
 function App() {
   const { endTime, token } = useAuthStore(); // endTime = 만료시간, token = 걍 토큰
@@ -69,6 +70,10 @@ function App() {
           <Route path="/market" element={<MarketListPage />} />
           <Route path="/market/writeFrm" element={<MarketWritePage />} />
           <Route path="/market/view/:marketNo" element={<MarketViewPage />} />
+          <Route
+            path="/market/modify/:marketNo"
+            element={<MarketModifyPage />}
+          />
 
           <Route path="/member/mypage/*" element={<Mypage />} />
 

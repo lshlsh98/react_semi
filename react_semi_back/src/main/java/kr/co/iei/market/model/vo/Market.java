@@ -29,6 +29,7 @@ public class Market {
 	private Integer isLike;			//좋아요 여부
 	private Integer reportCount;	//신고 수
 	private Integer isReport;		//신고 여부
+	private Integer isRequest;		//거래 요청여부
 	private List<MarketFile> fileList;
 	private List<String> deleteFilePath;
 }
