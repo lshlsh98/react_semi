@@ -64,16 +64,38 @@ const MarketComment = ({ marketNo, memberId, marketWriter }) => {
   const handleFilterChange = (value) => {
     setFilterType(value);
     setPage(0);
+    scrollToCommentTop();
   };
 
   const handleOrderChange = (value) => {
     setOrderType(value);
     setPage(0);
+    scrollToCommentTop();
+  };
+
+  const handlePageChange = (newPage) => {
+    setPage(newPage);
+    scrollToCommentTop();
   };
 
   const { memberThumb } = useAuthStore(); // 새 댓글 작성할때 프사뜨게 하기 위해 가져옴
 
   const commentWrapRef = useRef(null); // 댓글 입력시 댓글 상단으로 스크롤하기위해 스크롤할 위치를 잡을 Ref
+
+  // 화면 갱신이후에 상단으로 부드럽게 스크롤하는 함수 -> 새댓글 작성, 페이지 넘김등에서 쓰기위해
+  const scrollToCommentTop = () => {
+    if (commentWrapRef.current) {
+      const headerOffset = 148; // 헤더 + 메뉴바의 전체 높이
+
+      // 현재 요소의 위치를 계산해서 헤더 높이만큼 빼줌
+      const elementPosition =
+        commentWrapRef.current.getBoundingClientRect().top; // getBoundingCliendRect().top : 내 브라우저 화면 맨 위를 기준으로, 이 댓글창이 얼마나 아래에 있는지를 픽셀단위로 가져옴( ref를 현재 댓글 컴포넌트 상단에 두었으니 내 브라우저에서부터의 거리를 상단이랑 잼)
+      const offsetPosition = elementPosition + window.scrollY - headerOffset; // window.scrollY : 웹페이지 맨 꼭대기에서부터 얼마나 스크롤을 내렸는지 값 가져옴.
+
+      // 계산된 위치로 부드럽게 이동
+      window.scrollTo({ top: offsetPosition, behavior: "smooth" });
+    }
+  };
 
   // 댓글 목록 가져오기
   const fetchComments = () => {
@@ -144,23 +166,7 @@ const MarketComment = ({ marketNo, memberId, marketWriter }) => {
 
         fetchComments(); // 화면 갱신을 위해 목록 다시 불러오기
 
-        // 화면 갱신이후에 상단으로 부드럽게 스크롤
-        if (commentWrapRef.current) {
-          // 헤더 + 메뉴바의 전체 높이
-          const headerOffset = 148;
-
-          // 현재 요소의 위치를 계산해서 헤더 높이만큼 빼줌
-          const elementPosition =
-            commentWrapRef.current.getBoundingClientRect().top; // getBoundingCliendRect().top : 내 브라우저 화면 맨 위를 기준으로, 이 댓글창이 얼마나 아래에 있는지를 픽셀단위로 가져옴( ref를 현재 댓글 컴포넌트 상단에 두었으니 내 브라우저에서부터의 거리를 상단이랑 잼)
-          const offsetPosition =
-            elementPosition + window.scrollY - headerOffset; // window.scrollY : 웹페이지 맨 꼭대기에서부터 얼마나 스크롤을 내렸는지 값 가져옴.
-
-          // 계산된 위치로 부드럽게 이동
-          window.scrollTo({
-            top: offsetPosition,
-            behavior: "smooth",
-          });
-        }
+        scrollToCommentTop();
       })
       .catch((err) => {
         console.log("댓글 작성 실패:", err);
@@ -284,7 +290,7 @@ const MarketComment = ({ marketNo, memberId, marketWriter }) => {
       <div className={styles.pagination_area}>
         <Pagination
           page={page}
-          setPage={setPage}
+          setPage={handlePageChange}
           totalPage={totalPage}
           naviSize={5} // 아래쪽에 1 2 3 4 5 처럼 5개씩 띄우기
         />
@@ -440,15 +446,42 @@ const CommentItem = ({
       title: "신고하기",
       html: `
         <textarea id="report-reason" class="swal2-textarea" 
-          placeholder="신고 사유를 입력해주세요 (최대 200자)" 
-          maxlength="200" 
+          placeholder="신고 사유를 입력해주세요 (최대 1000자)" 
+          maxlength="1000" 
           style="width: 85%; height: 100px; resize: none; font-size: 14px; margin-top: 10px;"></textarea>
+        <div id="report-counter" style="text-align: right; width: 85%; margin: 5px auto 0; font-size: 13px; color: var(--gray4);">
+          0/1000
+        </div>
       `,
       showCancelButton: true,
       confirmButtonText: "신고",
       cancelButtonText: "취소",
       confirmButtonColor: "var(--danger)",
       cancelButtonColor: "var(--gray5)",
+
+      allowOutsideClick: false, // 배경(바깥쪽) 클릭해도 안 닫힘
+      allowEscapeKey: false, // Esc 눌러도 안 닫힘
+
+      // sweetalert으로 실시간으로 현재 글자수를 띄우기위해 값을 계산해서 addEvent로 input에 넣어주기 위한 함수
+      divInput: () => {
+        // 위의 sweetalert의 html 요소들 가져오기
+        const textarea = document.getElementById("report-reason");
+        const counter = document.getElementById("report-counter");
+
+        // 가져온 값을 넣어줌
+        textarea.addEventListener("input", (e) => {
+          const currentLength = e.target.value.length;
+          counter.innerText = `${currentLength}/1000`;
+
+          // 1000자가 꽉 차면 빨간색으로 변경
+          if (currentLength >= 1000) {
+            counter.style.color = "var(--danger)";
+          } else {
+            counter.style.color = "var(--gray4)";
+          }
+        });
+      },
+
       preConfirm: () => {
         // 확인 버튼 눌렀을 때 텍스트 박스 내용 긁어오기 외부 - 라이브러리여서 찾아보고 이렇게 사용
         const reason = document.getElementById("report-reason").value;
