@@ -44,9 +44,7 @@ import kr.co.iei.market.model.vo.TradeRequest;
 
 import kr.co.iei.utils.FileUtils;
 
-@CrossOrigin(
-	    origins = "http://localhost:5173",
-	    allowCredentials = "true")
+@CrossOrigin(origins = "http://localhost:5173", allowCredentials = "true")
 @RestController
 @RequestMapping(value = "/markets")
 
@@ -99,6 +97,7 @@ public class MarketController {
 
 		return ResponseEntity.ok(result);
 	}
+
 	// 메인 페이지용 5개 리스트 조회 - 이영민
 	@GetMapping("/main")
 	public ResponseEntity<?> selectMainPageMarketList(@RequestParam Integer order) {
@@ -108,84 +107,75 @@ public class MarketController {
 	}
 
 	// 1. 특정 게시글의 댓글 목록 조회 - 이영민
-	@GetMapping(value="/{marketNo}/comments")
-	public ResponseEntity<?> selectMarketCommentList(@PathVariable Integer marketNo, @ModelAttribute CommentListItem item) {
+	@GetMapping(value = "/{marketNo}/comments")
+	public ResponseEntity<?> selectMarketCommentList(@PathVariable Integer marketNo,
+			@ModelAttribute CommentListItem item) {
 		item.setMarketNo(marketNo);
 		ListResponse response = marketService.selectMarketCommentList(item);
 		return ResponseEntity.ok(response);
 	}
 
-    // 2. 댓글 작성 (대댓글 포함) - 이영민
-    @PostMapping(value="/comments")
-    public ResponseEntity<?> insertMarketComment(@RequestBody MarketComment marketComment) {
-        int result = marketService.insertMarketComment(marketComment);
-        return ResponseEntity.ok(result);
-    }
-
-    // 3. 댓글 삭제 - 이영민
-    @DeleteMapping(value="/comments/{commentNo}")
-    public ResponseEntity<?> deleteMarketComment(@PathVariable Integer commentNo) {
-        int result = marketService.deleteMarketComment(commentNo);
-        return ResponseEntity.ok(result);
-    }
-    
-    // 4. 댓글 수정 - 이영민
-    @PatchMapping(value="/comments")
-    public ResponseEntity<?> updateMarketComment(@RequestBody MarketComment marketComment) {
-        int result = marketService.updateMarketComment(marketComment);
-        return ResponseEntity.ok(result);
-    }
-	
-    // 5. 댓글 신고 - 이영민
-    @PostMapping(value="/comments/reports")
-    public ResponseEntity<?> insertMarketCommentReport(@RequestBody MarketCommentReport report) {
-        int result = marketService.insertMarketCommentReport(report);
-        return ResponseEntity.ok(result);
-    }
-    
-	@GetMapping(value="/{marketNo}")
-	public ResponseEntity<?> selectOneMarket(@PathVariable Integer marketNo ,@RequestHeader(required = false,name="Authorization") String token){
-		//System.out.println(marketNo);
-		
-		Market m = marketService.selectOneMarket(marketNo,token);
-		//System.out.println(m);
-		return ResponseEntity.ok(m);
+	// 2. 댓글 작성 (대댓글 포함) - 이영민
+	@PostMapping(value = "/comments")
+	public ResponseEntity<?> insertMarketComment(@RequestBody MarketComment marketComment) {
+		int result = marketService.insertMarketComment(marketComment);
+		return ResponseEntity.ok(result);
 	}
-	
-	//마켓 게시물 조회
+
+	// 3. 댓글 삭제 - 이영민
+	@DeleteMapping(value = "/comments/{commentNo}")
+	public ResponseEntity<?> deleteMarketComment(@PathVariable Integer commentNo) {
+		int result = marketService.deleteMarketComment(commentNo);
+		return ResponseEntity.ok(result);
+	}
+
+	// 4. 댓글 수정 - 이영민
+	@PatchMapping(value = "/comments")
+	public ResponseEntity<?> updateMarketComment(@RequestBody MarketComment marketComment) {
+		int result = marketService.updateMarketComment(marketComment);
+		return ResponseEntity.ok(result);
+	}
+
+	// 5. 댓글 신고 - 이영민
+	@PostMapping(value = "/comments/reports")
+	public ResponseEntity<?> insertMarketCommentReport(@RequestBody MarketCommentReport report) {
+		int result = marketService.insertMarketCommentReport(report);
+		return ResponseEntity.ok(result);
+	}
+
+	// 마켓 게시물 조회
 	@GetMapping(value = "/{marketNo}")
 	public ResponseEntity<?> selectOneMarket(@PathVariable Integer marketNo,
-			@RequestHeader(required = false, name = "Authorization") String token,
-			HttpServletRequest request,
-    		HttpServletResponse response
-			
-			) {
-		
+			@RequestHeader(required = false, name = "Authorization") String token, HttpServletRequest request,
+			HttpServletResponse response
+
+	) {
+
 		Market m = marketService.selectOneMarket(marketNo, token);
 		// System.out.println(m);
 		if (m == null) {
-	        return ResponseEntity.notFound().build(); 					// err.response.status 404 전달 및 프론트에서 처리 
-	    }
+			return ResponseEntity.notFound().build(); // err.response.status 404 전달 및 프론트에서 처리
+		}
 		// 쿠키 확인
 		Cookie[] cookies = request.getCookies();
 		boolean alreadyViewed = false;
 		if (cookies != null) {
-	        for (Cookie c : cookies) {
-	            if (c.getName().equals("view_" + marketNo)) {
-	                alreadyViewed = true;
-	                break;
-	            }
-	        }
-	    }
+			for (Cookie c : cookies) {
+				if (c.getName().equals("view_" + marketNo)) {
+					alreadyViewed = true;
+					break;
+				}
+			}
+		}
 		String message = alreadyViewed ? "봤음" : "안봤음";
 		System.out.println("게시글 확인 체크 : " + message);
-				
-		if(!alreadyViewed) {
+
+		if (!alreadyViewed) {
 			marketService.incrementViewCount(marketNo);
-			 Cookie cookie = new Cookie("view_" + marketNo, "true");
-		     cookie.setMaxAge(60 * 60); 								// 1시간 유지
-		     cookie.setPath("/"); 										// (전체 경로 적용)
-		     response.addCookie(cookie);
+			Cookie cookie = new Cookie("view_" + marketNo, "true");
+			cookie.setMaxAge(60 * 60); // 1시간 유지
+			cookie.setPath("/"); // (전체 경로 적용)
+			response.addCookie(cookie);
 		}
 		return ResponseEntity.ok(m);
 	}
@@ -207,15 +197,15 @@ public class MarketController {
 		String savepath = root + "market/";
 		// 1. 파일패스 가져오기
 		List<String> fileList = marketService.getFilePath(marketNo);
-		
+
 		// 2.서비스 처리 (market_file_tbl 삭제, market_tbl 삭제)
 		Map<String, Object> serviceResponse = new HashMap<String, Object>();
-		//2-1 두 쿼리문의 결과를 담아올 객체 생성
+		// 2-1 두 쿼리문의 결과를 담아올 객체 생성
 		serviceResponse = marketService.deleteOneMarketAndFileTbl(marketNo);
-		
+
 		int fileCount = (int) serviceResponse.get("fileCount");
 		int result = (int) serviceResponse.get("result");
-		
+
 		System.out.println("파일TBL 삭제 결과 (1~10) : " + fileCount);
 		System.out.println("마켓TBL 삭제 결과 (0~1) : " + result);
 		// 3. 파일 삭제
@@ -231,7 +221,7 @@ public class MarketController {
 			}
 		}
 		System.out.println("전체파일 삭제결과 : " + allDeleted);
-		
+
 		Map<String, Object> response = new HashMap<String, Object>();
 		response.put("fileCount", fileCount); // 프론트에 전달할 삭제파일 갯수
 		response.put("allDeleted", allDeleted); // 프론트에 전달할 전체 삭제 정상 여부
@@ -240,28 +230,29 @@ public class MarketController {
 
 	}
 
-
-	
 	// 좋아요 누르기
-	@PostMapping(value="/{marketNo}/likes")
-	public ResponseEntity<?> likeOn(@PathVariable Integer marketNo,@RequestHeader(name="Authorization") String token){
-		int result = marketService.likeOn(marketNo,token);
+	@PostMapping(value = "/{marketNo}/likes")
+	public ResponseEntity<?> likeOn(@PathVariable Integer marketNo,
+			@RequestHeader(name = "Authorization") String token) {
+		int result = marketService.likeOn(marketNo, token);
 		return ResponseEntity.ok(result);
 	}
-	
+
 	// 좋아요 삭제
-	@DeleteMapping(value="/{marketNo}/likes")
-	public ResponseEntity<?> likeOff(@PathVariable Integer marketNo,@RequestHeader(name="Authorization") String token){
-		int result = marketService.likeOff(marketNo,token);
+	@DeleteMapping(value = "/{marketNo}/likes")
+	public ResponseEntity<?> likeOff(@PathVariable Integer marketNo,
+			@RequestHeader(name = "Authorization") String token) {
+		int result = marketService.likeOff(marketNo, token);
 		return ResponseEntity.ok(result);
 	}
 
 	// 신고 등록
-	@PostMapping(value="/reports")
-	public ResponseEntity<?> pushReport(@RequestBody MarketReport marketReport){
+	@PostMapping(value = "/reports")
+	public ResponseEntity<?> pushReport(@RequestBody MarketReport marketReport) {
 		int result = marketService.pushReport(marketReport);
 		return ResponseEntity.ok(result);
 	}
+
 	// 신고 취소
 	@DeleteMapping(value = "/{marketNo}/reports")
 	public ResponseEntity<?> cancelReport(@PathVariable Integer marketNo,
