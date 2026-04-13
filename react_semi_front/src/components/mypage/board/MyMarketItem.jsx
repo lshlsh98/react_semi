@@ -110,7 +110,7 @@ const MyMarketItem = ({
         <div className={styles.views_done}>
           <div className={styles.views}>조회수: {board.viewCount}</div>
           <div className={styles.done}>
-            <div>{board.isCompleted === 1 ? "완료" : "미완료"}</div>
+            <div>{board.isCompleted === 1 ? "거래 완료" : "거래 미완료"}</div>
             {board.isCompleted === 1 ? <div>[{board.completedDate}]</div> : ""}
           </div>
         </div>
