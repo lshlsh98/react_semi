@@ -11,8 +11,6 @@ import lombok.NoArgsConstructor;
 @Data
 	//market 리스트와 페이지네이션용 totalPage 저장해서 전송할 객체
 public class ListResponse {
-	private List<Market> items;
+	private List<?> items;
 	private Integer totalPage;
 }
-
-	

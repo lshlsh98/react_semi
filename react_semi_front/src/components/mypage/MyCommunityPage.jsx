@@ -23,11 +23,12 @@ const MyCommunityPage = () => {
   const [status, setStatus] = useState(0); // 0: 전체 / 1: 공개 / 2: 비공개
   const [keyword, setKeyword] = useState("");
   const [searchKeyword, setSearchKeyword] = useState("");
+  const [notice, setNotice] = useState(0); // 0: 전체 / 1: 공지
 
   useEffect(() => {
     axios
       .get(
-        `${import.meta.env.VITE_BACKSERVER}/mypages/board/community?isAdminMode=${isAdminMode}&page=${page}&size=${size}&order=${order}&status=${status}&searchKeyword=${searchKeyword}&memberId=${memberId}&memberGrade=${memberGrade}`,
+        `${import.meta.env.VITE_BACKSERVER}/mypages/board/community?isAdminMode=${isAdminMode}&page=${page}&size=${size}&order=${order}&status=${status}&searchKeyword=${searchKeyword}&memberId=${memberId}&memberGrade=${memberGrade}&notice=${notice}`,
       )
       .then((res) => {
         setBoardList(res.data.list);
@@ -36,11 +37,11 @@ const MyCommunityPage = () => {
       .catch((err) => {
         console.log(err);
       });
-  }, [page, order, status, searchKeyword]);
+  }, [page, order, notice, status, searchKeyword]);
 
   useEffect(() => {
     setPage(0);
-  }, [order, status, searchKeyword]);
+  }, [order, status, notice, searchKeyword]);
 
   return (
     <div className={styles.myboard_wrap}>
@@ -66,6 +67,15 @@ const MyCommunityPage = () => {
         )}
 
         <div className={styles.filter_select}>
+          <BasicSelect
+            state={notice}
+            setState={setNotice}
+            list={[
+              [0, "전체"],
+              [1, "공지"],
+            ]}
+          />
+
           <BasicSelect
             state={status}
             setState={setStatus}

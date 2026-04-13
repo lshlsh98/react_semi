@@ -1,6 +1,8 @@
 package kr.co.iei.market.controller;
 
+import java.io.File;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -14,6 +16,7 @@ import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -25,11 +28,14 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 import kr.co.iei.WebConfig;
 import kr.co.iei.market.model.service.MarketService;
+import kr.co.iei.market.model.vo.CommentListItem;
 import kr.co.iei.market.model.vo.ListItem;
 import kr.co.iei.market.model.vo.ListResponse;
 import kr.co.iei.market.model.vo.Market;
 import kr.co.iei.market.model.vo.MarketComment;
+import kr.co.iei.market.model.vo.MarketCommentReport;
 import kr.co.iei.market.model.vo.MarketFile;
+import kr.co.iei.member.model.vo.LoginMember;
 import kr.co.iei.utils.FileUtils;
 
 @CrossOrigin(value="*")
@@ -96,17 +102,16 @@ public class MarketController {
 	}
 	
 	// 1. 특정 게시글의 댓글 목록 조회 - 이영민
-    @GetMapping(value="/{marketNo}/comments")
-    public ResponseEntity<?> selectMarketCommentList(@PathVariable Integer marketNo) {
-        List<MarketComment> list = marketService.selectMarketCommentList(marketNo);
-        return ResponseEntity.ok(list);
-    }
+	@GetMapping(value="/{marketNo}/comments")
+	public ResponseEntity<?> selectMarketCommentList(@PathVariable Integer marketNo, @ModelAttribute CommentListItem item) {
+		item.setMarketNo(marketNo);
+		ListResponse response = marketService.selectMarketCommentList(item);
+		return ResponseEntity.ok(response);
+	}
 
     // 2. 댓글 작성 (대댓글 포함) - 이영민
     @PostMapping(value="/comments")
     public ResponseEntity<?> insertMarketComment(@RequestBody MarketComment marketComment) {
-        // 💡 팁: 앞선 게시글 등록은 이미지가 있어서 @ModelAttribute를 썼지만, 
-        // 단순 텍스트인 댓글은 프론트에서 JSON으로 보내므로 @RequestBody를 써야 합니다!
         int result = marketService.insertMarketComment(marketComment);
         return ResponseEntity.ok(result);
     }
@@ -117,13 +122,80 @@ public class MarketController {
         int result = marketService.deleteMarketComment(commentNo);
         return ResponseEntity.ok(result);
     }
+    
+    // 4. 댓글 수정 - 이영민
+    @PatchMapping(value="/comments")
+    public ResponseEntity<?> updateMarketComment(@RequestBody MarketComment marketComment) {
+        int result = marketService.updateMarketComment(marketComment);
+        return ResponseEntity.ok(result);
+    }
 	
+    // 5. 댓글 신고 - 이영민
+    @PostMapping(value="/comments/reports")
+    public ResponseEntity<?> insertMarketCommentReport(@RequestBody MarketCommentReport report) {
+        int result = marketService.insertMarketCommentReport(report);
+        return ResponseEntity.ok(result);
+    }
+    
 	@GetMapping(value="/{marketNo}")
-	public ResponseEntity<?> selectOneMarket(@PathVariable Integer marketNo){
+	public ResponseEntity<?> selectOneMarket(@PathVariable Integer marketNo ,@RequestHeader(required = false,name="Authorization") String token){
 		//System.out.println(marketNo);
-		Market m = marketService.selectOneMarket(marketNo);
+		
+		Market m = marketService.selectOneMarket(marketNo,token);
 		//System.out.println(m);
 		return ResponseEntity.ok(m);
+	}
+	
+	
+	/// 파일삭제 메소드 (출처 : MemberService)
+		private boolean deleteFile(String filename, String root) {
+			if (filename == null || filename.isEmpty())
+				return false;
+			File file = new File(root + filename);
+			if (file.exists()) {
+				return file.delete();
+				// 파일 삭제 성공시 true 리턴
+			}
+			return false;
+		}
+	@DeleteMapping(value="/{marketNo}") //게시글삭제
+	public ResponseEntity<?> deleteOneMarket(@PathVariable Integer marketNo){
+		System.out.println("글번호 확인 " + marketNo);
+		String savepath = root + "market/";
+		System.out.println(savepath);
+		
+		//1. 파일패스 가져오기
+		List<String> fileList = marketService.getFilePath(marketNo);
+		System.out.println(fileList);
+		
+		//2. 파일TBL 삭제 (삭제한 row 만큼 result 반환)
+		int fileCount= marketService.deleteFileTbl(marketNo);
+		System.out.println("파일TBL 삭제 결과 (1~10) : " + fileCount);
+		
+		//3. 마켓TBL 삭제
+		int result = marketService.deleteOneMarket(marketNo);
+		System.out.println("마켓TBL 삭제 결과 (0~1) : " + result);
+		
+		//4. 파일 삭제
+		boolean allDeleted = true;
+		if(fileList != null) {
+			for(String fileName : fileList) {
+				System.out.println("삭제합니다 : " + fileName);
+				boolean bool = deleteFile(fileName, savepath);
+				System.out.println("삭제결과 : " + bool);
+				if(!bool) {
+					allDeleted = false;
+				}
+			}
+		}
+		System.out.println("전체파일 삭제결과 : " + allDeleted);
+		
+		Map<String,Object> response = new HashMap<String,Object>();
+		response.put("fileCount",fileCount);	//프론트에 전달할 삭제파일 갯수
+		response.put("allDeleted", allDeleted);	//프론트에 전달할 전체 삭제 정상 여부
+		response.put("result", result);			//프론트에 전달할 게시물 삭제 여부
+		return ResponseEntity.ok(response);
+		
 	}
 	
 	@GetMapping(value="/{marketNo}/likes")

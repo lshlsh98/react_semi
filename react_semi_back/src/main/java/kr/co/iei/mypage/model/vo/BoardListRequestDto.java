@@ -19,5 +19,6 @@ public class BoardListRequestDto {
 	private Integer memberGrade;	
 	
 	private Integer completed;
+	private Integer notice;
 }
 

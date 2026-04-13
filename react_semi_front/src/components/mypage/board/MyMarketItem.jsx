@@ -15,6 +15,7 @@ const MyMarketItem = ({
   setBoardList,
   status,
   isAdminMode,
+  timeAgo,
 }) => {
   const [contentStatus, setContentStatus] = useState(board.contentStatus);
 
@@ -100,7 +101,7 @@ const MyMarketItem = ({
         <div className={styles.item_title}>{board.title}</div>
         <div className={styles.item_info}>
           <div>{`${board.writerName} [${board.writerId}]`}</div>
-          <div>{board.contentDate}</div>
+          <div>{timeAgo(board.contentDate)}</div>
         </div>
         <div className={styles.item_actions}>
           {/* 좋아요, 싫어요, 댓글, 신고 */}
