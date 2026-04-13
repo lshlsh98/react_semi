@@ -80,6 +80,10 @@ public interface MarketDao {
 	int cancelReport(Integer marketNo, String memberId);
 
 	int pushReport(MarketReport marketReport);
+
+	int selectParentCommentCount(CommentListItem item);
+
+	List<MarketComment> selectMarketCommentList(CommentListItem item);
 	
 
 	
