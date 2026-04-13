@@ -127,8 +127,7 @@ public class MarketService {
         return result;
     }
 	
-	@Transactional
-	public Market selectOneMarket(Integer marketNo, String token) {
+    public Market selectOneMarket(Integer marketNo, String token) {
 		String memberId = null;
 		if (token != null) {
 			LoginMember loginMember = jwtUtil.checkToken(token);				//토큰으로 로그인 객체 생성
