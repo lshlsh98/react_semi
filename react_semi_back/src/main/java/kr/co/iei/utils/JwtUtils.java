@@ -39,7 +39,7 @@ public class JwtUtils {
 							.signWith(key)						// 암호화 서명
 							.claim("memberId", memberId)		// 토큰에 포함 될 부가정보
 							.claim("memberGrade", memberGrade)	// 토큰에 포함 될 부가정보
-							.claim("memberAddress", memberAddr)
+							.claim("memberAddr", memberAddr)
 							.compact();							// 생성
 		
 		LoginMember login = new LoginMember();
