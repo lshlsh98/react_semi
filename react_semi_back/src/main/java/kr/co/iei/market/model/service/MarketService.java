@@ -17,6 +17,8 @@ import kr.co.iei.market.model.vo.Market;
 import kr.co.iei.market.model.vo.MarketComment;
 import kr.co.iei.market.model.vo.MarketCommentReport;
 import kr.co.iei.market.model.vo.MarketFile;
+import kr.co.iei.market.model.vo.MarketReport;
+import kr.co.iei.market.model.vo.TradeRequest;
 import kr.co.iei.member.model.vo.LoginMember;
 import kr.co.iei.utils.JwtUtils;
 
@@ -127,10 +129,6 @@ public class MarketService {
 	
 	@Transactional
 	public Market selectOneMarket(Integer marketNo, String token) {
-		/// 마켓 게시글 조회
-
-		marketDao.incrementViewCount(marketNo); 								//조회수증가로직
-		
 		String memberId = null;
 		if (token != null) {
 			LoginMember loginMember = jwtUtil.checkToken(token);				//토큰으로 로그인 객체 생성
@@ -138,11 +136,17 @@ public class MarketService {
 		}
 		
 		Market m = marketDao.selectOneMarket(marketNo,memberId);				//market 객체 생성
+		
+		if(m == null) {															//
+		 return null;
+		}
+		
 		List<MarketFile> fileList = marketDao.selectMarketFileList(marketNo);	//파일 리스트 조회
 		m.setFileList(fileList);												//객체에 파일리스트 추가
 		return m;
 	}
 
+	///사용안함
 	public Map<String, Object> selectLikeInfo(Integer marketNo, String token) {
 
 		int likeCount = marketDao.selectLikeCount(marketNo); // 총 좋아요 수 조회
@@ -169,7 +173,6 @@ public class MarketService {
 	@Transactional // 좋아요 클릭
 	public int likeOn(Integer marketNo, String token) {
 		LoginMember loginMember = jwtUtil.checkToken(token);
-
 		Map<String, Object> params = new HashMap<String, Object>();
 		params.put("marketNo", marketNo);
 		params.put("memberId", loginMember.getMemberId());
@@ -187,21 +190,78 @@ public class MarketService {
 		return result;
 	}
 
-	
+	//거래삭제시 파일패스 리스트 가져오기
 	public List<String> getFilePath(Integer marketNo) {
 		List<String> fileList = marketDao.getFilePath(marketNo);
 		return fileList;
 	}
 
-	@Transactional
-	public int deleteFileTbl(Integer marketNo) {
-		int result = marketDao.deleteFileTbl(marketNo);
-		return result;
+	//거래요청 목록조회
+	public List<TradeRequest> selectAllTradeRequest(Integer marketNo) {
+		List<TradeRequest> list = marketDao.selectAllTradeRequest(marketNo);
+		return list;
 	}
 	
+	//거래확정
 	@Transactional
-	public int deleteOneMarket(Integer marketNo) {
+	public int tradeComplete(Integer marketNo, String buyerId) {
+		//1. buyerId = 거래완료(Status = 2) completed_date = sysdate
+		int result1 = marketDao.tradeAccepted(marketNo,buyerId);
+		//2. !buyerId = 거래거절(Status = 3) completed_date = sysdate (거래요청 수만큼 반환)
+		int result2 = marketDao.tradeReject(marketNo,buyerId);
+		
+		//3. marketNo completed = 1, completed_date = sysdate
+		int result3 = marketDao.marketCompleted(marketNo);
+		
+		int result = result1 + result2 + result3;
+				
+		return result;
+	}
+
+	//거래요청
+	@Transactional
+	public int tradeRequest(TradeRequest request) {
+		int result = marketDao.tradeRequest(request);
+		return result;
+	}
+	//거래요청 취소
+	@Transactional
+	public int tradeRequestCancel(Integer marketNo, String token) {
+		LoginMember loginMember = jwtUtil.checkToken(token);
+		String buyerId = loginMember.getMemberId();
+		int result = marketDao.tradeRequestCancel(marketNo,buyerId);
+		return result;
+	}
+
+	//마켓 삭제시 market_tbl 삭제,market_file_tbl 삭제
+	@Transactional
+	public Map<String, Object> deleteOneMarketAndFileTbl(Integer marketNo) {
+		Map<String,Object> serviceResponse = new HashMap<String,Object>();
+		int fileCount = marketDao.deleteFileTbl(marketNo);
 		int result = marketDao.deleteOneMarket(marketNo);
+		serviceResponse.put("fileCount",fileCount);
+		serviceResponse.put("result",result);
+		return serviceResponse;
+	}
+	
+	//신고 취소
+	@Transactional
+	public int cancelReport(Integer marketNo, String token) {
+		LoginMember loginMember = jwtUtil.checkToken(token);
+		String memberId = loginMember.getMemberId();
+		int result = marketDao.cancelReport(marketNo,memberId);
+		return result;
+	}
+	//조회수 증가
+	@Transactional
+	public void incrementViewCount(Integer marketNo) {
+		marketDao.incrementViewCount(marketNo);
+	}
+	
+	//신고 등록
+	@Transactional
+	public int pushReport(MarketReport marketReport) {
+		int result = marketDao.pushReport(marketReport);
 		return result;
 	}
 	
