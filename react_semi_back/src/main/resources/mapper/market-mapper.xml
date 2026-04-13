@@ -223,7 +223,7 @@
 				where rownum = 1
 			) marketThumb
 		from market_tbl m
-		where m.market_status = 1
+		where m.market_status = 1 and m.completed = 0
 		
 		<if test="order==0">
 		order by m.market_no desc

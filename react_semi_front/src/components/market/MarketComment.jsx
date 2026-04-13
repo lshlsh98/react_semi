@@ -325,7 +325,34 @@ const CommentItem = ({
   const isMyComment = memberId === comment.marketCommentWriter; // 내가 쓴 댓글인지 (true, false 저장)
   const isPostWriter = memberId === marketWriter; // 내가 이 마켓 글쓴이(판매자)인가 (true, false 저장)
 
-  const canViewSecret = isMyComment || isPostWriter; // 비밀댓글 열람 권한: 내 댓글이거나, 내가 글쓴이면 볼 수 있음
+  // 조상 댓글(부모, 조부모...) 중에 내가 쓴 댓글이 있는지 추적하는 함수 (내가 쓴 비밀댓글(답글로 비밀댓글을 써도 답글의 답글이어도)의 답글들은 비밀댓글이어도 볼수 있게)
+  const isMyThread = () => {
+    let currentComment = comment; // 탐색하기 시작하는 현재 댓글
+
+    // 부모 번호가 null이 아닐 때까지(최상위 부모 댓글에 도달할 때까지) 계속 위로 올라감
+    while (currentComment.marketRecommentNo !== null) {
+      // 내 부모 댓글을 전체 리스트에서 찾기 -> 찾아서 parentComment에 저장
+      const parentComment = allComments.find(
+        (c) => c.marketCommentNo === currentComment.marketRecommentNo,
+      );
+
+      // 부모가 없으면(혹시라도 DB에서 지워졌다면) 멈춤 -> 이게 없으면 혹여나 DB에서 지워지면 무한루프됨.
+      if (!parentComment) break;
+
+      // 찾은 부모(혹은 조부모...) 댓글의 작성자가 '나(memberId)'라면? -> 볼 권한 있음(true)
+      if (parentComment.marketCommentWriter === memberId) {
+        return true;
+      }
+
+      // 다음 반복을 위해 currentComment를 부모(parentComment)로 교체해서 한 단계 더 위로 올라감
+      currentComment = parentComment;
+    }
+
+    // 끝까지 다 뒤졌는데 내가 쓴 게 하나도 없으면 권한 없음(false)
+    return false;
+  };
+
+  const canViewSecret = isMyComment || isPostWriter || isMyThread(); // 비밀댓글 열람 권한: 내 댓글이거나, 내가 글쓴이(게시글 주인(작성자)), 내가 쓴 댓글에 있는 답글이면 볼 수 있음
   const isSecretComment = comment.isSecret === 1; // comment로 가져온 댓글의 비밀댓글여부(0, 1)가 비밀댓글(1)인지 true, false로 담아둠
 
   // 상호작용(답글/신고) 권한 체크용
@@ -463,7 +490,8 @@ const CommentItem = ({
       allowEscapeKey: false, // Esc 눌러도 안 닫힘
 
       // sweetalert으로 실시간으로 현재 글자수를 띄우기위해 값을 계산해서 addEvent로 input에 넣어주기 위한 함수
-      divInput: () => {
+      // didOpen : sweetalert에서 제공하는 함수 -> alert창이 뜨고 나서 실행하는 함수
+      didOpen: () => {
         // 위의 sweetalert의 html 요소들 가져오기
         const textarea = document.getElementById("report-reason");
         const counter = document.getElementById("report-counter");
@@ -756,6 +784,7 @@ const CommentItem = ({
               fetchComments={fetchComments}
               allComments={allComments}
               marketNo={marketNo}
+              memberThumb={memberThumb}
             />
           ))}
         </ul>
