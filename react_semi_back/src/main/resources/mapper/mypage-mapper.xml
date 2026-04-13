@@ -8,7 +8,7 @@
 			csv.title, 
 			csv.writer_id,
 			csv.writer_name,
-			TO_CHAR(csv.content_date, 'mm-dd') AS content_date,
+			csv.content_date,
 			csv.content_status,
 			csv.view_count,
 			csv.like_count,
@@ -47,6 +47,9 @@
 		    csv.title LIKE '%'||#{searchKeyword}||'%'
    			<if test="isAdminMode != true">
   			      AND csv.writer_id = #{memberId}
+    		</if>
+    		<if test="notice == 1">
+    			AND csv.member_grade IN (1, 2)
     		</if>
     		<if test="status != 0">
         		AND csv.content_status = #{status}
@@ -105,6 +108,9 @@
    			<if test="isAdminMode != true">
   			      AND csv.writer_id = #{memberId}
     		</if>
+    		<if test="notice == 1">
+    			AND csv.member_grade IN (1, 2)
+    		</if>
     		<if test="status != 0">
         		AND csv.content_status = #{status}
     		</if>
@@ -148,14 +154,14 @@
 			msv.title, 
 			msv.writer_id,
 			msv.writer_name,
-			TO_CHAR(msv.content_date, 'mm-dd') AS content_date,
+			msv.content_date,
 			msv.content_status,
 			msv.view_count,
 			msv.like_count,
 			msv.comment_count,
 			msv.report_count,
 			msv.completed AS is_completed,
-			TO_CHAR(msv.completed_date, 'mm-dd') AS completed_date, 
+			TO_CHAR(msv.completed_date, 'yyyy-mm-dd') AS completed_date,
 			
 			CASE WHEN cl.member_id IS NOT NULL THEN 1 ELSE 0 END AS is_liked,
 			CASE WHEN cc.market_comment_writer IS NOT NULL

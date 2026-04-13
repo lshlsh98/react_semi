@@ -106,7 +106,7 @@ const TradeStatus = () => {
             setState={setComplete}
             list={[
               [2, "전체"],
-              [1, "완료11111"],
+              [1, "완료"],
               [0, "미완료"],
             ]}
           />
