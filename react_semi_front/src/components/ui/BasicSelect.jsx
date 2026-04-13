@@ -4,8 +4,9 @@ import FormControl from "@mui/material/FormControl";
 import Select from "@mui/material/Select";
 import { useState, useEffect } from "react";
 
-const BasicSelect = ({ state, setState, list }) => {
-  const [minWidth, setMinWidth] = useState(50); // 기본 최소 width
+const BasicSelect = ({ state, setState, list, onChange }) => {
+  const [open, setOpen] = useState(false);
+  const [minWidth, setMinWidth] = useState(100); // 기본 최소 width
 
   useEffect(() => {
     // Canvas로 글자 길이 계산
@@ -34,7 +35,12 @@ const BasicSelect = ({ state, setState, list }) => {
       <FormControl size="small" fullWidth>
         <Select
           value={state}
-          onChange={(e) => setState(e.target.value)}
+          onChange={(e) => {
+            setState(e.target.value);
+            onChange?.(e);
+          }}
+          // onOpen={() => setOpen(true)}
+          // onClose={() => setOpen(false)}
           sx={{
             fontSize: "0.8rem",
             fontFamily: "tr_r",

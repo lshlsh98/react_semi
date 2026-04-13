@@ -7,6 +7,7 @@ import useAuthStore from "../../components/utils/useAuthStore";
 import { useNavigate } from "react-router-dom";
 import CommunityList from "../../components/community/CommunityList";
 import axios from "axios";
+import BasicSelect from "../../components/ui/BasicSelect";
 
 const CommunityListPage = () => {
   const navigete = useNavigate();
@@ -54,16 +55,17 @@ const CommunityListPage = () => {
             setPage(0);
           }}
         >
-          <select
-            className={styles.select}
-            value={type}
+          <BasicSelect
+            state={type}
+            setState={setType}
             onChange={(e) => {
-              setType(e.target.value);
+              setPage(0);
             }}
-          >
-            <option value={1}>글/내용</option>
-            <option value={2}>작성자</option>
-          </select>
+            list={[
+              [1, "글/내용"],
+              [2, "작성자"],
+            ]}
+          />
           <Input
             type="text"
             value={keyword}
@@ -76,17 +78,17 @@ const CommunityListPage = () => {
           </Button>
         </form>
         <div className={styles.order_item_wrap}>
-          <select
-            className={styles.select}
-            value={view}
+          <BasicSelect
+            state={view}
+            setState={setView}
             onChange={(e) => {
-              setView(e.target.value);
               setPage(0);
             }}
-          >
-            <option value={1}>게시글</option>
-            <option value={2}>공지사항</option>
-          </select>
+            list={[
+              [1, "게시글"],
+              [2, "공지사항"],
+            ]}
+          />
           <div className={styles.order_wrap}>
             {memberId && (
               <div className={styles.write_btn_zone}>
@@ -100,20 +102,21 @@ const CommunityListPage = () => {
                 </Button>
               </div>
             )}
-            <select
-              className={styles.select}
-              value={order}
+            <BasicSelect
+              state={order}
+              setState={setOrder}
               onChange={(e) => {
-                setOrder(e.target.value);
+                setPage(0);
               }}
-            >
-              <option value={1}>최신순</option>
-              <option value={2}>작성순</option>
-              <option value={3}>조회수</option>
-              <option value={4}>좋아요</option>
-              <option value={5}>싫어요</option>
-              <option value={6}>신고수</option>
-            </select>
+              list={[
+                [1, "최신순"],
+                [2, "작성순"],
+                [3, "조회수"],
+                [4, "좋아요"],
+                [5, "싫어요"],
+                [6, "신고수"],
+              ]}
+            />
           </div>
         </div>
       </div>
