@@ -15,8 +15,6 @@ import ThumbUpAltIcon from "@mui/icons-material/ThumbUpAlt";
 import ThumbUpOffAltIcon from "@mui/icons-material/ThumbUpOffAlt";
 import ThumbDownAltIcon from "@mui/icons-material/ThumbDownAlt";
 import ThumbDownOffAltIcon from "@mui/icons-material/ThumbDownOffAlt";
-import ReportIcon from "@mui/icons-material/Report";
-import ReportGmailerrorredIcon from "@mui/icons-material/ReportGmailerrorred";
 
 const CommunityViewPage = () => {
   const navigate = useNavigate();
@@ -117,30 +115,33 @@ const CommunityViewPage = () => {
 
           <div className={styles.community_action_btn_wrap}>
             {memberId && memberId === community.communityWriter && (
-              <div className={styles.button_group}>
-                <Button
-                  className="btn primary"
-                  onClick={() => {
-                    navigate(`/community/modify/${community.communityNo}`);
-                  }}
-                >
-                  수정
-                </Button>
+              <div className={styles.left}>
+                <div className={styles.button_group}>
+                  <Button
+                    className="btn primary"
+                    onClick={() => {
+                      navigate(`/community/modify/${community.communityNo}`);
+                    }}
+                  >
+                    수정
+                  </Button>
 
-                <Button
-                  className="btn primary outline"
-                  onClick={deleteCommunity}
-                >
-                  삭제
-                </Button>
+                  <Button
+                    className="btn primary outline"
+                    onClick={deleteCommunity}
+                  >
+                    삭제
+                  </Button>
+                </div>
               </div>
             )}
-            <LikeAndDislikeAndReport
-              communityNo={communityNo}
-              communityWriter={community.communityWriter}
-            />
+            <div className={styles.right}>
+              <LikeAndDislikeAndReport
+                communityNo={communityNo}
+                communityWriter={community.communityWriter}
+              />
+            </div>
           </div>
-          <CommunityCommentComponent communityNo={communityNo} />
         </>
       )}
     </section>
@@ -282,47 +283,6 @@ const LikeAndDislikeAndReport = ({ communityNo, communityWriter }) => {
       });
   };
 
-  /*
-  const reportOn = () => {
-    axios
-      .post(
-        `${import.meta.env.VITE_BACKSERVER}/communities/${communityNo}/reports`,
-      )
-      .then((res) => {
-        console.log(res);
-        if (res.data === 1) {
-          setReportInfo({
-            ...reportInfo,
-            isReport: 1,
-            reportCount: reportInfo.reportCount + 1,
-          });
-        }
-      })
-      .catch((err) => {
-        console.log(err);
-      });
-  };
-
-  const reportOff = () => {
-    axios
-      .delete(
-        `${import.meta.env.VITE_BACKSERVER}/communities/${communityNo}/reports`,
-      )
-      .then((res) => {
-        if (res.data === 1) {
-          setReportInfo({
-            ...reportInfo,
-            isReport: 0,
-            reportCount: reportInfo.reportCount - 1,
-          });
-        }
-      })
-      .catch((err) => {
-        console.log(err);
-      });
-  };
-  */
-
   const loginMsg = () => {
     Swal.fire({ title: "로그인 후 이용 가능합니다.", icon: "info" });
   };
@@ -409,8 +369,9 @@ const LikeAndDislikeAndReport = ({ communityNo, communityWriter }) => {
           <span>{dislikeInfo.dislikeCount}</span>
         </div>
       )}
+
       {memberId !== communityWriter && (
-        <div className={styles.report_btn}>
+        <div className={styles.center}>
           <Button className="btn danger" onClick={handleReportClick}>
             신고하기
           </Button>
@@ -455,221 +416,6 @@ const LikeAndDislikeAndReport = ({ communityNo, communityWriter }) => {
         </div>
       )}
     </div>
-  );
-};
-
-const CommunityCommentComponent = ({ communityNo }) => {
-  const { memberId } = useAuthStore();
-  const [communityComment, setCommunityComment] = useState({
-    communityCommentContent: "",
-    communityCommentWriter: memberId,
-    communityNo: communityNo,
-    communityCommentNo2: "",
-  });
-  const [communityCommentList, setCommunityCommentList] = useState([]);
-  useEffect(() => {
-    axios
-      .get(
-        `${import.meta.env.VITE_BACKSERVER}/communities/${communityNo}/comments`,
-      )
-      .then((res) => {
-        console.log(res);
-        setCommunityCommentList(res.data);
-      })
-      .catch((err) => {
-        console.log(err);
-      });
-  }, []);
-  const updateComment = (modifyComment, index) => {
-    axios
-      .put(
-        `${import.meta.env.VITE_BACKSERVER}/communities/comments/${modifyComment.communityCommentNo}`,
-        modifyComment,
-      )
-      .then((res) => {
-        console.log(res);
-        if (res.data === 1) {
-          const newCommentList = [...communityCommentList];
-          newCommentList[index].communityCommentContent =
-            modifyComment.communityCommentContent;
-          setCommunityCommentList(newCommentList);
-        }
-      })
-      .catch((err) => {
-        console.log(err);
-      });
-  };
-
-  const deleteComment = (communityCommentNo) => {
-    axios
-      .delete(
-        `${import.meta.env.VITE_BACKSERVER}/communities/comments/${communityCommentNo}`,
-      )
-      .then((res) => {
-        console.log(res);
-        if (res.data === 1) {
-          const newCommunityCommentList = communityCommentList.filter(
-            (item) => {
-              return communityCommentNo !== item.communityCommentNo;
-            },
-          );
-          setCommunityCommentList(newCommunityCommentList);
-        }
-      });
-  };
-
-  const registComment = () => {
-    if (communityComment.communityCommentContent === "") {
-      return;
-    }
-    axios
-      .post(
-        `${import.meta.env.VITE_BACKSERVER}/communities/comments`,
-        communityComment,
-      )
-      .then((res) => {
-        console.log(res);
-        setCommunityCommentList([...communityCommentList, res.data]);
-        setCommunityComment({
-          ...communityComment,
-          communityCommentContent: "",
-        });
-      })
-      .catch((err) => {
-        console.log(err);
-      });
-  };
-  return (
-    <div className={styles.comment_wrap}>
-      {memberId && (
-        <div className={styles.comment_regist_wrap}>
-          <h3>댓글 등록</h3>
-          <div className={styles.input_item}>
-            <TextArea
-              value={communityComment.communityCommentContent}
-              onChange={(e) => {
-                setCommunityComment({
-                  ...communityComment,
-                  communityCommentContent: e.target.value,
-                });
-              }}
-            ></TextArea>
-            <Button className="btn primary" onClick={registComment}>
-              등록
-            </Button>
-          </div>
-
-          <div className={styles.community_comment_count_wrap}>
-            <Comment className={styles.icon} />
-            <h3>댓글 {communityCommentList.length}개</h3>
-          </div>
-        </div>
-      )}
-      <div className={styles.comment_list_wrap}>
-        {communityCommentList.map((comment, index) => {
-          return (
-            <CommunityComment
-              key={"comment-" + comment.communityCommentNo}
-              comment={comment}
-              index={index}
-              updateComment={updateComment}
-              deleteComment={deleteComment}
-            />
-          );
-        })}
-      </div>
-    </div>
-  );
-};
-
-const CommunityComment = ({ comment, index, updateComment, deleteComment }) => {
-  const { memberId } = useAuthStore();
-  const [isModifyMode, setIsModifyMode] = useState(false);
-  const [modifyComment, setModifyComment] = useState({
-    communityCommentContent: comment.communityCommentContent,
-    communityCommentNo: comment.communityCommentNo,
-  });
-  return (
-    <ul className={styles.comment_item}>
-      <li className={styles.comment_info}>
-        <div className={styles.comment_writer_wrap}>
-          <span>{comment.communityCommentWriter}</span>
-        </div>
-        <span className={styles.comment_date}>
-          {comment.communityCommentDate}
-        </span>
-        {memberId &&
-          memberId === comment.communityCommentWriter &&
-          (isModifyMode ? (
-            <>
-              <Button
-                className="btn primary sm"
-                onClick={() => {
-                  updateComment(modifyComment, index);
-                  setIsModifyMode(false);
-                }}
-              >
-                수정하기
-              </Button>
-              <Button
-                className="btn primary outline sm"
-                onClick={() => {
-                  setModifyComment({
-                    ...modifyComment,
-                    communityCommentContent: comment.communityCommentContent,
-                  });
-                  setIsModifyMode(false);
-                }}
-              >
-                수정 취소
-              </Button>
-            </>
-          ) : (
-            <>
-              <Button
-                className="btn primary"
-                onClick={() => {
-                  setIsModifyMode(true);
-                }}
-              >
-                수정
-              </Button>
-              <Button
-                className="btn light outline"
-                onClick={() => {
-                  Swal.fire({
-                    title: "댓글을 삭제하시겠습니까?",
-                    icon: "warning",
-                    showCancelButton: true,
-                    confirmButtonText: "삭제",
-                    cancelButtonText: "취소",
-                    confirmButtonColor: "var(--primary)",
-                    cancelButtonColor: "var(--danger)",
-                  }).then((result) => {
-                    if (result.isConfirmed) {
-                      deleteComment(modifyComment.communityCommentNo);
-                    }
-                  });
-                }}
-              >
-                삭제
-              </Button>
-            </>
-          ))}
-      </li>
-      <li className={styles.comment_content}>
-        <TextArea
-          value={modifyComment.communityCommentContent}
-          onChange={(e) => {
-            setModifyComment({
-              ...modifyComment,
-              communityCommentContent: e.target.value,
-            });
-          }}
-          disabled={!isModifyMode}
-        ></TextArea>
-      </li>
-    </ul>
   );
 };
 

@@ -33,6 +33,13 @@
   font-size: 20px;
 }
 
+/* 작성자, 날짜, 조회수 세로로 간격 넓히기 */
+.community_sub_info {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
 /* 아이콘 자체의 크기나 위치 미세 조정 */
 .icon {
   font-size: 20px !important; /* 아이콘 크기가 너무 크면 조정 */
@@ -81,7 +88,9 @@
 .community_action_btn_wrap {
   display: flex;
   align-items: center;
-  margin-top: 20px;
+  position: relative;
+  margin-top: 10px;
+  min-height: 40px;
 }
 
 /* 수정/삭제 버튼 사이의 간격 */
@@ -91,13 +100,48 @@
   gap: 20px;
 }
 
-/* 좋아요/싫어요/신고 아이콘 + 신고하기 버튼 */
+/* 좋아요/싫어요/ + 신고하기 버튼 */
 .community_like_dislike_report_wrap {
   display: flex;
   align-items: center;
-  gap: 15px; /* 아이콘 간격 */
-  margin-top: 0;
-  margin-left: auto; /* 작성자 및 로그인 여부 떠나서 항상 오른쪽에 배치해놓음*/
+  margin-top: 30px; /* 내용에서 30px 멀어지게 */
+}
+
+/* 수정, 삭제 버튼 */
+.left {
+  flex: 1;
+  justify-content: flex-start;
+  align-items: center;
+}
+
+/* 신고하기 버튼 */
+.center {
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 1; /* 혹시 겹침 방지 */
+}
+
+/* 좋아요, 싫어요 */
+.right {
+  margin-left: auto;
+  display: flex;
+  align-items: center;
+}
+
+.community_dislike_wrap {
+  margin-left: 18px; /* 좋아요 아이콘과 간격 확보 */
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+/* 좋아요와 싫어요 */
+.community_like_wrap,
+.community_dislike_wrap {
+  display: flex;
+  align-items: center;
+  gap: 8px; /* 아이콘이랑 숫자 간격 */
 }
 
 /* 좋아요/싫어요 숫자 표시 cursor: pointer 해제 */
@@ -106,18 +150,53 @@
   cursor: default;
 }
 
-.community_like_wrap,
-.community_dislike_wrap {
-  display: inline-flex; /* 아이콘과 텍스트를 한 줄로 묶기 */
-  align-items: center;
-  gap: 6px; /* 아이콘과 숫자 사이 간격 */
+.community_like_wrap svg,
+.community_dislike_wrap svg {
   cursor: pointer;
-  font-size: 14px;
 }
 
-/* 신고 아이콘이랑 신고하기 버튼 간격 */
-.community_report_btn_wrap button {
-  margin-left: 15px;
+.overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.5);
+  z-index: 999;
+
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.report_modal {
+  background: white;
+  padding: 24px;
+  border-radius: 12px;
+  width: 350px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.modal_btn_wrap {
+  display: flex;
+  justify-content: flex-end;
+  gap: 15px;
+  margin-top: 10px;
+}
+
+.community_like_wrap > svg {
+  fill: black;
+}
+
+/* ON 상태 */
+.active > svg {
+  fill: blue;
+}
+
+.community_report_wrap > svg {
+  fill: var(--danger);
 }
 
 /* 아래부터는 댓글 관련 */
@@ -188,53 +267,4 @@
 .comment_content {
   margin-top: 16px;
   width: 100%;
-}
-
-.community_like_wrap svg,
-.community_dislike_wrap svg {
-  cursor: pointer;
-}
-
-.overlay {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background: rgba(0, 0, 0, 0.5);
-  z-index: 999;
-
-  display: flex;
-  justify-content: center;
-  align-items: center;
-}
-
-.report_modal {
-  background: white;
-  padding: 24px;
-  border-radius: 12px;
-  width: 350px;
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
-}
-
-.modal_btn_wrap {
-  display: flex;
-  justify-content: flex-end;
-  gap: 15px;
-  margin-top: 10px;
-}
-
-.community_like_wrap > svg {
-  fill: black;
-}
-
-/* ON 상태 */
-.active > svg {
-  fill: blue;
-}
-
-.community_report_wrap > svg {
-  fill: var(--danger);
 }
