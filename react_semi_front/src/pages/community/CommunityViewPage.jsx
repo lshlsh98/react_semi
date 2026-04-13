@@ -7,7 +7,6 @@ import Button from "../../components/ui/Button";
 import Swal from "sweetalert2";
 import { TextArea } from "../../components/ui/Form";
 
-import PersonIcon from "@mui/icons-material/Person";
 import CalendarTodayIcon from "@mui/icons-material/CalendarToday";
 import VisibilityIcon from "@mui/icons-material/Visibility";
 import Comment from "@mui/icons-material/Comment";
@@ -81,7 +80,21 @@ const CommunityViewPage = () => {
               </h2>
               <div className={styles.community_sub_info}>
                 <div className={styles.community_writer}>
-                  <PersonIcon className={styles.icon} />
+                  <div
+                    className={
+                      community.memberThumb
+                        ? styles.member_thumb_exists
+                        : styles.member_thumb
+                    }
+                  >
+                    <img
+                      src={
+                        community.memberThumb
+                          ? `${import.meta.env.VITE_BACKSERVER}/member/thumb/${community.memberThumb}`
+                          : userImg
+                      }
+                    ></img>
+                  </div>
                   <span>{community.communityWriter}</span>
                 </div>
 
@@ -122,7 +135,10 @@ const CommunityViewPage = () => {
                 </Button>
               </div>
             )}
-            <LikeAndDislikeAndReport communityNo={communityNo} />
+            <LikeAndDislikeAndReport
+              communityNo={communityNo}
+              communityWriter={community.communityWriter}
+            />
           </div>
           <CommunityCommentComponent communityNo={communityNo} />
         </>
@@ -131,7 +147,7 @@ const CommunityViewPage = () => {
   );
 };
 
-const LikeAndDislikeAndReport = ({ communityNo }) => {
+const LikeAndDislikeAndReport = ({ communityNo, communityWriter }) => {
   const { memberId } = useAuthStore();
   const [likeInfo, setLikeInfo] = useState(null);
   const [dislikeInfo, setDislikeInfo] = useState(null);
@@ -393,19 +409,10 @@ const LikeAndDislikeAndReport = ({ communityNo }) => {
           <span>{dislikeInfo.dislikeCount}</span>
         </div>
       )}
-      {reportInfo && (
-        <div className={styles.community_report_btn_wrap}>
-          {Number(reportInfo.isReport) === 1 ? (
-            <ReportIcon style={{ color: "var(--danger)" }} />
-          ) : (
-            <ReportGmailerrorredIcon />
-          )}
-          <span>{reportInfo.reportCount}</span>
-
-          <Button className="btn danger" onClick={handleReportClick}>
-            신고하기
-          </Button>
-        </div>
+      {memberId !== communityWriter && (
+        <Button className="btn danger" onClick={handleReportClick}>
+          신고하기
+        </Button>
       )}
       {isReportModalOpen && (
         <div
@@ -416,7 +423,7 @@ const LikeAndDislikeAndReport = ({ communityNo }) => {
             className={styles.report_modal}
             onClick={(e) => e.stopPropagation()}
           >
-            <h3>신고하기</h3>
+            <h3>게시글 신고하기</h3>
 
             <TextArea
               placeholder="신고 사유를 입력해주세요 (최대 200자 입력 가능)"

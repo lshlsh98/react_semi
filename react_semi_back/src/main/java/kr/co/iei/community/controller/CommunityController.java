@@ -37,7 +37,7 @@ public class CommunityController {
 	@Autowired
 	private CommunityService communityService;
 	
-	@GetMapping
+	@GetMapping // 커뮤 게시글 목록
 	public ResponseEntity<?> selectBoardList(@ModelAttribute CommunityListItem request) {
 		CommunityListResponse response = communityService.selectCommunityList(request);
 		return ResponseEntity.ok(response);
@@ -56,6 +56,7 @@ public class CommunityController {
 		Community community = communityService.selectOneCommunity(communityNo);
 		return ResponseEntity.ok(community);
 	}
+	
 	
 	@PutMapping(value="/{communityNo}") // 커뮤 게시글 수정하기
 	public ResponseEntity<?> updateCommunity(@PathVariable Integer communityNo,

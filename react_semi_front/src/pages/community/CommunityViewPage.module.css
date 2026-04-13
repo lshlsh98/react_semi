@@ -40,6 +40,33 @@
   align-items: center;
 }
 
+/* 회원 프로필 유무 여부 */
+.member_thumb {
+  width: 36px;
+  height: 36px;
+  padding: 8px;
+  border-radius: 18px;
+  background-color: var(--gray6);
+}
+.member_thumb > img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
+.member_thumb_exists {
+  width: 36px;
+  height: 36px;
+  padding: 0px;
+  overflow: hidden;
+  border-radius: 18px;
+  background-color: var(--gray6);
+}
+.member_thumb_exists > img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
 /* 내용 */
 .community_view_content {
   margin-top: 20px;
@@ -98,7 +125,7 @@
   margin-left: 15px;
 }
 
-/* 아래부터는 댓글 관련*/
+/* 아래부터는 댓글 관련 */
 /* 댓글 등록을 간격 두기*/
 .comment_regist_wrap > h3 {
   margin-top: 50px;

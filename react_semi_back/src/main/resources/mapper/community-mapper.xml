@@ -108,6 +108,7 @@
 			community_content,
 			community_writer,
 			view_count,
+			member_thumb,
 			to_char(community_date,'yyyy-mm-dd') as community_date
 		from community_tbl
 		join member_tbl on (community_writer = member_id)
