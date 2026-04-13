@@ -89,14 +89,27 @@ const MarketViewPage = () => {
             }
           });
         }
-        console.log(err);
+
+        if (err.response.status === 400) {
+          console.log("Integer 범위를 넘는 요청");
+          Swal.fire({
+            title: "Integer 범위를 넘는 요청",
+            icon: "warning",
+            confirmButtonText: "닫기",
+            confirmButtonColor: "var(--primary)",
+          }).then((result) => {
+            if (result.isConfirmed) {
+              navigate("/market");
+            }
+          });
+        }
       });
   }, [memberId, marketNo, isReady, tradeRequestList]);
 
   /* 거래요청 함수 */
   const requestTrade = () => {
     Swal.fire({
-      title: "거래요청",
+      title: "거래요청 하시겠어요?",
       html: `
           <textarea id="report-reason" class="swal2-textarea"
           placeholder="요청 메시지를 입력해주세요 (최대 200자)"
@@ -104,10 +117,11 @@ const MarketViewPage = () => {
           style="width: 85%; height: 100px; resize: none; font-size: 14px; margin-top: 10px;"></textarea>
           `,
       showCancelButton: true,
-      confirmButtonText: "요청",
-      cancelButtonText: "취소",
+      confirmButtonText: "네",
+      cancelButtonText: "아니오",
       confirmButtonColor: "var(--primary)",
       cancelButtonColor: "var(--danger)",
+
       preConfirm: () => {
         // 확인 버튼 눌렀을 때 텍스트 박스 내용 긁어오기 외부 - 라이브러리여서 찾아보고 이렇게 사용
         const reason = document.getElementById("report-reason").value; // 신고 사유(신고의 텍스트 박스 내용)가 없다면 쓰라고 하기
@@ -142,7 +156,7 @@ const MarketViewPage = () => {
             if (res.data === 1) {
               setMarket({ ...market, isRequest: 1 });
               Swal.fire({
-                icon: "success", // 성공 아이콘 (체크 표시)
+                icon: "success",
                 title: "거래요청완료",
                 confirmButtonText: "닫기",
                 confirmButtonColor: "var(--primary)",
@@ -162,8 +176,8 @@ const MarketViewPage = () => {
       title: "거래요청 취소 하시겠습니까?",
       icon: "question",
       showCancelButton: true,
-      confirmButtonText: "취소",
-      cancelButtonText: "닫기",
+      confirmButtonText: "네",
+      cancelButtonText: "아니오",
       confirmButtonColor: "var(--danger)",
       cancelButtonColor: "var(--primary)",
     }).then((result) => {
@@ -197,8 +211,8 @@ const MarketViewPage = () => {
       title: "삭제 하시겠습니까?",
       icon: "warning",
       showCancelButton: true,
-      confirmButtonText: "삭제",
-      cancelButtonText: "취소",
+      confirmButtonText: "네",
+      cancelButtonText: "아니오",
       confirmButtonColor: "var(--danger)",
       cancelButtonColor: "var(--primary)",
     }).then((result) => {
@@ -210,14 +224,14 @@ const MarketViewPage = () => {
             const { fileCount, allDeleted, result } = res.data;
 
             Swal.fire({
-              title: "삭제확인",
+              title: "게시물 삭제확인",
               html: `
               게시글 삭제: ${result === 1 ? "성공" : "실패"}<br/>
               삭제된 파일 수: ${fileCount}개<br/>
               파일 전체 삭제 여부: ${allDeleted ? "성공" : "일부실패"}
               `,
               icon: result === 1 ? "success" : "error",
-              confirmButtonText: "확인",
+              confirmButtonText: "닫기",
               confirmButtonColor: "pink",
             }).then((result) => {
               if (result.isConfirmed) {
@@ -345,7 +359,7 @@ const MarketViewPage = () => {
   /*신고하기 함수*/
   const pushReport = () => {
     Swal.fire({
-      title: "신고하기",
+      title: "신고 하시겠어요?",
       html: `
           <textarea id="report-reason" class="swal2-textarea"
           placeholder="신고 사유를 입력해주세요 (최대 200자)"
@@ -353,10 +367,10 @@ const MarketViewPage = () => {
           style="width: 85%; height: 100px; resize: none; font-size: 14px; margin-top: 10px;"></textarea>
           `,
       showCancelButton: true,
-      confirmButtonText: "신고",
-      cancelButtonText: "취소",
+      confirmButtonText: "네",
+      cancelButtonText: "아니오",
       confirmButtonColor: "var(--danger)",
-      cancelButtonColor: "var(--gray5)",
+      cancelButtonColor: "var(--primary)",
       preConfirm: () => {
         // 확인 버튼 눌렀을 때 텍스트 박스 내용 긁어오기 외부 - 라이브러리여서 찾아보고 이렇게 사용
         const reason = document.getElementById("report-reason").value; // 신고 사유(신고의 텍스트 박스 내용)가 없다면 쓰라고 하기
@@ -413,8 +427,8 @@ const MarketViewPage = () => {
       title: "신고내역을 취소 하시겠습니까?",
       icon: "question",
       showCancelButton: true,
-      confirmButtonText: "취소",
-      cancelButtonText: "닫기",
+      confirmButtonText: "네",
+      cancelButtonText: "아니오",
       confirmButtonColor: "var(--danger)",
       cancelButtonColor: "var(--primary)",
     }).then((result) => {
@@ -555,7 +569,32 @@ const MarketViewPage = () => {
               </Box>
             </Modal>
           </div>
-
+          {market.completed === 1 && (
+            <div className={styles.sold_out}>
+              <p>판매완료된 게시글입니다.</p>
+              <Button
+                className="btn primary"
+                onClick={() => {
+                  navigate("/market");
+                }}
+              >
+                다른 상품 보러가기
+              </Button>
+            </div>
+          )}
+          {market.marketStatus === 2 && (
+            <div className={styles.hidden_market}>
+              <p>숨겨진 게시물 입니다.</p>
+              <Button
+                className="btn primary"
+                onClick={() => {
+                  navigate("/market");
+                }}
+              >
+                다른 상품 보러가기
+              </Button>
+            </div>
+          )}
           <div className={styles.title_wrap}>
             <div className={styles.title_info}>
               <p className={styles.title_info_title}>{market.marketTitle}</p>
@@ -684,7 +723,7 @@ const MarketViewPage = () => {
                 </Button>
                 <Button
                   className="btn primary"
-                  style={{ backgroundColor: "pink", border: "none" }}
+                  style={{ backgroundColor: "var(--pink1)", border: "none" }}
                   onClick={tradeComplete}
                 >
                   거래완료

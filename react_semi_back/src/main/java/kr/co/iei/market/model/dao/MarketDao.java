@@ -68,6 +68,10 @@ public interface MarketDao {
 	int cancelReport(Integer marketNo, String memberId);
 
 	int pushReport(MarketReport marketReport);
+
+	Market selectSellerId(Integer marketNo);
+
+	int addPoint(Integer marketNo, String sellerId);
 	
 
 	

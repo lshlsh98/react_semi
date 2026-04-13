@@ -46,7 +46,7 @@ public class MarketController {
 	private String root;
 	@Autowired
 	private FileUtils fileUtil;
-	private int cookieTime = 60 * 3; // 쿠키 시간설정 3분
+	private int cookieTime = 60 * 5; // 쿠키 시간설정 5분
 
 	/// 전체 마켓게시글 조회
 	@GetMapping
@@ -59,7 +59,7 @@ public class MarketController {
 	public ResponseEntity<?> insertMarket(@ModelAttribute Market market, @ModelAttribute List<MultipartFile> files) {
 		// 파일리스트 확인
 		for (MultipartFile file : files) {
-			System.out.println("파일명: " + file.getOriginalFilename());
+			System.out.println("\n파일명: " + file.getOriginalFilename());
 			System.out.println("크기: " + file.getSize());
 			System.out.println("타입: " + file.getContentType());
 		}
@@ -113,7 +113,7 @@ public class MarketController {
 	}
 
 	// 마켓 게시물 조회
-	@GetMapping(value = "/{marketNo}")
+	@GetMapping(value = "/{marketNo:\\d+}")
 	public ResponseEntity<?> selectOneMarket(@PathVariable Integer marketNo,
 			@RequestHeader(required = false, name = "Authorization") String token, HttpServletRequest request,
 			HttpServletResponse response
@@ -136,8 +136,8 @@ public class MarketController {
 				}
 			}
 		}
-		String message = alreadyViewed ? "봤음" : "안봤음";
-		System.out.println("게시글 확인 체크 : " + message);
+		String message = alreadyViewed ? "본게시글" : "안본 게시글";
+		System.out.println("\n(쿠키시간 "+(cookieTime)/60+"분)게시글 확인 체크 : " + message);
 
 		if (!alreadyViewed) {
 			marketService.incrementViewCount(marketNo);
@@ -145,7 +145,12 @@ public class MarketController {
 			cookie.setMaxAge(cookieTime); // 쿠키시간설정
 			cookie.setPath("/"); // (전체 경로 적용)
 			response.addCookie(cookie);
+			//m.setViewCount(m.getViewCount() +1); 잘못된 보정
+			//증가된 조회수값 전송
+			m = marketService.selectOneMarket(marketNo, token);
 		}
+		
+		
 		return ResponseEntity.ok(m);
 	}
 
@@ -163,8 +168,6 @@ public class MarketController {
 	//게시글 삭제
 	@DeleteMapping(value = "/{marketNo}")
 	public ResponseEntity<?> deleteOneMarket(@PathVariable Integer marketNo) {
-		
-		
 		// 1. 파일패스 가져오기
 		List<String> fileList = marketService.getFilePath(marketNo);
 		
@@ -173,7 +176,7 @@ public class MarketController {
 		serviceResponse = marketService.deleteOneMarketAndFileTbl(marketNo);
 		int fileCount = (int) serviceResponse.get("fileCount");
 		int result = (int) serviceResponse.get("result");
-		System.out.println("파일TBL 삭제 결과 (1~10) : " + fileCount);
+		System.out.println("\n 파일TBL 삭제 결과 (1~10) : " + fileCount);
 		System.out.println("마켓TBL 삭제 결과 (0~1) : " + result);
 		
 		// 3. 파일 삭제
@@ -196,7 +199,6 @@ public class MarketController {
 		response.put("allDeleted", allDeleted); // 프론트에 전달할 전체 삭제 정상 여부
 		response.put("result", result); // 프론트에 전달할 게시물 삭제 여부
 		return ResponseEntity.ok(response);
-
 	}
 
 	// 좋아요
@@ -257,7 +259,7 @@ public class MarketController {
 	// 거래확정
 	@PatchMapping(value = "{marketNo}/complete/{buyerId}")
 	public ResponseEntity<?> tradeComplete(@PathVariable Integer marketNo, @PathVariable String buyerId) {
-		System.out.println("거래번호 : " + marketNo);
+		System.out.println("\n거래번호 : " + marketNo);
 		System.out.println("구매자아이디" + buyerId);
 		int result = marketService.tradeComplete(marketNo, buyerId);
 		return ResponseEntity.ok(result);

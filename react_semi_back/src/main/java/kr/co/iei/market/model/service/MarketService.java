@@ -84,6 +84,7 @@ public class MarketService {
 	}
 
 	
+	//게시글조회
 	public Market selectOneMarket(Integer marketNo, String token) {
 		String memberId = null;
 		if (token != null) {
@@ -145,7 +146,12 @@ public class MarketService {
 		//3. marketNo completed = 1, completed_date = sysdate
 		int result3 = marketDao.marketCompleted(marketNo);
 		
-		int result = result1 + result2 + result3;
+		//4. score_history_table에 포인트추가(
+		Market m = marketDao.selectSellerId(marketNo);
+		String sellerId = m.getMarketWriter();
+		int result4 = marketDao.addPoint(marketNo,sellerId);
+		
+		int result = result1 + result2 + result3 + result4;
 				
 		return result;
 	}
