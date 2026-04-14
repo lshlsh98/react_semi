@@ -8,6 +8,7 @@ import LikeDislikeList from "./board/LikeDislikeList";
 
 const LikeDislike = () => {
   const memberId = useAuthStore((state) => state.memberId);
+
   const [boardList, setBoardList] = useState([]);
   const [page, setPage] = useState(0);
   const [size, setSize] = useState(10);
@@ -30,8 +31,13 @@ const LikeDislike = () => {
   }, [page, order, status]);
 
   useEffect(() => {
-    setPage(0);
-  }, [order, status]);
+    window.scrollTo({
+      top: 0,
+      behavior: "smooth",
+    });
+  }, [page]);
+
+  useEffect(() => {}, [page]);
 
   return (
     <div className={styles.myboard_wrap}>
@@ -42,7 +48,7 @@ const LikeDislike = () => {
             state={status}
             setState={setStatus}
             list={[
-              [0, "전체"],
+              [0, "좋아요/싫어요"],
               [1, "좋아요"],
               [2, "싫어요"],
             ]}
@@ -53,15 +59,16 @@ const LikeDislike = () => {
             list={[
               [0, "최신순"],
               [1, "작성순"],
-              [2, "조회수"],
-              [3, "좋아요"],
-              [4, "싫어요"],
-              [5, "신고수"],
+              [2, "조회수순"],
+              [3, "좋아요순"],
+              [4, "싫어요순"],
+              [5, "신고수순"],
             ]}
           />
         </div>
       </div>
       <div className={styles.myboard_list_content}>
+        {/* axios.get으로 가지고온 좋아요/싫어요(거래, 커뮤) 게시글 리스트 넘기기 */}
         <LikeDislikeList boardList={boardList} />
       </div>
       <div className={styles.pagination_section}>

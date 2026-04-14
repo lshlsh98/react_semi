@@ -31,7 +31,6 @@ const MyMarketPage = () => {
         `${import.meta.env.VITE_BACKSERVER}/mypages/board/market?isAdminMode=${isAdminMode}&page=${page}&size=${size}&order=${order}&status=${status}&completed=${completed}&searchKeyword=${searchKeyword}&memberId=${memberId}&memberGrade=${memberGrade}`,
       )
       .then((res) => {
-        console.log(res.data.list);
         setBoardList(res.data.list);
         setTotalPage(res.data.totalPage);
       })
@@ -43,6 +42,15 @@ const MyMarketPage = () => {
   useEffect(() => {
     setPage(0);
   }, [order, status, searchKeyword, completed]);
+
+  useEffect(() => {
+    window.scrollTo({
+      top: 0,
+      behavior: "smooth",
+    });
+  }, [page]);
+
+  const safeOrder = completed === 0 && order === 5 ? 0 : order;
 
   return (
     <div className={styles.myboard_wrap}>
@@ -87,16 +95,26 @@ const MyMarketPage = () => {
             ]}
           />
           <BasicSelect
-            state={order}
+            state={safeOrder}
             setState={setOrder}
-            list={[
-              [0, "최신순"],
-              [1, "작성순"],
-              [2, "조회수"],
-              [3, "좋아요"],
-              [4, "신고수"],
-              [5, "최근완료"],
-            ]}
+            list={
+              completed === 0
+                ? [
+                    [0, "최신순"],
+                    [1, "작성순"],
+                    [2, "조회수"],
+                    [3, "좋아요"],
+                    [4, "신고수"],
+                  ]
+                : [
+                    [0, "최신순"],
+                    [1, "작성순"],
+                    [2, "조회수"],
+                    [3, "좋아요"],
+                    [4, "신고수"],
+                    [5, "최근완료"],
+                  ]
+            }
           />
         </div>
       </div>

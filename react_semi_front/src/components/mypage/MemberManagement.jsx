@@ -5,6 +5,7 @@ import Button from "../ui/Button";
 import Pagination from "../ui/Pagination";
 import MemberList from "./MemberList";
 import axios from "axios";
+import BasicSelect from "../ui/BasicSelect";
 
 const MemberManagement = () => {
   const [type, setType] = useState(1);
@@ -29,6 +30,7 @@ const MemberManagement = () => {
         console.log(res);
         setMemberList(res.data.items);
         setTotalPage(res.data.totalPage);
+        window.scrollTo(0, 0);
       })
       .catch((err) => {
         console.log(err);
@@ -40,32 +42,26 @@ const MemberManagement = () => {
       <h3 className="page-title">회원 관리</h3>
       <div className={styles.search_wrap}>
         <div className={styles.order_wrap}>
-          <select
-            className={styles.select}
-            value={order}
-            onChange={(e) => {
-              setOrder(e.target.value);
-            }}
-          >
-            <option value={1}>아이디 오름차순</option>
-            <option value={2}>아이디 내림차순</option>
-            <option value={3}>이름 오름차순</option>
-            <option value={4}>이름 내림차순</option>
-          </select>
-          <select
-            className={styles.select}
-            value={selectedGrade}
-            onChange={(e) => {
-              setSelectedGrade(e.target.value);
-            }}
-          >
-            <option value={0} disabled hidden>
-              등급별
-            </option>
-            <option value={1}>슈퍼 유저</option>
-            <option value={2}>관리자</option>
-            <option value={3}>일반회원</option>
-          </select>
+          <BasicSelect
+            state={order}
+            setState={setOrder}
+            list={[
+              [1, "아이디 오름차순"],
+              [2, "아이디 내림차순"],
+              [3, "이름 오름차순"],
+              [4, "이름 내림차순"],
+            ]}
+          />
+          <BasicSelect
+            state={selectedGrade}
+            setState={setSelectedGrade}
+            list={[
+              [0, "전체 등급"],
+              [1, "슈퍼 유저"],
+              [2, "관리자"],
+              [3, "일반회원"],
+            ]}
+          />
         </div>
         <form
           className={styles.search}
@@ -76,17 +72,15 @@ const MemberManagement = () => {
             setPage(0);
           }}
         >
-          <select
-            className={styles.select}
-            value={type}
-            onChange={(e) => {
-              setType(e.target.value);
-            }}
-          >
-            <option value={1}>이름</option>
-            <option value={2}>아이디</option>
-            <option value={3}>이메일</option>
-          </select>
+          <BasicSelect
+            state={type}
+            setState={setType}
+            list={[
+              [1, "이름"],
+              [2, "아이디"],
+              [3, "이메일"],
+            ]}
+          />
           <Input
             type="text"
             value={keyword}

@@ -1,0 +1,127 @@
+.community_modify_wrap {
+  width: 900px;
+  margin: 0 auto;
+}
+
+/* "게시글 수정" 글자 */
+.community_wrap > h3 {
+  margin-top: 50px;
+  text-align: center;
+}
+
+.community_modify_wrap > h3 {
+  text-align: center;
+  margin-top: 50px;
+  margin-bottom: 50px;
+  color: var(--primary);
+  font-size: 30px;
+  font-weight: 600;
+}
+
+/* 내용과 에디터 간격 */
+.community_input_wrap label {
+  display: block;
+  margin-bottom: 10px;
+}
+
+/* 제목, 내용 글씨 키우기 및 강조 */
+.community_input_wrap label {
+  font-size: 20px;
+  font-weight: 600;
+}
+
+.community_input_wrap {
+  margin-bottom: 20px;
+}
+
+/* 버튼 */
+.btn_wrap {
+  display: flex;
+  justify-content: center;
+  gap: 40px;
+  margin-top: 30px;
+  margin-bottom: 30px;
+}
+
+.btn {
+  width: 80px;
+  height: 36px;
+  border: none;
+  cursor: pointer;
+}
+
+/* 텍스트 에디터 */
+.editor_wrap {
+  border: 1px solid var(--secendary);
+  border-radius: 8px;
+  overflow: hidden;
+  background-color: var(--light);
+}
+.menu_bar {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  padding: 12px;
+  justify-content: center;
+  align-items: center;
+}
+.menu_bar button,
+.menu_bar input {
+  width: 50px;
+  height: 50px;
+  padding: 8px 12px;
+  border: 1px solid var(--secendary);
+  border-radius: 4px;
+  font-size: 14px;
+  cursor: pointer;
+  background-color: var(--light); /*기본 배경*/
+  color: var(--primary); /*기본 글자*/
+}
+
+.menu_bar button:hover {
+  background-color: var(--secendary);
+}
+.menu_bar button:hover svg {
+  fill: var(--light);
+}
+.menu_bar button.active {
+  background-color: var(--primary);
+  border: 1px solid var(--primary);
+}
+
+.menu_bar button.active svg {
+  fill: var(--light);
+}
+
+.editor_content {
+  padding: 16px;
+}
+
+/* 에디터 내부 전역 처리 */
+.editor_content :global(.ProseMirror) {
+  white-space: pre-wrap !important; /* 줄 바꿈 및 공백 여러 개 유지 */
+  word-break: break-all !important; /* 긴 단어 강제로 줄 바꾸는 거*/
+  margin: 0;
+  min-height: 1em;
+}
+
+.editor_content > div {
+  min-height: 400px;
+  background-color: var(--light);
+  padding: 10px 20px;
+  outline: none;
+  border: 1px solid var(--gray1);
+  border-radius: 12px;
+  line-height: 1.4;
+}
+
+.communityContent {
+  white-space: pre-wrap;
+  word-break: break-all;
+}
+.editor_content > div:hover {
+  background-color: var(--bg);
+}
+.editor_content > div ul {
+  padding-left: 20px;
+}

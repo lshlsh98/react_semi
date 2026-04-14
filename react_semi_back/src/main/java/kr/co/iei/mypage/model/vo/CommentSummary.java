@@ -29,5 +29,7 @@ public class CommentSummary {
 	private Integer isLiked;
 	private Integer dislikeCount;
 	private Integer isDisliked;
+	
+	private Integer isEdited;
 }
 

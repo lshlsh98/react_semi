@@ -5,11 +5,14 @@ import java.util.Map;
 
 import org.apache.ibatis.annotations.Mapper;
 
+import kr.co.iei.market.model.vo.CommentListItem;
 import kr.co.iei.market.model.vo.ListItem;
 import kr.co.iei.market.model.vo.Market;
 import kr.co.iei.market.model.vo.MarketComment;
+import kr.co.iei.market.model.vo.MarketCommentReport;
 import kr.co.iei.market.model.vo.MarketFile;
 import kr.co.iei.market.model.vo.MarketReport;
+import kr.co.iei.market.model.vo.ScoreHistory;
 import kr.co.iei.market.model.vo.TradeRequest;
 
 @Mapper
@@ -27,11 +30,21 @@ public interface MarketDao {
 	
 	List<Market> selectMainPageMarketList(Integer order);
 	
+	int updateMarket(Market market);
+	
+	int deleteMarketFileList(List<String> deleteFilePath);
+	
+	int deleteMarket(Integer marketNo);
+	
 	List<MarketComment> selectMarketCommentList(Integer marketNo);
 	
     int insertMarketComment(MarketComment marketComment);
     
     int deleteMarketComment(Integer commentNo);
+    
+    int updateMarketComment(MarketComment marketComment);
+    
+    int insertMarketCommentReport(MarketCommentReport report);
 
 	Market selectOneMarket(Integer marketNo, String memberId);
 
@@ -76,6 +89,13 @@ public interface MarketDao {
 	int addPointMember(String sellerId);
 	
 
+	int selectParentCommentCount(CommentListItem item);
+
+	List<MarketComment> selectMarketCommentList(CommentListItem item);
+
+	Integer selectOneCarbonContributionCount(String memberId, ListItem request);
+
+	List<ScoreHistory> selectOneCarbonContributionList(String memberId, ListItem request);
 	
 
 	

@@ -8,6 +8,8 @@ import org.apache.ibatis.annotations.Mapper;
 import kr.co.iei.community.model.vo.Community;
 import kr.co.iei.community.model.vo.CommunityListItem;
 import kr.co.iei.community.model.vo.CommunityComment;
+import kr.co.iei.community.model.vo.CommunityCommentListItem;
+import kr.co.iei.community.model.vo.CommunityCommentReport;
 
 @Mapper
 public interface CommunityDao {
@@ -24,17 +26,35 @@ public interface CommunityDao {
 	
 	List<Community> selectMainPageCommunityList(String type);
 	
-	int deleteCommunity(Integer communityNo);
-
-	int insertCommunityComment(CommunityComment communityComment);
-
-	List<CommunityComment> selectCommunityCommentList(Integer communityNo);
-
-	int selectNewCommunityCommentNo();
+	int selectParentCommentCount(CommunityCommentListItem req);
 	
-	CommunityComment selectOneCommunityComment(int communityCommentNo);
+	List<CommunityComment> selectCommunityCommentList(CommunityCommentListItem req);
+	
+	int insertCommunityComment(CommunityComment communityComment);
+	
+	int updateCommunityComment(CommunityComment comment);
 	
 	int deleteCommunityComment(Integer communityCommentNo);
+
+	int selectCommentLikeCount(Integer communityCommentNo);
+	
+	int selectCommentDislikeCount(Integer communityCommentNo);
+	
+	int selectCommentIsLike(Map<String, Object> params);
+	
+	int selectCommentIsDislike(Map<String, Object> params);
+	
+	int commentLikeOn(Map<String, Object> params);
+	
+	int commentLikeOff(Map<String, Object> params);
+	
+	int commentDislikeOn(Map<String, Object> params);
+	
+	int commentDislikeOff(Map<String, Object> params);
+	
+	int insertCommentReport(CommunityCommentReport report);
+	
+	int deleteCommunity(Integer communityNo);
 
 	int selectLikeCount(Integer communityNo);
 
@@ -52,8 +72,6 @@ public interface CommunityDao {
 
 	int deleteDislike(Map<String, Object> map);
 
-	int updateCommunityComment(CommunityComment comment);
-	
 	int selectReportCount(Integer communityNo);
 	
 	int selectIsReport(Map<String, Object> params);
@@ -61,5 +79,7 @@ public interface CommunityDao {
 	int insertReport(Map<String, Object> params);
 
 	int deleteReport(Map<String, Object> params);
+
+	int updateViewCountCommunity(Community community);
 
 }

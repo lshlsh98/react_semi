@@ -7,6 +7,7 @@ import useAuthStore from "../../components/utils/useAuthStore";
 import { useNavigate } from "react-router-dom";
 import CommunityList from "../../components/community/CommunityList";
 import axios from "axios";
+import BasicSelect from "../../components/ui/BasicSelect";
 
 const CommunityListPage = () => {
   const navigete = useNavigate();
@@ -15,7 +16,7 @@ const CommunityListPage = () => {
   const [type, setType] = useState(1); // 1:제목 2:작성자
   const [keyword, setKeyword] = useState(""); // 검색어
   const [order, setOrder] = useState(1); // 정렬 조건
-  const [view, setView] = useState(1);
+  const [view, setView] = useState(1); //출력 조건
 
   const [searchType, setSearchType] = useState(1); // 제출할 검색 조건
   const [searchKeyword, setSearchKeyword] = useState(""); // 제출할 검색어
@@ -54,16 +55,17 @@ const CommunityListPage = () => {
             setPage(0);
           }}
         >
-          <select
-            className={styles.select}
-            value={type}
+          <BasicSelect
+            state={type}
+            setState={setType}
             onChange={(e) => {
-              setType(e.target.value);
+              setPage(0);
             }}
-          >
-            <option value={1}>글/내용</option>
-            <option value={2}>작성자</option>
-          </select>
+            list={[
+              [1, "글/내용"],
+              [2, "작성자"],
+            ]}
+          />
           <Input
             type="text"
             value={keyword}
@@ -75,59 +77,68 @@ const CommunityListPage = () => {
             <span className="material-icons">search</span>
           </Button>
         </form>
-        <div className={styles.order_item_wrap}>
-          <select
-            className={styles.select}
-            value={view}
-            onChange={(e) => {
-              setView(e.target.value);
-              setPage(0);
-            }}
-          >
-            <option value={1}>게시글</option>
-            <option value={2}>공지사항</option>
-          </select>
-          <div className={styles.order_wrap}>
-            {memberId && (
-              <div className={styles.write_btn_zone}>
-                <Button
-                  className="btn primary"
-                  onClick={() => {
-                    navigete("/community/write");
-                  }}
-                >
-                  글쓰기
-                </Button>
-              </div>
-            )}
-            <select
-              className={styles.select}
-              value={order}
+      </div>
+      {communityList.length === 0 ? (
+        <div className={styles.community_list_none}>
+          <h3>존재하는 게시글이 없습니다.</h3>
+        </div>
+      ) : (
+        <>
+          <div className={styles.order_item_wrap}>
+            <BasicSelect
+              state={view}
+              setState={setView}
               onChange={(e) => {
-                setOrder(e.target.value);
+                setPage(0);
               }}
-            >
-              <option value={1}>최신순</option>
-              <option value={2}>작성순</option>
-              <option value={3}>조회수</option>
-              <option value={4}>좋아요</option>
-              <option value={5}>싫어요</option>
-              <option value={6}>신고수</option>
-            </select>
+              list={[
+                [1, "게시글"],
+                [2, "공지사항"],
+              ]}
+            />
+            <div className={styles.order_wrap}>
+              {memberId && (
+                <div className={styles.write_btn_zone}>
+                  <Button
+                    className="btn primary"
+                    onClick={() => {
+                      navigete("/community/write");
+                    }}
+                  >
+                    글쓰기
+                  </Button>
+                </div>
+              )}
+              <BasicSelect
+                state={order}
+                setState={setOrder}
+                onChange={(e) => {
+                  setPage(0);
+                }}
+                list={[
+                  [1, "최신순"],
+                  [2, "작성순"],
+                  [3, "조회수"],
+                  [4, "좋아요"],
+                  [5, "싫어요"],
+                  [6, "신고수"],
+                ]}
+              />
+            </div>
           </div>
-        </div>
-      </div>
-      <div className={styles.list_wrap}>
-        <CommunityList communityList={communityList} view={view} />
-        <div className={styles.community_list_pagination}>
-          <Pagination
-            page={page}
-            setPage={setPage}
-            totalPage={totalPage}
-            naviSize={5}
-          />
-        </div>
-      </div>
+          <div className={styles.list_wrap}>
+            <CommunityList communityList={communityList} view={view} />
+            <div className={styles.community_list_pagination}>
+              <Pagination
+                page={page}
+                setPage={setPage}
+                totalPage={totalPage}
+                naviSize={5}
+              />
+            </div>
+          </div>
+        </>
+      )}
     </section>
   );
 };

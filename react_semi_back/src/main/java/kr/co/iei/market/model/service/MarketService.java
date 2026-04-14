@@ -10,12 +10,15 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import kr.co.iei.market.model.dao.MarketDao;
+import kr.co.iei.market.model.vo.CommentListItem;
 import kr.co.iei.market.model.vo.ListItem;
 import kr.co.iei.market.model.vo.ListResponse;
 import kr.co.iei.market.model.vo.Market;
 import kr.co.iei.market.model.vo.MarketComment;
-import kr.co.iei.market.model.vo.MarketFile;	
+import kr.co.iei.market.model.vo.MarketCommentReport;
+import kr.co.iei.market.model.vo.MarketFile;
 import kr.co.iei.market.model.vo.MarketReport;
+import kr.co.iei.market.model.vo.ScoreHistory;
 import kr.co.iei.market.model.vo.TradeRequest;
 import kr.co.iei.member.model.vo.LoginMember;
 import kr.co.iei.utils.JwtUtils;
@@ -60,29 +63,70 @@ public class MarketService {
 		return result;
 	}
 
+	
+	@Transactional // 거래 게시글 수정 - 장지혁
+	public int updateMarket(Market market, List<MarketFile> addFileList) {
+		int result = marketDao.updateMarket(market);
+		for(MarketFile marketFile : addFileList) {
+			result += marketDao.insertMarketFile(marketFile);
+		}
+		if(market.getDeleteFilePath() != null) {
+			result += marketDao.deleteMarketFileList(market.getDeleteFilePath());
+		}
+		return result;
+	}
+	
+	@Transactional // 거래 게시글 삭제 - 장지혁
+	public int deleteMarket(Integer marketNo) {
+		int result = marketDao.deleteMarket(marketNo);
+		return result;
+	}
+	
 	// 메인페이지
 	public List<Market> selectMainPageMarketList(Integer order) {
 		List<Market> list = marketDao.selectMainPageMarketList(order);
 		return list;
 	}
-
+	
 	// 댓글 조회
-	public List<MarketComment> selectMarketCommentList(Integer marketNo) {
-		return marketDao.selectMarketCommentList(marketNo);
+	public ListResponse selectMarketCommentList(CommentListItem item) {
+			
+		int totalCount = marketDao.selectParentCommentCount(item); // 총 부모 댓글 수 구하기 (자식 답글은 페이지 계산에서 제외)
+		int totalPage = (int) Math.ceil(totalCount / (double) item.getSize()); // 총 페이지 수 계산
+			
+		List<MarketComment> list = marketDao.selectMarketCommentList(item); //조회
+			
+		ListResponse response = new ListResponse(list, totalPage);
+		return response;
 	}
 
 	// 댓글 작성
-	@Transactional
-	public int insertMarketComment(MarketComment marketComment) {
-		return marketDao.insertMarketComment(marketComment);
-	}
+    @Transactional
+    public int insertMarketComment(MarketComment marketComment) {
+    	int result = marketDao.insertMarketComment(marketComment);
+        return result;
+    }
 
-	// 댓글 삭제
-	@Transactional
-	public int deleteMarketComment(Integer commentNo) {
-		return marketDao.deleteMarketComment(commentNo);
-	}
-
+    // 댓글 삭제
+    @Transactional
+    public int deleteMarketComment(Integer commentNo) {
+    	int result = marketDao.deleteMarketComment(commentNo);
+        return result;
+    }
+    
+    // 댓글 수정
+    @Transactional
+    public int updateMarketComment(MarketComment marketComment) {
+    	int result = marketDao.updateMarketComment(marketComment);
+        return result;
+    }
+    
+    // 댓글 신고
+    @Transactional
+    public int insertMarketCommentReport(MarketCommentReport report) {
+    	int result = marketDao.insertMarketCommentReport(report);
+        return result;
+    }
 	
 	//게시글조회
 	public Market selectOneMarket(Integer marketNo, String token) {
@@ -206,6 +250,14 @@ public class MarketService {
 		return result;
 	}
 
-	
+	// 탄소 기여도 출력
+	public ListResponse selectOneCarbonContributionList(String memberId, ListItem request) {
+		Integer totalCount = marketDao.selectOneCarbonContributionCount(memberId, request);
+		int totalPage = (int) Math.ceil(totalCount / (double) request.getSize());
+		List<ScoreHistory> list = marketDao.selectOneCarbonContributionList(memberId, request);
+		ListResponse response = new ListResponse(list, totalPage);
+
+		return response;
+	}
 
 }

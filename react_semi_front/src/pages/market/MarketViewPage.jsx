@@ -762,7 +762,11 @@ const MarketViewPage = () => {
                 </Button>
               </div>
             )}
-          <MarketComment marketNo={marketNo} memberId={memberId} />
+          <MarketComment
+            marketNo={marketNo}
+            memberId={memberId}
+            marketWriter={market.marketWriter}
+          />
         </>
       )}
     </main>

@@ -87,8 +87,34 @@
 		0,
 		null
 		)
-
 	</insert>
+	
+	<!-- 거래 게시글 수정 (장지혁) -->
+	<update id="updateMarket">
+		update market_tbl set
+			market_title = #{marketTitle},
+			market_content = #{marketContent}
+		where market_no = #{marketNo}
+	</update>
+	
+	<!-- 거래 게시글 수정 + 파일 삭제 (장지혁) -->
+	<delete id="deleteMarketFile">
+  		delete from market_file_tbl where market_file_path = #{marketFilePath}
+  	</delete>
+	
+	<!-- 거래 게시글 수정 + 파일 리스트 삭제 (장지혁) -->
+	<delete id="deleteMarketFileList">
+  		delete from market_file_tbl where market_file_path in
+  		<foreach collection="list" item="marketFilePath" open="(" close=")" separator=",">
+  			#{marketFilePath}
+  		</foreach>
+  	</delete>
+	
+	<!-- 거래 게시글 삭제 (장지혁) -->
+	<delete id="deleteMarket">
+		delete market_tbl
+			where market_no = #{marketNo}
+	</delete>
 
 	<!-- 마켓 파일 등록 -->
 	<insert id="insertMarketFile">
@@ -179,68 +205,138 @@
 
 	<select id="selectMainPageMarketList" resultType="market">
 		select
-				market_no,
-				market_title,
-				to_char(market_date, 'yyyy-mm-dd HH24:mi:ss') as market_date,
-				market_writer,
-				view_count,
-				sell_addr,
-				sell_price,
-				(
+			m.market_no,
+			m.market_title,
+			to_char(m.market_date, 'yyyy-mm-dd hh24:mi:ss') market_date,
+			m.market_writer,
+			m.view_count,
+			m.sell_addr,
+			m.sell_price,
+			(
 				select market_file_path
-					from (
+				from (
 						select mf.market_file_path
-						from market_file_tbl  mf
-						where mf.market_no = market_tbl.market_no
+						from market_file_tbl mf
+						where mf.market_no = m.market_no
 						order by mf.market_file_no asc
-						)
+					)
 				where rownum = 1
-				) as marketThumb
-		from
-		market_tbl
-		where market_status = 1
-		and completed = 0
-			
-		<if test="order==0"> order by market_no desc</if>
-		<if test="order==2"> order by view_count desc </if>
+			) marketThumb
+		from market_tbl m
+		where m.market_status = 1 and m.completed = 0
+		
+		<if test="order==0">
+		order by m.market_no desc
+		</if>
+		
+		<if test="order==2">
+		order by m.view_count desc
+		</if>
 	
-		fetch first 5 rows only
+		offset 0 rows fetch next 5 rows only
 	</select>
 	
-	<select id="selectMarketCommentList" resultType="marketComment">
-        SELECT 
-            c.market_comment_no,
-            c.market_no,
-            c.market_comment_writer,  m.member_thumb,
-            c.market_comment_content,
-            TO_CHAR(c.market_comment_date, 'YYYY-MM-DD HH24:MI') AS market_comment_date,
-            c.market_recomment_no,    c.is_secret
-        FROM market_comment_tbl c
-        LEFT JOIN member_tbl m ON (c.market_comment_writer = m.member_id) WHERE c.market_no = #{marketNo}
-        ORDER BY c.market_comment_no ASC
-    </select>
+	<select id="selectParentCommentCount" resultType="int">
+		select count(*) from market_comment_tbl 
+		where market_no = #{marketNo} and market_recomment_no is null
+		
+		<if test="filterType == 'secret'">
+			and is_secret = 1
+		</if>
+		
+		<if test="filterType == 'normal'">
+			and is_secret = 0
+		</if>
+	</select>
 
+	<select id="selectMarketCommentList" resultType="marketComment">
+		select 
+		    t.market_comment_no, 
+		    t.market_no, 
+		    t.market_comment_writer, 
+		    t.market_comment_content, 
+		    to_char(t.market_comment_date, 'yyyy-mm-dd hh24:mi:ss') market_comment_date,
+		    t.market_recomment_no, 
+		    t.is_secret, 
+		    t.is_edited,
+		    m.member_thumb
+		from (
+		    select * from market_comment_tbl where market_no = #{marketNo}
+		    
+		    <!-- 1. 부모 댓글 10개를 뽑을 때 필터와 정렬을 싹 다 적용! -->
+		    start with market_comment_no in (
+		        select market_comment_no from (
+		            select market_comment_no from market_comment_tbl 
+		            where market_no = #{marketNo} and market_recomment_no is null
+		            
+		            <if test="filterType == 'secret'">
+		                and is_secret = 1
+		            </if>
+		            
+		            <if test="filterType == 'normal'">
+		                and is_secret = 0
+		            </if>
+
+		            <if test="orderType == 'oldest'">
+		                order by market_comment_no asc
+		            </if>
+		            
+		            <if test="orderType == 'newest' or orderType == null">
+		                order by market_comment_no desc
+		            </if>
+		        )
+		        offset #{page} * #{size} rows fetch next #{size} rows only
+		    )
+		    
+		    <!-- 2. 자식 답글들 전부 끌고 오기 -->
+		    connect by prior market_comment_no = market_recomment_no
+		    
+		    <!-- 3. 전체 데이터를 조건에 맞춰 정렬해서 프론트로 넘김 -->
+		    <if test="orderType == 'oldest'">
+		        order by market_comment_no asc
+		    </if>
+		    
+		    <if test="orderType == 'newest' or orderType == null">
+		        order by market_comment_no desc
+		    </if>
+		) t
+		left join member_tbl m on (t.market_comment_writer = m.member_id)
+	</select>
+    
     <insert id="insertMarketComment">
-        INSERT INTO market_comment_tbl (
-            market_comment_no,
-            market_comment_content,
-            market_comment_date,
-            market_no,
-            market_comment_writer,   market_recomment_no,     is_secret
-        ) VALUES (
+        insert into market_comment_tbl values (
             market_comment_seq.NEXTVAL,
             #{marketCommentContent},
-            SYSDATE,
+            sysdate,
             #{marketNo},
-            #{marketCommentWriter},  #{marketRecommentNo},    #{isSecret}
+            #{marketCommentWriter},  
+            #{marketRecommentNo},   
+			#{isSecret},
+			0
         )
     </insert>
 
     <delete id="deleteMarketComment">
-        DELETE FROM market_comment_tbl 
-        WHERE market_comment_no = #{commentNo}
+        delete from market_comment_tbl where market_comment_no = #{commentNo}
     </delete>
     
+    <update id="updateMarketComment">
+        update market_comment_tbl 
+        set 
+            market_comment_content = #{marketCommentContent},
+            is_secret = #{isSecret},
+            is_edited = 1
+        where market_comment_no = #{marketCommentNo}
+    </update>
+    
+    <insert id="insertMarketCommentReport">
+        insert into market_comment_report_tbl values (
+            #{marketCommentNo}, 
+            #{memberId}, 
+            #{marketCommentReportReason}
+        )
+    </insert>
+	
     <!-- 마켓게시글 삭제시 파일이름 확보 -->
     <select id="getFilePath" resultType="string">
     	select market_file_path from market_file_tbl where market_no = #{marketNo}
@@ -316,6 +412,49 @@
     <delete id="cancelReport">
     	delete from market_report_tbl where market_no= #{marketNo} and member_id = #{memberId}
     </delete>
+    
+    <!-- 탘소 기여도 페이지 수 -->
+    <select id="selectOneCarbonContributionCount" resultType="Integer">
+    	select count(*) from
+		score_history_tbl
+		where member_id = #{memberId}
+		
+		<if test="request.view==1">
+			and history_status = 1
+		</if>
+		<if test="request.view==2">
+			and history_status = 2
+		</if>
+    </select>
+    
+    <!-- 탘소 기여도 출력 -->
+    <select id="selectOneCarbonContributionList" resultType="scoreHistory">
+    	select
+    	score_no,
+    	history_status,
+    	member_id,
+    	market_no,
+    	(select market_title
+		from market_tbl m
+		where m.market_no = s.market_no) as market_title,
+		changed_score,
+		score_date
+    	from score_history_tbl s
+    	
+    	where member_id = #{memberId}
+    	
+    	<if test="request.view==1">
+			and history_status = 1
+		</if>
+		<if test="request.view==2">
+			and history_status = 2
+		</if>
+		
+		<if test="request.order == 1">order by score_date desc</if>
+		<if test="request.order == 2">order by score_date asc</if>
+		
+		offset #{request.page}*#{request.size} rows fetch next #{request.size} rows only
+    </select>
     
     <!-- 판매자 아이디 조회 -->
     <select id="selectSellerId" resultType="market">

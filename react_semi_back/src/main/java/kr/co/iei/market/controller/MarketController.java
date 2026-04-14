@@ -5,6 +5,10 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
+import kr.co.iei.utils.JwtUtils;
+
+import org.apache.ibatis.annotations.Delete;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
@@ -15,6 +19,7 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -25,10 +30,12 @@ import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import kr.co.iei.market.model.service.MarketService;
+import kr.co.iei.market.model.vo.CommentListItem;
 import kr.co.iei.market.model.vo.ListItem;
 import kr.co.iei.market.model.vo.ListResponse;
 import kr.co.iei.market.model.vo.Market;
 import kr.co.iei.market.model.vo.MarketComment;
+import kr.co.iei.market.model.vo.MarketCommentReport;
 import kr.co.iei.market.model.vo.MarketFile;
 import kr.co.iei.market.model.vo.MarketReport;
 import kr.co.iei.market.model.vo.TradeRequest;
@@ -92,16 +99,16 @@ public class MarketController {
 
 	// 1. 특정 게시글의 댓글 목록 조회 - 이영민
 	@GetMapping(value = "/{marketNo}/comments")
-	public ResponseEntity<?> selectMarketCommentList(@PathVariable Integer marketNo) {
-		List<MarketComment> list = marketService.selectMarketCommentList(marketNo);
-		return ResponseEntity.ok(list);
+	public ResponseEntity<?> selectMarketCommentList(@PathVariable Integer marketNo,
+			@ModelAttribute CommentListItem item) {
+		item.setMarketNo(marketNo);
+		ListResponse response = marketService.selectMarketCommentList(item);
+		return ResponseEntity.ok(response);
 	}
 
 	// 2. 댓글 작성 (대댓글 포함) - 이영민
 	@PostMapping(value = "/comments")
 	public ResponseEntity<?> insertMarketComment(@RequestBody MarketComment marketComment) {
-		// 💡 팁: 앞선 게시글 등록은 이미지가 있어서 @ModelAttribute를 썼지만,
-		// 단순 텍스트인 댓글은 프론트에서 JSON으로 보내므로 @RequestBody를 써야 합니다!
 		int result = marketService.insertMarketComment(marketComment);
 		return ResponseEntity.ok(result);
 	}
@@ -110,6 +117,20 @@ public class MarketController {
 	@DeleteMapping(value = "/comments/{commentNo}")
 	public ResponseEntity<?> deleteMarketComment(@PathVariable Integer commentNo) {
 		int result = marketService.deleteMarketComment(commentNo);
+		return ResponseEntity.ok(result);
+	}
+
+	// 4. 댓글 수정 - 이영민
+	@PatchMapping(value = "/comments")
+	public ResponseEntity<?> updateMarketComment(@RequestBody MarketComment marketComment) {
+		int result = marketService.updateMarketComment(marketComment);
+		return ResponseEntity.ok(result);
+	}
+
+	// 5. 댓글 신고 - 이영민
+	@PostMapping(value = "/comments/reports")
+	public ResponseEntity<?> insertMarketCommentReport(@RequestBody MarketCommentReport report) {
+		int result = marketService.insertMarketCommentReport(report);
 		return ResponseEntity.ok(result);
 	}
 
@@ -210,7 +231,7 @@ public class MarketController {
 		return ResponseEntity.ok(response);
 	}
 
-	// 좋아요
+	// 좋아요 누르기
 	@PostMapping(value = "/{marketNo}/likes")
 	public ResponseEntity<?> likeOn(@PathVariable Integer marketNo,
 			@RequestHeader(name = "Authorization") String token) {
@@ -218,7 +239,7 @@ public class MarketController {
 		return ResponseEntity.ok(result);
 	}
 
-	// 좋아요 취소
+	// 좋아요 삭제
 	@DeleteMapping(value = "/{marketNo}/likes")
 	public ResponseEntity<?> likeOff(@PathVariable Integer marketNo,
 			@RequestHeader(name = "Authorization") String token) {
@@ -274,4 +295,11 @@ public class MarketController {
 		return ResponseEntity.ok(result);
 	}
 
+	
+	// 멤버 개인 탄소 기여도
+	@GetMapping(value = "/carbon-contribution/{memberId}")
+	public ResponseEntity<?> carbonContribution(@PathVariable String memberId, @ModelAttribute ListItem request){
+		ListResponse response = marketService.selectOneCarbonContributionList(memberId, request);
+		return ResponseEntity.ok(response);
+	}
 }

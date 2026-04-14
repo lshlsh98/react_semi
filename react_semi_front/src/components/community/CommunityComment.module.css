@@ -1,0 +1,319 @@
+/* 전체 래퍼 및 상단 헤더 (제목/필터) 영역 */
+.comment_wrap {
+  width: 100%;
+  margin-top: 40px;
+  padding-top: 30px;
+  border-top: 1px solid var(--soft); /* 본문과 구분되는 연한 선 */
+  font-family: "tr_r";
+}
+
+.comment_header_wrap {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 15px;
+}
+
+.comment_title {
+  font-size: 20px;
+  font-weight: bold;
+  color: var(--text1);
+  margin-bottom: 24px;
+  margin: 0;
+}
+
+.filter_wrap {
+  display: flex;
+  gap: 10px;
+}
+
+/* 댓글 리스트 및 개별 댓글 (header, content, footer) */
+.comment_list {
+  list-style: none;
+  padding: 0;
+  margin: 0 0 40px 0;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.comment_item {
+  display: flex;
+  flex-direction: column;
+  padding-bottom: 20px;
+  border-bottom: 1px solid var(--gray7); /* 각 댓글 사이 연한 선 */
+}
+
+/* 마지막 댓글은 아래 선 없애기 */
+.comment_item:last-child {
+  border-bottom: none;
+  padding-bottom: 0;
+}
+
+/* 개별 댓글 헤더 */
+.comment_header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 10px;
+}
+
+.writer_info {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+/* 프사 이미지 (댓글 헤더, 작성창 헤더 공통) */
+.writer_info img,
+.write_header img {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 1px solid var(--soft);
+}
+
+.writer_info .material-icons {
+  font-size: 36px;
+  color: var(--gray5);
+}
+
+.writer_id {
+  font-size: 15px;
+  font-weight: bold;
+  color: var(--text1);
+}
+
+.comment_date {
+  font-size: 12px;
+  color: var(--gray4);
+}
+
+.edited_mark {
+  margin-left: 6px;
+  font-size: 11px;
+  color: var(--gray5);
+}
+
+.comment_actions {
+  display: flex;
+  gap: 12px;
+}
+
+.comment_actions button {
+  background: none;
+  border: none;
+  font-size: 13px;
+  color: var(--gray4);
+  cursor: pointer;
+  padding: 0;
+}
+
+.comment_actions button:hover {
+  color: var(--text1);
+  text-decoration: underline;
+}
+
+/* 개별 댓글 내용 */
+.comment_content {
+  font-size: 15px;
+  color: var(--gray1);
+  line-height: 1.5;
+  margin-bottom: 12px;
+  padding-left: 46px; /* 프사 사이즈만큼 들여쓰기 */
+  word-break: break-all;
+}
+
+/* 개별 댓글 푸터 (답글달기, 신고, 좋아요/싫어요) */
+.comment_footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding-left: 46px; /* 텍스트 시작 위치와 맞춤 */
+}
+
+/* 왼쪽 버튼들 (답글, 신고) */
+.footer_actions {
+  display: flex;
+  gap: 16px;
+}
+
+.footer_actions button {
+  background: none;
+  border: none;
+  font-size: 13px;
+  font-weight: bold;
+  color: var(--gray4);
+  cursor: pointer;
+  padding: 0;
+}
+
+.footer_actions button:hover {
+  color: var(--text1);
+}
+
+.report_btn:hover {
+  color: var(--danger) !important;
+}
+
+/* 오른쪽 버튼들 (좋아요, 싫어요) */
+.like_dislike_wrap {
+  display: flex;
+  gap: 16px;
+}
+
+.reaction_btn {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  background: none;
+  border: none;
+  padding: 4px;
+  font-size: 13px;
+  color: var(--gray4);
+  cursor: pointer;
+  transition: color 0.2s;
+}
+
+.reaction_btn:hover {
+  color: var(--text1);
+}
+
+.icon_size {
+  font-size: 20px !important;
+}
+
+.active_like {
+  color: var(--primary) !important;
+}
+
+.active_dislike {
+  color: var(--danger) !important;
+}
+
+/* 댓글 작성 및 수정/답글 창 영역  */
+.comment_write_wrap {
+  border: 1px solid var(--soft);
+  border-radius: 12px;
+  background-color: var(--bg);
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  margin-bottom: 40px; /* 새 댓글창과 페이징 사이 간격 */
+}
+
+/* 대댓글(답글) 작성창 들여쓰기 */
+.reply_write_wrap {
+  margin: 16px 0 0 46px;
+}
+
+/* 작성창 헤더 */
+.write_header {
+  padding: 16px 20px 0;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 14px;
+  font-weight: bold;
+  color: var(--text1);
+}
+
+.write_header .material-icons {
+  font-size: 24px;
+  color: var(--gray5);
+}
+
+/* 답글달기 전용 아이콘/프사 */
+.reply_arrow_icon {
+  font-size: 20px;
+}
+
+.reply_profile_img {
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+}
+
+/* 작성창 텍스트 에어리어 */
+.comment_textarea {
+  width: 100%;
+  height: 80px;
+  padding: 12px 20px;
+  border: none;
+  resize: none;
+  font-size: 15px;
+  color: var(--gray1);
+  font-family: inherit;
+  background-color: transparent;
+}
+
+.comment_textarea:focus {
+  outline: none;
+}
+
+/* 작성창 푸터 (글자수, 등록 버튼) */
+.write_footer {
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  padding: 12px 20px;
+  border-top: 1px solid var(--gray7);
+  background-color: var(--footer);
+}
+
+/* 우측 액션(글자수+버튼) 래퍼 */
+.write_actions {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.char_counter {
+  font-size: 13px;
+  color: var(--gray4);
+}
+
+.btn_group {
+  display: flex;
+  gap: 8px;
+}
+
+/* 답글 토글 버튼 및 대댓글 리스트 영역 */
+.toggle_replies_btn {
+  background: none;
+  border: none;
+  font-size: 14px;
+  font-weight: bold;
+  color: var(--primary);
+  cursor: pointer;
+  padding: 0 0 0 46px; /* 부모 댓글 들여쓰기와 맞춤 */
+  margin-top: 10px;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.toggle_replies_btn .material-icons {
+  font-size: 18px;
+}
+
+.toggle_replies_btn:hover .toggle_text {
+  text-decoration: underline;
+}
+
+.reply_list {
+  list-style: none;
+  padding: 0;
+  margin: 16px 0 0 46px; /* 부모 댓글 안쪽으로 쑥 들어가게 배치 */
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  border-left: 2px solid var(--gray7); /* 왼쪽에 묶여있다는 표시선 */
+  padding-left: 16px;
+}
+
+/* 페이지네이션 */
+.pagination_area {
+  margin-bottom: 40px;
+}

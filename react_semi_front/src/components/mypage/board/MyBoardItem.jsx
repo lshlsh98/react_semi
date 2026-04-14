@@ -3,11 +3,13 @@ import ThumbUpIcon from "@mui/icons-material/ThumbUp";
 import ThumbDownIcon from "@mui/icons-material/ThumbDown";
 import CommentIcon from "@mui/icons-material/Comment";
 import ReportIcon from "@mui/icons-material/Report";
+import VisibilityIcon from "@mui/icons-material/Visibility";
 import { useState } from "react";
 import Switch from "@mui/material/Switch";
 import axios from "axios";
 import Swal from "sweetalert2";
 import ReportModal from "../ReportModal";
+import { useNavigate } from "react-router-dom";
 
 const MyBoardItem = ({
   board,
@@ -16,8 +18,10 @@ const MyBoardItem = ({
   setBoardList,
   status,
   isAdminMode,
+  timeAgo,
 }) => {
   const [contentStatus, setContentStatus] = useState(board.contentStatus);
+  const navigate = useNavigate();
 
   const changeStatus = () => {
     const toggle = contentStatus === 1 ? 2 : 1;
@@ -75,7 +79,12 @@ const MyBoardItem = ({
   };
 
   return (
-    <div className={styles.item}>
+    <div
+      className={styles.item}
+      onClick={() => {
+        navigate(`/community/view/${board.boardNo}`);
+      }}
+    >
       <div className={styles.item_wrap}>
         {board.boardType ? (
           board.boardType === "market" ? (
@@ -86,22 +95,38 @@ const MyBoardItem = ({
         ) : (
           ""
         )}
-        <div className={styles.item_title}>{board.title}</div>
+        <div
+          className={`${styles.item_title} ${
+            board.writerGrade !== 3 ? styles.notice : ""
+          }`}
+        >
+          {board.writerGrade !== 3 ? `[공지] ${board.title}` : board.title}
+        </div>
         <div className={styles.item_info}>
-          <div>{`${board.writerName} [${board.writerId}]`}</div>
-          <div>{board.contentDate}</div>
+          <div className={styles.writer_info}>
+            <div>{`${board.writerName} [${board.writerId}]`}</div>
+            <div>{timeAgo(board.contentDate)}</div>
+          </div>
+          <div>
+            <div className={styles.views}>
+              <VisibilityIcon /> {board.viewCount}
+            </div>
+          </div>
         </div>
         <div className={styles.item_actions}>
           <Actions board={board} isAdminMode={isAdminMode} />
         </div>
         <div className={styles.views_done}>
-          <div className={styles.views}>조회수: {board.viewCount}</div>
+          <div className={styles.views}></div>
         </div>
       </div>
       {isAdminMode === "false" ? (
         ""
       ) : (
-        <div className={styles.admin_section}>
+        <div
+          className={styles.admin_section}
+          onClick={(e) => e.stopPropagation()}
+        >
           <Switch
             className={styles.switch}
             sx={{

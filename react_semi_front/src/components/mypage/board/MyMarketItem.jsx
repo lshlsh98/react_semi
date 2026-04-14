@@ -2,11 +2,13 @@ import styles from "./MyBoardItem.module.css";
 import ThumbUpIcon from "@mui/icons-material/ThumbUp";
 import CommentIcon from "@mui/icons-material/Comment";
 import ReportIcon from "@mui/icons-material/Report";
+import VisibilityIcon from "@mui/icons-material/Visibility";
 import { useState } from "react";
 import Switch from "@mui/material/Switch";
 import axios from "axios";
 import Swal from "sweetalert2";
 import ReportModal from "../ReportModal";
+import { useNavigate } from "react-router-dom";
 
 const MyMarketItem = ({
   board,
@@ -15,20 +17,26 @@ const MyMarketItem = ({
   setBoardList,
   status,
   isAdminMode,
+  timeAgo,
 }) => {
   const [contentStatus, setContentStatus] = useState(board.contentStatus);
+  const navigate = useNavigate();
 
+  // 게시글 숨기기 (관리자용)
   const changeStatus = () => {
-    const toggle = contentStatus === 1 ? 2 : 1;
+    const toggle = contentStatus === 1 ? 2 : 1; // 1: 공개 / 2: 비공개
     const obj = { boardNo: board.boardNo, status: toggle };
 
+    // 거래 게시글 상태(공개 여부) update
     axios
       .patch(
         `${import.meta.env.VITE_BACKSERVER}/mypages/board/market/${board.boardNo}`,
         obj,
       )
       .then((res) => {
+        // status -> select 필터 0: 전체 / 1: 공개 / 2: 비공개
         if (res.data === 1 && status !== 0) {
+          // 현재 select가 공개 or 비공개일 때 토글 누르면 리스트에서 사라지기
           const newBoardList = boardList.filter((b, i) => {
             return i !== index;
           });
@@ -39,9 +47,10 @@ const MyMarketItem = ({
         console.log(err);
       });
 
-    setContentStatus(toggle);
+    setContentStatus(toggle); // 토글 변화용(프론트)
   };
 
+  // 게시글 삭제 (관리자용)
   const deleteBoard = () => {
     Swal.fire({
       title: "삭제하시겠습니까?",
@@ -52,12 +61,14 @@ const MyMarketItem = ({
       cancelButtonText: "취소",
     }).then((result) => {
       if (result.isConfirmed) {
+        // 거래 게시글 delete
         axios
           .delete(
             `${import.meta.env.VITE_BACKSERVER}/mypages/board/market/${board.boardNo}`,
           )
           .then((res) => {
             if (res.data === 1) {
+              // 삭제되면 리스트에서 사라지기
               const newBoardList = boardList.filter((b, i) => {
                 return i !== index;
               });
@@ -75,11 +86,12 @@ const MyMarketItem = ({
     <div
       className={styles.item}
       onClick={() => {
-        console.log(board.boardNo);
+        navigate(`/market/view/${board.boardNo}`);
       }}
     >
+      {/* 거래, 커뮤 확인용 */}
       <div className={styles.item_wrap}>
-        {board.boardType ? (
+        {board.boardType ? ( // 타입이 있을때만
           board.boardType === "market" ? (
             <div className={styles.board_type}>거래 게시판</div>
           ) : (
@@ -90,16 +102,24 @@ const MyMarketItem = ({
         )}
         <div className={styles.item_title}>{board.title}</div>
         <div className={styles.item_info}>
-          <div>{`${board.writerName} [${board.writerId}]`}</div>
-          <div>{board.contentDate}</div>
+          <div className={styles.writer_info}>
+            <div>{`${board.writerName} [${board.writerId}]`}</div>
+            <div>{timeAgo(board.contentDate)}</div>
+          </div>
+          <div>
+            <div className={styles.views}>
+              <VisibilityIcon /> {board.viewCount}
+            </div>
+          </div>
         </div>
         <div className={styles.item_actions}>
+          {/* 좋아요, 싫어요, 댓글, 신고 */}
           <Actions board={board} isAdminMode={isAdminMode} />
         </div>
         <div className={styles.views_done}>
-          <div className={styles.views}>조회수: {board.viewCount}</div>
+          <div className={styles.views}></div>
           <div className={styles.done}>
-            <div>{board.isCompleted === 1 ? "완료" : "미완료"}</div>
+            <div>{board.isCompleted === 1 ? "거래 완료" : "거래 미완료"}</div>
             {board.isCompleted === 1 ? <div>[{board.completedDate}]</div> : ""}
           </div>
         </div>
@@ -107,7 +127,10 @@ const MyMarketItem = ({
       {isAdminMode === "false" ? (
         ""
       ) : (
-        <div className={styles.admin_section}>
+        <div
+          className={styles.admin_section}
+          onClick={(e) => e.stopPropagation()}
+        >
           <Switch
             className={styles.switch}
             sx={{
@@ -122,12 +145,7 @@ const MyMarketItem = ({
             onChange={changeStatus}
           />
           <div className={styles.btn_section}>
-            <div
-              className={styles.btn}
-              onClick={() => {
-                deleteBoard();
-              }}
-            >
+            <div className={styles.btn} onClick={deleteBoard}>
               삭제
             </div>
           </div>
@@ -140,7 +158,9 @@ const MyMarketItem = ({
 const Actions = ({ board, isAdminMode }) => {
   const [open, setOpen] = useState(false);
 
+  // 신고 모달
   const showReport = () => {
+    // 신고가 있고 관리자일 때만
     if (board.reportCount <= 0 || isAdminMode === "false") {
       return;
     }
@@ -188,6 +208,7 @@ const Actions = ({ board, isAdminMode }) => {
             className={styles.modal_content}
             onClick={(e) => e.stopPropagation()}
           >
+            {/* 거래인지 커뮤인지 타입을 tblName으로 넘긴다 */}
             <ReportModal board={board} tblName="market" />
           </div>
         </div>

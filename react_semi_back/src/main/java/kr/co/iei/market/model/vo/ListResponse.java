@@ -14,5 +14,3 @@ public class ListResponse {
 	private List<?> items;
 	private Integer totalPage;
 }
-
-	

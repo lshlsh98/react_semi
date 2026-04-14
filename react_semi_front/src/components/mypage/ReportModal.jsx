@@ -3,12 +3,13 @@ import axios from "axios";
 import { useEffect, useState } from "react";
 
 const ReportModal = ({ board, tblName }) => {
-  // const obj = { boardNo: board.boardNo, tblName: tblName };
+  // tblName: market / community / marketComment / communityComment
   const obj = {
     boardNo:
       tblName === "market" || tblName === "community"
         ? board.boardNo
         : board.commentNo,
+
     tblName: tblName,
   };
 

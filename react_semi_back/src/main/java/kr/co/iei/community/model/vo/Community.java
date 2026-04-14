@@ -23,4 +23,5 @@ public class Community {
 	private Integer dislikeCount;		// 싫어요 수
 	private Integer reportCount;		// 신고 수
 	private Integer viewCount;			// 조회수
+	private Integer commentCount;		// 댓글 수
 }
