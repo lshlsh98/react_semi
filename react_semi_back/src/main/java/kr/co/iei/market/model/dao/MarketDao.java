@@ -84,6 +84,10 @@ public interface MarketDao {
 	int selectParentCommentCount(CommentListItem item);
 
 	List<MarketComment> selectMarketCommentList(CommentListItem item);
+
+	Integer selectOneCarbonContributionCount(ListItem request);
+
+	List<Market> selectOneCarbonContributionList(ListItem request);
 	
 
 	

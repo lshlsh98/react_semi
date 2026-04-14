@@ -16,7 +16,7 @@ const CommunityListPage = () => {
   const [type, setType] = useState(1); // 1:제목 2:작성자
   const [keyword, setKeyword] = useState(""); // 검색어
   const [order, setOrder] = useState(1); // 정렬 조건
-  const [view, setView] = useState(1);
+  const [view, setView] = useState(1); //출력 조건
 
   const [searchType, setSearchType] = useState(1); // 제출할 검색 조건
   const [searchKeyword, setSearchKeyword] = useState(""); // 제출할 검색어

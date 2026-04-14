@@ -412,4 +412,42 @@
     <delete id="cancelReport">
     	delete from market_report_tbl where market_no= #{marketNo} and member_id = #{memberId}
     </delete>
+    
+    <!-- 탘소 기여도 페이지 수 -->
+    <select id="selectOneCarbonContributionCount" resultType="Integer">
+    	select count(*) from
+		score_history_tbl
+		where member_id = #{memberId}
+		
+		<if test="view==1">
+			and history_status = 1
+		</if>
+		<if test="view==2">
+			and history_status = 2
+		</if>
+    </select>
+    
+    <!-- 탘소 기여도 출력 -->
+    <select id="selectOneCarbonContributionList" resultType="scoreHistory">
+    	select
+    	score_no,
+    	member_id,
+    	(select market_title
+		from market_tbl m
+		where m.market_no = s.market_no) as market_title,
+		changed_score,
+		score_date
+    	from score_history_tbl s
+    	
+    	where
+    	<if test="view==1">
+			history_status = 1
+		</if>
+		<if test="view==2">
+			history_status = 2
+		</if>
+		
+		<if test="order == 1">order by score_date desc</if>
+		<if test="order == 2">order by score_date asc</if>
+    </select>
 </mapper>

@@ -263,5 +263,15 @@ public class MarketService {
 		int result = marketDao.pushReport(marketReport);
 		return result;
 	}
+
+	// 탄소 기여도 출력
+	public ListResponse selectOneCarbonContributionList(ListItem request) {
+		Integer totalCount = marketDao.selectOneCarbonContributionCount(request);
+		int totalPage = (int) Math.ceil(totalCount / (double) request.getSize());
+		List<Market> list = marketDao.selectOneCarbonContributionList(request);
+		ListResponse response = new ListResponse(list, totalPage);
+
+		return response;
+	}
 	
 }
