@@ -7,6 +7,7 @@ import Pagination from "../../components/ui/Pagination";
 import Button from "../../components/ui/Button";
 import ImageNotSupportedIcon from "@mui/icons-material/ImageNotSupported";
 import FavoriteIcon from "@mui/icons-material/Favorite";
+import BasicSelect from "../../components/ui/BasicSelect";
 
 const MarketListPage = () => {
   const navigate = useNavigate();
@@ -61,7 +62,22 @@ const MarketListPage = () => {
         console.log(err);
       });
   }, [page, size, status, order, searchType, searchKeyword, location]);
-
+  const list = [
+    [1, "제목"],
+    [2, "작성자"],
+  ];
+  const orderList = [
+    [0, "최신순"],
+    [1, "작성순"],
+    [2, "조회수"],
+    [3, "좋아요"],
+    [4, "금액순"],
+  ];
+  const sizeList = [
+    [10, "10개씩보기"],
+    [20, "20개씩보기"],
+    [50, "50개씩보기"],
+  ];
   return (
     <>
       <section className={styles.market_wrap}>
@@ -74,15 +90,7 @@ const MarketListPage = () => {
               setPage(0);
             }}
           >
-            <select
-              value={type}
-              onChange={(e) => {
-                setType(e.target.value);
-              }}
-            >
-              <option value={1}>제목</option>
-              <option value={2}>작성자</option>
-            </select>
+            <BasicSelect state={type} setState={setType} list={list} />
 
             <input
               type="text"
@@ -95,31 +103,23 @@ const MarketListPage = () => {
             <Button className="btn primary" type="submit">
               검색
             </Button>
-            <select
-              value={order}
-              onChange={(e) => {
-                setOrder(e.target.value);
+            <BasicSelect
+              state={order}
+              setState={(value) => {
+                setOrder(value);
                 setPage(0);
               }}
-            >
-              <option value={0}>최신순</option>
-              <option value={1}>작성순</option>
-              <option value={2}>조회수</option>
-              <option value={3}>좋아요</option>
-              <option value={4}>금액순</option>
-            </select>
+              list={orderList}
+            />
 
-            <select
-              value={size}
-              onChange={(e) => {
-                setSize(e.target.value);
+            <BasicSelect
+              state={size}
+              setState={(value) => {
+                setSize(value);
                 setPage(0);
               }}
-            >
-              <option value={10}>10개씩보기</option>
-              <option value={20}>20개씩보기</option>
-              <option value={50}>50개씩보기</option>
-            </select>
+              list={sizeList}
+            />
             <Button
               className="btn primary danger"
               onClick={() => {

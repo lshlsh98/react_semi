@@ -14,7 +14,7 @@ import kr.co.iei.market.model.vo.ListItem;
 import kr.co.iei.market.model.vo.ListResponse;
 import kr.co.iei.market.model.vo.Market;
 import kr.co.iei.market.model.vo.MarketComment;
-import kr.co.iei.market.model.vo.MarketFile;
+import kr.co.iei.market.model.vo.MarketFile;	
 import kr.co.iei.market.model.vo.MarketReport;
 import kr.co.iei.market.model.vo.TradeRequest;
 import kr.co.iei.member.model.vo.LoginMember;
