@@ -118,7 +118,7 @@ public class MarketController {
 	public ResponseEntity<?> selectOneMarket(@PathVariable Integer marketNo,
 			@RequestHeader(required = false, name = "Authorization") String token, HttpServletRequest request,
 			HttpServletResponse response) {
-
+		
 		Market m = marketService.selectOneMarket(marketNo, token);
 		if (m == null) {
 			return ResponseEntity.notFound().build();
@@ -139,7 +139,7 @@ public class MarketController {
 		if (cookies != null) {
 			for (Cookie c : cookies) {
 				if (c.getName().equals("view_" + marketNo)) {
-					alreadyViewed = true;
+					alreadyViewed = true;	
 					break;
 				}
 			}
@@ -249,7 +249,6 @@ public class MarketController {
 	}
 
 	// 거래요청취소
-	@DeleteMapping(value = "{marketNo}/cancel")
 	public ResponseEntity<?> tradeRequestCancel(@PathVariable Integer marketNo,
 			@RequestHeader(name = "Authorization") String token) {
 		int result = marketService.tradeRequestCancel(marketNo, token);
