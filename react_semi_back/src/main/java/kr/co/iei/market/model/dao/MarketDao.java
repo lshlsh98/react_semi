@@ -82,6 +82,13 @@ public interface MarketDao {
 
 	int pushReport(MarketReport marketReport);
 
+	Market selectSellerId(Integer marketNo);
+
+	int addPointHistory(Integer marketNo, String sellerId);
+
+	int addPointMember(String sellerId);
+	
+
 	int selectParentCommentCount(CommentListItem item);
 
 	List<MarketComment> selectMarketCommentList(CommentListItem item);

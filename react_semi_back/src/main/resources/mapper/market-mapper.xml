@@ -456,4 +456,26 @@
 		offset #{request.page}*#{request.size} rows fetch next #{request.size} rows only
     </select>
     
+    <!-- 판매자 아이디 조회 -->
+    <select id="selectSellerId" resultType="market">
+    	select market_no, market_writer from market_tbl where market_no = #{marketNo}
+    </select>
+    
+    <!-- 거래완료후 포인트 추가 -->
+    <insert id="addPointHistory">
+    	insert into score_history_tbl values(
+    		score_history_seq.nextval,
+    		#{sellerId},
+    		#{marketNo},
+    		1,
+    		100,
+    		sysdate
+    	)
+    </insert>
+    
+    <update id="addPointMember">
+    	update member_tbl set
+            member_score = member_score + 100
+        where member_id = #{sellerId}
+    </update>
 </mapper>
