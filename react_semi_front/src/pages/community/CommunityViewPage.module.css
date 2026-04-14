@@ -90,11 +90,18 @@
 /* 내용 */
 .community_view_content {
   margin-top: 20px;
-  padding: 20px;
+  padding: 10px 20px;
   border: 1px solid var(--border);
   border-radius: 8px;
   background-color: var(--soft);
   line-height: 1.6;
+  white-space: pre-wrap;
+  word-break: break-all;
+}
+
+/* 내용에서 개행 */
+.community_view_content p {
+  min-height: 1em; /* 빈 문단이더라도 높이를 가지게 함 */
 }
 
 /* 수정/삭제 버튼 + 좋아요 및 싫어요 + 신고하기 버튼 */

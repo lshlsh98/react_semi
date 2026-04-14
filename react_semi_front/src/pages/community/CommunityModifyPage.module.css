@@ -96,14 +96,28 @@
 .editor_content {
   padding: 16px;
 }
+
+/* 에디터 내부 전역 처리 */
+.editor_content :global(.ProseMirror) {
+  white-space: pre-wrap !important; /* 줄 바꿈 및 공백 여러 개 유지 */
+  word-break: break-all !important; /* 긴 단어 강제로 줄 바꾸는 거*/
+  margin: 0;
+  min-height: 1em;
+}
+
 .editor_content > div {
   min-height: 400px;
   background-color: var(--light);
-  padding: 12px;
+  padding: 10px 20px;
   outline: none;
   border: 1px solid var(--gray1);
   border-radius: 12px;
   line-height: 1.4;
+}
+
+.communityContent {
+  white-space: pre-wrap;
+  word-break: break-all;
 }
 .editor_content > div:hover {
   background-color: var(--bg);
