@@ -1,0 +1,166 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="kr.co.iei.chat.model.dao.ChatDao">
+	
+	<select id="findChatRoomById" resultType="chatRoom">
+		SELECT * 
+		FROM chat_room
+		WHERE id = #{roomId}
+	</select>
+	
+	<select id="findMemberById" resultType="member">
+		SELECT * 
+		FROM member_tbl
+		WHERE member_id = #{memberId}
+	</select>
+	
+	<insert id="saveChatMessage">
+		INSERT INTO chat_message 
+		VALUES (#{id}, #{chatRoomId}, #{memberId}, #{content}, sysdate)
+	</insert>
+	
+	<select id="findChatParticipantAllById" resultType="chatParticipant">
+		SELECT *
+		FROM chat_participant
+		WHERE chat_room_id = #{id}
+	</select>
+	
+	<insert id="saveReadStatus">
+		INSERT INTO message_read_status 
+		VALUES (message_read_status_seq.NEXTVAL, #{messageId}, #{memberId}, #{chatRoomId}, #{isRead})
+	</insert>
+	
+	<insert id="saveChatRoom">
+		INSERT INTO chat_room 
+		VALUES (#{id}, #{isGroupChat}, #{name})
+	</insert>
+	
+	<insert id="saveChatParticipant">
+		INSERT INTO chat_participant 
+		VALUES (chat_participant_seq.NEXTVAL, #{chatRoomId}, #{memberId})
+	</insert>
+	
+	<select id="getChatRoomId" resultType="Long">
+		SELECT chat_room_seq.NEXTVAL FROM dual
+	</select>
+	
+	<select id="getChatMessageId" resultType="Long">
+		SELECT chat_message_seq.NEXTVAL FROM dual
+	</select>
+	
+	<select id="getGroupChatRooms" resultType="chatRoomListResDto">
+		SELECT 
+			id AS roomId,
+			name AS roomName
+		FROM chat_room
+		WHERE is_group_chat = 2
+	</select>
+	
+	<select id="findByChatRoomAndMember" resultType="int">
+		SELECT COUNT(*)
+		FROM chat_participant
+		WHERE chat_room_id = #{chatRoomId} 
+		 	  AND member_id = #{memberId}
+	</select>
+	
+	<select id="findByChatRoomId" resultType="chatMessageDto">
+		SELECT 
+			c.content AS message,
+			m.member_id AS sender_id,
+			m.member_name AS sender_name,
+			m.member_thumb AS sender_thumb
+			
+		FROM chat_message c
+		INNER JOIN member_tbl m 
+			ON (c.member_id = m.id)
+		WHERE chat_room_id = #{id}
+		ORDER BY c.created_at ASC
+	</select>
+	
+	<select id="findReadStatusByChatRoomAndMember" resultType="readStatus">
+		SELECT * 
+		FROM message_read_status
+		WHERE chat_room_id = #{chatRoomId} 
+			  AND member_id = #{member_id}
+	</select>
+	
+	<update id="updateIsRead">
+		UPDATE message_read_status
+		SET is_read = 1
+		WHERE chat_room_id = #{chatRoomId} 
+			  AND member_id = #{memberId}
+	</update>
+	
+	<select id="getMyChatRooms" resultType="myChatListResDto">
+		SELECT 
+			p.chat_room_id AS room_id,
+			r.name AS room_name,
+			r.is_group_chat
+			
+		FROM chat_participant p
+		INNER JOIN chat_room r
+			ON (p.chat_room_id = r.id)
+		
+		WHERE member_id = #{id}
+	</select>
+	
+	<select id="getCountIsReadZero" resultType="Long">
+		SELECT COUNT(*)
+		FROM message_read_status
+		WHERE chat_room_id = #{chatRoomId}
+		        AND member_id = #{memberId}
+		        AND is_read = 0
+	</select>
+	
+	<select id="findChatParticipantByChatRoomAndMember" resultType="chatParticipant">
+		SELECT * 
+		FROM chat_participant
+		WHERE chat_room_id = #{chatRoomId}	
+				AND member_id = #{memberId}
+	</select>
+	
+	<delete id="deleteChatParticipant">
+		DELETE 
+		FROM chat_participant
+		WHERE id = #{id}
+	</delete>
+	
+	<delete id="deleteChatRoom">
+		DELETE 
+		FROM chat_room
+		WHERE id = #{roomId}
+	</delete>
+	
+	<select id="findMemberById" resultType="member">
+		SELECT * 
+		FROM member_tbl
+		WHERE id = #{memberId}
+	</select>
+	
+	<select id="findExistingPrivateRoom" resultType="chatRoom">
+		SELECT * 
+		FROM chat_room			
+		WHERE id = (SELECT cp1.chat_room_id
+					FROM chat_participant cp1
+					INNER JOIN chat_participant cp2 
+						ON (cp1.chat_room_id = cp2.chat_room_id)
+					WHERE cp1.member_id = #{memberId} AND cp2.member_id = #{otherMemberId})
+				AND is_group_chat = 1		
+	</select>
+	
+	<!-- 
+	<select id="findExistingPrivateRoom" resultType="chatRoom">
+		SELECT DISTINCT cr.*
+		FROM chat_room cr
+		INNER JOIN chat_participant cp1 
+			ON cr.id = cp1.chat_room_id
+		INNER JOIN chat_participant cp2 
+			ON cr.id = cp2.chat_room_id
+		WHERE cp1.member_id = #{memberId}
+	  	AND cp2.member_id = #{otherMemberId}
+	  	AND cr.is_group_chat = 1
+	</select>
+	 -->
+	
+</mapper>
+

@@ -1,15 +1,22 @@
 package kr.co.iei;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+
+import kr.co.iei.utils.JwtAuthFilter;
 
 @Configuration
 @EnableWebSecurity
 public class SpringSecurityConfig {
+	
+	@Autowired
+	private JwtAuthFilter jwtAuthFilter;
     
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
@@ -19,7 +26,8 @@ public class SpringSecurityConfig {
             .anyRequest().permitAll() // 모든 요청 허용
         )
         .formLogin(form -> form.disable()) // 로그인 폼 비활성화
-        .httpBasic(basic -> basic.disable()); // 기본 인증 비활성화
+        .httpBasic(basic -> basic.disable()) // 기본 인증 비활성화
+        .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class);
 
         return http.build();
     }
