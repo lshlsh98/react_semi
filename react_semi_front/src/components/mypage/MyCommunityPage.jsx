@@ -74,14 +74,18 @@ const MyCommunityPage = () => {
         )}
 
         <div className={styles.filter_select}>
-          <BasicSelect
-            state={notice}
-            setState={setNotice}
-            list={[
-              [0, "전체"],
-              [1, "공지"],
-            ]}
-          />
+          {isAdminMode === "true" ? (
+            <BasicSelect
+              state={notice}
+              setState={setNotice}
+              list={[
+                [0, "전체"],
+                [1, "공지"],
+              ]}
+            />
+          ) : (
+            ""
+          )}
 
           <BasicSelect
             state={status}

@@ -123,7 +123,10 @@ const MyBoardItem = ({
       {isAdminMode === "false" ? (
         ""
       ) : (
-        <div className={styles.admin_section}>
+        <div
+          className={styles.admin_section}
+          onClick={(e) => e.stopPropagation()}
+        >
           <Switch
             className={styles.switch}
             sx={{

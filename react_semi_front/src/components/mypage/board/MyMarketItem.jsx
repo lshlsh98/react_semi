@@ -127,7 +127,10 @@ const MyMarketItem = ({
       {isAdminMode === "false" ? (
         ""
       ) : (
-        <div className={styles.admin_section}>
+        <div
+          className={styles.admin_section}
+          onClick={(e) => e.stopPropagation()}
+        >
           <Switch
             className={styles.switch}
             sx={{
@@ -142,12 +145,7 @@ const MyMarketItem = ({
             onChange={changeStatus}
           />
           <div className={styles.btn_section}>
-            <div
-              className={styles.btn}
-              onClick={() => {
-                deleteBoard();
-              }}
-            >
+            <div className={styles.btn} onClick={deleteBoard}>
               삭제
             </div>
           </div>
