@@ -1,6 +1,6 @@
 import { useNavigate, useParams } from "react-router-dom";
 import styles from "./CommunityModifyPage.module.css";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import axios from "axios";
 import { Input } from "../../components/ui/Form";
 import Button from "../../components/ui/Button";
@@ -280,15 +280,28 @@ const TextEditor = ({ data, setData }) => {
   let lastValidHTML = "";
   const editor = useEditor({
     extensions: [
-      StarterKit,
+      StarterKit.configure({
+        paragraph: {
+          // 이 설정이 있어야 연속된 공백이 데이터에서 사라지지 않습니다.
+          HTMLAttributes: {
+            class: "tiptap-paragraph", // 클래스를 부여해서 관리
+          },
+        },
+      }),
       TextStyle,
       Color,
       TextAlign.configure({
         types: ["heading", "paragraph"],
+        alignments: ["left", "center", "right"],
+        defaultAlignment: "left",
       }),
     ],
     content: data /* 에디터의 글자수를 제한 */,
     editorProps: {
+      attributes: {
+        class: styles.prose_mirror_custom, // CSS 클래스로 제어하거나
+        style: "white-space: pre-wrap; word-break: break-all;", // 여기서 스타일 직접 주입
+      },
       handleTextInput(view, from, to, text) {
         const currentHTML = view.dom.innerHTML;
         const newHTML = currentHTML + text;
@@ -314,8 +327,13 @@ const TextEditor = ({ data, setData }) => {
       },
     },
     onUpdate: ({ editor }) => {
-      const html = editor.getHTML();
-      const byteLength = new TextEncoder().encode(html).length;
+      let html = editor.getHTML();
+
+      // 연속된 공백 2개를 하나는 일반 공백, 하나는 &nbsp;로 치환
+      // 이렇게 하면 브라우저가 HTML을 다시 읽을 때 공백을 합치지 않음
+      const formattedHtml = html.replace(/  /g, " &nbsp;");
+
+      const byteLength = new TextEncoder().encode(formattedHtml).length;
 
       if (byteLength > 4000) {
         editor.commands.setContent(lastValidHTML, false);
@@ -324,12 +342,15 @@ const TextEditor = ({ data, setData }) => {
         return;
       }
       lastValidHTML = html;
-      setData(html);
+      setData(formattedHtml);
     },
   });
+  const isSet = useRef(false);
+
   useEffect(() => {
-    if (editor && data) {
+    if (editor && data && !isSet.current) {
       editor.commands.setContent(data);
+      isSet.current = true;
     }
   }, [editor, data]);
   return (
