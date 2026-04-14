@@ -249,6 +249,7 @@ public class MarketController {
 	}
 
 	// 거래요청취소
+	@DeleteMapping(value = "{marketNo}/request")
 	public ResponseEntity<?> tradeRequestCancel(@PathVariable Integer marketNo,
 			@RequestHeader(name = "Authorization") String token) {
 		int result = marketService.tradeRequestCancel(marketNo, token);
