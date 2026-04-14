@@ -195,13 +195,13 @@ const MarketViewPage = () => {
       showCancelButton: true,
       confirmButtonText: "네",
       cancelButtonText: "아니오",
-      confirmButtonColor: "var(--danger)",
-      cancelButtonColor: "var(--primary)",
+      confirmButtonColor: "var(--primary)",
+      cancelButtonColor: "var(--danger)",
     }).then((result) => {
       if (result.isConfirmed) {
         axios
           .delete(
-            `${import.meta.env.VITE_BACKSERVER}/markets/${marketNo}/cancel`,
+            `${import.meta.env.VITE_BACKSERVER}/markets/${marketNo}/request`,
           )
           .then((res) => {
             if (res.data === 1) {
@@ -230,8 +230,8 @@ const MarketViewPage = () => {
       showCancelButton: true,
       confirmButtonText: "네",
       cancelButtonText: "아니오",
-      confirmButtonColor: "var(--danger)",
-      cancelButtonColor: "var(--primary)",
+      confirmButtonColor: "var(--primary)",
+      cancelButtonColor: "var(--danger)",
     }).then((result) => {
       if (result.isConfirmed) {
         axios
