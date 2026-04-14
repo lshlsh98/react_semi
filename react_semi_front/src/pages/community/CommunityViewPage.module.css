@@ -21,6 +21,7 @@
   border: 1px solid #ccc;
   border-radius: 6px;
   margin-bottom: 20px;
+  font-size: 20px;
 }
 
 /* 작성자, 날짜, 조회수 */
@@ -200,4 +201,9 @@
   justify-content: flex-end;
   gap: 15px;
   margin-top: 10px;
+}
+
+/* 사유 입력 1,000자 입력 글씨 크기 조정 */
+.report_modal textarea::placeholder {
+  font-size: 13px;
 }
