@@ -261,7 +261,7 @@
 		from (
 		    select * from market_comment_tbl where market_no = #{marketNo}
 		    
-		    /* 1. 부모 댓글 10개를 뽑을 때 필터와 정렬을 싹 다 적용! */
+		    <!-- 1. 부모 댓글 10개를 뽑을 때 필터와 정렬을 싹 다 적용! -->
 		    start with market_comment_no in (
 		        select market_comment_no from (
 		            select market_comment_no from market_comment_tbl 
@@ -284,10 +284,10 @@
 		        offset #{page} * #{size} rows fetch next #{size} rows only
 		    )
 		    
-		    /* 2. 자식 답글들 전부 끌고 오기 */
+		    <!-- 2. 자식 답글들 전부 끌고 오기 -->
 		    connect by prior market_comment_no = market_recomment_no
 		    
-		    /* 3. 전체 데이터를 조건에 맞춰 정렬해서 프론트로 넘김 */
+		    <!-- 3. 전체 데이터를 조건에 맞춰 정렬해서 프론트로 넘김 -->
 		    <if test="orderType == 'oldest'">
 		        order by market_comment_no asc
 		    </if>

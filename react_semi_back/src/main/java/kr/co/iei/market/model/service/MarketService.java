@@ -90,13 +90,12 @@ public class MarketService {
 	// 댓글 조회
 	public ListResponse selectMarketCommentList(CommentListItem item) {
 			
-		int totalCount = marketDao.selectParentCommentCount(item);	// 총 부모 댓글 수 구하기 (자식 답글은 페이지 계산에서 제외)
-		int totalPage = (int) Math.ceil(totalCount / (double) item.getSize());	// 총 페이지 수 계산
+		int totalCount = marketDao.selectParentCommentCount(item); // 총 부모 댓글 수 구하기 (자식 답글은 페이지 계산에서 제외)
+		int totalPage = (int) Math.ceil(totalCount / (double) item.getSize()); // 총 페이지 수 계산
 			
-		List<MarketComment> list = marketDao.selectMarketCommentList(item);
+		List<MarketComment> list = marketDao.selectMarketCommentList(item); //조회
 			
 		ListResponse response = new ListResponse(list, totalPage);
-			
 		return response;
 	}
 

@@ -14,10 +14,10 @@ const timeAgo = (dateString) => {
     return "";
   }
 
-  const postDate = new Date(dateString); // postDate : 게시글 올린 date(날짜, 시간등)
+  const postDate = new Date(dateString); // postDate : 댓글 올린 date(날짜, 시간등)
   const now = new Date(); // now : 지금(현재 날짜, 시간등)
 
-  const diffInSeconds = Math.floor((now - postDate) / 1000); // 현재 시간과 게시글 시간의 차이를 초 단위로 계산
+  const diffInSeconds = Math.floor((now - postDate) / 1000); // 현재 시간과 댓글 시간의 차이를 초 단위로 계산
 
   if (diffInSeconds < 60) {
     return "방금 전";
@@ -109,7 +109,6 @@ const MarketComment = ({ marketNo, memberId, marketWriter }) => {
         `${import.meta.env.VITE_BACKSERVER}/markets/${marketNo}/comments?page=${page}&filterType=${filterType}&orderType=${orderType}`,
       )
       .then((res) => {
-        // backend에서 response에 list로 넣긴하는데 vo에서 객체 선언할때부터 items로 받음.
         setCommentList(res.data.items);
         setTotalPage(res.data.totalPage);
       })
@@ -118,7 +117,7 @@ const MarketComment = ({ marketNo, memberId, marketWriter }) => {
       });
   };
 
-  // 페이지가 처음 켜질 때(혹은 marketNo가 바뀔 때) 댓글 목록 불러오기
+  // 페이지가 처음 켜질 때(혹은 marketNo가 바뀔 때 등) 댓글 목록 불러오기
   useEffect(() => {
     fetchComments();
   }, [marketNo, page, filterType, orderType]);
@@ -447,7 +446,7 @@ const CommentItem = ({
       .post(`${import.meta.env.VITE_BACKSERVER}/markets/comments`, replyData)
       .then((res) => {
         setReplyContent(""); // 답글의 내용(value) 초기화
-        setIsSecretReply(false); // 수정 완료됐으니 다른 댓글에서도 수정인지 여부를 따로 따져야하니 기본값으로 초기화
+        setIsSecretReply(false); // 작성 완료됐으니 다른 댓글에서도 비밀댓글인지 여부를 따로 따져야하니 기본값으로 초기화
         setShowReplyInput(false); // 입력창 닫기
         setShowReplies(true); // 답글 달았으니 접혀있던 '답글 보기'토글 열기
         fetchComments(); // 화면 렌더링
@@ -457,7 +456,7 @@ const CommentItem = ({
       });
   };
 
-  // 신고하기
+  // 댓글 신고하기
   const reportComment = () => {
     if (!memberId) {
       Swal.fire({

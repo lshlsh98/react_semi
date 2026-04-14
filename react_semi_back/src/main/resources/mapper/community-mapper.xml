@@ -138,11 +138,11 @@
 		c.community_title,
 		c.community_content,
 		c.community_writer,
-		to_char(c.community_date, 'yyyy-mm-dd hh24:mi:ss') as community_date,
+		to_char(c.community_date, 'yyyy-mm-dd hh24:mi:ss') community_date,
 		c.view_count,
 		(select count(*)
 		from community_like_tbl l
-		where c.community_no = l.community_no) as like_count
+		where c.community_no = l.community_no) like_count
 		from community_tbl c
 		join member_tbl m on (c.community_writer = m.member_id) where
 		c.community_status = 1
@@ -174,29 +174,40 @@
 		    t.community_recomment_no, 
 		    t.is_edited,
 		    m.member_thumb,
-		    /* 스칼라 서브쿼리로 좋아요/싫어요 카운트 가져오기 */
-		    (select count(*) from community_comment_like_tbl cl where cl.community_comment_no = t.community_comment_no) as like_count,
-		    (select count(*) from community_comment_dislike_tbl cd where cd.community_comment_no = t.community_comment_no) as dislike_count
+		    (select count(*) from community_comment_like_tbl cl where cl.community_comment_no = t.community_comment_no) like_count,
+		    (select count(*) from community_comment_dislike_tbl cd where cd.community_comment_no = t.community_comment_no) dislike_count,
+		    <!-- 현재 로그인한 사람이 좋아요/싫어요를 눌렀는지 판별 (memberId 활용) -->
+		    (select count(*) from community_comment_like_tbl cl where cl.community_comment_no = t.community_comment_no and cl.member_id = #{memberId}) is_like,
+		    (select count(*) from community_comment_dislike_tbl cd where cd.community_comment_no = t.community_comment_no and cd.member_id = #{memberId}) is_dislike
 		from (
 		    select * from community_comment_tbl where community_no = #{communityNo}
 		    
-		    /* 부모 댓글 N개 추출 */
+		    <!-- 1. 부모 댓글 10개를 뽑을 때 정렬을 싹 다 적용! (비밀댓글이 없으므로 정렬만 수행) -->
 		    start with community_comment_no in (
 		        select community_comment_no from (
 		            select community_comment_no from community_comment_tbl 
 		            where community_no = #{communityNo} and community_recomment_no is null
-		            <if test="orderType == 'oldest'">order by community_comment_no asc</if>
-		            <if test="orderType == 'newest' or orderType == null">order by community_comment_no desc</if>
+		            
+		            <if test="orderType == 'oldest'">
+		                order by community_comment_no asc
+		            </if>
+		            <if test="orderType == 'newest' or orderType == null">
+		                order by community_comment_no desc
+		            </if>
 		        )
 		        offset #{page} * #{size} rows fetch next #{size} rows only
 		    )
 		    
-		    /* 자식 답글 연결 */
+		    <!-- 2. 자식 답글들 전부 끌고 오기 -->
 		    connect by prior community_comment_no = community_recomment_no
 		    
-		    /* 정렬 */
-		    <if test="orderType == 'oldest'">order by community_comment_no asc</if>
-		    <if test="orderType == 'newest' or orderType == null">order by community_comment_no desc</if>
+		    <!-- 3. 전체 데이터를 조건에 맞춰 정렬해서 프론트로 넘김 -->
+		    <if test="orderType == 'oldest'">
+		        order by community_comment_no asc
+		    </if>
+		    <if test="orderType == 'newest' or orderType == null">
+		        order by community_comment_no desc
+		    </if>
 		) t
 		left join member_tbl m on (t.community_comment_writer = m.member_id)
 	</select>
@@ -214,7 +225,8 @@
 	</insert>
 
 	<update id="updateCommunityComment">
-		update community_comment_tbl set
+		update community_comment_tbl 
+		set
 			community_comment_content = #{communityCommentContent},
 			is_edited = 1
 		where community_comment_no = #{communityCommentNo}

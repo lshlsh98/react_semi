@@ -54,7 +54,7 @@
   padding-bottom: 0;
 }
 
-/* --- 개별 댓글 헤더 --- */
+/* 개별 댓글 헤더 */
 .comment_header {
   display: flex;
   justify-content: space-between;
@@ -119,7 +119,7 @@
   text-decoration: underline;
 }
 
-/* --- 개별 댓글 내용 --- */
+/* 개별 댓글 내용 */
 .comment_content {
   font-size: 15px;
   color: var(--gray1);
@@ -141,7 +141,7 @@
   color: var(--gray4);
 }
 
-/* --- 개별 댓글 푸터 (답글달기, 신고) --- */
+/* 개별 댓글 푸터 (답글달기, 신고) */
 .comment_footer {
   display: flex;
   gap: 16px;

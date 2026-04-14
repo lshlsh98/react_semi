@@ -18,4 +18,10 @@ public class CommunityComment {
 	private String communityCommentWriter;		// 댓글 작성자
 	private Integer communityRecommentNo;		// DB 컬럼명에 맞춤 (대댓글 부모 번호-자기참조)
 	private Integer isEdited; 			  		// 수정 여부 (0: 일반, 1: 수정됨)
+	
+	private String memberThumb;	// 프사
+	private Integer likeCount;		// 좋아요수
+	private Integer dislikeCount;	// 싫어요수
+	private Integer isLike;			// 좋아요여부
+	private Integer isDislike;		// 싫어요여부
 }
