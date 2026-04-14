@@ -4,6 +4,7 @@ import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -17,6 +18,7 @@ import kr.co.iei.chat.model.vo.ChatMessageDto;
 import kr.co.iei.chat.model.vo.ChatRoomListResDto;
 import kr.co.iei.chat.model.vo.MyChatListResDto;
 
+@CrossOrigin("*")
 @RestController
 @RequestMapping("/chat")
 public class ChatController {

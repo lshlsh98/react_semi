@@ -72,7 +72,7 @@
 			
 		FROM chat_message c
 		INNER JOIN member_tbl m 
-			ON (c.member_id = m.id)
+			ON (c.member_id = m.member_id)
 		WHERE chat_room_id = #{id}
 		ORDER BY c.created_at ASC
 	</select>

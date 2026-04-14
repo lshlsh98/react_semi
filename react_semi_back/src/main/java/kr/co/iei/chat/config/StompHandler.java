@@ -1,5 +1,7 @@
 package kr.co.iei.chat.config;
 
+import javax.crypto.SecretKey;
+
 import org.jspecify.annotations.Nullable;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -13,6 +15,7 @@ import org.springframework.stereotype.Component;
 
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
+import io.jsonwebtoken.security.Keys;
 import kr.co.iei.chat.model.service.ChatService;
 
 @Component
@@ -27,14 +30,15 @@ public class StompHandler implements ChannelInterceptor {
 	@Override
 	public @Nullable Message<?> preSend(Message<?> message, MessageChannel channel) {
 		final StompHeaderAccessor accessor = StompHeaderAccessor.wrap(message);
-		
+
+		SecretKey key = Keys.hmacShaKeyFor(secretKey.getBytes());
 		if(StompCommand.CONNECT == accessor.getCommand()) {
 			System.out.println("connect 요청 시 토큰 유효성 검증");
 			String token = accessor.getFirstNativeHeader("Authorization");
 			
 			// 토큰 검증
 			Jwts.parser()
-				.setSigningKey(secretKey)
+				.setSigningKey(key)
 				.build()
 				.parseClaimsJws(token)
 				.getBody();
@@ -47,7 +51,7 @@ public class StompHandler implements ChannelInterceptor {
 			
 			// 토큰 검증
 			Claims claims = Jwts.parser()
-				.setSigningKey(secretKey)
+				.setSigningKey(key)
 				.build()
 				.parseClaimsJws(token)
 				.getBody();
