@@ -50,6 +50,8 @@ const CommunityComment = ({ communityNo, memberId, communityWriter }) => {
   const orderList = [
     ["newest", "최신순"],
     ["oldest", "오래된순"],
+    ["like", "좋아요순"],
+    ["dislike", "싫어요순"],
   ];
 
   // 셀렉터 값 변경 시 1페이지로 돌아가는 함수들

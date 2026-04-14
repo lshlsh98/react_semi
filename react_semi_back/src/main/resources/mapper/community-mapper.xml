@@ -191,9 +191,22 @@
 		            <if test="orderType == 'oldest'">
 		                order by community_comment_no asc
 		            </if>
+		            
 		            <if test="orderType == 'newest' or orderType == null">
 		                order by community_comment_no desc
 		            </if>
+		            
+		            <if test="orderType == 'like'">
+                		order by 
+                		(select count(*) from community_comment_like_tbl 
+                		where community_comment_no = community_comment_tbl.community_comment_no) desc, community_comment_no desc
+            		</if>
+            		
+            		<if test="orderType == 'dislike'">
+              		  	order by 
+              		  	(select count(*) from community_comment_dislike_tbl 
+              		  	where community_comment_no = community_comment_tbl.community_comment_no) desc, community_comment_no desc
+            		</if>
 		        )
 		        offset #{page} * #{size} rows fetch next #{size} rows only
 		    )
@@ -205,8 +218,21 @@
 		    <if test="orderType == 'oldest'">
 		        order by community_comment_no asc
 		    </if>
+		    
 		    <if test="orderType == 'newest' or orderType == null">
 		        order by community_comment_no desc
+		    </if>
+		    
+		    <if test="orderType == 'like'">
+		        order by 
+		        (select count(*) from community_comment_like_tbl 
+		        where community_comment_no = community_comment_tbl.community_comment_no) desc, community_comment_no desc
+		    </if>
+		    
+		    <if test="orderType == 'dislike'">
+		        order by 
+		        (select count(*) from community_comment_dislike_tbl 
+		        where community_comment_no = community_comment_tbl.community_comment_no) desc, community_comment_no desc
 		    </if>
 		) t
 		left join member_tbl m on (t.community_comment_writer = m.member_id)

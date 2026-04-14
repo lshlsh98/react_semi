@@ -239,9 +239,11 @@
 	<select id="selectParentCommentCount" resultType="int">
 		select count(*) from market_comment_tbl 
 		where market_no = #{marketNo} and market_recomment_no is null
+		
 		<if test="filterType == 'secret'">
 			and is_secret = 1
 		</if>
+		
 		<if test="filterType == 'normal'">
 			and is_secret = 0
 		</if>
@@ -270,6 +272,7 @@
 		            <if test="filterType == 'secret'">
 		                and is_secret = 1
 		            </if>
+		            
 		            <if test="filterType == 'normal'">
 		                and is_secret = 0
 		            </if>
@@ -277,6 +280,7 @@
 		            <if test="orderType == 'oldest'">
 		                order by market_comment_no asc
 		            </if>
+		            
 		            <if test="orderType == 'newest' or orderType == null">
 		                order by market_comment_no desc
 		            </if>
@@ -291,6 +295,7 @@
 		    <if test="orderType == 'oldest'">
 		        order by market_comment_no asc
 		    </if>
+		    
 		    <if test="orderType == 'newest' or orderType == null">
 		        order by market_comment_no desc
 		    </if>
