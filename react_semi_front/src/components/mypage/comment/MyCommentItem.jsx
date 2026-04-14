@@ -7,6 +7,7 @@ import { useEffect, useRef, useState } from "react";
 import axios from "axios";
 import Swal from "sweetalert2";
 import ReportModal from "../ReportModal";
+import { useNavigate } from "react-router-dom";
 
 const MyCommentItem = ({
   comment,
@@ -16,13 +17,14 @@ const MyCommentItem = ({
   type,
   isAdminMode,
   tblName,
+  timeAgo,
 }) => {
   const memberThumb = comment.writerThumb;
-
   const memberGrade = useAuthStore((state) => state.memberGrade);
   const [curComment, setCurComment] = useState(comment.commentContent);
-
   const textareaRef = useRef(null);
+  const [isEdited, setIsEdited] = useState(comment.isEdited);
+  const navigate = useNavigate();
 
   useEffect(() => {
     if (textareaRef.current) {
@@ -45,9 +47,8 @@ const MyCommentItem = ({
           `${import.meta.env.VITE_BACKSERVER}/mypages/comment/${comment.commentNo}`,
           updObj,
         )
-        .then((res) => {})
-        .catch((err) => {
-          console.log(err);
+        .then(() => {
+          setIsEdited(1);
         });
     }
 
@@ -90,37 +91,83 @@ const MyCommentItem = ({
   };
 
   return (
-    <div className={styles.item_wrap}>
+    <div
+      className={styles.item_wrap}
+      onClick={() => {
+        if (type === "market") {
+          navigate(`/market/view/${comment.boardNo}`);
+        } else if (type === "community") {
+          navigate(`/community/view/${comment.boardNo}`);
+        }
+      }}
+    >
       <div className={styles.comment_wrap}>
         <div className={styles.comment_writer}>
-          <div className={styles.comment_wrtier_thumb}>
+          <div className={styles.writer}>
+            <div className={styles.comment_wrtier_thumb}>
+              <div
+                className={
+                  memberThumb ? styles.member_thumb_exists : styles.member_thumb
+                }
+              >
+                {memberThumb ? (
+                  <img
+                    src={`${import.meta.env.VITE_BACKSERVER}/semi/${memberThumb}`}
+                  />
+                ) : (
+                  <span className="material-icons">account_circle</span>
+                )}
+              </div>
+            </div>
+            <div className={styles.comment_writer_info}>
+              <div
+                className={styles.comment_name}
+              >{`${comment.writerName} [${comment.writerId}]`}</div>
+            </div>
+            <div className={styles.comment_date}>
+              {timeAgo(comment.commentDate)}
+            </div>
+            {isEdited === 1 ? (
+              <div className={styles.edited}>(수정됨)</div>
+            ) : (
+              ""
+            )}
+          </div>
+          <div>
             <div
-              className={
-                memberThumb ? styles.member_thumb_exists : styles.member_thumb
-              }
+              className={styles.comment_btn_section}
+              onClick={(e) => e.stopPropagation()}
             >
-              {memberThumb ? (
-                <img
-                  src={`${import.meta.env.VITE_BACKSERVER}/semi/${memberThumb}`}
-                />
+              {isAdminMode === "false" ? (
+                <div className={styles.comment_btn} onClick={updateComment}>
+                  {dis ? "수정" : "완료"}
+                </div>
               ) : (
-                <span className="material-icons">account_circle</span>
+                ""
               )}
+              <div className={styles.comment_btn} onClick={deleteComment}>
+                삭제
+              </div>
             </div>
           </div>
-          <div className={styles.comment_writer_info}>
-            <div
-              className={styles.comment_name}
-            >{`${comment.writerName} [${comment.writerId}]`}</div>
-          </div>
         </div>
-        <div className={styles.comment_content}>
+        <div
+          className={styles.comment_content}
+          onClick={(e) => {
+            if (!dis) e.stopPropagation();
+          }}
+        >
           <textarea
             ref={textareaRef}
             className={styles.textarea}
             value={curComment}
             onChange={(e) => setCurComment(e.target.value)}
             disabled={dis}
+            onClick={(e) => {
+              if (!dis) {
+                e.stopPropagation();
+              }
+            }}
           />
         </div>
         <div className={styles.comment_actions}>
@@ -130,18 +177,6 @@ const MyCommentItem = ({
             isAdminMode={isAdminMode}
             tblName={tblName}
           />
-        </div>
-      </div>
-      <div className={styles.comment_btn_section}>
-        {isAdminMode === "false" ? (
-          <div className={styles.comment_btn} onClick={updateComment}>
-            {dis ? "수정" : "완료"}
-          </div>
-        ) : (
-          ""
-        )}
-        <div className={styles.comment_btn} onClick={deleteComment}>
-          삭제
         </div>
       </div>
     </div>

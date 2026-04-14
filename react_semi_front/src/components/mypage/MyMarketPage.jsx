@@ -43,6 +43,15 @@ const MyMarketPage = () => {
     setPage(0);
   }, [order, status, searchKeyword, completed]);
 
+  useEffect(() => {
+    window.scrollTo({
+      top: 0,
+      behavior: "smooth",
+    });
+  }, [page]);
+
+  const safeOrder = completed === 0 && order === 5 ? 0 : order;
+
   return (
     <div className={styles.myboard_wrap}>
       <h3 className="page-title">거래 게시글 관리</h3>
@@ -86,16 +95,26 @@ const MyMarketPage = () => {
             ]}
           />
           <BasicSelect
-            state={order}
+            state={safeOrder}
             setState={setOrder}
-            list={[
-              [0, "최신순"],
-              [1, "작성순"],
-              [2, "조회수"],
-              [3, "좋아요"],
-              [4, "신고수"],
-              [5, "최근완료"],
-            ]}
+            list={
+              completed === 0
+                ? [
+                    [0, "최신순"],
+                    [1, "작성순"],
+                    [2, "조회수"],
+                    [3, "좋아요"],
+                    [4, "신고수"],
+                  ]
+                : [
+                    [0, "최신순"],
+                    [1, "작성순"],
+                    [2, "조회수"],
+                    [3, "좋아요"],
+                    [4, "신고수"],
+                    [5, "최근완료"],
+                  ]
+            }
           />
         </div>
       </div>

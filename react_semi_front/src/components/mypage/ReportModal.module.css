@@ -26,3 +26,7 @@
   background-color: rgb(247, 240, 240);
   font-size: 20px;
 }
+
+.report_list_wrap li {
+  color: black;
+}

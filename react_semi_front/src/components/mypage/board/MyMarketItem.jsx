@@ -2,11 +2,13 @@ import styles from "./MyBoardItem.module.css";
 import ThumbUpIcon from "@mui/icons-material/ThumbUp";
 import CommentIcon from "@mui/icons-material/Comment";
 import ReportIcon from "@mui/icons-material/Report";
+import VisibilityIcon from "@mui/icons-material/Visibility";
 import { useState } from "react";
 import Switch from "@mui/material/Switch";
 import axios from "axios";
 import Swal from "sweetalert2";
 import ReportModal from "../ReportModal";
+import { useNavigate } from "react-router-dom";
 
 const MyMarketItem = ({
   board,
@@ -18,6 +20,7 @@ const MyMarketItem = ({
   timeAgo,
 }) => {
   const [contentStatus, setContentStatus] = useState(board.contentStatus);
+  const navigate = useNavigate();
 
   // 게시글 숨기기 (관리자용)
   const changeStatus = () => {
@@ -83,8 +86,7 @@ const MyMarketItem = ({
     <div
       className={styles.item}
       onClick={() => {
-        // 누르면 상세페이지
-        console.log(board.boardNo);
+        navigate(`/market/view/${board.boardNo}`);
       }}
     >
       {/* 거래, 커뮤 확인용 */}
@@ -100,17 +102,24 @@ const MyMarketItem = ({
         )}
         <div className={styles.item_title}>{board.title}</div>
         <div className={styles.item_info}>
-          <div>{`${board.writerName} [${board.writerId}]`}</div>
-          <div>{timeAgo(board.contentDate)}</div>
+          <div className={styles.writer_info}>
+            <div>{`${board.writerName} [${board.writerId}]`}</div>
+            <div>{timeAgo(board.contentDate)}</div>
+          </div>
+          <div>
+            <div className={styles.views}>
+              <VisibilityIcon /> {board.viewCount}
+            </div>
+          </div>
         </div>
         <div className={styles.item_actions}>
           {/* 좋아요, 싫어요, 댓글, 신고 */}
           <Actions board={board} isAdminMode={isAdminMode} />
         </div>
         <div className={styles.views_done}>
-          <div className={styles.views}>조회수: {board.viewCount}</div>
+          <div className={styles.views}></div>
           <div className={styles.done}>
-            <div>{board.isCompleted === 1 ? "완료" : "미완료"}</div>
+            <div>{board.isCompleted === 1 ? "거래 완료" : "거래 미완료"}</div>
             {board.isCompleted === 1 ? <div>[{board.completedDate}]</div> : ""}
           </div>
         </div>
@@ -118,7 +127,10 @@ const MyMarketItem = ({
       {isAdminMode === "false" ? (
         ""
       ) : (
-        <div className={styles.admin_section}>
+        <div
+          className={styles.admin_section}
+          onClick={(e) => e.stopPropagation()}
+        >
           <Switch
             className={styles.switch}
             sx={{
@@ -133,12 +145,7 @@ const MyMarketItem = ({
             onChange={changeStatus}
           />
           <div className={styles.btn_section}>
-            <div
-              className={styles.btn}
-              onClick={() => {
-                deleteBoard();
-              }}
-            >
+            <div className={styles.btn} onClick={deleteBoard}>
               삭제
             </div>
           </div>

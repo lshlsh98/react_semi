@@ -15,6 +15,7 @@
 			csv.dislike_count,
 			csv.comment_count,
 			csv.report_count,
+			csv.member_grade AS writer_grade,
 			
 			CASE WHEN cl.member_id IS NOT NULL THEN 1 ELSE 0 END AS is_liked,
 			CASE WHEN cd.member_id IS NOT NULL THEN 1 ELSE 0 END AS is_disliked,	
@@ -279,6 +280,7 @@
 			mcsv.member_name AS writer_name,
 			mcsv.member_thumb AS writer_thumb,
 			mcsv.report_count,
+			mcsv.is_edited,
 			
 			CASE WHEN cr.member_id IS NOT NULL THEN 1 ELSE 0 END AS is_reported
 	
@@ -328,13 +330,13 @@
 	
 	<update id="updateMarketComment">
 		UPDATE market_comment_tbl
-		SET market_comment_content = #{newComment}
+		SET market_comment_content = #{newComment}, is_edited = 1
 		WHERE market_comment_no = #{commentNo}
 	</update>
 	
 	<update id="updateCommunityComment">
 		UPDATE community_comment_tbl
-		SET community_comment_content = #{newComment}
+		SET community_comment_content = #{newComment}, is_edited = 1
 		WHERE community_comment_no = #{commentNo}
 	</update>
 	
@@ -362,6 +364,7 @@
 			ccsv.report_count,
 			ccsv.like_count,
 			ccsv.dislike_count,
+			ccsv.is_edited,
 			
 			CASE WHEN cr.member_id IS NOT NULL THEN 1 ELSE 0 END AS is_reported,
 			CASE WHEN cl.member_id IS NOT NULL THEN 1 ELSE 0 END AS is_liked,
@@ -489,6 +492,7 @@
     		msv.view_count, 
     		msv.completed AS is_completed, 
     		msv.completed_date,
+    		msv.member_grade AS writer_grade,
     
     		<!-- market 게시글의 좋아요, 싫어요, 댓글, 신고 수 -->
     		msv.like_count, 
@@ -542,6 +546,7 @@
     		csv.view_count,
     		NULL AS is_completed,
     		NULL AS completed_date,
+    		csv.member_grade AS writer_grade,
     
     		<!-- community 게시글의 좋아요, 싫어요, 댓글, 신고 수 -->
     		csv.like_count, 
