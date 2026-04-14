@@ -14,6 +14,7 @@ import TradeStatus from "../../components/mypage/TradeStatus";
 import MemberManagement from "../../components/mypage/MemberManagement";
 import MemberInfoManagement from "../../components/mypage/MemberInfoManagement";
 import CarbonContribution from "../../components/mypage/CarbonContribution";
+import MypageMain from "../../components/mypage/MypageMain";
 const Mypage = () => {
   const navigate = useNavigate();
   const { memberId, isReady, isNotLogout } = useAuthStore();
@@ -40,6 +41,7 @@ const Mypage = () => {
         </div>
         <div className={styles.mypage_content}>
           <Routes>
+            <Route path="/" element={<MypageMain />} />
             <Route path="myinfo" element={<MemberInfo />} />
             <Route path="likedislike" element={<LikeDislike />} />
             <Route

@@ -296,9 +296,9 @@ public class MarketController {
 
 	
 	// 멤버 개인 탄소 기여도
-	@GetMapping(value = "/carbon-contribution/{memberId}/")
+	@GetMapping(value = "/carbon-contribution/{memberId}")
 	public ResponseEntity<?> carbonContribution(@PathVariable String memberId, @ModelAttribute ListItem request){
-		ListResponse response = marketService.selectOneCarbonContributionList(request);
+		ListResponse response = marketService.selectOneCarbonContributionList(memberId, request);
 		return ResponseEntity.ok(response);
 	}
 }

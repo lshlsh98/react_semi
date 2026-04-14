@@ -419,10 +419,10 @@
 		score_history_tbl
 		where member_id = #{memberId}
 		
-		<if test="view==1">
+		<if test="request.view==1">
 			and history_status = 1
 		</if>
-		<if test="view==2">
+		<if test="request.view==2">
 			and history_status = 2
 		</if>
     </select>
@@ -431,7 +431,9 @@
     <select id="selectOneCarbonContributionList" resultType="scoreHistory">
     	select
     	score_no,
+    	history_status,
     	member_id,
+    	market_no,
     	(select market_title
 		from market_tbl m
 		where m.market_no = s.market_no) as market_title,
@@ -439,15 +441,19 @@
 		score_date
     	from score_history_tbl s
     	
-    	where
-    	<if test="view==1">
-			history_status = 1
+    	where member_id = #{memberId}
+    	
+    	<if test="request.view==1">
+			and history_status = 1
 		</if>
-		<if test="view==2">
-			history_status = 2
+		<if test="request.view==2">
+			and history_status = 2
 		</if>
 		
-		<if test="order == 1">order by score_date desc</if>
-		<if test="order == 2">order by score_date asc</if>
+		<if test="request.order == 1">order by score_date desc</if>
+		<if test="request.order == 2">order by score_date asc</if>
+		
+		offset #{request.page}*#{request.size} rows fetch next #{request.size} rows only
     </select>
+    
 </mapper>

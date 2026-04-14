@@ -18,6 +18,7 @@ import kr.co.iei.market.model.vo.MarketComment;
 import kr.co.iei.market.model.vo.MarketCommentReport;
 import kr.co.iei.market.model.vo.MarketFile;
 import kr.co.iei.market.model.vo.MarketReport;
+import kr.co.iei.market.model.vo.ScoreHistory;
 import kr.co.iei.market.model.vo.TradeRequest;
 import kr.co.iei.member.model.vo.LoginMember;
 import kr.co.iei.utils.JwtUtils;
@@ -265,13 +266,13 @@ public class MarketService {
 	}
 
 	// 탄소 기여도 출력
-	public ListResponse selectOneCarbonContributionList(ListItem request) {
-		Integer totalCount = marketDao.selectOneCarbonContributionCount(request);
+	public ListResponse selectOneCarbonContributionList(String memberId, ListItem request) {
+		Integer totalCount = marketDao.selectOneCarbonContributionCount(memberId, request);
 		int totalPage = (int) Math.ceil(totalCount / (double) request.getSize());
-		List<Market> list = marketDao.selectOneCarbonContributionList(request);
+		List<ScoreHistory> list = marketDao.selectOneCarbonContributionList(memberId, request);
 		ListResponse response = new ListResponse(list, totalPage);
 
 		return response;
 	}
-	
+
 }

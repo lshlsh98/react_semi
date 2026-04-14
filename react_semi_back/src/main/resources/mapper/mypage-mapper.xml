@@ -817,4 +817,47 @@
 		</where>
 	</select>
 	
+	<select id="todayOneCounts" resultType = "TodayStats">
+		select 
+		    d.today,
+		    nvl(t.community_count, 0) as community_count,
+    		nvl(t.market_count, 0) as market_count
+		from (
+		    select to_char(sysdate - (level - 1), 'mm-dd') as today
+		    from dual
+		    <![CDATA[
+				connect by level <= 14
+			]]>
+		) d
+		
+		left join (
+		    select 
+		        today,
+		        sum(community_count) as community_count,
+		        sum(market_count) as market_count
+		    from (
+		        select 
+		            to_char(community_date, 'mm-dd') as today,
+		            count(*) as community_count,
+		            0 as market_count
+		        from community_tbl
+		        where community_writer = #{memberId}
+		        group by to_char(community_date, 'mm-dd')
+		
+		        union all
+		
+		        select 
+		            to_char(market_date, 'mm-dd') as today,
+		            0 as community_count,
+		            count(*) as market_count
+		        from market_tbl
+		        where market_writer = #{memberId}
+		        group by to_char(market_date, 'mm-dd')
+		    ) temp
+		    group by today
+		) t
+		on d.today = t.today
+		
+		order by d.today
+	</select>
 </mapper>

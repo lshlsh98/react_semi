@@ -51,6 +51,9 @@
   justify-content: end;
   gap: 16px;
 }
+.write_btn_zone {
+  display: flex;
+}
 
 .order_item_wrap select {
   padding: 9px;
@@ -60,4 +63,12 @@
   border: 1px solid var(--primary);
   outline: none;
   color: var(--line);
+}
+
+.community_list_none {
+  margin-top: 50px;
+  background-color: var(--gray7);
+  padding: 50px;
+  border-radius: 8px;
+  text-align: center;
 }

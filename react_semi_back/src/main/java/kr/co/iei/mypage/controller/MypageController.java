@@ -26,6 +26,7 @@ import kr.co.iei.mypage.model.vo.CommentListResponseDto;
 import kr.co.iei.mypage.model.vo.CommentSummary;
 import kr.co.iei.mypage.model.vo.ReportRequestDto;
 import kr.co.iei.mypage.model.vo.ReportResponseDto;
+import kr.co.iei.mypage.model.vo.TodayStats;
 import kr.co.iei.mypage.model.vo.TradeStatusReqDto;
 import kr.co.iei.mypage.model.vo.TradeStatusResDto;
 import kr.co.iei.mypage.model.vo.UpdateCommentDto;
@@ -170,6 +171,13 @@ public class MypageController {
 		
 		return ResponseEntity.ok(map);
 	}//
+	
+	@GetMapping(value = "/today/{memberId}")
+	public ResponseEntity<?> todayOneCounts(@PathVariable String memberId){
+		List<TodayStats> list = mypageService.todayOneCounts(memberId);
+		
+		return ResponseEntity.ok(list);
+	}
 }
 
 
