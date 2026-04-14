@@ -71,7 +71,9 @@ public interface MarketDao {
 
 	Market selectSellerId(Integer marketNo);
 
-	int addPoint(Integer marketNo, String sellerId);
+	int addPointHistory(Integer marketNo, String sellerId);
+
+	int addPointMember(String sellerId);
 	
 
 	

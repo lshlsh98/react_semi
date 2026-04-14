@@ -323,7 +323,7 @@
     </select>
     
     <!-- 거래완료후 포인트 추가 -->
-    <insert id="addPoint">
+    <insert id="addPointHistory">
     	insert into score_history_tbl values(
     		score_history_seq.nextval,
     		#{sellerId},
@@ -333,4 +333,10 @@
     		sysdate
     	)
     </insert>
+    
+    <update id="addPointMember">
+    	update member_tbl set
+            member_score = member_score + 100
+        where member_id = #{sellerId}
+    </update>
 </mapper>

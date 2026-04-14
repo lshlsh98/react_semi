@@ -146,12 +146,14 @@ public class MarketService {
 		//3. marketNo completed = 1, completed_date = sysdate
 		int result3 = marketDao.marketCompleted(marketNo);
 		
-		//4. score_history_table에 포인트추가(
+		//4. score_history_table에 포인트 기록 추가(
 		Market m = marketDao.selectSellerId(marketNo);
 		String sellerId = m.getMarketWriter();
-		int result4 = marketDao.addPoint(marketNo,sellerId);
+		int result4 = marketDao.addPointHistory(marketNo,sellerId);
+		//5. member_tbl에 sellerId 포인트 증가
+		int result5 = marketDao.addPointMember(sellerId);
 		
-		int result = result1 + result2 + result3 + result4;
+		int result= result1 + result2 + result3 + result4;
 				
 		return result;
 	}

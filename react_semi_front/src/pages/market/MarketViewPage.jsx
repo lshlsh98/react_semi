@@ -11,6 +11,16 @@ import withReactContent from "sweetalert2-react-content";
 import MarketComment from "../../components/market/MarketComment";
 import { Modal, Box, IconButton } from "@mui/material"; // IconButton 추가
 import { ChevronLeft, ChevronRight, Close } from "@mui/icons-material";
+import MarketMap from "./MarketMap";
+
+/* 날짜아이콘 */
+import CalendarTodayIcon from "@mui/icons-material/CalendarToday";
+/* 조회수아이콘*/
+import VisibilityIcon from "@mui/icons-material/Visibility";
+/*유저아이콘 */
+import PersonIcon from "@mui/icons-material/Person";
+/*좋아요 아이콘 */
+import FavoriteIcon from "@mui/icons-material/Favorite";
 
 const MarketViewPage = () => {
   const navigate = useNavigate();
@@ -62,6 +72,13 @@ const MarketViewPage = () => {
     };
   }, []);
   */
+  /*금액 함수*/
+  const formatPrice = (price) => {
+    if (price === 0) {
+      return "무료나눔";
+    }
+    return price.toLocaleString() + "원"; // toLocaleString하면 현재 본인의 국가에 해당하는 숫자 표기법을 적용 (예 : 1000000 -> 1,000,000)
+  };
 
   /* 게시글 불러오기 */
   useEffect(() => {
@@ -479,7 +496,6 @@ const MarketViewPage = () => {
                       height: "100%",
                       objectFit: "cover",
                       borderRadius: "12px",
-                      border: "1px solid var(--primary)",
                     }}
                     onClick={() => handleOpen(index)}
                   />
@@ -595,118 +611,134 @@ const MarketViewPage = () => {
               </Button>
             </div>
           )}
-          <div className={styles.title_wrap}>
-            <div className={styles.title_info}>
-              <p className={styles.title_info_title}>{market.marketTitle}</p>
-              <p className={styles.title_info_price}>
-                {market.sellPrice.toLocaleString("ko-KR")}원
+
+          <div className={styles.title_info}>
+            <p className={styles.title_info_title}>{market.marketTitle}</p>
+            <div className={styles.title_info_wrap}>
+              <p
+                className={
+                  market.sellPrice === 0
+                    ? styles.title_info_price_free
+                    : styles.title_info_price
+                }
+              >
+                {formatPrice(market.sellPrice)}
               </p>
-              <div className={styles.date_view_like}>
-                <p>{market.marketDate.slice(0, 10)}</p>
-                <p>조회수 : {market.viewCount}</p>
-                <p>좋아요 : {market.likeCount}</p>
-              </div>
+              <p className={styles.title_info_writer}>{market.marketWriter}</p>
             </div>
-            <div className={styles.title_map}>지도가 들어갈 예정</div>
 
-            {(!memberId || memberId !== market.marketWriter) && (
-              <div className={styles.title_btn}>
-                {memberId ? (
-                  <>
-                    {market.completed === 0 && (
-                      <>
-                        {/*거래요청 버튼*/}
-                        {market.isRequest === 0 && (
-                          <Button
-                            className="btn primary"
-                            onClick={requestTrade}
-                          >
-                            거래요청
-                          </Button>
-                        )}
-
-                        {market.isRequest === 1 && (
-                          <Button
-                            className="btn primary"
-                            onClick={cancelTrade}
-                            style={{
-                              backgroundColor: "var(--gray8)",
-                              fontWeight: "900",
-                              color: "var(--primary)",
-                            }}
-                          >
-                            요청취소
-                          </Button>
-                        )}
-                      </>
-                    )}
-                    {/*좋아요 버튼*/}
-                    {market.isLike === 0 ? (
-                      <Button
-                        className="btn primary"
-                        style={{
-                          backgroundColor: "var(--pink1)",
-                          color: "white",
-                          border: "1px solid var(--pink1)",
-                        }}
-                        onClick={likeOn}
-                      >
-                        좋아요
-                      </Button>
-                    ) : (
-                      <Button
-                        className="btn primary"
-                        style={{
-                          backgroundColor: "white",
-                          color: "var(--pink1)",
-                          fontWeight: "900",
-                          border: "1px solid var(--pink1)",
-                        }}
-                        onClick={likeOff}
-                      >
-                        좋아요 취소
-                      </Button>
-                    )}
-                    {/*신고하기 버튼*/}
-                    {market.isReport === 0 ? (
-                      <Button
-                        className="btn primary"
-                        style={{
-                          backgroundColor: "var(--danger)",
-                          color: "white",
-                          border: "1px solid var(--danger)",
-                        }}
-                        onClick={pushReport}
-                      >
-                        신고하기
-                      </Button>
-                    ) : (
-                      <Button
-                        className="btn primary"
-                        style={{
-                          backgroundColor: "white",
-                          color: "var(--danger)",
-                          fontWeight: "900",
-                          border: "1px solid var(--danger)",
-                        }}
-                        onClick={cancelReport}
-                      >
-                        신고취소
-                      </Button>
-                    )}
-                  </>
-                ) : (
-                  <Button
-                    className="btn primary"
-                    onClick={loginMsg}
-                    style={{ width: "200px" }}
-                  >
-                    거래요청(로그인필요)
-                  </Button>
-                )}
-              </div>
-            )}
+            <div className={styles.date_view_like}>
+              <p className={styles.date_wrap}>
+                <CalendarTodayIcon />
+                {market.marketDate.slice(0, 10)}
+              </p>
+              <p className={styles.viewCount_wrap}>
+                <VisibilityIcon />
+                {market.viewCount}
+              </p>
+              <p className={styles.likeCount_wrap}>
+                <FavoriteIcon />
+                {market.likeCount}
+              </p>
+            </div>
           </div>
+
+          <MarketMap market={market} />
+
+          {(!memberId || memberId !== market.marketWriter) && (
+            <div className={styles.title_btn}>
+              {memberId ? (
+                <>
+                  {market.completed === 0 && (
+                    <>
+                      {/*거래요청 버튼*/}
+                      {market.isRequest === 0 && (
+                        <Button className="btn primary" onClick={requestTrade}>
+                          거래요청
+                        </Button>
+                      )}
+
+                      {market.isRequest === 1 && (
+                        <Button
+                          className="btn primary"
+                          onClick={cancelTrade}
+                          style={{
+                            backgroundColor: "var(--gray8)",
+                            fontWeight: "900",
+                            color: "var(--primary)",
+                          }}
+                        >
+                          요청취소
+                        </Button>
+                      )}
+                    </>
+                  )}
+                  {/*좋아요 버튼*/}
+                  {market.isLike === 0 ? (
+                    <Button
+                      className="btn primary"
+                      style={{
+                        backgroundColor: "var(--pink1)",
+                        color: "white",
+                        border: "1px solid var(--pink1)",
+                      }}
+                      onClick={likeOn}
+                    >
+                      좋아요
+                    </Button>
+                  ) : (
+                    <Button
+                      className="btn primary"
+                      style={{
+                        backgroundColor: "white",
+                        color: "var(--pink1)",
+                        fontWeight: "900",
+                        border: "1px solid var(--pink1)",
+                      }}
+                      onClick={likeOff}
+                    >
+                      좋아요 취소
+                    </Button>
+                  )}
+                  {/*신고하기 버튼*/}
+                  {market.isReport === 0 ? (
+                    <Button
+                      className="btn primary"
+                      style={{
+                        backgroundColor: "var(--danger)",
+                        color: "white",
+                        border: "1px solid var(--danger)",
+                      }}
+                      onClick={pushReport}
+                    >
+                      신고하기
+                    </Button>
+                  ) : (
+                    <Button
+                      className="btn primary"
+                      style={{
+                        backgroundColor: "white",
+                        color: "var(--danger)",
+                        fontWeight: "900",
+                        border: "1px solid var(--danger)",
+                      }}
+                      onClick={cancelReport}
+                    >
+                      신고취소
+                    </Button>
+                  )}
+                </>
+              ) : (
+                <Button
+                  className="btn primary"
+                  onClick={loginMsg}
+                  style={{ width: "200px" }}
+                >
+                  거래요청(로그인필요)
+                </Button>
+              )}
+            </div>
+          )}
 
           <div
             className={styles.content_wrap}

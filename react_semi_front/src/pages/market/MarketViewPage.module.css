@@ -21,41 +21,79 @@
   background-color: var(--light);
 }
 
-/* 타이틀 : (제목 금액 작성일 조회수 좋아요)(지도)(버튼랩)*/
-.title_wrap {
-  border-radius: 12px;
-  padding: 12px;
-  margin: 20px 0;
-  background-color: var(--light);
-  display: flex;
-  flex-direction: column;
-}
 /*타이틀 (제목 금액 작성일 조회수 좋아요 */
 .title_info {
-  border: 1px solid black;
+  border-radius: 8px;
+  background-color: var(--light);
 }
 /*마켓 제목*/
 .title_info_title {
-  color: red;
+  text-align: center;
+  margin-top: 12px;
+  color: var(--gray2);
+  font-size: 20px;
+  font-weight: 700;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
-/*마켓 금액*/
-.title_info_price {
-  color: green;
-}
-/*(작성일 조회수 좋아요)*/
-.date_view_like {
-  border: 1px solid black;
+/*금액 판매자아이디 wrap*/
+.title_info_wrap {
   display: flex;
   justify-content: space-between;
+  margin-top: 12px;
 }
-.date_view_like > p {
+.title_info_wrap > p {
   width: 120px;
   text-align: center;
 }
-.title_map {
-  border: 1px solid black;
-  height: 100px;
+/*마켓 금액*/
+.title_info_price {
+  /*가격*/
+  color: var(--secendary);
+  font-size: 16px;
+  font-weight: 700;
 }
+.title_info_price_free {
+  font-size: 16px;
+  font-weight: bold;
+  color: var(--danger);
+}
+.title_info_writer {
+  color: var(--gray2);
+  font-size: 16px;
+  font-weight: 700;
+}
+
+/*(작성일 조회수 좋아요)*/
+.date_view_like {
+  margin: 12px 0;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+.date_view_like > p {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 4px;
+  font-size: 12px;
+  width: 120px;
+  text-align: center;
+}
+.date_wrap > svg {
+  fill: var(--gray2);
+  font-size: 24px;
+}
+.viewCount_wrap > svg {
+  fill: var(--secendary);
+  font-size: 24px;
+}
+.likeCount_wrap > svg {
+  fill: var(--danger);
+  font-size: 24px;
+}
+
 .title_btn {
   display: flex;
   gap: 24px;
@@ -68,11 +106,10 @@
 
 /* 내용*/
 .content_wrap {
-  border-radius: 12px;
-  padding: 12px;
+  padding: 4px 0;
+  border-radius: 8px;
   margin: 20px 0;
   background-color: var(--light);
-  height: 720px;
 }
 
 /*수정 삭제 버튼*/
@@ -151,11 +188,4 @@
   font-weight: 900;
   z-index: 10;
   pointer-events: all;
-}
-.swal-confirm-btn {
-  width: 120px;
-}
-
-.swal-cancel-btn {
-  width: 120px;
 }

@@ -15,12 +15,12 @@ ol {
 
 /* 검색창 정렬박스 */
 .market_searchbox {
-  margin: 24px 0;
-  padding: 24px;
   border-radius: 8px;
   background-color: var(--light);
+  padding: 20px 0;
   display: flex;
   justify-content: center;
+  position: fixed;
 }
 .market_searchbox > form {
   width: 900px;
@@ -59,12 +59,15 @@ ol {
 }
 
 /* 마켓 게시물이 없을때 */
-.no_result{
-  padding : 16px 0;
-  text-align: center; 
+.no_result {
+  position: absolute;
+  width: 900px;
+  top: 246px;
+  padding: 16px 0;
+  text-align: center;
   border-radius: 8px;
-  background-color:  var(--light);
-  color : var(--primary);
+  background-color: var(--light);
+  color: var(--primary);
   font-weight: 900;
 }
 
@@ -72,11 +75,12 @@ ol {
 .market_list_wrap > ul {
   display: flex;
   flex-direction: column;
-  gap:12px
+  gap: 12px;
+  margin-top: 80px;
 }
 .market_list_wrap > ul > li {
   border-radius: 8px;
-  border: 1px solid var(--primary);
+
   background-color: var(--light);
   padding: 12px;
   cursor: pointer;
@@ -103,7 +107,6 @@ ol {
 /* 정보 */
 .info {
   border-radius: 8px;
-
   flex-grow: 1;
   display: flex;
   flex-direction: column;

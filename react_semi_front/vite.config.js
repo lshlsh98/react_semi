@@ -5,6 +5,13 @@ import react from "@vitejs/plugin-react";
 export default defineConfig({
   plugins: [react()],
   server: {
+    host: "localhost",
+    port: 5173,
+    strictPort: true,
+    /* host,port,strictport 설정은 JAVA 컨트롤러
+      @CrossOrigin(origins = "http://localhost:5173", allowCredentials = "true")
+      (프론트서버 5173으로 고정)
+    */
     proxy: {
       "/api": {
         target: "https://apis.data.go.kr", // 진짜 공공데이터 서버 주소

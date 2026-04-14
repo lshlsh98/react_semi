@@ -46,7 +46,8 @@ public class MarketController {
 	private String root;
 	@Autowired
 	private FileUtils fileUtil;
-	private int cookieTime = 60 * 5; // 쿠키 시간설정 5분
+	private int cookieTime = 60 * 5; 	// 쿠키 시간설정 5분
+	private int addPoint = 100;			// 중고거래 성사시 지급될 포인트
 
 	/// 전체 마켓게시글 조회
 	@GetMapping
