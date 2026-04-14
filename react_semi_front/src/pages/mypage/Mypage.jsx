@@ -14,10 +14,12 @@ import TradeStatus from "../../components/mypage/TradeStatus";
 import MemberManagement from "../../components/mypage/MemberManagement";
 import MemberInfoManagement from "../../components/mypage/MemberInfoManagement";
 import CarbonContribution from "../../components/mypage/CarbonContribution";
+import MypageMain from "../../components/mypage/MypageMain";
 const Mypage = () => {
   const navigate = useNavigate();
   const { memberId, isReady, isNotLogout } = useAuthStore();
   console.log(useAuthStore());
+
   if (isReady && memberId == null && !isNotLogout) {
     Swal.fire({
       title: "로그인 후 이용 가능합니다.",
@@ -27,7 +29,9 @@ const Mypage = () => {
     });
     return;
   }
+
   window.scrollTo(0, 0); //페이지 이동 시 항상 가장 맨 위 화면으로
+
   return (
     memberId && (
       <div className={styles.mypage_wrap}>
@@ -37,6 +41,7 @@ const Mypage = () => {
         </div>
         <div className={styles.mypage_content}>
           <Routes>
+            <Route path="/" element={<MypageMain />} />
             <Route path="myinfo" element={<MemberInfo />} />
             <Route path="likedislike" element={<LikeDislike />} />
             <Route
@@ -72,6 +77,7 @@ const Mypage = () => {
     )
   );
 };
+
 const Profile = () => {
   const { memberId, memberName, memberThumb } = useAuthStore();
   return (
@@ -94,6 +100,7 @@ const Profile = () => {
     </section>
   );
 };
+
 const SideBar = () => {
   const { memberGrade } = useAuthStore();
   const [selectMenu, setSelectMenu] = useState(null);

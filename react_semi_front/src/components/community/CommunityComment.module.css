@@ -19,10 +19,6 @@
   font-weight: bold;
   color: var(--text1);
   margin-bottom: 24px;
-}
-
-/* 필터 영역과 함께 있을 때 제목 마진 제거 */
-.comment_header_wrap .comment_title {
   margin: 0;
 }
 
@@ -125,30 +121,25 @@
   color: var(--gray1);
   line-height: 1.5;
   margin-bottom: 12px;
-  padding-left: 46px; /* 프사 너비(36) + 간격(10) */
+  padding-left: 46px; /* 프사 사이즈만큼 들여쓰기 */
   word-break: break-all;
 }
 
-.secret_text {
-  color: var(--danger);
-  font-weight: bold;
-  font-size: 14px;
-}
-
-.lock_icon {
-  font-size: 14px;
-  margin-right: 4px;
-  color: var(--gray4);
-}
-
-/* 개별 댓글 푸터 (답글달기, 신고) */
+/* 개별 댓글 푸터 (답글달기, 신고, 좋아요/싫어요) */
 .comment_footer {
   display: flex;
-  gap: 16px;
+  justify-content: space-between;
+  align-items: center;
   padding-left: 46px; /* 텍스트 시작 위치와 맞춤 */
 }
 
-.comment_footer button {
+/* 왼쪽 버튼들 (답글, 신고) */
+.footer_actions {
+  display: flex;
+  gap: 16px;
+}
+
+.footer_actions button {
   background: none;
   border: none;
   font-size: 13px;
@@ -156,16 +147,48 @@
   color: var(--gray4);
   cursor: pointer;
   padding: 0;
-  display: flex;
-  align-items: center;
-  gap: 4px;
 }
 
-.comment_footer button:hover {
+.footer_actions button:hover {
   color: var(--text1);
 }
 
 .report_btn:hover {
+  color: var(--danger) !important;
+}
+
+/* 오른쪽 버튼들 (좋아요, 싫어요) */
+.like_dislike_wrap {
+  display: flex;
+  gap: 16px;
+}
+
+.reaction_btn {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  background: none;
+  border: none;
+  padding: 4px;
+  font-size: 13px;
+  color: var(--gray4);
+  cursor: pointer;
+  transition: color 0.2s;
+}
+
+.reaction_btn:hover {
+  color: var(--text1);
+}
+
+.icon_size {
+  font-size: 20px !important;
+}
+
+.active_like {
+  color: var(--primary) !important;
+}
+
+.active_dislike {
   color: var(--danger) !important;
 }
 
@@ -177,7 +200,7 @@
   overflow: hidden;
   display: flex;
   flex-direction: column;
-  margin-bottom: 40px;
+  margin-bottom: 40px; /* 새 댓글창과 페이징 사이 간격 */
 }
 
 /* 대댓글(답글) 작성창 들여쓰기 */
@@ -229,31 +252,14 @@
   outline: none;
 }
 
-/* 작성창 푸터 (비밀댓글 체크, 글자수, 등록 버튼) */
+/* 작성창 푸터 (글자수, 등록 버튼) */
 .write_footer {
   display: flex;
-  justify-content: space-between;
+  justify-content: flex-end;
   align-items: center;
   padding: 12px 20px;
   border-top: 1px solid var(--gray7);
   background-color: var(--footer);
-}
-
-.secret_check {
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  font-size: 14px;
-  color: var(--gray3);
-  cursor: pointer;
-  user-select: none;
-}
-
-.secret_check input[type="checkbox"] {
-  width: 16px;
-  height: 16px;
-  accent-color: var(--primary); /* 체크됐을 때 초록색 */
-  cursor: pointer;
 }
 
 /* 우측 액션(글자수+버튼) 래퍼 */
@@ -265,7 +271,7 @@
 
 .char_counter {
   font-size: 13px;
-  /* 글자 수에 따른 색상은 jsx에서 인라인으로 동적 처리 */
+  color: var(--gray4);
 }
 
 .btn_group {

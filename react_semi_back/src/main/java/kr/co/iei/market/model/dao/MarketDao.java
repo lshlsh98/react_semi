@@ -12,6 +12,7 @@ import kr.co.iei.market.model.vo.MarketComment;
 import kr.co.iei.market.model.vo.MarketCommentReport;
 import kr.co.iei.market.model.vo.MarketFile;
 import kr.co.iei.market.model.vo.MarketReport;
+import kr.co.iei.market.model.vo.ScoreHistory;
 import kr.co.iei.market.model.vo.TradeRequest;
 
 @Mapper
@@ -81,9 +82,20 @@ public interface MarketDao {
 
 	int pushReport(MarketReport marketReport);
 
+	Market selectSellerId(Integer marketNo);
+
+	int addPointHistory(Integer marketNo, String sellerId);
+
+	int addPointMember(String sellerId);
+	
+
 	int selectParentCommentCount(CommentListItem item);
 
 	List<MarketComment> selectMarketCommentList(CommentListItem item);
+
+	Integer selectOneCarbonContributionCount(String memberId, ListItem request);
+
+	List<ScoreHistory> selectOneCarbonContributionList(String memberId, ListItem request);
 	
 
 	

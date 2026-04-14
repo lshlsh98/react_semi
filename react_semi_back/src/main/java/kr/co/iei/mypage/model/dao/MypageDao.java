@@ -10,6 +10,7 @@ import kr.co.iei.mypage.model.vo.ChartResDto;
 import kr.co.iei.mypage.model.vo.CommentSummary;
 import kr.co.iei.mypage.model.vo.ReportRequestDto;
 import kr.co.iei.mypage.model.vo.ReportResponseDto;
+import kr.co.iei.mypage.model.vo.TodayStats;
 import kr.co.iei.mypage.model.vo.TradeStatusReqDto;
 import kr.co.iei.mypage.model.vo.TradeStatusResDto;
 import kr.co.iei.mypage.model.vo.UpdateCommentDto;
@@ -67,4 +68,6 @@ public interface MypageDao {
 	List<TradeStatusResDto> findListAll(TradeStatusReqDto request);
 
 	int findListAllCount(TradeStatusReqDto request);
+
+	List<TodayStats> todayOneCounts(String memberId);
 }

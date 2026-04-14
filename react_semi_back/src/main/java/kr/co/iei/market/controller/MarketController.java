@@ -2,7 +2,6 @@ package kr.co.iei.market.controller;
 
 import java.io.File;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -27,7 +26,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
-
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -55,6 +53,8 @@ public class MarketController {
 	private String root;
 	@Autowired
 	private FileUtils fileUtil;
+	private int cookieTime = 60 * 5; 	// 쿠키 시간설정 5분
+	private int addPoint = 100;			// 중고거래 성사시 지급될 포인트
 
 	/// 전체 마켓게시글 조회
 	@GetMapping
@@ -65,20 +65,14 @@ public class MarketController {
 
 	@PostMapping
 	public ResponseEntity<?> insertMarket(@ModelAttribute Market market, @ModelAttribute List<MultipartFile> files) {
-		// System.out.println(market); //정상작동 확인
-
-		/*---------------------files 정상작동 확인--------------------------
+		// 파일리스트 확인
 		for (MultipartFile file : files) {
-			System.out.println("파일명: " + file.getOriginalFilename());
+			System.out.println("\n파일명: " + file.getOriginalFilename());
 			System.out.println("크기: " + file.getSize());
 			System.out.println("타입: " + file.getContentType());
 		}
-		--------------------------------------------------------------------*/
-
 		List<MarketFile> fileList = new ArrayList<MarketFile>();
-
 		if (files != null) {
-
 			String savepath = root + "market/";
 			for (MultipartFile file : files) {
 				String marketFileName = file.getOriginalFilename();
@@ -87,14 +81,11 @@ public class MarketController {
 				marketFile.setMarketFileName(marketFileName);
 				marketFile.setMarketFilePath(marketFilepath);
 				fileList.add(marketFile);
-				// System.out.println(marketFile); // 파일첨부시 marketFile 객체생성확인
 			}
-
 		} else {
-
+			/// Todo : files == null
 		}
 		int result = marketService.insertMarket(market, fileList);
-
 		return ResponseEntity.ok(result);
 	}
 
@@ -144,18 +135,25 @@ public class MarketController {
 	}
 
 	// 마켓 게시물 조회
-	@GetMapping(value = "/{marketNo}")
+	@GetMapping(value = "/{marketNo:\\d+}")
 	public ResponseEntity<?> selectOneMarket(@PathVariable Integer marketNo,
 			@RequestHeader(required = false, name = "Authorization") String token, HttpServletRequest request,
-			HttpServletResponse response
-
-	) {
+			HttpServletResponse response) {
 
 		Market m = marketService.selectOneMarket(marketNo, token);
-		// System.out.println(m);
 		if (m == null) {
-			return ResponseEntity.notFound().build(); // err.response.status 404 전달 및 프론트에서 처리
+			return ResponseEntity.notFound().build();
+			// err.response.status 404 전달 및 프론트에서 alert 후 목록으로 이동처리
 		}
+
+		int completed = m.getCompleted(); // 거래완료여부 -> 0 :거래미완료 1 : 거래완료 (not null)
+		int status = m.getMarketStatus(); // 공개상태 -> 1 : 공개 2: 비공개 (not null)
+
+		if (completed == 1 || status == 2) {
+			System.out.println("\n완료여부 : "+ completed + " / 공개상태 : "+status);
+			return ResponseEntity.ok(m); // 거래완료 or 비공개 게시글은 조회수 증가없이 리턴
+		}
+
 		// 쿠키 확인
 		Cookie[] cookies = request.getCookies();
 		boolean alreadyViewed = false;
@@ -167,16 +165,22 @@ public class MarketController {
 				}
 			}
 		}
-		String message = alreadyViewed ? "봤음" : "안봤음";
-		System.out.println("게시글 확인 체크 : " + message);
+		String message = alreadyViewed ? "본게시글" : "안본 게시글";
+		System.out.println("\n"+marketNo+" 번글 - (쿠키시간 " + (cookieTime) / 60 + "분)게시글 확인 체크 : " + message);
 
 		if (!alreadyViewed) {
-			marketService.incrementViewCount(marketNo);
+			int result = marketService.incrementViewCount(marketNo);
+			if (result == 1) {
+				System.out.println("\n"+marketNo + " 번글 : 조회수 증가");
+			}
 			Cookie cookie = new Cookie("view_" + marketNo, "true");
-			cookie.setMaxAge(60 * 60); // 1시간 유지
+			cookie.setMaxAge(cookieTime); // 쿠키시간설정
 			cookie.setPath("/"); // (전체 경로 적용)
 			response.addCookie(cookie);
+			m.setViewCount(m.getViewCount() +1);
+			
 		}
+
 		return ResponseEntity.ok(m);
 	}
 
@@ -186,29 +190,27 @@ public class MarketController {
 			return false;
 		File file = new File(root + filename);
 		if (file.exists()) {
-			return file.delete();
-			// 파일 삭제 성공시 true 리턴
+			return file.delete(); // 파일 삭제 성공시 true 리턴
 		}
 		return false;
 	}
 
-	@DeleteMapping(value = "/{marketNo}") // 게시글삭제
+	// 게시글 삭제
+	@DeleteMapping(value = "/{marketNo}")
 	public ResponseEntity<?> deleteOneMarket(@PathVariable Integer marketNo) {
-		String savepath = root + "market/";
 		// 1. 파일패스 가져오기
 		List<String> fileList = marketService.getFilePath(marketNo);
 
 		// 2.서비스 처리 (market_file_tbl 삭제, market_tbl 삭제)
 		Map<String, Object> serviceResponse = new HashMap<String, Object>();
-		// 2-1 두 쿼리문의 결과를 담아올 객체 생성
 		serviceResponse = marketService.deleteOneMarketAndFileTbl(marketNo);
-
 		int fileCount = (int) serviceResponse.get("fileCount");
 		int result = (int) serviceResponse.get("result");
-
-		System.out.println("파일TBL 삭제 결과 (1~10) : " + fileCount);
+		System.out.println("\n 파일TBL 삭제 결과 (1~10) : " + fileCount);
 		System.out.println("마켓TBL 삭제 결과 (0~1) : " + result);
+
 		// 3. 파일 삭제
+		String savepath = root + "market/";
 		boolean allDeleted = true;
 		if (result == 1) {
 			if (fileList != null && !fileList.isEmpty()) {
@@ -227,7 +229,6 @@ public class MarketController {
 		response.put("allDeleted", allDeleted); // 프론트에 전달할 전체 삭제 정상 여부
 		response.put("result", result); // 프론트에 전달할 게시물 삭제 여부
 		return ResponseEntity.ok(response);
-
 	}
 
 	// 좋아요 누르기
@@ -288,10 +289,17 @@ public class MarketController {
 	// 거래확정
 	@PatchMapping(value = "{marketNo}/complete/{buyerId}")
 	public ResponseEntity<?> tradeComplete(@PathVariable Integer marketNo, @PathVariable String buyerId) {
-		System.out.println("거래번호 : " + marketNo);
+		System.out.println("\n거래번호 : " + marketNo);
 		System.out.println("구매자아이디" + buyerId);
 		int result = marketService.tradeComplete(marketNo, buyerId);
 		return ResponseEntity.ok(result);
 	}
 
+	
+	// 멤버 개인 탄소 기여도
+	@GetMapping(value = "/carbon-contribution/{memberId}")
+	public ResponseEntity<?> carbonContribution(@PathVariable String memberId, @ModelAttribute ListItem request){
+		ListResponse response = marketService.selectOneCarbonContributionList(memberId, request);
+		return ResponseEntity.ok(response);
+	}
 }

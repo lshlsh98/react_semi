@@ -24,6 +24,8 @@ import org.springframework.web.bind.annotation.RestController;
 import kr.co.iei.community.model.service.CommunityService;
 import kr.co.iei.community.model.vo.Community;
 import kr.co.iei.community.model.vo.CommunityComment;
+import kr.co.iei.community.model.vo.CommunityCommentListItem;
+import kr.co.iei.community.model.vo.CommunityCommentReport;
 import kr.co.iei.community.model.vo.CommunityListItem;
 import kr.co.iei.community.model.vo.CommunityListResponse;
 
@@ -71,12 +73,83 @@ public class CommunityController {
 		return ResponseEntity.ok(result);
 	}
 
-	// 메인 페이지용 리스트 조회
+	// 메인 페이지용 리스트 조회 - 이영민
 	@GetMapping(value = "/main")
 	public ResponseEntity<?> selectMainPageCommunityList(@RequestParam String type) {
 		// 저는 totalPage가 필요없어서 마켓 리스트 객체를 따로 만들게요 - 이영민
 		List<Community> list = communityService.selectMainPageCommunityList(type);
 		return ResponseEntity.ok(list);
+	}
+	
+	// 1. 특정 게시글의 댓글 목록 조회 - 이영민
+	@GetMapping(value = "/{communityNo}/comments") 
+	public ResponseEntity<?> selectCommunityCommentList(@PathVariable Integer communityNo, @ModelAttribute CommunityCommentListItem item) {
+		item.setCommunityNo(communityNo); // 경로 변수 세팅
+		CommunityListResponse response = communityService.selectCommunityCommentList(item);
+		return ResponseEntity.ok(response);
+	}
+	
+	// 2. 댓글 작성 (대댓글 포함) - 이영민
+	@PostMapping(value = "/comments") 
+	public ResponseEntity<?> insertCommunityComment(@RequestBody CommunityComment communityComment) {
+		int result = communityService.insertCommunityComment(communityComment);
+		return ResponseEntity.ok(result);
+	}
+
+	// 3. 댓글 수정 - 이영민
+	@PatchMapping(value = "/comments") 
+	public ResponseEntity<?> updateCommunityComment(@RequestBody CommunityComment comment) {
+		int result = communityService.updateCommunityComment(comment);
+		return ResponseEntity.ok(result);
+	}
+
+	// 4. 댓글 삭제 - 이영민
+	@DeleteMapping(value = "/comments/{communityCommentNo}") 
+	public ResponseEntity<?> deleteCommunityComment(@PathVariable Integer communityCommentNo) {
+		int result = communityService.deleteCommunityComment(communityCommentNo);
+		return ResponseEntity.ok(result);
+	}
+
+	// 5. 댓글 좋아요 / 싫어요 정보 조회 - 이영민
+	@GetMapping(value="/comments/{communityCommentNo}/likes")
+	public ResponseEntity<?> selectCommentLikeInfo(@PathVariable Integer communityCommentNo, @RequestHeader(required = false,name="Authorization") String token){	// 로그인 안되어 있어도 정보를 불러올수있게 required = false
+		Map<String,Object> result = communityService.selectCommentLikeInfo(communityCommentNo, token);
+		return ResponseEntity.ok(result);
+	}
+	
+	// 6. 댓글 좋아요 on - 이영민
+	@PostMapping(value="/comments/{communityCommentNo}/likes")
+	public ResponseEntity<?> commentLikeOn(@PathVariable Integer communityCommentNo, @RequestHeader(name="Authorization") String token){
+		int result = communityService.commentLikeOn(communityCommentNo, token);
+		return ResponseEntity.ok(result);
+	}
+	
+	// 7. 댓글 좋아요 off - 이영민
+	@DeleteMapping(value="/comments/{communityCommentNo}/likes")
+	public ResponseEntity<?> commentLikeOff(@PathVariable Integer communityCommentNo, @RequestHeader(name="Authorization") String token){
+		int result = communityService.commentLikeOff(communityCommentNo, token);
+		return ResponseEntity.ok(result);
+	}
+
+	// 8. 댓글 싫어요 on - 이영민
+	@PostMapping(value="/comments/{communityCommentNo}/dislikes")
+	public ResponseEntity<?> commentDislikeOn(@PathVariable Integer communityCommentNo, @RequestHeader(name="Authorization") String token){
+		int result = communityService.commentDislikeOn(communityCommentNo, token);
+		return ResponseEntity.ok(result);
+	}
+	
+	// 9. 댓글 싫어요 off - 이영민
+	@DeleteMapping(value="/comments/{communityCommentNo}/dislikes")
+	public ResponseEntity<?> commentDislikeOff(@PathVariable Integer communityCommentNo, @RequestHeader(name="Authorization") String token){
+		int result = communityService.commentDislikeOff(communityCommentNo, token);
+		return ResponseEntity.ok(result);
+	}
+
+	// 10. 댓글 신고 - 이영민
+	@PostMapping(value="/comments/reports")
+	public ResponseEntity<?> insertCommentReport(@RequestBody CommunityCommentReport report){
+		int result = communityService.insertCommentReport(report);
+		return ResponseEntity.ok(result);
 	}
 
 	@DeleteMapping(value = "/{communityNo}") // 커뮤 게시글 삭제하기
@@ -85,29 +158,6 @@ public class CommunityController {
 		return ResponseEntity.ok(result);
 	}
 
-	@GetMapping(value = "/{communityNo}/comments") // 커뮤 댓글 출력
-	public ResponseEntity<?> selectCommunityCommentList(@PathVariable Integer communityNo) {
-		List<CommunityComment> commentList = communityService.selectCommunityCommentList(communityNo);
-		return ResponseEntity.ok(commentList);
-	}
-
-	@PostMapping(value = "/comments") // 커뮤 댓글 등록
-	public ResponseEntity<?> insertCommunityComment(@RequestBody CommunityComment communityComment) {
-		CommunityComment newComment = communityService.insertCommunityComment(communityComment);
-		return ResponseEntity.ok(newComment);
-	}
-
-	@PutMapping(value = "/comments/{communityCommentNo}") // 커뮤 댓글 수정
-	public ResponseEntity<?> updateCommunityComment(@RequestBody CommunityComment comment) {
-		int result = communityService.updateCommunityComment(comment);
-		return ResponseEntity.ok(result);
-	}
-
-	@DeleteMapping(value = "/comments/{communityCommentNo}") // 커뮤 댓글 삭제
-	public ResponseEntity<?> deleteCommunityComment(@PathVariable Integer communityCommentNo) {
-		int result = communityService.deleteCommunityComment(communityCommentNo);
-		return ResponseEntity.ok(result);
-	}
 
 	@GetMapping(value = "/{communityNo}/likes") // 커뮤 좋아요 출력
 	public ResponseEntity<?> selectLikeInfo(@PathVariable Integer communityNo,

@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef } from "react";
 import axios from "axios";
-import styles from "./MarketComment.module.css";
+import styles from "./CommunityComment.module.css";
 import Button from "../ui/Button";
 import Swal from "sweetalert2";
 import useAuthStore from "../utils/useAuthStore";
@@ -37,36 +37,24 @@ const timeAgo = (dateString) => {
   }
 };
 
-const MarketComment = ({ marketNo, memberId, marketWriter }) => {
+const CommunityComment = ({ communityNo, memberId, communityWriter }) => {
   const [commentList, setCommentList] = useState([]); // 전체 댓글 목록 리스트
   const [newComment, setNewComment] = useState(""); // 새 댓글 내용
-  const [isSecret, setIsSecret] = useState(false); // 비밀댓글 체크박스 상태
 
   // 페이지네이션용 State 추가
   const [page, setPage] = useState(0); // 현재 페이지 (0부터 시작)
   const [totalPage, setTotalPage] = useState(0); // 전체 페이지 수
 
-  const [filterType, setFilterType] = useState("all"); // 기본값: 전체
   const [orderType, setOrderType] = useState("newest"); // 기본값: 최신순
-
-  const filterList = [
-    ["all", "전체"],
-    ["normal", "일반댓글"],
-    ["secret", "비밀댓글"],
-  ];
 
   const orderList = [
     ["newest", "최신순"],
     ["oldest", "오래된순"],
+    ["like", "좋아요순"],
+    ["dislike", "싫어요순"],
   ];
 
   // 셀렉터 값 변경 시 1페이지로 돌아가는 함수들
-  const handleFilterChange = (value) => {
-    setFilterType(value);
-    setPage(0);
-    scrollToCommentTop();
-  };
-
   const handleOrderChange = (value) => {
     setOrderType(value);
     setPage(0);
@@ -100,13 +88,13 @@ const MarketComment = ({ marketNo, memberId, marketWriter }) => {
   // 댓글 목록 가져오기
   const fetchComments = () => {
     // 글 번호가 없으면 return
-    if (!marketNo) {
+    if (!communityNo) {
       return;
     }
 
     axios
       .get(
-        `${import.meta.env.VITE_BACKSERVER}/markets/${marketNo}/comments?page=${page}&filterType=${filterType}&orderType=${orderType}`,
+        `${import.meta.env.VITE_BACKSERVER}/communities/${communityNo}/comments?page=${page}&orderType=${orderType}&memberId=${memberId || ""}`,
       )
       .then((res) => {
         setCommentList(res.data.items);
@@ -117,10 +105,10 @@ const MarketComment = ({ marketNo, memberId, marketWriter }) => {
       });
   };
 
-  // 페이지가 처음 켜질 때(혹은 marketNo가 바뀔 때 등) 댓글 목록 불러오기
+  // 페이지가 처음 켜질 때(혹은 communityNo이 바뀔 때 등) 댓글 목록 불러오기
   useEffect(() => {
     fetchComments();
-  }, [marketNo, page, filterType, orderType]);
+  }, [communityNo, page, orderType]);
 
   // 댓글 작성 로직
   const submitComment = () => {
@@ -129,7 +117,7 @@ const MarketComment = ({ marketNo, memberId, marketWriter }) => {
       Swal.fire({
         icon: "warning",
         title: "로그인 필요",
-        text: "댓글을 작성하려면 로그인해주세요.",
+        text: "로그인 후 이용해주세요.",
       });
       return;
     }
@@ -146,21 +134,20 @@ const MarketComment = ({ marketNo, memberId, marketWriter }) => {
 
     // backend로 보낼 JSON 데이터
     const commentData = {
-      marketNo: marketNo,
-      marketCommentWriter: memberId,
-      marketCommentContent: newComment,
-      isSecret: isSecret ? 1 : 0, // DB에는 0(일반) 또는 1(비밀)로 들어감
-      marketRecommentNo: null, // 최상위 댓글이니까 부모 번호는 null!
+      communityNo: communityNo,
+      communityCommentWriter: memberId,
+      communityCommentContent: newComment,
     };
 
     axios
-      .post(`${import.meta.env.VITE_BACKSERVER}/markets/comments`, commentData)
+      .post(
+        `${import.meta.env.VITE_BACKSERVER}/communities/comments`,
+        commentData,
+      )
       .then((res) => {
         setNewComment(""); // 입력창 비우기
-        setIsSecret(false); // 비밀댓글 체크박스 풀기
 
         setPage(0); // 1페이지로 가기
-        setFilterType("all");
         setOrderType("newest");
 
         fetchComments(); // 화면 갱신을 위해 목록 다시 불러오기
@@ -176,22 +163,20 @@ const MarketComment = ({ marketNo, memberId, marketWriter }) => {
   const renderComments = (parentId) => {
     return (
       commentList
-        // 전체 댓글 중에서 '부모 번호(marketRecommentNo)'가 현재 찾고 있는 번호(parentId)랑 똑같은 애들만 걸러냄
+        // 전체 댓글 중에서 '부모 번호(CommunityRecommentNo)'가 현재 찾고 있는 번호(parentId)랑 똑같은 애들만 걸러냄
         // 답글에서 그 답글을 어떤 댓글에 단건지 알기 위해 부모 번호로 그룹지어주기 위해서
         // 처음엔 parentId가 null이니까 최상위 댓글만 뽑아냄.
-        .filter((c) => {
-          return c.marketRecommentNo === parentId;
-        })
+        .filter((c) => c.communityRecommentNo === parentId)
         .map((comment) => (
           // 뽑아낸 데이터들을 자식 컴포넌트(CommentItem)한테 넘겨주고 화면에 그림
           <CommentItem
-            key={comment.marketCommentNo}
+            key={comment.communityCommentNo}
             comment={comment} // 댓글 데이터
             memberId={memberId} // 현재 로그인한 유저
-            marketWriter={marketWriter} // 게시글 작성자
+            communityWriter={communityWriter} // 게시글 작성자
             fetchComments={fetchComments} // 자식쪽에서 삭제/수정 시 화면 렌더링을 할수있게 함수도 통째로 넘겨줌
             allComments={commentList} // 자식이 자기 밑에 달린 답글 찾을 수 있게 전체 리스트도 넘겨줌
-            marketNo={marketNo} // 게시글 번호
+            communityNo={communityNo} // 게시글 번호
             memberThumb={memberThumb} // 답글 작성할때 프사뜨게 하기 위해 넘겨줌
           />
         ))
@@ -203,12 +188,6 @@ const MarketComment = ({ marketNo, memberId, marketWriter }) => {
       <div className={styles.comment_header_wrap}>
         <h4 className={styles.comment_title}>댓글</h4>
         <div className={styles.filter_wrap}>
-          {/* 일반/비밀 필터 */}
-          <BasicSelect
-            state={filterType}
-            setState={handleFilterChange}
-            list={filterList}
-          />
           {/* 최신/오래된순 정렬 */}
           <BasicSelect
             state={orderType}
@@ -242,30 +221,13 @@ const MarketComment = ({ marketNo, memberId, marketWriter }) => {
               : "로그인 후 댓글을 작성할 수 있습니다."
           }
           value={newComment}
-          onChange={(e) => {
-            setNewComment(e.target.value);
-          }}
+          onChange={(e) => setNewComment(e.target.value)}
           disabled={!memberId} // memberId가 없으면(비회원이면) true가 되어 비활성화
           maxLength={1000} // 1000자 제한
         />
 
         <div className={styles.write_footer}>
-          <label className={styles.secret_check}>
-            <input
-              type="checkbox"
-              checked={isSecret}
-              onChange={(e) => {
-                setIsSecret(e.target.checked);
-              }}
-              disabled={!memberId} // 비회원은 체크도 못하게 막음
-              maxLength={1000} // 1000자 제한 -> 개발자도구로 disable 해제할 경우를 생각해서 넣어둠
-            />
-            비밀댓글
-          </label>
-
-          {/* 버튼 옆에 글자 수 카운터와 묶어주기 위해 div로 감쌈 */}
           <div className={styles.write_actions}>
-            {/* 글자 수 카운터 UX 추가 (1000자 꽉 차면 빨간색으로 경고!) */}
             <span
               className={styles.char_counter}
               style={{
@@ -275,7 +237,6 @@ const MarketComment = ({ marketNo, memberId, marketWriter }) => {
             >
               {newComment.length}/1000
             </span>
-
             <Button
               className="btn primary sm"
               onClick={submitComment}
@@ -286,6 +247,7 @@ const MarketComment = ({ marketNo, memberId, marketWriter }) => {
           </div>
         </div>
       </div>
+
       <div className={styles.pagination_area}>
         <Pagination
           page={page}
@@ -302,66 +264,30 @@ const MarketComment = ({ marketNo, memberId, marketWriter }) => {
 const CommentItem = ({
   comment,
   memberId,
-  marketWriter,
   fetchComments, // 부모가 준 렌더링 함수
   allComments, // 전체 댓글 리스트, commentList로 하고 싶었는데 위에서 한번 쓴 변수명이니 혹시몰라 이렇게..
-  marketNo,
+  communityNo,
   memberThumb,
 }) => {
   // 답글(대댓글) 작성 관련 State
   const [showReplyInput, setShowReplyInput] = useState(false); // 답글달기 입력창 열림/닫힘 여부
   const [replyContent, setReplyContent] = useState(""); // 답글의 내용(value)
-  const [isSecretReply, setIsSecretReply] = useState(false); // 답글의 비밀댓글 여부
 
-  // 수정 관련 State
   const [isEditing, setIsEditing] = useState(false); // 수정 모드여부 확인
-  const [editContent, setEditContent] = useState(comment.marketCommentContent); // 수정창에 띄울 기존댓글 내용
-  const [isSecretEdit, setIsSecretEdit] = useState(comment.isSecret === 1); // 기존 비밀댓글인지 여부
+  // 수정창에 띄울 기존댓글 내용
+  const [editContent, setEditContent] = useState(
+    comment.communityCommentContent,
+  );
 
   const [showReplies, setShowReplies] = useState(false); // '답글 보기' 열림/닫힘 토글
 
-  // 권한 체크 로직
-  const isMyComment = memberId === comment.marketCommentWriter; // 내가 쓴 댓글인지 (true, false 저장)
-  const isPostWriter = memberId === marketWriter; // 내가 이 마켓 글쓴이(판매자)인가 (true, false 저장)
-
-  // 조상 댓글(부모, 조부모...) 중에 내가 쓴 댓글이 있는지 추적하는 함수 (내가 쓴 비밀댓글(답글로 비밀댓글을 써도 답글의 답글이어도)의 답글들은 비밀댓글이어도 볼수 있게)
-  const isMyThread = () => {
-    let currentComment = comment; // 탐색하기 시작하는 현재 댓글
-
-    // 부모 번호가 null이 아닐 때까지(최상위 부모 댓글에 도달할 때까지) 계속 위로 올라감
-    while (currentComment.marketRecommentNo !== null) {
-      // 내 부모 댓글을 전체 리스트에서 찾기 -> 찾아서 parentComment에 저장
-      const parentComment = allComments.find(
-        (c) => c.marketCommentNo === currentComment.marketRecommentNo,
-      );
-
-      // 부모가 없으면(혹시라도 DB에서 지워졌다면) 멈춤 -> 이게 없으면 혹여나 DB에서 지워지면 무한루프됨.
-      if (!parentComment) break;
-
-      // 찾은 부모(혹은 조부모...) 댓글의 작성자가 '나(memberId)'라면? -> 볼 권한 있음(true)
-      if (parentComment.marketCommentWriter === memberId) {
-        return true;
-      }
-
-      // 다음 반복을 위해 currentComment를 부모(parentComment)로 교체해서 한 단계 더 위로 올라감
-      currentComment = parentComment;
-    }
-
-    // 끝까지 다 뒤졌는데 내가 쓴 게 하나도 없으면 권한 없음(false)
-    return false;
-  };
-
-  const canViewSecret = isMyComment || isPostWriter || isMyThread(); // 비밀댓글 열람 권한: 내 댓글이거나, 내가 글쓴이(게시글 주인(작성자)), 내가 쓴 댓글에 있는 답글이면 볼 수 있음
-  const isSecretComment = comment.isSecret === 1; // comment로 가져온 댓글의 비밀댓글여부(0, 1)가 비밀댓글(1)인지 true, false로 담아둠
-
-  // 상호작용(답글/신고) 권한 체크용
-  const canInteract = !isSecretComment || canViewSecret; // 비밀댓글이 아니거나, (비밀댓글이라도) 내가 볼 권한이 있다면(이 권한들로 버튼을 띄우기 위해)
+  const isMyComment = memberId === comment.communityCommentWriter; // 내가 쓴 댓글인지 (true, false 저장)
 
   // 자식 답글들
-  // 전체 댓글 리스트를 뒤져서, 부모 번호(marketRecommentNo)가 지금 내 번호(comment.marketCommentNo)랑 똑같은 애들만 필터링
-  const childComments = allComments.filter((c) => {
-    return c.marketRecommentNo === comment.marketCommentNo;
-  });
+  // 전체 댓글 리스트를 뒤져서, 부모 번호(communityRecommentNo)가 지금 내 번호(comment.communityCommentNo)랑 똑같은 애들만 필터링
+  const childComments = allComments.filter(
+    (c) => c.communityRecommentNo === comment.communityCommentNo,
+  );
 
   // 댓글 삭제
   const deleteComment = () => {
@@ -378,7 +304,7 @@ const CommentItem = ({
       if (result.isConfirmed) {
         axios
           .delete(
-            `${import.meta.env.VITE_BACKSERVER}/markets/comments/${comment.marketCommentNo}`,
+            `${import.meta.env.VITE_BACKSERVER}/communities/comments/${comment.communityCommentNo}`,
           )
           .then((res) => {
             // 지운 다음에 화면 렌더링 함수
@@ -398,24 +324,23 @@ const CommentItem = ({
       return;
     }
 
-    // 수정한 내용과 비밀댓글 여부가 기존과 완전히 똑같으면 서버 요청 안하고 바로 리턴
-    if (
-      editContent === comment.marketCommentContent &&
-      isSecretEdit === (comment.isSecret === 1)
-    ) {
+    // 수정한 내용과 기존내용이 완전히 똑같으면 서버 요청 안하고 바로 리턴
+    if (editContent === comment.communityCommentContent) {
       setIsEditing(false); // 수정창만 닫아버림
       return;
     }
 
     // 수정할 data
     const updateData = {
-      marketCommentNo: comment.marketCommentNo, // 누구를 수정할 건지 PK 전송
-      marketCommentContent: editContent, // 댓글의 내용
-      isSecret: isSecretEdit ? 1 : 0, // 비밀 댓글 여부
+      communityCommentNo: comment.communityCommentNo, // 누구를 수정할 건지 PK 전송
+      communityCommentContent: editContent, // 댓글의 내용
     };
 
     axios
-      .patch(`${import.meta.env.VITE_BACKSERVER}/markets/comments`, updateData)
+      .patch(
+        `${import.meta.env.VITE_BACKSERVER}/communities/comments`,
+        updateData,
+      )
       .then((res) => {
         setIsEditing(false); // 수정 완료됐으니 다른 댓글에서도 수정인지 여부를 따로 따져야하니 기본값으로 초기화
         fetchComments(); // 화면 렌더링
@@ -435,18 +360,19 @@ const CommentItem = ({
     // 답글 data
     const replyData = {
       // 똑같은거 위에도 많으니 주석 굳이 안함
-      marketNo: marketNo,
-      marketCommentWriter: memberId,
-      marketCommentContent: replyContent,
-      isSecret: isSecretReply ? 1 : 0,
-      marketRecommentNo: comment.marketCommentNo, // 여기가 핵심! 부모 번호에 지금 내 번호를 넣어줘서 종속관계를 만듦!
+      communityNo: communityNo,
+      communityCommentWriter: memberId,
+      communityCommentContent: replyContent,
+      communityRecommentNo: comment.communityCommentNo, // 여기가 핵심! 부모 번호에 지금 내 번호를 넣어줘서 종속관계를 만듦!
     };
 
     axios
-      .post(`${import.meta.env.VITE_BACKSERVER}/markets/comments`, replyData)
+      .post(
+        `${import.meta.env.VITE_BACKSERVER}/communities/comments`,
+        replyData,
+      )
       .then((res) => {
         setReplyContent(""); // 답글의 내용(value) 초기화
-        setIsSecretReply(false); // 작성 완료됐으니 다른 댓글에서도 비밀댓글인지 여부를 따로 따져야하니 기본값으로 초기화
         setShowReplyInput(false); // 입력창 닫기
         setShowReplies(true); // 답글 달았으니 접혀있던 '답글 보기'토글 열기
         fetchComments(); // 화면 렌더링
@@ -531,14 +457,14 @@ const CommentItem = ({
       if (result.isConfirmed) {
         // 신고 data
         const reportData = {
-          marketCommentNo: comment.marketCommentNo,
+          communityCommentNo: comment.communityCommentNo,
           memberId: memberId,
-          marketCommentReportReason: result.value, // 아까 긁어온 내용
+          communityCommentReportReason: result.value, // 아까 긁어온 내용
         };
 
         axios
           .post(
-            `${import.meta.env.VITE_BACKSERVER}/markets/comments/reports`,
+            `${import.meta.env.VITE_BACKSERVER}/communities/comments/reports`,
             reportData,
           )
           .then((res) => {
@@ -562,6 +488,82 @@ const CommentItem = ({
     });
   };
 
+  // 좋아요 처리 함수
+  const handleLike = () => {
+    if (!memberId) {
+      Swal.fire({
+        icon: "warning",
+        title: "로그인 필요",
+        text: "로그인 후 이용해주세요.",
+      });
+      return;
+    }
+
+    // 이미 좋아요를 누른 상태면 취소(delete), 아니면 추가(post)
+    // isLike = 1 이면 누른상태 0 이면 안 누른 상태 (backend에서도 설명되어 있음.)
+    if (comment.isLike === 1) {
+      axios
+        .delete(
+          `${import.meta.env.VITE_BACKSERVER}/communities/comments/${comment.communityCommentNo}/likes`,
+        )
+        .then((res) => {
+          fetchComments(); // 화면 렌더링
+        })
+        .catch((err) => {
+          console.log("댓글 좋아요 off 실패:", err);
+        });
+    } else {
+      axios
+        .post(
+          `${import.meta.env.VITE_BACKSERVER}/communities/comments/${comment.communityCommentNo}/likes`,
+        )
+        .then((res) => {
+          fetchComments(); // 화면 렌더링
+        })
+        .catch((err) => {
+          console.log("댓글 좋아요 on 실패:", err);
+        });
+    }
+  };
+
+  // 싫어요 처리 함수
+  const handleDislike = () => {
+    if (!memberId) {
+      Swal.fire({
+        icon: "warning",
+        title: "로그인 필요",
+        text: "로그인 후 이용해주세요.",
+      });
+      return;
+    }
+
+    // 이미 싫어요를 누른 상태면 취소(delete), 아니면 추가(post)
+    // isDisLike = 1 이면 누른상태 0 이면 안 누른 상태 (backend에서도 설명되어 있음.)
+    if (comment.isDislike === 1) {
+      axios
+        .delete(
+          `${import.meta.env.VITE_BACKSERVER}/communities/comments/${comment.communityCommentNo}/dislikes`,
+        )
+        .then((res) => {
+          fetchComments(); // 화면 렌더링
+        })
+        .catch((err) => {
+          console.log("댓글 싫어요 off 실패:", err);
+        });
+    } else {
+      axios
+        .post(
+          `${import.meta.env.VITE_BACKSERVER}/communities/comments/${comment.communityCommentNo}/dislikes`,
+        )
+        .then((res) => {
+          fetchComments(); // 화면 렌더링
+        })
+        .catch((err) => {
+          console.log("댓글 싫어요 on 실패:", err);
+        });
+    }
+  };
+
   return (
     <li className={styles.comment_item}>
       {/* 헤더 영역: 프사, 아이디, 날짜, 수정/삭제 버튼 */}
@@ -576,10 +578,10 @@ const CommentItem = ({
             <span className="material-icons">account_circle</span>
           )}
           <span className={styles.writer_id}>
-            {comment.marketCommentWriter}
+            {comment.communityCommentWriter}
           </span>
           <span className={styles.comment_date}>
-            {timeAgo(comment.marketCommentDate)}
+            {timeAgo(comment.communityCommentDate)}
             {/* isEdited가 1이면 (수정됨) 마크 붙여주기 */}
             {comment.isEdited === 1 && (
               <span className={styles.edited_mark}>(수정됨)</span>
@@ -608,15 +610,6 @@ const CommentItem = ({
               maxLength={1000} // 수정창도 1000자 제한
             />
             <div className={styles.write_footer}>
-              <label className={styles.secret_check}>
-                <input
-                  type="checkbox"
-                  checked={isSecretEdit}
-                  onChange={(e) => setIsSecretEdit(e.target.checked)}
-                />
-                비밀댓글
-              </label>
-
               <div className={styles.write_actions}>
                 <span
                   className={styles.char_counter}
@@ -629,7 +622,6 @@ const CommentItem = ({
                 >
                   {editContent.length}/1000
                 </span>
-
                 <div className={styles.btn_group}>
                   <Button
                     className="btn sm"
@@ -646,42 +638,57 @@ const CommentItem = ({
           </div>
         ) : (
           // 일반 조회 모드
-          <>
-            {/* 비밀댓글인데 볼 권한이 없으면 자물쇠 처리 */}
-            {isSecretComment && !canViewSecret ? (
-              // 좌물쇠 아이콘 구글에서 복붙한거임 필요하면 다들 복붙 ㄱㄱ
-              <span className={styles.secret_text}>🔒 비밀댓글입니다.</span>
-            ) : (
-              // 볼 권한이 있거나, 일반 댓글일 경우 렌더링
-              <p>
-                {/* 비밀댓글이지만 내가 볼 권한이 있어서 내용이 보이는 경우 자물쇠 아이콘만 살짝 띄워줌 */}
-                {isSecretComment && (
-                  <span className={`material-icons ${styles.lock_icon}`}>
-                    lock
-                  </span>
-                )}
-                {comment.marketCommentContent}
-              </p>
-            )}
-          </>
+          <p>{comment.communityCommentContent}</p>
         )}
       </div>
 
-      {/* 푸터 영역 : 답글달기, 신고 버튼 (수정 중이 아니고 볼 권한이 있을 때만 노출) */}
-      {!isEditing && canInteract && (
+      {/* 푸터 영역 : 답글달기, 신고 버튼, 좋아요, 싫어요 (수정 중이 아니고 볼 권한이 있을 때만 노출) */}
+      {!isEditing && (
         <div className={styles.comment_footer}>
-          {/* 로그인되어 있지 않으면 답글달기 버튼 안뜨게 */}
-          {memberId && (
-            <button onClick={() => setShowReplyInput(!showReplyInput)}>
-              {showReplyInput ? "답글취소" : "답글달기"}
+          {/* 답글달기, 신고 */}
+          <div className={styles.footer_actions}>
+            {/* 로그인되어 있지 않으면 답글달기 버튼 안뜨게 */}
+            {memberId && (
+              <button onClick={() => setShowReplyInput(!showReplyInput)}>
+                {showReplyInput ? "답글취소" : "답글달기"}
+              </button>
+            )}
+            {/* 내가 쓴 댓글이 아닐 때만 신고 버튼 노출 */}
+            {!isMyComment && (
+              <button className={styles.report_btn} onClick={reportComment}>
+                신고
+              </button>
+            )}
+          </div>
+
+          {/* 좋아요 / 싫어요 */}
+          <div className={styles.like_dislike_wrap}>
+            <button
+              onClick={isMyComment ? null : handleLike} // 본인이면 함수 실행 안 함
+              className={`${styles.reaction_btn} ${comment.isLike === 1 ? styles.active_like : ""}`}
+              style={{
+                cursor: isMyComment ? "default" : "pointer",
+              }} // 손가락 커서 없앰
+              title={isMyComment ? "내 댓글에는 반응할 수 없습니다." : ""} // 마우스 올리면 툴팁 뜸
+            >
+              <span className={`material-icons ${styles.icon_size}`}>
+                thumb_up
+              </span>
+              <span>{comment.likeCount || 0}</span>
             </button>
-          )}
-          {/* 내가 쓴 댓글이 아닐 때만 신고 버튼 노출 */}
-          {!isMyComment && (
-            <button className={styles.report_btn} onClick={reportComment}>
-              신고
+
+            <button
+              onClick={isMyComment ? null : handleDislike} // 본인이면 함수 실행 안 함
+              className={`${styles.reaction_btn} ${comment.isDislike === 1 ? styles.active_dislike : ""}`} // 손가락 커서 없앰
+              style={{ cursor: isMyComment ? "default" : "pointer" }}
+              title={isMyComment ? "내 댓글에는 반응할 수 없습니다." : ""} // 마우스 올리면 툴팁 뜸
+            >
+              <span className={`material-icons ${styles.icon_size}`}>
+                thumb_down
+              </span>
+              <span>{comment.dislikeCount || 0}</span>
             </button>
-          )}
+          </div>
         </div>
       )}
 
@@ -717,22 +724,10 @@ const CommentItem = ({
               maxLength={1000} // 답글창 1000자 제한 추가
             />
             <div className={styles.write_footer}>
-              <label className={styles.secret_check}>
-                <input
-                  type="checkbox"
-                  checked={isSecretReply}
-                  onChange={(e) => {
-                    setIsSecretReply(e.target.checked);
-                  }}
-                />
-                비밀답글
-              </label>
-              <div
-                style={{ display: "flex", alignItems: "center", gap: "10px" }}
-              >
+              <div className={styles.write_actions}>
                 <span
+                  className={styles.char_counter}
                   style={{
-                    fontSize: "13px",
                     color:
                       replyContent.length >= 1000
                         ? "var(--danger)"
@@ -754,14 +749,11 @@ const CommentItem = ({
       {childComments.length > 0 && (
         <button
           className={styles.toggle_replies_btn}
-          onClick={() => {
-            setShowReplies(!showReplies);
-          }}
+          onClick={() => setShowReplies(!showReplies)}
         >
           <span className="material-icons">
             {showReplies ? "expand_less" : "expand_more"}
           </span>
-
           <span className={styles.toggle_text}>
             {showReplies
               ? "답글 숨기기"
@@ -773,16 +765,15 @@ const CommentItem = ({
       {/* 재귀 호출 파트: showReplies가 true(열림)일 때만 내 밑에 달린 자식 댓글들을 렌더링 */}
       {showReplies && (
         <ul className={styles.reply_list}>
-          {childComments.map((childComment) => (
+          {childComments.map((child) => (
             // 자기가 자기 자신(CommentItem)을 또 부름 (이래서 대댓글이 계속 이어서 갈 수 있음)
             <CommentItem
-              key={childComment.marketCommentNo}
-              comment={childComment}
+              key={child.communityCommentNo}
+              comment={child}
               memberId={memberId}
-              marketWriter={marketWriter}
               fetchComments={fetchComments}
               allComments={allComments}
-              marketNo={marketNo}
+              communityNo={communityNo}
               memberThumb={memberThumb}
             />
           ))}
@@ -792,4 +783,4 @@ const CommentItem = ({
   );
 };
 
-export default MarketComment;
+export default CommunityComment;

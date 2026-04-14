@@ -51,6 +51,10 @@ const MarketListPage = () => {
         console.log(res.data.items);
         setMarketList(res.data.items);
         setTotalPage(res.data.totalPage);
+        window.scrollTo({
+          top: 0,
+          behavior: "smooth",
+        });
       })
       .catch((err) => {
         console.log("리스트 조회 실패");

@@ -4,7 +4,7 @@
   margin: 0px auto;
 }
 
-/* 게시글 작성 (맨 위 구분하기 쉽게 적어놓음)*/
+/* 게시글 작성 글자 (맨 위 구분하기 쉽게 적어놓음)*/
 .community_write_wrap > h3 {
   text-align: center;
   margin-top: 50px;

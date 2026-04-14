@@ -30,6 +30,7 @@ const MemberManagement = () => {
         console.log(res);
         setMemberList(res.data.items);
         setTotalPage(res.data.totalPage);
+        window.scrollTo(0, 0);
       })
       .catch((err) => {
         console.log(err);

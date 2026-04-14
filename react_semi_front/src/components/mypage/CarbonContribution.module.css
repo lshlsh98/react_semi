@@ -8,6 +8,11 @@
   width: 100%;
 }
 
+.carbon_contribution_order_wrap {
+  display: flex;
+  gap: 12px;
+}
+
 .carbon_contribution {
   border: 2px solid var(--gray5);
   border-radius: 4px;
@@ -23,6 +28,17 @@
 .carbon_contribution_list_wrap {
   width: 100%;
 }
+.carbon_contribution_order_wrap {
+  margin-bottom: 12px;
+}
+
+.carbon_contribution_none {
+  width: 100%;
+  background-color: var(--gray7);
+  padding: 50px;
+  text-align: center;
+  border-radius: 4px;
+}
 
 .carbon_contribution_list_title {
   width: 100%;
@@ -31,7 +47,50 @@
   padding: 20px;
   background-color: var(--primary);
   border-radius: 4px 4px 0 0;
+  text-align: center;
 }
+
+.carbon_contribution_list {
+  width: 100%;
+  list-style-type: none;
+  display: flex;
+  padding: 20px;
+  text-align: center;
+  border-bottom: 1px solid var(--gray6);
+}
+
 .carbon_contribution_list_title > li {
   color: var(--gray8);
+}
+.carbon_contribution_status {
+  width: 10%;
+}
+.carbon_contribution_market_title {
+  width: 50%;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  padding: 0 30px;
+}
+.carbon_contribution_market_title:hover {
+  text-decoration: underline;
+  cursor: pointer;
+}
+.carbon_contribution_changed_score {
+  width: 15%;
+}
+.carbon_contribution_score_date {
+  width: 25%;
+}
+
+.green {
+  color: var(--line);
+}
+
+.red {
+  color: var(--danger);
+}
+
+.carbon_contribution_list_pagination {
+  margin-top: 30px;
 }

@@ -15,4 +15,6 @@ public class ListItem {
 	private Integer searchType;		//검색조건		
 	private Integer location;		//거래장소
 	private String searchKeyword;	//입력한정보
+	
+	private Integer view;			// 출력 조건
 }

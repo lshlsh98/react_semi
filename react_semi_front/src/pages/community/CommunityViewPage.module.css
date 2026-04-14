@@ -3,16 +3,13 @@
   margin: 0 auto;
   border-radius: 8px;
   background-color: var(--gray8);
-  margin: 50px auto;
 }
-
 .community_view_wrap {
   margin-top: 50px;
   border: 1px solid var(--line);
   padding: 16px;
   border-radius: 8px;
 }
-
 /* 제목 */
 .community_title {
   display: flex;
@@ -22,8 +19,8 @@
   border: 1px solid #ccc;
   border-radius: 6px;
   margin-bottom: 20px;
+  font-size: 20px;
 }
-
 /* 작성자, 날짜, 조회수 */
 .community_writer,
 .community_date,
@@ -31,60 +28,84 @@
   display: flex;
   align-items: center;
   gap: 12px; /* 아이콘과 글자 사이 간격 */
-  font-size: 20px;
+  font-size: 16px;
 }
 
+/* 작성자, 날짜, 조회수 세로로 간격 넓히기 */
+.community_sub_info {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+/* 날짜 및 조회수 있는 쪽 왼쪽에 여백 약간 줘서 세로 간격 맞추기 */
+.community_date,
+.community_view_count {
+  margin-left: 5px;
+}
 /* 아이콘 자체의 크기나 위치 미세 조정 */
 .icon {
-  font-size: 20px !important; /* 아이콘 크기가 너무 크면 조정 */
+  font-size: 22px !important; /* 아이콘 크기가 너무 크면 조정 */
   display: flex;
   align-items: center;
 }
 
-/* 회원 프로필 유무 여부 */
-.member_thumb {
-  width: 36px;
-  height: 36px;
+/* 회원 프로필 관련*/
+.community_writer > .member_thumb {
+  width: 32px;
+  height: 32px;
   padding: 8px;
   border-radius: 18px;
   background-color: var(--gray6);
-}
-.member_thumb > img {
-  width: 100%;
-  height: 100%;
-  object-fit: contain;
-}
-.member_thumb_exists {
-  width: 36px;
-  height: 36px;
-  padding: 0px;
   overflow: hidden;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border: 1px solid var(--gray6);
+}
+
+.community_writer > .member_thumb > span {
+  color: var(--gray8);
+  font-size: 40px;
+}
+
+.community_writer > .member_thumb_exists {
+  width: 32px;
+  height: 32px;
   border-radius: 18px;
   background-color: var(--gray6);
+  overflow: hidden;
 }
-.member_thumb_exists > img {
+
+.community_writer > .member_thumb_exists > img {
   width: 100%;
   height: 100%;
   object-fit: cover;
 }
-
 /* 내용 */
 .community_view_content {
   margin-top: 20px;
-  padding: 20px;
+  padding: 10px 20px;
   border: 1px solid var(--border);
   border-radius: 8px;
   background-color: var(--soft);
   line-height: 1.6;
+  white-space: pre-wrap;
+  word-break: break-all;
 }
 
-/* 수정/삭제 버튼 + 좋아요/싫어요/신고 아이콘 + 신고하기 버튼 */
+/* 내용에서 개행 */
+.community_view_content p {
+  min-height: 1em; /* 빈 문단이더라도 높이를 가지게 함 */
+}
+
+/* 수정/삭제 버튼 + 좋아요 및 싫어요 + 신고하기 버튼 */
 .community_action_btn_wrap {
   display: flex;
   align-items: center;
-  margin-top: 20px;
+  margin-top: 25px;
+  margin-bottom: 50px;
 }
-
 /* 수정/삭제 버튼 사이의 간격 */
 .button_group {
   display: flex;
@@ -92,113 +113,64 @@
   gap: 20px;
 }
 
-/* 좋아요/싫어요/신고 아이콘 + 신고하기 버튼 */
+/* 좋아요 및 싫어요 + 신고하기 버튼 */
 .community_like_dislike_report_wrap {
   display: flex;
   align-items: center;
-  gap: 15px; /* 아이콘 간격 */
-  margin-top: 0;
-  margin-left: auto; /* 작성자 및 로그인 여부 떠나서 항상 오른쪽에 배치해놓음*/
 }
 
-/* 좋아요/싫어요 숫자 표시 cursor: pointer 해제 */
-.community_like_wrap span,
-.community_dislike_wrap span {
-  cursor: default;
+/* 수정, 삭제 버튼 */
+.left {
+  flex: 1;
+  justify-content: flex-start;
+  align-items: center;
 }
 
+/* 신고하기 버튼 */
+.center {
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+}
+
+/* 좋아요, 싫어요 */
+.right {
+  margin-left: auto;
+  display: flex;
+  align-items: center;
+}
+
+/* 싫어요랑 좋아요 아이콘과 간격 확보 */
+.community_dislike_wrap {
+  margin-left: 18px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+/* 좋아요와 싫어요 */
 .community_like_wrap,
-.community_dislike_wrap,
-.community_report_btn_wrap {
-  display: inline-flex; /* 아이콘과 텍스트를 한 줄로 묶기 */
-  align-items: center;
-  gap: 6px; /* 아이콘과 숫자 사이 간격 */
-  cursor: pointer;
-  font-size: 14px;
-}
-
-.community_report_btn_wrap {
-  cursor: default; /* 신고 아이콘만 cursor: pointer 제외 */
-}
-
-/* 신고 아이콘이랑 신고하기 버튼 간격 */
-.community_report_btn_wrap button {
-  margin-left: 15px;
-}
-
-/* 아래부터는 댓글 관련 */
-/* 댓글 등록을 간격 두기*/
-.comment_regist_wrap > h3 {
-  margin-top: 50px;
-}
-
-/* 댓글 등록 밑에 상자 크기 조정 + 패딩으로 조절 */
-.comment_regist_wrap textarea {
-  height: 100px !important;
-  min-height: 50px;
-  resize: none;
-  padding: 12px;
-  margin-top: 10px;
-}
-
-/* 등록 버튼 (오른쪽으로 배치) */
-.input_item {
-  display: flex;
-  flex-direction: column;
-  align-items: flex-end;
-  gap: 12px; /* 입력창과 등록 버튼 사이의 간격 */
-  margin-bottom: 50px;
-}
-
-.community_comment_count_wrap {
+.community_dislike_wrap {
   display: flex;
   align-items: center;
-  gap: 10px;
-  border-bottom: 1px solid green;
-  flex-grow: 1; /* 남는 공간을 꽉 채우게 함 */
+  gap: 8px; /* 아이콘이랑 숫자 간격 */
 }
 
-/* 댓글 N개 현황 */
-.community_comment_count_wrap > h3 {
-  margin: 0;
-  padding-bottom: 10px;
-  font-size: 24px;
-}
-
-/* 아이콘 크기 조정 + 댓글 개수랑 세로 정렬이 안 맞아서 미세하게 5px 조절함 */
-.community_comment_count_wrap .icon {
-  margin-bottom: 5px;
-  width: 30px;
-  height: 30px;
-}
-
-.comment_list_wrap {
-  margin-top: 12px;
-}
-
-/* 등록된 댓글 상자 크기 조절 */
-.comment_content textarea {
-  width: 100% !important; /* 가로를 꽉 채우도록 강제 */
-  height: 100px !important;
-  min-height: 100px;
-  resize: none;
-  box-sizing: border-box; /* 패딩이 너비를 벗어나지 않게 함 */
-  padding: 12px;
-}
-
-.comment_item {
-  list-style-type: none;
-  padding: 16px 0; /* 좌우 패딩을 0으로 해서 본문 끝선에 맞춤 */
-  border-bottom: none;
-}
-.comment_content {
-  margin-top: 16px;
-  width: 100%;
-}
-
+/* 좋아요와 싫어요 아이콘 갖다댈 때 cursor: pointer; */
 .community_like_wrap svg,
 .community_dislike_wrap svg {
   cursor: pointer;
+}
+
+/* 좋아요 ON 상태일 때 파란색 */
+.active > svg {
+  fill: blue;
+}
+
+/* 좋아요/싫어요 "숫자 표시" cursor: pointer 해제 */
+.community_like_wrap span,
+.community_dislike_wrap span {
+  cursor: default;
 }
 
 .overlay {
@@ -209,14 +181,14 @@
   height: 100%;
   background: rgba(0, 0, 0, 0.5);
   z-index: 999;
-
   display: flex;
   justify-content: center;
   align-items: center;
 }
 
+/* 신고하기 버튼 누르면 내용들 */
 .report_modal {
-  background: white;
+  background-color: white;
   padding: 24px;
   border-radius: 12px;
   width: 350px;
@@ -224,7 +196,6 @@
   flex-direction: column;
   gap: 12px;
 }
-
 .modal_btn_wrap {
   display: flex;
   justify-content: flex-end;
@@ -232,15 +203,7 @@
   margin-top: 10px;
 }
 
-.community_like_wrap > svg {
-  fill: black;
-}
-
-/* ON 상태 */
-.active > svg {
-  fill: blue;
-}
-
-.community_report_wrap > svg {
-  fill: var(--danger);
+/* 사유 입력 1,000자 입력 글씨 크기 조정 */
+.report_modal textarea::placeholder {
+  font-size: 13px;
 }

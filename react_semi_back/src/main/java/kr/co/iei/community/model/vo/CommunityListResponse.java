@@ -10,6 +10,6 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @Data
 public class CommunityListResponse {
-	private List<Community> items;
+	private List<?> items;
 	private Integer totalPage;
 }

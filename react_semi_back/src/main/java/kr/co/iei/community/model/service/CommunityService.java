@@ -13,6 +13,8 @@ import kr.co.iei.community.model.vo.Community;
 import kr.co.iei.community.model.vo.CommunityListItem;
 import kr.co.iei.community.model.vo.CommunityListResponse;
 import kr.co.iei.community.model.vo.CommunityComment;
+import kr.co.iei.community.model.vo.CommunityCommentListItem;
+import kr.co.iei.community.model.vo.CommunityCommentReport;
 import kr.co.iei.member.model.vo.LoginMember;
 import kr.co.iei.utils.JwtUtils;
 
@@ -58,19 +60,6 @@ public class CommunityService {
 		return result;
 	}
 
-	public List<CommunityComment> selectCommunityCommentList(Integer communityNo) {
-		List<CommunityComment> commentList = communityDao.selectCommunityCommentList(communityNo);
-		return commentList;
-	}
-
-	@Transactional
-	public CommunityComment insertCommunityComment(CommunityComment communityComment) {
-		int communityCommentNo = communityDao.selectNewCommunityCommentNo();
-		communityComment.setCommunityCommentNo(communityCommentNo);
-		int result = communityDao.insertCommunityComment(communityComment);
-		CommunityComment newComment = communityDao.selectOneCommunityComment(communityCommentNo);
-		return newComment;
-	}
 
 	// 좋아요 표시
 	public Map<String, Object> selectLikeInfo(Integer communityNo, String token) {
@@ -153,16 +142,6 @@ public class CommunityService {
 		return result;
 	}
 
-	public int deleteCommunityComment(Integer communityCommentNo) {
-		int result = communityDao.deleteCommunityComment(communityCommentNo);
-		return result;
-	}
-
-	public int updateCommunityComment(CommunityComment comment) {
-		int result = communityDao.updateCommunityComment(comment);
-		return result;
-	}
-	
 	// 신고 버튼 출력
 	public Map<String, Object> selectReportInfo(Integer communityNo, String token) {
 		int reportCount = communityDao.selectReportCount(communityNo);
@@ -202,17 +181,137 @@ public class CommunityService {
 		return result;
 	}
 
-	public List<Community> selectMainPageCommunityList(String type) {
-		return communityDao.selectMainPageCommunityList(type);
-	}
-
 	public int updateViewCountCommunity(Integer communityNo) {
 		Community community = selectOneCommunity(communityNo);
 		int result = communityDao.updateViewCountCommunity(community);
 		return result;
 	}
 	
+	// 메인페이지
+	public List<Community> selectMainPageCommunityList(String type) {
+		List<Community> list = communityDao.selectMainPageCommunityList(type);
+		return list;
+	}
+	
+	// 댓글 조회
+	public CommunityListResponse selectCommunityCommentList(CommunityCommentListItem item) {
+		int totalCount = communityDao.selectParentCommentCount(item); // 총 부모 댓글 수 구하기 (자식 답글은 페이지 계산에서 제외)
+		int totalPage = (int) Math.ceil(totalCount / (double) item.getSize()); // 총 페이지 수 계산
+		
+		List<CommunityComment> list = communityDao.selectCommunityCommentList(item); // 조회
+		
+		CommunityListResponse response = new CommunityListResponse(list, totalPage);
+		return response;
+	}
+	
+	// 댓글 작성
+	@Transactional
+	public int insertCommunityComment(CommunityComment communityComment) {
+		int result = communityDao.insertCommunityComment(communityComment); // 작성
+		return result;
+	}
+
+	// 댓글 수정
+	@Transactional
+	public int updateCommunityComment(CommunityComment comment) {
+		int result = communityDao.updateCommunityComment(comment); // 수정
+		return result;
+	}
+
+	// 댓글 삭제
+	@Transactional
+	public int deleteCommunityComment(Integer communityCommentNo) {
+		int result = communityDao.deleteCommunityComment(communityCommentNo); // 삭제
+		return result;
+	}
+
+	// 댓글 좋아요 / 싫어요 정보 조회
+	public Map<String, Object> selectCommentLikeInfo(Integer communityCommentNo, String token) {
+		int likeCount = communityDao.selectCommentLikeCount(communityCommentNo); // 댓글 좋아요수
+		int dislikeCount = communityDao.selectCommentDislikeCount(communityCommentNo); // 댓글 싫어요수
+		
+		Map<String, Object> result = new HashMap<>(); // 컨트롤러에 줄 객체 생성해서 여기에 다 담기
+		result.put("likeCount", likeCount);
+		result.put("dislikeCount", dislikeCount);
+		
+		if (token != null) { // 토큰이 있다면 (로그인한 회원이라면)
+			LoginMember loginMember = jwtUtil.checkToken(token); // 토큰 해독해서 유저 정보 꺼냄
+			
+			Map<String, Object> params = new HashMap<>(); // 로그인 유저 정보 담는 객체
+			params.put("communityCommentNo", communityCommentNo);
+			params.put("memberId", loginMember.getMemberId());
+			
+			result.put("isLike", communityDao.selectCommentIsLike(params)); // 로그인 유저가 좋아요를 누른적있는지 확인 (있으면 1, 없으면 0)
+			result.put("isDislike", communityDao.selectCommentIsDislike(params)); // 로그인 유저가 싫어요를 누른적있는지 확인 (있으면 1, 없으면 0)
+		} else { // 토큰이 없음 (로그인 x)
+			// 위에서 없으면 0이라고 했으니 0
+			result.put("isLike", 0); 
+			result.put("isDislike", 0);
+		}
+		return result;
+	}
+
+	// 댓글 좋아요 on
+	@Transactional
+	public int commentLikeOn(Integer communityCommentNo, String token) {
+		LoginMember loginMember = jwtUtil.checkToken(token); // 토큰 해독해서 유저 정보 꺼냄
+		
+		Map<String, Object> params = new HashMap<>(); // 로그인 유저 정보 담는 객체
+		params.put("communityCommentNo", communityCommentNo);
+		params.put("memberId", loginMember.getMemberId());
+		
+		communityDao.commentDislikeOff(params); // 싫어요가 있었다면 해제(사실 없어도 함수는 돌아가니 작동은 함)
+		
+		int result = communityDao.commentLikeOn(params);
+		return result;
+	}
+
+	// 댓글 좋아요 off
+	@Transactional
+	public int commentLikeOff(Integer communityCommentNo, String token) {
+		LoginMember loginMember = jwtUtil.checkToken(token); // 토큰 해독해서 유저 정보 꺼냄
+		
+		Map<String, Object> params = new HashMap<>(); // 로그인 유저 정보 담는 객체
+		params.put("communityCommentNo", communityCommentNo);
+		params.put("memberId", loginMember.getMemberId());
+		
+		int result = communityDao.commentLikeOff(params);
+		return result;
+	}
+
+	// 댓글 싫어요 on
+	@Transactional
+	public int commentDislikeOn(Integer communityCommentNo, String token) {
+		LoginMember loginMember = jwtUtil.checkToken(token); // 토큰 해독해서 유저 정보 꺼냄
+		
+		Map<String, Object> params = new HashMap<>(); // 로그인 유저 정보 담는 객체
+		params.put("communityCommentNo", communityCommentNo);
+		params.put("memberId", loginMember.getMemberId());
+		
+		communityDao.commentLikeOff(params); // 좋아요가 있었다면 해제(사실 없어도 함수는 돌아가니 작동은 함)
+		
+		int result = communityDao.commentDislikeOn(params);
+		return result;
+	}
+
+	// 댓글 싫어요 off
+	@Transactional
+	public int commentDislikeOff(Integer communityCommentNo, String token) {
+		LoginMember loginMember = jwtUtil.checkToken(token); // 토큰 해독해서 유저 정보 꺼냄
+		
+		Map<String, Object> params = new HashMap<>(); // 로그인 유저 정보 담는 객체
+		params.put("communityCommentNo", communityCommentNo);
+		params.put("memberId", loginMember.getMemberId());
+		
+		int result = communityDao.commentDislikeOff(params);
+		return result;
+	}
+
+	// 댓글 신고
+	@Transactional
+	public int insertCommentReport(CommunityCommentReport report) {
+		int result = communityDao.insertCommentReport(report);
+		return result;
+	}
+
 }
-
-
-
