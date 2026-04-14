@@ -46,7 +46,7 @@ public interface ChatDao {
 
 	void updateIsRead(ChatRoomAndMemberReqDto req);
 
-	List<MyChatListResDto> getMyChatRooms(Long id);
+	List<MyChatListResDto> getMyChatRooms(String memberId);
 
 	Long getCountIsReadZero(ChatRoomAndMemberReqDto req);
 
@@ -58,7 +58,7 @@ public interface ChatDao {
 
 	Member findMemberById(Long memberId);
 
-	ChatRoom findExistingPrivateRoom(Map<String, Long> ids);
+	ChatRoom findExistingPrivateRoom(Map<String, String> ids);
 	
 	
 	

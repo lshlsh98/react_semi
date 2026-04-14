@@ -101,7 +101,7 @@
 		INNER JOIN chat_room r
 			ON (p.chat_room_id = r.id)
 		
-		WHERE member_id = #{id}
+		WHERE member_id = #{memberId}
 	</select>
 	
 	<select id="getCountIsReadZero" resultType="Long">
@@ -140,7 +140,7 @@
 	<select id="findExistingPrivateRoom" resultType="chatRoom">
 		SELECT * 
 		FROM chat_room			
-		WHERE id = (SELECT cp1.chat_room_id
+		WHERE id IN (SELECT cp1.chat_room_id
 					FROM chat_participant cp1
 					INNER JOIN chat_participant cp2 
 						ON (cp1.chat_room_id = cp2.chat_room_id)

@@ -200,16 +200,15 @@ public class ChatService {
 	}//
 
 	public List<MyChatListResDto> getMyChatRooms() {
-		Member member = chatDao.findMemberByEmail(SecurityContextHolder.getContext().getAuthentication().getName());
+		Member member = chatDao.findMemberById(SecurityContextHolder.getContext().getAuthentication().getName());
 		if(member == null) {
 			throw new NotFoundException("member can not be found");
 		}
 		
-		List<MyChatListResDto> MyChatListResDtos = chatDao.getMyChatRooms(member.getId());
+		List<MyChatListResDto> MyChatListResDtos = chatDao.getMyChatRooms(member.getMemberId());
 		for(MyChatListResDto d :  MyChatListResDtos) {
-			ChatRoomAndMemberReqDto req = new ChatRoomAndMemberReqDto(d.getRoomId(), member.getId());
+			ChatRoomAndMemberReqDto req = new ChatRoomAndMemberReqDto(d.getRoomId(), member.getMemberId());
 			Long count = chatDao.getCountIsReadZero(req);
-//			d.setUnReadCount(count == null ? 0 : count / 2); // 왜인지 모르겠지만 똑같은게 2번 찍힘
 			d.setUnReadCount(count == null ? 0 : count); 
 		}
 		
@@ -222,7 +221,7 @@ public class ChatService {
 			throw new NotFoundException("chatRoom can not be found");
 		}
 				
-		Member member = chatDao.findMemberByEmail(SecurityContextHolder.getContext().getAuthentication().getName());
+		Member member = chatDao.findMemberById(SecurityContextHolder.getContext().getAuthentication().getName());
 		if(member == null) {
 			throw new NotFoundException("member can not be found");
 		}
@@ -231,7 +230,7 @@ public class ChatService {
 			throw new IllegalArgumentException("단체 채팅방이 아닙니다.");
 		}
 		
-		ChatRoomAndMemberReqDto req = new ChatRoomAndMemberReqDto(chatRoom.getId(), member.getId());
+		ChatRoomAndMemberReqDto req = new ChatRoomAndMemberReqDto(chatRoom.getId(), member.getMemberId());
 		ChatParticipant c = chatDao.findChatParticipantByChatRoomAndMember(req);
 		if(c == null) {
 			throw new NotFoundException("참여자를 찾을 수 없습니다");
@@ -246,7 +245,7 @@ public class ChatService {
 	}//
 
 	public Long getOrCreatePrivateRoom(Long otherMemberId) {
-		Member member = chatDao.findMemberByEmail(SecurityContextHolder.getContext().getAuthentication().getName());
+		Member member = chatDao.findMemberById(SecurityContextHolder.getContext().getAuthentication().getName());
 		if(member == null) {
 			throw new NotFoundException("member can not be found");
 		}
@@ -257,9 +256,9 @@ public class ChatService {
 		}
 
 		// 나와 상대방이 1:1 채팅에 이미 참석하고 있다면 해당 roomId retrun
-		Map<String, Long> ids = new HashMap<>();
-		ids.put("memberId", member.getId());
-		ids.put("otherMemberId", otherMember.getId());
+		Map<String, String> ids = new HashMap<>();
+		ids.put("memberId", member.getMemberId());
+		ids.put("otherMemberId", otherMember.getMemberId());
 		ChatRoom chatRoom = chatDao.findExistingPrivateRoom(ids);
 		
 		// 만약 1:1 채팅방이 없을 경우 채팅방 개설
