@@ -131,12 +131,6 @@
 		WHERE id = #{roomId}
 	</delete>
 	
-	<select id="findMemberById" resultType="member">
-		SELECT * 
-		FROM member_tbl
-		WHERE id = #{memberId}
-	</select>
-	
 	<select id="findExistingPrivateRoom" resultType="chatRoom">
 		SELECT * 
 		FROM chat_room			

@@ -244,7 +244,7 @@ public class ChatService {
 		}
 	}//
 
-	public Long getOrCreatePrivateRoom(Long otherMemberId) {
+	public Long getOrCreatePrivateRoom(String otherMemberId) {
 		Member member = chatDao.findMemberById(SecurityContextHolder.getContext().getAuthentication().getName());
 		if(member == null) {
 			throw new NotFoundException("member can not be found");

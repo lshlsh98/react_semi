@@ -56,8 +56,6 @@ public interface ChatDao {
 
 	void deleteChatRoom(Long roomId);
 
-	Member findMemberById(Long memberId);
-
 	ChatRoom findExistingPrivateRoom(Map<String, String> ids);
 	
 	
