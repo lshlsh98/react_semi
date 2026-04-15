@@ -44,10 +44,9 @@ const MainPage = () => {
   const [popularCommunity, setPopularCommunity] = useState([]); // 커뮤니티 인기글 (좋아요순)
   const [noticeCommunity, setNoticeCommunity] = useState([]); // 커뮤니티 공지사항 (공지사항 -> 회원등급 : 1-슈퍼관리자, 2-관리자 order by 최신순)
 
-  // 🚀 1. 배너 관련 State 및 데이터 추가
-  const [currentBanner, setCurrentBanner] = useState(0);
+  const [currentBanner, setCurrentBanner] = useState(0); // 현재 배너의 번호
 
-  // 배너 데이터 배열 (이미지 경로는 프로젝트에 맞게 수정해주세요!)
+  // 배너 데이터 배열 (id : 배너 번호, img : 경로, title : 제목, link : route해서 갈 주소)
   const bannerList = [
     { id: 1, img: "/banner1.png", title: "그린리턴 중고거래", link: "/market" },
     { id: 2, img: "/banner2.png", title: "그린 커뮤니티", link: "/community" },
@@ -57,18 +56,23 @@ const MainPage = () => {
 
   // 4초마다 배너가 자동으로 넘어가게 하는 타이머
   useEffect(() => {
-    let timerId;
+    let timerId; // 몇번 타이머인지 구분하기 위해 지정
 
+    // 자동으로 슬라이드 넘기는 함수
     const startAutoSlide = () => {
+      // timerId에 값 대입할거고 setInterval()은 n초마다 작업 반복하는것
       timerId = setInterval(() => {
+        // 지금 배너가 마지막 배너면 0번으로 가고, 아니면 다음(+1)으로 가기
         setCurrentBanner((prev) =>
           prev === bannerList.length - 1 ? 0 : prev + 1,
         );
-      }, 4000); // 4000 = 4초
+      }, 4000); // 4000ms = 4초마다
     };
 
     const stopAutoSlide = () => {
-      if (timerId) clearInterval(timerId);
+      if (timerId) {
+        clearInterval(timerId);
+      }
     };
 
     startAutoSlide(); // 컴포넌트 마운트 시 타이머 시작
