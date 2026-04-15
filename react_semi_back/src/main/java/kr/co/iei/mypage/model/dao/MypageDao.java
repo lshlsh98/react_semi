@@ -8,6 +8,7 @@ import kr.co.iei.mypage.model.vo.BoardListRequestDto;
 import kr.co.iei.mypage.model.vo.BoardSummary;
 import kr.co.iei.mypage.model.vo.ChartResDto;
 import kr.co.iei.mypage.model.vo.CommentSummary;
+import kr.co.iei.mypage.model.vo.MyPost;
 import kr.co.iei.mypage.model.vo.ReportRequestDto;
 import kr.co.iei.mypage.model.vo.ReportResponseDto;
 import kr.co.iei.mypage.model.vo.TodayStats;
@@ -70,4 +71,8 @@ public interface MypageDao {
 	int findListAllCount(TradeStatusReqDto request);
 
 	List<TodayStats> todayOneCounts(String memberId);
+	
+	List<MyPost> myBestPost(String memberId);
+
+	List<MyPost> myRecentPost(String memberId);
 }
