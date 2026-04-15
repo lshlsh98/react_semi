@@ -1,16 +1,9 @@
-import { useEffect, useState, useRef } from "react";
-import { useNavigate, useParams } from "react-router-dom";
-import Swal from "sweetalert2";
-import useAuthStore from "../../components/utils/useAuthStore";
-import styles from "./MarketWritePage.module.css";
-import axios from "axios";
+import styles from "./MarketFrm.module.css";
 import Button from "../../components/ui/Button";
 import { Input } from "../../components/ui/Form";
 import InsertPhotoIcon from "@mui/icons-material/InsertPhoto";
 import DeleteIcon from "@mui/icons-material/Delete";
 import { useKakaoPostcode } from "@clroot/react-kakao-postcode";
-
-//tip-tap editor
 import { useEditor, EditorContent } from "@tiptap/react";
 import StarterKit from "@tiptap/starter-kit";
 import { TextStyle } from "@tiptap/extension-text-style";
@@ -27,188 +20,23 @@ import FormatAlignRightIcon from "@mui/icons-material/FormatAlignRight";
 import ClearIcon from "@mui/icons-material/Clear";
 import UndoIcon from "@mui/icons-material/Undo";
 import RedoIcon from "@mui/icons-material/Redo";
+import { useRef } from "react";
 
-const MarketModifyPage = () => {
-  const { memberId, memberAddr } = useAuthStore();
-  const navigate = useNavigate();
-  const params = useParams();
-  const marketNo = params.marketNo;
-  const [market, setMarket] = useState({});
-
-  useEffect(() => {
-    axios
-      .get(`${import.meta.env.VITE_BACKSERVER}/markets/${marketNo}`)
-      .then((res) => {
-        setMarket(res.data);
-      })
-      .catch((err) => {
-        console.log(err);
-      });
-  }, [marketNo]);
-
-  /* 파일 관리용 스테이트 */
-  const [files, setFiles] = useState([]);
-  /* 파일 추가 함수 */
-  const addFiles = (fileList) => {
-    const imageFiles = fileList.filter((file) =>
-      file.type.startsWith("image/"),
-    );
-    if (imageFiles.length !== fileList.length) {
-      Swal.fire({
-        icon: "warning",
-        title: "이미지 파일만 업로드 가능합니다.",
-      });
-    }
-    /* 최대 이미지 개수 설정 */
-    if (files.length + imageFiles.length > 10) {
-      Swal.fire({
-        icon: "warning",
-        title: "이미지는 최대 10장까지 업로드 가능합니다.",
-      });
-      return;
-    }
-    const newFiles = [...files, ...imageFiles];
-    setFiles(newFiles);
-  };
-
-  /* 파일 삭제용 함수*/
-  const deleteFile = (file) => {
-    const newFiles = files.filter((item) => {
-      return item !== file;
-    });
-    setFiles(newFiles);
-  };
-
-  /* 기존파일 삭제용 함수 */
-  const [deleteFileList, setDeleteFileList] = useState([]);
-  const addDeleteFileList = (file) => {
-    //화면에서 기존파일을 없애는 작업 - board.fileList를 변환
-    const newFileList = market.fileList.filter((item) => {
-      return item !== file;
-    });
-    setMarket({ ...market, fileList: newFileList });
-    //삭제할 파일 추가(boardFilePath 를 추가)
-    setDeleteFileList([...deleteFileList, file.marketFilePath]);
-  };
-  /* INPUT 함수 */
-  const inputMarket = (e) => {
-    const name = e.target.name;
-    const value = e.target.value;
-    const newMarket = { ...market, [name]: value };
-    setMarket(newMarket);
-  };
-
-  /* 판매 제목 함수 */
-  const inputMarketTitle = (e) => {
-    const name = e.target.name;
-    const value = e.target.value;
-    if (value.length > 50) {
-      Swal.fire({
-        icon: "warning",
-        title: "50자 이상 쓸 수 없어요.",
-      });
-      return;
-    }
-    setMarket({ ...market, [name]: value });
-  };
-
-  /* 판매 금액 함수 */
-  const inputMarketPrice = (e) => {
-    const name = e.target.name;
-    const value = e.target.value;
-    const num = Number(value);
-    if (num < 0) {
-      Swal.fire({
-        icon: "warning",
-        title: "0원 보다 작게 설정하실 수는 없어요!",
-      });
-      setMarket({ ...market, [name]: "" });
-      return;
-    } else if (num > 10000000) {
-      Swal.fire({
-        icon: "warning",
-        title: "최대 1,000만원까지 설정 가능해요!",
-      });
-      setMarket({ ...market, [name]: "" });
-      return;
-    }
-    setMarket({ ...market, [name]: value });
-  };
-  /* 테스트 에디터용 함수 */
-
-  const inputMarketContent = (data) => {
-    setMarket({ ...market, marketContent: data });
-  };
-
-  /* 판매 주소*/
-  const detailRef = useRef(null);
-
-  const { open } = useKakaoPostcode({
-    onComplete: (data) => {
-      //console.log(data);
-
-      setMarket({
-        ...market,
-        marketPostcode: data.zonecode,
-        sellAddr: data.roadAddress,
-      });
-      detailRef.current.focus();
-    },
-  });
-
-  /* 수정하기버튼 클릭이벤트 연결 함수 */
-  const modify = () => {
-    if (
-      market.marketTitle === "" ||
-      market.marketContent === "" ||
-      market.sellPrice === "" ||
-      market.sellAddr === "" ||
-      (files.length === 0 && (!market.fileList || market.fileList.length === 0))
-    ) {
-      Swal.fire({
-        icon: "warning",
-        title: "빠짐없이 작성해주세요.",
-      });
-      return;
-    }
-    //console.log("수정하기 버튼클릭");
-    const form = new FormData();
-    form.append("marketTitle", market.marketTitle);
-    form.append("marketContent", market.marketContent);
-    form.append("sellPrice", market.sellPrice);
-    form.append("sellAddr", market.sellAddr);
-    form.append("marketWriter", market.marketWriter);
-    files.forEach((file) => {
-      form.append("files", file);
-    });
-
-    for (let pair of form.entries()) {
-      console.log(pair[0], pair[1]);
-    }
-    axios
-      .patch(`${import.meta.env.VITE_BACKSERVER}/markets/${marketNo}`, form, {
-        headers: {
-          "Content-Type": "multipart/form-data",
-        },
-      })
-      .then((res) => {
-        if (res.data === 1) {
-          Swal.fire({
-            title: "게시글 수정 완료",
-            icon: "success",
-          }).then(() => {
-            navigate(`/market/view/${marketNo}`);
-          });
-        }
-        console.log(res);
-      })
-      .catch((err) => {
-        console.log(err);
-      });
-  };
-
+const MarketFrm = ({
+  market,
+  inputMarket,
+  inputMarketTitle,
+  inputMarketPrice,
+  inputMarketContent,
+  files,
+  addFiles,
+  deleteFile,
+  addDeleteFileList,
+  detailRef,
+  open,
+}) => {
   return (
-    <section className={styles.market_write_wrap}>
+    <section className={styles.market_frm_wrap}>
       {/* 제목 필드 */}
       <div className={styles.market_input_wrap}>
         <label htmlFor="marketTitle">제목</label>
@@ -216,7 +44,7 @@ const MarketModifyPage = () => {
           type="text"
           name="marketTitle"
           id="marketTitle"
-          value={market.marketTitle}
+          value={market.marketTitle || ""}
           onChange={inputMarketTitle}
         ></Input>
       </div>
@@ -227,7 +55,7 @@ const MarketModifyPage = () => {
           type="number"
           name="sellPrice"
           id="sellPrice"
-          value={market.sellPrice}
+          value={market.sellPrice || ""}
           onChange={inputMarketPrice}
           placeholder="숫자만 입력 가능"
         ></Input>
@@ -236,13 +64,6 @@ const MarketModifyPage = () => {
       {/* 거래 장소 필드 */}
       <div className={styles.market_input_wrap}>
         <label htmlFor="marketTitle">거래장소</label>
-        {/* <input
-          type="text"
-          name="sellAddr"
-          id="sellAddr"
-          value={market.sellAddr}
-          onChange={inputMarket}
-        ></input> */}
 
         <div className={styles.market_addr}>
           <Input
@@ -250,7 +71,7 @@ const MarketModifyPage = () => {
             type="text"
             name="sellAddr"
             id="sellAddr"
-            value={market.sellAddr}
+            value={market.sellAddr || ""}
             onChange={inputMarket}
             readOnly={true}
           ></Input>
@@ -323,55 +144,9 @@ const MarketModifyPage = () => {
           })}
         </div>
       </div>
-
-      <div className={styles.market_write_btn_wrap}>
-        <Button className="btn primary" onClick={modify}>
-          수정하기
-        </Button>
-
-        <Button
-          className="btn primary danger"
-          onClick={() => {
-            Swal.fire({
-              title: "작성을 취소하시겠어요?",
-              icon: "warning",
-              showCancelButton: true,
-              confirmButtonText: "네",
-              cancelButtonText: "아니오",
-            }).then((result) => {
-              if (result.isConfirmed) {
-                navigate(`/market/view/${marketNo}`);
-              }
-            });
-          }}
-        >
-          작성취소
-        </Button>
-      </div>
     </section>
   );
 };
-
-const FileItem = ({ file, deleteFile }) => {
-  return (
-    <ul className={styles.file_item}>
-      <li>
-        <InsertPhotoIcon />
-      </li>
-      {/*file.name || file.marketFileName 수정할때 파일이름 출력*/}
-      <li className={styles.file_name}>{file.name || file.marketFileName}</li>
-      <li>
-        <ClearIcon
-          className={styles.file_delete}
-          onClick={() => {
-            deleteFile(file);
-          }}
-        />
-      </li>
-    </ul>
-  );
-};
-
 const MenuBar = ({ editor }) => {
   if (!editor) return null;
 
@@ -528,12 +303,7 @@ const TextEditor = ({ data, setData }) => {
         types: ["heading", "paragraph"],
       }),
     ],
-    content: data,
-    onUpdate: ({ editor }) => {
-      const html = editor.getHTML();
-      setData(html);
-    },
-
+    content: data || "",
     /* 에디터의 글자수를 제한 */
     editorProps: {
       handleTextInput(view, from, to, text) {
@@ -575,11 +345,6 @@ const TextEditor = ({ data, setData }) => {
       setData(html);
     },
   });
-  useEffect(() => {
-    if (editor && data) {
-      editor.commands.setContent(data);
-    }
-  }, [data, editor]);
 
   return (
     <div className={styles.editor_wrap}>
@@ -588,5 +353,4 @@ const TextEditor = ({ data, setData }) => {
     </div>
   );
 };
-
-export default MarketModifyPage;
+export default MarketFrm;

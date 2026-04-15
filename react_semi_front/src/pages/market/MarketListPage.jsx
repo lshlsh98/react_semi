@@ -11,7 +11,7 @@ import BasicSelect from "../../components/ui/BasicSelect";
 
 const MarketListPage = () => {
   const navigate = useNavigate();
-  const { memberId } = useAuthStore();
+  const { memberId, memberGrade } = useAuthStore();
   const [marketList, setMarketList] = useState([]);
 
   /* 사이즈 셋팅 */

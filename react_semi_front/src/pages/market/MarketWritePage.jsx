@@ -159,11 +159,9 @@ const MarketWritePage = () => {
     files.forEach((file) => {
       form.append("files", file);
     });
-
     for (let pair of form.entries()) {
       console.log(pair[0], pair[1]);
     }
-
     axios
       .post(`${import.meta.env.VITE_BACKSERVER}/markets`, form, {
         headers: {

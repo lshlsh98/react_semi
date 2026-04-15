@@ -125,35 +125,44 @@
 }
 
 /* 거래완료창 */
-.trade_ul {
+:global(.trade_ul) {
   display: flex;
   flex-direction: column;
   gap: 12px;
 }
-.trade_li {
+:global(.trade_li) {
   border: 1px solid var(--primary);
   border-radius: 8px;
   display: flex;
+  align-items: center;
   justify-content: space-between;
   padding: 12px;
   gap: 12px;
 }
-.trade_buyerId {
+
+:global(.trade_buyerId) {
   width: 150px;
+  flex-shrink: 0; /* 👈 중요 */
+  font-weight: 600;
 }
-.trade_message {
-  flex-grow: 1;
+:global(.trade_message) {
+  flex: 1; /* flex-grow 대신 이게 더 안정적 */
+  word-break: break-word;
+  overflow-wrap: break-word;
 }
 
-.trade_btn {
+:global(.trade_btn) {
+  width: 100px;
+  flex-shrink: 0; /* 👈 버튼 안 찌그러지게 */
   cursor: pointer;
   font-size: 14px;
   padding: 8px 20px;
   border: none;
   border-radius: 6px;
   background-color: var(--primary);
-  border: 1px solid var(--primary);
-  color: var(--gray8);
+  color: var(--light);
+
+  transition: 0.2s;
 }
 
 /*판매완료시 노출*/

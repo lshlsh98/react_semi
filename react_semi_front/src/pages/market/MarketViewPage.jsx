@@ -126,27 +126,55 @@ const MarketViewPage = () => {
   /* 거래요청 함수 */
   const requestTrade = () => {
     Swal.fire({
-      title: "거래요청 하시겠어요?",
+      title: "거래요청하기",
       html: `
-          <textarea id="report-reason" class="swal2-textarea"
-          placeholder="요청 메시지를 입력해주세요 (최대 200자)"
-          maxlength="200"
-          style="width: 85%; height: 100px; resize: none; font-size: 14px; margin-top: 10px;"></textarea>
+            <textarea id="report-reason" class="swal2-textarea" 
+              placeholder="거래요청 메시지를 남겨주세요. (최대 100자)" 
+              maxlength="100" 
+              style="width: 85%; height: 100px; resize: none; font-size: 14px; margin-top: 10px;"></textarea>
+            <div id="report-counter" style="text-align: right; width: 85%; margin: 5px auto 0; font-size: 13px; color: var(--gray4);">
+              0/100
+            </div>
           `,
       showCancelButton: true,
       confirmButtonText: "네",
       cancelButtonText: "아니오",
       confirmButtonColor: "var(--primary)",
-      cancelButtonColor: "var(--danger)",
+      cancelButtonColor: "var(--gray5)",
+
+      allowOutsideClick: false, // 배경(바깥쪽) 클릭해도 안 닫힘
+      allowEscapeKey: false, // Esc 눌러도 안 닫힘
+
+      // sweetalert으로 실시간으로 현재 글자수를 띄우기위해 값을 계산해서 addEvent로 input에 넣어주기 위한 함수
+      // didOpen : sweetalert에서 제공하는 함수 -> alert창이 뜨고 나서 실행하는 함수
+      didOpen: () => {
+        // 위의 sweetalert의 html 요소들 가져오기
+        const textarea = document.getElementById("report-reason");
+        const counter = document.getElementById("report-counter");
+
+        // 가져온 값을 넣어줌
+        textarea.addEventListener("input", (e) => {
+          const currentLength = e.target.value.length;
+          counter.innerText = `${currentLength}/100`;
+
+          // 1000자가 꽉 차면 빨간색으로 변경
+          if (currentLength >= 100) {
+            counter.style.color = "var(--danger)";
+          } else {
+            counter.style.color = "var(--gray4)";
+          }
+        });
+      },
 
       preConfirm: () => {
         // 확인 버튼 눌렀을 때 텍스트 박스 내용 긁어오기 외부 - 라이브러리여서 찾아보고 이렇게 사용
-        const reason = document.getElementById("report-reason").value; // 신고 사유(신고의 텍스트 박스 내용)가 없다면 쓰라고 하기
+        const reason = document.getElementById("report-reason").value;
 
+        // 신고 사유(신고의 텍스트 박스 내용)가 없다면 쓰라고 하기
         if (!reason.trim()) {
-          Swal.showValidationMessage("요청 메시지를 입력해주세요."); // 빈칸이면 못 넘어가게 막기
-          // sweetalert 스타일 맞추기 위해
+          Swal.showValidationMessage("신고 사유를 입력해주세요."); // 빈칸이면 못 넘어가게 막기
 
+          // sweetalert 스타일 맞추기 위해
           const validationMsg = Swal.getValidationMessage();
           if (validationMsg) {
             validationMsg.style.backgroundColor = "transparent";
@@ -222,7 +250,11 @@ const MarketViewPage = () => {
     });
   };
 
-  /* 게시글삭제 함수 */
+  /* 게시글 수정 함수 */
+  const modifyMarket = () => {
+    navigate(`/market/modify/${marketNo}`);
+  };
+  /* 게시글 삭제 함수 */
   const deleteMarket = () => {
     Swal.fire({
       title: "삭제 하시겠습니까?",
@@ -278,26 +310,32 @@ const MarketViewPage = () => {
         }
         MySwal.fire({
           title: "거래 요청 목록",
-          html: (
-            <ul className={styles.trade_ul}>
-              {/* setTradeRequestList 대신 받아온 res.data를 직접 맵핑 */}
-              {res.data.map((trade) => (
-                <li className={styles.trade_li} key={trade.tradeNo}>
-                  <p className={styles.trade_buyerId}>{trade.buyerId}</p>
-                  <p className={styles.trade_message}>{trade.message}</p>
-                  <button
-                    className={styles.trade_btn}
-                    onClick={() => {
-                      MySwal.close();
-                      requestAccepted(trade.buyerId);
-                    }}
-                  >
-                    거래 확정
-                  </button>
-                </li>
-              ))}
-            </ul>
-          ),
+          html: `
+    <ul class="trade_ul">
+      ${res.data
+        .map(
+          (trade) => `
+        <li class="trade_li">
+          <p class="trade_buyerId">${trade.buyerId}</p>
+          <p class="trade_message">${trade.message}</p>
+          <button class="trade_btn" data-id="${trade.buyerId}">
+            거래 확정
+          </button>
+        </li>
+      `,
+        )
+        .join("")}
+    </ul>
+  `,
+          didOpen: () => {
+            document.querySelectorAll(".trade_btn").forEach((btn) => {
+              btn.addEventListener("click", (e) => {
+                const buyerId = e.target.dataset.id;
+                MySwal.close();
+                requestAccepted(buyerId);
+              });
+            });
+          },
           width: "900px",
           showConfirmButton: false,
           showCloseButton: true,
@@ -376,26 +414,55 @@ const MarketViewPage = () => {
   /*신고하기 함수*/
   const pushReport = () => {
     Swal.fire({
-      title: "신고 하시겠어요?",
+      title: "신고하기",
       html: `
-          <textarea id="report-reason" class="swal2-textarea"
-          placeholder="신고 사유를 입력해주세요 (최대 200자)"
-          maxlength="200"
-          style="width: 85%; height: 100px; resize: none; font-size: 14px; margin-top: 10px;"></textarea>
+            <textarea id="report-reason" class="swal2-textarea" 
+              placeholder="신고 사유를 입력해주세요 (최대 1000자)" 
+              maxlength="1000" 
+              style="width: 85%; height: 100px; resize: none; font-size: 14px; margin-top: 10px;"></textarea>
+            <div id="report-counter" style="text-align: right; width: 85%; margin: 5px auto 0; font-size: 13px; color: var(--gray4);">
+              0/1000
+            </div>
           `,
       showCancelButton: true,
-      confirmButtonText: "네",
-      cancelButtonText: "아니오",
+      confirmButtonText: "신고",
+      cancelButtonText: "취소",
       confirmButtonColor: "var(--danger)",
-      cancelButtonColor: "var(--primary)",
+      cancelButtonColor: "var(--gray5)",
+
+      allowOutsideClick: false, // 배경(바깥쪽) 클릭해도 안 닫힘
+      allowEscapeKey: false, // Esc 눌러도 안 닫힘
+
+      // sweetalert으로 실시간으로 현재 글자수를 띄우기위해 값을 계산해서 addEvent로 input에 넣어주기 위한 함수
+      // didOpen : sweetalert에서 제공하는 함수 -> alert창이 뜨고 나서 실행하는 함수
+      didOpen: () => {
+        // 위의 sweetalert의 html 요소들 가져오기
+        const textarea = document.getElementById("report-reason");
+        const counter = document.getElementById("report-counter");
+
+        // 가져온 값을 넣어줌
+        textarea.addEventListener("input", (e) => {
+          const currentLength = e.target.value.length;
+          counter.innerText = `${currentLength}/1000`;
+
+          // 1000자가 꽉 차면 빨간색으로 변경
+          if (currentLength >= 1000) {
+            counter.style.color = "var(--danger)";
+          } else {
+            counter.style.color = "var(--gray4)";
+          }
+        });
+      },
+
       preConfirm: () => {
         // 확인 버튼 눌렀을 때 텍스트 박스 내용 긁어오기 외부 - 라이브러리여서 찾아보고 이렇게 사용
-        const reason = document.getElementById("report-reason").value; // 신고 사유(신고의 텍스트 박스 내용)가 없다면 쓰라고 하기
+        const reason = document.getElementById("report-reason").value;
 
+        // 신고 사유(신고의 텍스트 박스 내용)가 없다면 쓰라고 하기
         if (!reason.trim()) {
           Swal.showValidationMessage("신고 사유를 입력해주세요."); // 빈칸이면 못 넘어가게 막기
-          // sweetalert 스타일 맞추기 위해
 
+          // sweetalert 스타일 맞추기 위해
           const validationMsg = Swal.getValidationMessage();
           if (validationMsg) {
             validationMsg.style.backgroundColor = "transparent";
@@ -643,8 +710,6 @@ const MarketViewPage = () => {
             </div>
           </div>
 
-          <MarketMap market={market} />
-
           {(!memberId || memberId !== market.marketWriter) && (
             <div className={styles.title_btn}>
               {memberId ? (
@@ -744,12 +809,15 @@ const MarketViewPage = () => {
             className={styles.content_wrap}
             dangerouslySetInnerHTML={{ __html: market.marketContent }}
           ></div>
+          <MarketMap market={market} />
 
           {memberId &&
             memberId === market.marketWriter &&
             market.completed === 0 && (
               <div className={styles.button_wrap}>
-                <Button className="btn primary">수정</Button>
+                <Button className="btn primary" onClick={modifyMarket}>
+                  수정
+                </Button>
                 <Button className="btn primary danger" onClick={deleteMarket}>
                   삭제
                 </Button>
