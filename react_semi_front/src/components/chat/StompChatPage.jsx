@@ -132,7 +132,7 @@ const StompChatPage = () => {
             className={`${styles.chatting} ${m.senderId === senderId ? styles.sent : styles.received}`}
           >
             <div className={styles.chat_writer}>
-              <div className={styles.chat_wrtier_thumb}>
+              <div className={styles.chat_writer_thumb}>
                 <div
                   className={
                     m.senderThumb ? styles.chat_thumb_exists : styles.chat_thumb
@@ -147,9 +147,9 @@ const StompChatPage = () => {
                   )}
                 </div>
               </div>
-              <div className={styles.chat_writer_name}></div>
+              <div className={styles.chat_writer_name}>{m.senderName}</div>
             </div>
-            <div className={styles.chat_message}></div>
+            <div className={styles.chat_message}>{m.message}</div>
           </div>
         ))}
       </div>

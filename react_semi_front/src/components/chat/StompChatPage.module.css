@@ -27,6 +27,7 @@
   border-radius: 8px;
   background-color: rgb(230, 255, 230);
   overflow-y: auto;
+  padding: 10px;
 }
 
 .chat_send {
@@ -68,17 +69,17 @@
   font-size: 17px;
 }
 
+.btn_zone > button:hover {
+  background-color: rgb(77, 156, 77);
+}
+
 .chatting {
-  border: 1px solid black;
+  background-color: var(--gray8);
+  border: 1px solid var(--gray6);
+  border-radius: 8px;
   width: 300px;
   min-height: 50px;
   margin-bottom: 5px;
-}
-
-.sent {
-}
-
-.received {
 }
 
 .chat_thumb {
@@ -110,4 +111,14 @@
   width: 100%;
   height: 100%;
   object-fit: cover;
+}
+
+.chat_writer {
+  display: flex;
+  gap: 5px;
+  align-items: center;
+}
+
+.chat_message {
+  padding: 3px 5px;
 }
