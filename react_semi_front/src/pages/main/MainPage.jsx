@@ -148,13 +148,13 @@ const MainPage = () => {
 
   return (
     <div className={styles.main_wrap}>
-      {/* 🚀 3. 메인 배너 슬라이더 영역 추가 (수정됨) */}
+      {/* 배너 슬라이더 영역 */}
       <section className={styles.banner_section}>
         <div
           className={styles.banner_slider}
           style={{ transform: `translateX(-${currentBanner * 100}%)` }}
         >
-          {bannerList.map((banner, index) => (
+          {bannerList.map((banner) => (
             <div
               key={`banner-${banner.id}`}
               className={styles.banner_slide}
@@ -169,18 +169,12 @@ const MainPage = () => {
           ))}
         </div>
 
-        {/* 🚀 4. 배너 양옆 화살표 버튼 추가 (개선됨) */}
+        {/* 배너 양옆 화살표 추가 */}
         <div className={styles.banner_btn_wrap}>
           <button
             className={styles.prev_btn}
             onClick={() => {
-              // 타이머가 동작 중이라면 초기화 (clearInterval은 타이머 ID를 알아야 하므로
-              // setInterval을 state로 관리하거나 ref로 관리해야 합니다.
-              // 이 방식은 코드가 복잡해지므로, 일단은 onClick 로직에 clearInterval만 추가하는 방식으로 가겠습니다.)
-
-              // 대신에, 사용자가 넘긴 직후에 자동으로 넘어가는 것을 방지하기 위해,
-              // 수동 이동 후 일정 시간 동안 자동 이동을 멈추는 로직을 추가할 수 있습니다.
-
+              // 배너를 한칸 앞으로 이동(prev가 0이면 첫번째 배너일때 이전을 누르거니 마지막 배너로 이동하고 아니면 한칸 앞으로)
               setCurrentBanner((prev) =>
                 prev === 0 ? bannerList.length - 1 : prev - 1,
               );
@@ -191,6 +185,7 @@ const MainPage = () => {
           <button
             className={styles.next_btn}
             onClick={() => {
+              // 배너를 한칸 뒤로 이동(prev가 bannerList.length-1이랑 같으면 마지막 배너일때 다음을 누른거니 첫번째 배너로 이동하고 아니면 한칸 뒤로)
               setCurrentBanner((prev) =>
                 prev === bannerList.length - 1 ? 0 : prev + 1,
               );
