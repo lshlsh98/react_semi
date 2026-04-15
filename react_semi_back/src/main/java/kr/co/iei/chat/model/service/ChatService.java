@@ -17,9 +17,12 @@ import kr.co.iei.chat.model.vo.ChatParticipant;
 import kr.co.iei.chat.model.vo.ChatRoom;
 import kr.co.iei.chat.model.vo.ChatRoomAndMemberReqDto;
 import kr.co.iei.chat.model.vo.ChatRoomListResDto;
+import kr.co.iei.chat.model.vo.CreatePrivateRoomReqDto;
 import kr.co.iei.chat.model.vo.MyChatListResDto;
 import kr.co.iei.chat.model.vo.ReadStatus;
 import kr.co.iei.common.exception.NotFoundException;
+import kr.co.iei.market.model.dao.MarketDao;
+import kr.co.iei.market.model.vo.Market;
 import kr.co.iei.member.model.vo.Member;
 
 @Service
@@ -28,6 +31,8 @@ public class ChatService {
 
 	@Autowired
 	private ChatDao chatDao;
+	@Autowired
+	private MarketDao marketDao;
 
 	public void saveMessage(Long roomId, ChatMessageDto chatMessageReqDto) {
 		// 채팅방 조회
@@ -244,7 +249,7 @@ public class ChatService {
 		}
 	}//
 
-	public Long getOrCreatePrivateRoom(String otherMemberId) {
+	public Long getOrCreatePrivateRoom(String otherMemberId, Long marketNo) {
 		Member member = chatDao.findMemberById(SecurityContextHolder.getContext().getAuthentication().getName());
 		if(member == null) {
 			throw new NotFoundException("member can not be found");
@@ -255,17 +260,43 @@ public class ChatService {
 			throw new NotFoundException("member can not be found");
 		}
 
-		// 나와 상대방이 1:1 채팅에 이미 참석하고 있다면 해당 roomId retrun
-		Map<String, String> ids = new HashMap<>();
-		ids.put("memberId", member.getMemberId());
-		ids.put("otherMemberId", otherMember.getMemberId());
-		ChatRoom chatRoom = chatDao.findExistingPrivateRoom(ids);
+		// 나와 상대방이 1:1 채팅에 이미 참석하고 있다면 해당 roomId return
+		CreatePrivateRoomReqDto req = CreatePrivateRoomReqDto.builder()
+				.memberId(member.getMemberId())
+				.otherMemberId(otherMemberId)
+				.marketNo(marketNo)
+				.build(); 		
+		ChatRoom chatRoom = chatDao.findExistingPrivateRoom(req);
+		
+		if(chatRoom != null) {
+			return chatRoom.getId();
+		}
 		
 		// 만약 1:1 채팅방이 없을 경우 채팅방 개설
+		Market market = marketDao.findOneMarketByMarketNo(Math.toIntExact(marketNo)); 
+				
+		Long newRoomId = chatDao.getChatRoomId();
+		ChatRoom newRoom = ChatRoom.builder()
+				.id(newRoomId)
+				.isGroupChat(1)
+				.name(market.getMarketTitle())
+				.marketNo(marketNo)
+				.myName(member.getMemberName())
+				.otherName(otherMember.getMemberName())
+				.build();
+		chatDao.saveChatRoom(newRoom);
 		
 		// 두 사람 모두 참여자로 새롭게 추가
+		addParticipantToRoom(newRoom, member);
+		addParticipantToRoom(newRoom, otherMember);
 		
-		return null;
+		return newRoom.getId();
+	}//
+
+	public String getChatRoomName(Long roomId) {
+		ChatRoom chatRoom = chatDao.findChatRoomById(roomId);
+				
+		return chatRoom.getName();
 	}//
 }
 

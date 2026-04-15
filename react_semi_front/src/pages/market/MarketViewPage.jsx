@@ -474,6 +474,19 @@ const MarketViewPage = () => {
     });
   };
 
+  /*채팅하기 함수*/
+  const startChat = () => {
+    // 기존의 채팅방이 있으면 return 받고, 없으면 새롭게 생성된 roomId return
+    axios
+      .post(
+        `${import.meta.env.VITE_BACKSERVER}/chat/room/private/create?otherMemberId=${market.marketWriter}&marketNo=${market.marketNo}`,
+      )
+      .then((res) => {
+        const roomId = res.data;
+        navigate(`/chatpage/${roomId}`);
+      });
+  };
+
   return (
     <main className={styles.main_wrap}>
       {market && (
@@ -727,6 +740,10 @@ const MarketViewPage = () => {
                       신고취소
                     </Button>
                   )}
+                  {/*채팅하기 버튼*/}
+                  <Button className="btn primary" onClick={startChat}>
+                    채팅하기
+                  </Button>
                 </>
               ) : (
                 <Button

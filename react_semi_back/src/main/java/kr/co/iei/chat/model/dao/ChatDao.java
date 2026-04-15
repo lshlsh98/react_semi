@@ -11,6 +11,7 @@ import kr.co.iei.chat.model.vo.ChatParticipant;
 import kr.co.iei.chat.model.vo.ChatRoom;
 import kr.co.iei.chat.model.vo.ChatRoomAndMemberReqDto;
 import kr.co.iei.chat.model.vo.ChatRoomListResDto;
+import kr.co.iei.chat.model.vo.CreatePrivateRoomReqDto;
 import kr.co.iei.chat.model.vo.MyChatListResDto;
 import kr.co.iei.chat.model.vo.ReadStatus;
 import kr.co.iei.member.model.vo.Member;
@@ -56,7 +57,7 @@ public interface ChatDao {
 
 	void deleteChatRoom(Long roomId);
 
-	ChatRoom findExistingPrivateRoom(Map<String, String> ids);
+	ChatRoom findExistingPrivateRoom(CreatePrivateRoomReqDto req);
 	
 	
 	

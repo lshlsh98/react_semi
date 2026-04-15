@@ -21,6 +21,8 @@ import MainPage from "./pages/main/MainPage";
 import CommunityModifyPage from "./pages/community/CommunityModifyPage";
 import CommunityViewPage from "./pages/community/CommunityViewPage";
 import MarketModifyPage from "./pages/market/MarketModifyPage";
+import StompChatPage from "./components/chat/StompChatPage";
+import MyChatPage from "./components/chat/MyChatPage";
 
 function App() {
   const { endTime, token } = useAuthStore(); // endTime = 만료시간, token = 걍 토큰
@@ -87,6 +89,9 @@ function App() {
             path="/community/modify/:communityNo"
             element={<CommunityModifyPage />}
           />
+
+          <Route path="/chatpage/:roomId" element={<StompChatPage />} />
+          <Route path="/my/chat/page" element={<MyChatPage />} />
         </Routes>
       </div>
       <Footer />

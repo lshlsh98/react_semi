@@ -23,6 +23,12 @@ const Header = () => {
             <>
               <Button
                 className="btn primary outline"
+                onClick={() => navigate("/my/chat/page")}
+              >
+                내 채팅
+              </Button>
+              <Button
+                className="btn primary outline"
                 onClick={() => navigate("/member/mypage")}
               >
                 마이페이지

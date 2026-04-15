@@ -96,7 +96,6 @@ public interface MarketDao {
 	Integer selectOneCarbonContributionCount(String memberId, ListItem request);
 
 	List<ScoreHistory> selectOneCarbonContributionList(String memberId, ListItem request);
-	
 
-	
+	Market findOneMarketByMarketNo(Integer marketNo);
 }
