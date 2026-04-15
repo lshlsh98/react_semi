@@ -32,6 +32,17 @@ public class FileUtils {
 		}
 		
 		return filepath;
-	}//
+	}
+	
+	private boolean deleteFile(String filename, String root) {
+		if (filename == null || filename.isEmpty())
+			return false;
+		File file = new File(root + filename);
+		if (file.exists()) {
+			return file.delete(); // 파일 삭제 성공시 true 리턴
+		}
+		return false;
+	}
+	
 	
 }

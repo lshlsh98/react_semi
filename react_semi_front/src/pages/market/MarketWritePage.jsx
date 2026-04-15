@@ -31,9 +31,6 @@ import RedoIcon from "@mui/icons-material/Redo";
 const MarketWritePage = () => {
   const { memberId, memberAddr } = useAuthStore();
   const navigate = useNavigate();
-  const mapDivRef = useRef(null);
-  const markerRef = useRef([]);
-  const mapObjRef = useRef(null);
 
   useEffect(() => {
     if (!memberId) {
@@ -162,11 +159,9 @@ const MarketWritePage = () => {
     files.forEach((file) => {
       form.append("files", file);
     });
-    /*--------폼데이터 콘솔 확인---------
     for (let pair of form.entries()) {
       console.log(pair[0], pair[1]);
-    }----------------------------------*/
-
+    }
     axios
       .post(`${import.meta.env.VITE_BACKSERVER}/markets`, form, {
         headers: {

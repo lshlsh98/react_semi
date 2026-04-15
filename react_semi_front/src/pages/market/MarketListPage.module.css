@@ -5,22 +5,23 @@ ol {
   padding: 0;
 }
 
-/* 전체 랩 */
+/* 전체 랩 SearchBox, List_wrap*/
 .market_wrap {
   width: 900px;
   margin: 0 auto;
-  display: flex;
-  flex-direction: column;
 }
 
 /* 검색창 정렬박스 */
 .market_searchbox {
-  border-radius: 8px;
-  background-color: var(--light);
-  padding: 20px 0;
+  margin: 12px 0;
+  background-color: transparent;
   display: flex;
   justify-content: center;
   position: fixed;
+  top: 150px;
+}
+.market_searchbox:hover {
+  background-color: white;
 }
 .market_searchbox > form {
   width: 900px;
@@ -42,12 +43,14 @@ ol {
   flex-grow: 1;
   outline: none;
   padding: 8px 4px 8px 16px;
-  border: 1px solid var(--gray5);
+  border: 1px solid var(--primary);
   border-radius: 8px;
+  background-color: transparent;
 }
 .market_searchbox > form > input:focus {
   border: 1px solid var(--primary);
-  box-shadow: 0 0 0 0.25rem rgba(37, 99, 235, 0.3);
+
+  background-color: var(--light);
 }
 
 .market_category {
@@ -60,28 +63,26 @@ ol {
 
 /* 마켓 게시물이 없을때 */
 .no_result {
-  position: absolute;
-  width: 900px;
-  top: 246px;
+  margin-top: 200px;
   padding: 16px 0;
   text-align: center;
   border-radius: 8px;
-  background-color: var(--light);
   color: var(--primary);
   font-weight: 900;
 }
 
 /* 마켓리스트*/
+
 .market_list_wrap > ul {
   display: flex;
+  margin-top: 66px;
   flex-direction: column;
   gap: 12px;
-  margin-top: 80px;
 }
 .market_list_wrap > ul > li {
   border-radius: 8px;
+  border: 1px solid var(--gray6);
 
-  background-color: var(--light);
   padding: 12px;
   cursor: pointer;
   transition: 0.5s;
@@ -153,7 +154,6 @@ ol {
 .market_pagination {
   height: 48px;
   margin: 24px 0;
-  background-color: var(--light);
   display: flex;
   justify-content: center;
   align-items: center;
