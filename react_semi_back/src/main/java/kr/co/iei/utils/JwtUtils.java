@@ -22,7 +22,7 @@ public class JwtUtils {
 	private int expireHour;
 	
 	// 유효시간 1시간 토큰 생성
-	public LoginMember createToken(String memberId, Integer memberGrade, String memberAddr, Integer integer) {
+	public LoginMember createToken(String memberId, Integer memberGrade, String memberAddr, Integer integer, String hexCode) {
 		// 1. 미리 작성해 둔 키 값을 이용해서 암호화 코드 생성
 		SecretKey key = Keys.hmacShaKeyFor(secretKey.getBytes());
 		
@@ -41,6 +41,7 @@ public class JwtUtils {
 							.claim("memberGrade", memberGrade)	// 토큰에 포함 될 부가정보
 							.claim("memberAddr", memberAddr)
 							.claim("currentColorId", integer)
+							.claim("hexCode", hexCode)
 							.compact();							// 생성
 		
 		LoginMember login = new LoginMember();

@@ -33,7 +33,7 @@ const ColorShop = () => {
     axios
       .patch(`${import.meta.env.VITE_BACKSERVER}/mypages/color`, memberColor)
       .then((res) => {
-        // useAuthStore.getState().setColor(selectColor);
+        useAuthStore.getState().setHexCode(selectColor);
         navigate("/member/mypage");
       })
       .catch((err) => {

@@ -10,4 +10,5 @@ const Nickname = ({ member }) => {
     </span>
   );
 };
+
 export default Nickname;

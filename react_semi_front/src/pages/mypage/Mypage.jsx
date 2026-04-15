@@ -82,7 +82,7 @@ const Mypage = () => {
 };
 
 const Profile = () => {
-  const { memberId, memberName, memberThumb } = useAuthStore();
+  const { memberId, memberName, memberThumb, hexCode } = useAuthStore();
   const [member, setMember] = useState();
 
   useEffect(() => {
@@ -113,7 +113,13 @@ const Profile = () => {
       </div>
       <div className={styles.profile_info}>
         <p>{memberName}</p>
-        <p>{member && <Nickname member={member} />}</p>
+        <p
+          style={{
+            color: hexCode || "#000",
+          }}
+        >
+          {memberId}
+        </p>
       </div>
     </section>
   );
