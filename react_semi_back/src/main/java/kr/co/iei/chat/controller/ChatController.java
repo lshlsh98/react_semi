@@ -84,8 +84,8 @@ public class ChatController {
 	
 	// 개인 채팅방 개설 또는 기존 roomId return
 	@PostMapping("/room/private/create")
-	public ResponseEntity<?> getOrCreatePrivateRoom(@RequestParam String otherMemberId){
-		Long roomId = chatService.getOrCreatePrivateRoom(otherMemberId);
+	public ResponseEntity<?> getOrCreatePrivateRoom(@RequestParam String otherMemberId, @RequestParam Long marketNo){
+		Long roomId = chatService.getOrCreatePrivateRoom(otherMemberId, marketNo);
 		
 		return ResponseEntity.ok(roomId);
 	}//

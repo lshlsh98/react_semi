@@ -32,7 +32,7 @@
 	
 	<insert id="saveChatRoom">
 		INSERT INTO chat_room 
-		VALUES (#{id}, #{isGroupChat}, #{name})
+		VALUES (#{id}, #{isGroupChat}, #{name}, #{marketNo})
 	</insert>
 	
 	<insert id="saveChatParticipant">
@@ -95,7 +95,7 @@
 		SELECT 
 			p.chat_room_id AS room_id,
 			r.name AS room_name,
-			r.is_group_chat
+			r.is_group_chat,
 			
 		FROM chat_participant p
 		INNER JOIN chat_room r
@@ -138,7 +138,7 @@
 					FROM chat_participant cp1
 					INNER JOIN chat_participant cp2 
 						ON (cp1.chat_room_id = cp2.chat_room_id)
-					WHERE cp1.member_id = #{memberId} AND cp2.member_id = #{otherMemberId})
+					WHERE cp1.member_id = #{memberId} AND cp2.member_id = #{otherMemberId} AND market_no = #{marketNo})
 				AND is_group_chat = 1		
 	</select>
 	
