@@ -148,6 +148,7 @@
 		c.community_status = 1
 
 		<if test="type == 'popular'">
+			and m.member_grade in 3
 			order by like_count desc, c.community_no desc
 		</if>
 

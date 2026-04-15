@@ -8,15 +8,22 @@ import { useNavigate } from "react-router-dom";
 import CommunityList from "../../components/community/CommunityList";
 import axios from "axios";
 import BasicSelect from "../../components/ui/BasicSelect";
+import { useSearchParams } from "react-router-dom";
 
 const CommunityListPage = () => {
   const navigete = useNavigate();
   const { memberId } = useAuthStore();
 
+  const [searchParams] = useSearchParams(); // URL의 쿼리 스트링을 읽어오기 위한 훅
+
+  // URL에 'view' 파라미터가 있으면 그 값을 쓰고, 없으면 기본값 1 사용(main에서 바로 공지사항으로 가기위해 만든 함수, 결국 view state에 들어가는값은 숫자(기존 코드처럼 정상작동됨)이니 url만 살짝 여러방법으로 들어올수 있게 된뿐)
+  // searchParams.get은 문자열을 반환하므로 숫자로 변환(Number)하고 사용
+  const initialView = Number(searchParams.get("view")) || 1;
+
   const [type, setType] = useState(1); // 1:제목 2:작성자
   const [keyword, setKeyword] = useState(""); // 검색어
   const [order, setOrder] = useState(1); // 정렬 조건
-  const [view, setView] = useState(1); //출력 조건
+  const [view, setView] = useState(initialView); //출력 조건
 
   const [searchType, setSearchType] = useState(1); // 제출할 검색 조건
   const [searchKeyword, setSearchKeyword] = useState(""); // 제출할 검색어

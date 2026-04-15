@@ -100,10 +100,18 @@ const MainPage = () => {
         items={hotItems}
       />
       <div className={styles.community_wrap}>
-        {/* 왼쪽: 3. 인기글 */}
-        <CommunitySection title="커뮤니티 인기글" items={popularCommunity} />
-        {/* 오른쪽: 4. 공지사항 */}
-        <CommunitySection title="커뮤니티 공지사항" items={noticeCommunity} />
+        {/* 왼쪽: 3. 인기글 viewType=1(게시글)을 보냄*/}
+        <CommunitySection
+          title="커뮤니티 인기글"
+          items={popularCommunity}
+          viewType={1}
+        />
+        {/* 오른쪽: 4. 공지사항 viewType=2(공지사항)을 보냄*/}
+        <CommunitySection
+          title="커뮤니티 공지사항"
+          items={noticeCommunity}
+          viewType={2}
+        />
       </div>
     </div>
   );
@@ -191,14 +199,16 @@ const MarketSection = ({ title, highlightWord, items }) => {
 };
 
 // 커뮤니티 컴포넌트 (이것도 여기서만 쓰니 여기에 만듬)
-const CommunitySection = ({ title, items }) => {
+const CommunitySection = ({ title, items, viewType }) => {
   const navigate = useNavigate();
+
+  const moreLink = viewType === 1 ? "/community?view=1" : "/community?view=2";
 
   return (
     <section className={styles.comm_section_box}>
       <div className={styles.section_header}>
         <h2 className={styles.title}>{title}</h2>
-        <Link to="/community" className={styles.more_link}>
+        <Link to={moreLink} className={styles.more_link}>
           더보기 {">"}
         </Link>
       </div>
@@ -208,7 +218,22 @@ const CommunitySection = ({ title, items }) => {
           <li
             key={`main_comm-${item.communityNo}`}
             className={styles.comm_card}
-            onClick={() => navigate(`/community/view/${item.communityNo}`)}
+            // 마켓과 커뮤니티의 조회수 증가하는 방식이 달라서 커뮤니티에만 클릭시 조회수 증가 함수
+            onClick={async () => {
+              try {
+                // axios는 기존에 비동기이기에 서버요청을 던지고 다음코드로 넘어가지만 await를 하면 서버에서 데이터를 줄때까지 다음코드로 넘어가지않고 기다림.
+                // 댓글에서 쓴 return과의 차이는 return은 데이터를 받고 바로 함수를 호출한 곳으로 값을 넘김.(애초에 자바든 파이썬이든 return의 하는일이 이거긴함.)
+                // 반면 await는 return으로 어디에 값을 보내거나 하지 않음. 값을 보낼필요없을때 return대신 await를 쓴다고 생각하면 편함(100%는 아님. 보통은 그 함수 안에서 바로 데이터를 조작하거나, 조건문을 걸거나, 다음 동작(navigate 등)을 이어서 해야 할 때 쓴다고 함.)
+                await axios.patch(
+                  `${import.meta.env.VITE_BACKSERVER}/communities/view/${item.communityNo}`,
+                  item,
+                );
+              } catch (err) {
+                console.error(err);
+              }
+              // 통신이 성공하든 실패하든 상세 페이지로는 무조건 이동
+              navigate(`/community/view/${item.communityNo}`);
+            }}
           >
             <h3 className={styles.comm_item_title}>{item.communityTitle}</h3>
 
