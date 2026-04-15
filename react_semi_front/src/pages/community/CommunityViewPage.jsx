@@ -147,6 +147,29 @@ const LikeAndDislikeAndReport = ({ communityNo, communityWriter }) => {
   const [reportInfo, setReportInfo] = useState(null);
   const [isReportModalOpen, setIsReportModalOpen] = useState(false);
   const [reportReason, setReportReason] = useState("");
+  const handleCloseModal = () => {
+    // 내용이 있으면 경고
+    if (reportReason.trim() !== "") {
+      Swal.fire({
+        title: "작성 중인 내용이 있습니다.",
+        text: "취소를 누르면 작성 중인 글이 사라집니다.",
+        icon: "warning",
+        showCancelButton: true,
+        confirmButtonText: "네",
+        cancelButtonText: "아니오",
+        confirmButtonColor: "var(--danger)",
+        cancelButtonColor: "var(--primary)",
+      }).then((result) => {
+        if (result.isConfirmed) {
+          setReportReason(""); // 내용 초기화
+          setIsReportModalOpen(false);
+        }
+      });
+    } else {
+      // 내용 없으면 그냥 닫기
+      setIsReportModalOpen(false);
+    }
+  };
   useEffect(() => {
     axios
       .get(
@@ -379,7 +402,11 @@ const LikeAndDislikeAndReport = ({ communityNo, communityWriter }) => {
                 setReportReason(value);
               }}
             />
-            <div className={styles.text_count}>
+            <div
+              className={`${styles.text_count} ${
+                reportReason.length >= 1000 ? styles.limit : ""
+              }`}
+            >
               {reportReason.length} / 1000
             </div>
 
@@ -387,10 +414,7 @@ const LikeAndDislikeAndReport = ({ communityNo, communityWriter }) => {
               <Button className="btn danger" onClick={submitReport}>
                 신고
               </Button>
-              <Button
-                className="btn light outline"
-                onClick={() => setIsReportModalOpen(false)}
-              >
+              <Button className="btn light outline" onClick={handleCloseModal}>
                 취소
               </Button>
             </div>

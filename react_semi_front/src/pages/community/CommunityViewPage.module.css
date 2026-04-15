@@ -17,6 +17,7 @@
   padding: 15px 20px;
   height: 50px;
   border: 1px solid #ccc;
+  background-color: var(--light);
   border-radius: 6px;
   margin-bottom: 20px;
   font-size: 20px;
@@ -28,7 +29,8 @@
   display: flex;
   align-items: center;
   gap: 12px; /* 아이콘과 글자 사이 간격 */
-  font-size: 16px;
+  font-size: 11px;
+  font-weight: bold;
 }
 
 /* 작성자, 날짜, 조회수 세로로 간격 넓히기 */
@@ -82,13 +84,19 @@
   height: 100%;
   object-fit: cover;
 }
+
+/* 조회수 아이콘 색상 */
+.community_view_count > .icon {
+  color: var(--primary);
+}
+
 /* 내용 */
 .community_view_content {
+  border: 1px solid #ccc;
   margin-top: 20px;
   padding: 10px 20px;
-  border: 1px solid var(--border);
   border-radius: 8px;
-  background-color: var(--soft);
+  background-color: var(--light);
   line-height: 1.6;
   white-space: pre-wrap;
   word-break: break-all;
@@ -210,4 +218,17 @@
 /* 사유 입력 1,000자 입력 글씨 크기 조정 */
 .report_modal textarea::placeholder {
   font-size: 13px;
+}
+
+/* 기본 글자 수 */
+.text_count {
+  font-size: 13px;
+  color: var(--gray3);
+  text-align: right; /* 👉 오른쪽 정렬 (UX 좋음) */
+}
+
+/* 1000 도달 시 */
+.limit {
+  color: var(--danger);
+  font-weight: 700;
 }
