@@ -133,7 +133,7 @@
   transform: translateX(-50%);
 }
 
-/* 좋아요, 싫어요 */
+/* 좋아요와 싫어요 */
 .right {
   margin-left: auto;
   display: flex;
@@ -162,15 +162,19 @@
   cursor: pointer;
 }
 
-/* 좋아요 ON 상태일 때 파란색 */
-.active > svg {
-  fill: blue;
-}
-
-/* 좋아요/싫어요 "숫자 표시" cursor: pointer 해제 */
+/* 좋아요와 싫어요 "숫자 표시"에는 cursor: pointer 해제 */
 .community_like_wrap span,
 .community_dislike_wrap span {
   cursor: default;
+}
+
+/* 좋아요 ON 상태일 때 초록색, 싫어요는 빨간색 */
+.like_active > svg {
+  fill: var(--primary);
+}
+
+.dislike_active > svg {
+  fill: var(--danger);
 }
 
 .overlay {

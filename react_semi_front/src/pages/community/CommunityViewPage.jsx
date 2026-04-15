@@ -326,7 +326,7 @@ const LikeAndDislikeAndReport = ({ communityNo, communityWriter }) => {
       {likeInfo && (
         <div
           className={`${styles.community_like_wrap} ${
-            likeInfo.isLike === 1 ? styles.active : ""
+            likeInfo.isLike === 1 ? styles.like_active : ""
           }`}
         >
           {likeInfo.isLike === 1 ? (
@@ -338,7 +338,11 @@ const LikeAndDislikeAndReport = ({ communityNo, communityWriter }) => {
         </div>
       )}
       {dislikeInfo && (
-        <div className={styles.community_dislike_wrap}>
+        <div
+          className={`${styles.community_dislike_wrap} ${
+            dislikeInfo.isDislike === 1 ? styles.dislike_active : ""
+          }`}
+        >
           {dislikeInfo.isDislike === 1 ? (
             <ThumbDownAltIcon onClick={dislikeOff} />
           ) : (
