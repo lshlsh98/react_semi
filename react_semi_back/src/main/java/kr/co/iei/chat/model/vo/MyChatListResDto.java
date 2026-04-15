@@ -19,5 +19,6 @@ public class MyChatListResDto {
 	private String isGroupChat;
 	private Long unReadCount;
 	
+	private String myName;
 	private String otherName;
 }

@@ -22,7 +22,7 @@
 
 .chat_box {
   width: 700px;
-  height: 500px;
+  height: 650px;
   border: 5px solid var(--primary);
   border-radius: 8px;
   background-color: rgb(230, 255, 230);
@@ -68,14 +68,46 @@
   font-size: 17px;
 }
 
-.chat_message {
-  margin-bottom: 10px;
+.chatting {
+  border: 1px solid black;
+  width: 300px;
+  min-height: 50px;
+  margin-bottom: 5px;
 }
 
 .sent {
-  text-align: right;
 }
 
 .received {
-  text-align: left;
+}
+
+.chat_thumb {
+  width: 30px;
+  height: 30px;
+  background-color: var(--gray6);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 25px;
+}
+
+.chat_thumb > span {
+  font-size: 30px;
+  color: var(--gray8);
+}
+
+.chat_thumb_exists {
+  width: 30px;
+  height: 30px;
+  padding: 0px;
+  background-color: var(--gray6);
+  border-radius: 15px;
+  cursor: pointer;
+  overflow: hidden;
+}
+
+.chat_thumb_exists > img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
 }

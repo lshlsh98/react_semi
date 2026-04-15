@@ -478,4 +478,10 @@
             member_score = member_score + 100
         where member_id = #{sellerId}
     </update>
+    
+    <select id="findOneMarketByMarketNo" resultType="market">
+    	SELECT *
+    	FROM market_tbl
+    	WHERE market_no = #{marketNo}
+    </select>
 </mapper>

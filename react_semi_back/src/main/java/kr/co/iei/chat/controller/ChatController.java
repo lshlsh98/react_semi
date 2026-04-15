@@ -1,6 +1,8 @@
 package kr.co.iei.chat.controller;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -54,8 +56,13 @@ public class ChatController {
 	@GetMapping("/history/{roomId}")
 	public ResponseEntity<?> getChatHistory(@PathVariable Long roomId){
 		List<ChatMessageDto> list = chatService.getChatHistory(roomId);
+		String roomName = chatService.getChatRoomName(roomId);
 		
-		return ResponseEntity.ok(list);
+		Map<String, Object> histories = new HashMap<>();
+		histories.put("messages", list);
+		histories.put("roomName", roomName);
+				
+		return ResponseEntity.ok(histories);
 	}//
 	
 	// 채팅 메시지 읽음 처리

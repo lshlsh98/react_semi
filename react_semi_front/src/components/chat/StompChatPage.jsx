@@ -17,6 +17,7 @@ const StompChatPage = () => {
   const subscriptionRef = useRef(null);
   const [messages, setMessages] = useState([]);
   const [newMessage, setNewMessage] = useState("");
+  const [roomName, setRoomName] = useState("");
   const senderId = useAuthStore((state) => state.memberId);
   const senderName = useAuthStore((state) => state.memberName);
   const senderThumb = useAuthStore((state) => state.memberThumb);
@@ -30,7 +31,8 @@ const StompChatPage = () => {
     axios
       .get(`${import.meta.env.VITE_BACKSERVER}/chat/history/${roomId}`)
       .then((res) => {
-        setMessages(res.data);
+        setMessages(res.data.messages);
+        setRoomName(res.data.roomName);
       });
 
     connectWebsocket();
@@ -122,14 +124,32 @@ const StompChatPage = () => {
 
   return (
     <div className={styles.chat_card}>
-      <h3>나중에 거래 게시글의 title 받아서 적용할 것</h3>
+      <h4>{roomName}</h4>
       <div className={styles.chat_box} ref={chatBoxRef}>
         {messages.map((m, i) => (
           <div
             key={i}
-            className={`${styles.chat_message} ${m.senderId === senderId ? styles.sent : styles.received}`}
+            className={`${styles.chatting} ${m.senderId === senderId ? styles.sent : styles.received}`}
           >
-            <strong>{m.senderName}: </strong> {m.message}
+            <div className={styles.chat_writer}>
+              <div className={styles.chat_wrtier_thumb}>
+                <div
+                  className={
+                    m.senderThumb ? styles.chat_thumb_exists : styles.chat_thumb
+                  }
+                >
+                  {m.senderThumb ? (
+                    <img
+                      src={`${import.meta.env.VITE_BACKSERVER}/semi/${m.senderThumb}`}
+                    />
+                  ) : (
+                    <span className="material-icons">account_circle</span>
+                  )}
+                </div>
+              </div>
+              <div className={styles.chat_writer_name}></div>
+            </div>
+            <div className={styles.chat_message}></div>
           </div>
         ))}
       </div>

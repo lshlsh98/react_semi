@@ -21,6 +21,8 @@ import kr.co.iei.chat.model.vo.CreatePrivateRoomReqDto;
 import kr.co.iei.chat.model.vo.MyChatListResDto;
 import kr.co.iei.chat.model.vo.ReadStatus;
 import kr.co.iei.common.exception.NotFoundException;
+import kr.co.iei.market.model.dao.MarketDao;
+import kr.co.iei.market.model.vo.Market;
 import kr.co.iei.member.model.vo.Member;
 
 @Service
@@ -29,6 +31,8 @@ public class ChatService {
 
 	@Autowired
 	private ChatDao chatDao;
+	@Autowired
+	private MarketDao marketDao;
 
 	public void saveMessage(Long roomId, ChatMessageDto chatMessageReqDto) {
 		// 채팅방 조회
@@ -269,12 +273,16 @@ public class ChatService {
 		}
 		
 		// 만약 1:1 채팅방이 없을 경우 채팅방 개설
+		Market market = marketDao.findOneMarketByMarketNo(Math.toIntExact(marketNo)); 
+				
 		Long newRoomId = chatDao.getChatRoomId();
 		ChatRoom newRoom = ChatRoom.builder()
 				.id(newRoomId)
 				.isGroupChat(1)
-				.name(member.getMemberName() + "-" + otherMember.getMemberName())
+				.name(market.getMarketTitle())
 				.marketNo(marketNo)
+				.myName(member.getMemberName())
+				.otherName(otherMember.getMemberName())
 				.build();
 		chatDao.saveChatRoom(newRoom);
 		
@@ -283,6 +291,12 @@ public class ChatService {
 		addParticipantToRoom(newRoom, otherMember);
 		
 		return newRoom.getId();
+	}//
+
+	public String getChatRoomName(Long roomId) {
+		ChatRoom chatRoom = chatDao.findChatRoomById(roomId);
+				
+		return chatRoom.getName();
 	}//
 }
 

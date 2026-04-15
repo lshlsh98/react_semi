@@ -13,7 +13,6 @@
   display: flex;
   border-bottom: 1px solid var(--primary);
   margin: 0;
-  padding: 5px;
 }
 
 .chat_item > li {
@@ -35,9 +34,11 @@
 }
 
 .chat_room_name {
-  width: 70%;
+  width: 50%;
 }
-
+.chat_other {
+  width: 20%;
+}
 .chat_unread_count {
   width: 20%;
 }
