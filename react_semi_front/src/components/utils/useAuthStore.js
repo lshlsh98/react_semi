@@ -12,6 +12,7 @@ const useAuthStore = create(
       token: null,
       endTime: null,
       isReady: false,
+      currentColorId: null,
 
       login: ({
         memberId,
@@ -21,6 +22,7 @@ const useAuthStore = create(
         memberAddr,
         token,
         endTime,
+        currentColorId,
       }) => {
         set({
           memberId,
@@ -30,6 +32,7 @@ const useAuthStore = create(
           memberAddr,
           token,
           endTime,
+          currentColorId,
         });
       },
       logout: (isNotLogout = false) => {
@@ -41,6 +44,7 @@ const useAuthStore = create(
           memberAddr: null,
           token: null,
           endTime: null,
+          currentColorId: null,
           isNotLogout,
         });
       },
@@ -69,6 +73,7 @@ const useAuthStore = create(
           memberAddr: state.memberAddr,
           token: state.token,
           endTime: state.endTime,
+          currentColorId: state.currentColorId,
         };
       },
     },

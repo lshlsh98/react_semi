@@ -14,5 +14,6 @@ public class LoginMember {
     private String memberName; 
     private String memberThumb;
     private String memberAddr;
+    private Integer currentColorId;
     private Long endTime;
 }

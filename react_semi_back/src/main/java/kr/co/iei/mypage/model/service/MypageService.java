@@ -11,7 +11,9 @@ import kr.co.iei.mypage.model.dao.MypageDao;
 import kr.co.iei.mypage.model.vo.BoardListRequestDto;
 import kr.co.iei.mypage.model.vo.BoardSummary;
 import kr.co.iei.mypage.model.vo.ChartResDto;
+import kr.co.iei.mypage.model.vo.Color;
 import kr.co.iei.mypage.model.vo.CommentSummary;
+import kr.co.iei.mypage.model.vo.MemberColor;
 import kr.co.iei.mypage.model.vo.MyPost;
 import kr.co.iei.mypage.model.vo.ReportRequestDto;
 import kr.co.iei.mypage.model.vo.ReportResponseDto;
@@ -182,6 +184,16 @@ public class MypageService {
 	public List<MyPost> myRecentPost(String memberId) {
 		List<MyPost> list = mypageDao.myRecentPost(memberId);
 		return list;
+	}
+
+	public List<Color> selectColorList() {
+		List<Color> list = mypageDao.selectColorList();
+		return list;
+	}
+
+	public int updateCurrentColor(MemberColor memberColor) {
+		int count = mypageDao.updateCurrentColor(memberColor);
+		return 0;
 	}
 
 }

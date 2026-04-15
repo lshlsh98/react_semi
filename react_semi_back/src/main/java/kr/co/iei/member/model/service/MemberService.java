@@ -38,6 +38,7 @@ public class MemberService {
 
 	public Member selectOneMember(String memberId) {
 		Member m = memberDao.selectOneMember(memberId);
+		System.out.println(m);
 		return m;
 	}
 
@@ -45,11 +46,11 @@ public class MemberService {
 		Member loginMember = memberDao.selectOneMember(member.getMemberId());
 		
 		if (loginMember != null && bcrypt.matches(member.getMemberPw(), loginMember.getMemberPw())) {
-			LoginMember login = jwtUtil.createToken(loginMember.getMemberId(), loginMember.getMemberGrade(), loginMember.getMemberAddr());
+			LoginMember login = jwtUtil.createToken(loginMember.getMemberId(), loginMember.getMemberGrade(), loginMember.getMemberAddr(), loginMember.getCurrentColorId());
 			login.setMemberThumb(loginMember.getMemberThumb());
 			login.setMemberName(loginMember.getMemberName());
 			login.setMemberAddr(loginMember.getMemberAddr());	//마켓게시판 글 작성시 불러올 주소정보 추가 : 한진호
-			
+			login.setCurrentColorId(loginMember.getCurrentColorId());
 			return login;
 		}
 		return null;

@@ -22,4 +22,6 @@ public class Member {
     private String memberAddr;        
     private String memberDetailAddr;  
     private Integer memberScore;      
+    private Integer currentColorId;
+    private String hexCode;
 }

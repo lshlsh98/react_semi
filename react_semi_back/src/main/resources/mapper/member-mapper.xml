@@ -12,8 +12,13 @@
 	</insert>
 
 	<select id="selectOneMember" resultType="member">
-		select * from member_tbl
-		where member_id = #{memberId}
+		SELECT 
+		    m.*,
+		    c.hex_code
+		FROM member_tbl m
+		LEFT JOIN color_tbl c
+		ON m.current_color_id = c.color_id
+		WHERE m.member_id = #{memberId}
 	</select>
 
 	<select id="findId" resultType="string">
@@ -23,9 +28,9 @@
 	</select>
 
 	<update id="updateTempPw">
-		update member_tbl set member_pw = #{memberPw} where
-		member_id = #{memberId}
-		and member_email = #{memberEmail}
+		update member_tbl set member_pw = #{memberPw} 
+		where member_id = #{memberId}
+				and member_email = #{memberEmail}
 	</update>
 
 	<update id="updateThumbnail">
@@ -43,6 +48,8 @@
 		member_addr = #{memberAddr},
 		member_detail_addr = #{memberDetailAddr},
 		member_grade = #{memberGrade}
+		current_color_id = #{currentColorId}
+		
 		where member_id = #{memberId}
 	</update>
 

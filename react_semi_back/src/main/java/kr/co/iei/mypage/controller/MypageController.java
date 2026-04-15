@@ -23,8 +23,10 @@ import kr.co.iei.mypage.model.vo.BoardListRequestDto;
 import kr.co.iei.mypage.model.vo.BoardListResponseDto;
 import kr.co.iei.mypage.model.vo.BoardSummary;
 import kr.co.iei.mypage.model.vo.ChartResDto;
+import kr.co.iei.mypage.model.vo.Color;
 import kr.co.iei.mypage.model.vo.CommentListResponseDto;
 import kr.co.iei.mypage.model.vo.CommentSummary;
+import kr.co.iei.mypage.model.vo.MemberColor;
 import kr.co.iei.mypage.model.vo.MyPost;
 import kr.co.iei.mypage.model.vo.ReportRequestDto;
 import kr.co.iei.mypage.model.vo.ReportResponseDto;
@@ -182,7 +184,7 @@ public class MypageController {
 		return ResponseEntity.ok(list);
 	}
 	
-	//
+	// 나의 인기글
 	@GetMapping(value= "/my-best/{memberId}")
 	public ResponseEntity<?> myBestPost(@PathVariable String memberId){
 		List<MyPost> list = mypageService.myBestPost(memberId);
@@ -190,12 +192,27 @@ public class MypageController {
 		return ResponseEntity.ok(list);
 	}
 	
+	// 나의 최신글
 	@GetMapping(value= "/my-recent/{memberId}")
 	public ResponseEntity<?> myRecentPost(@PathVariable String memberId){
 		List<MyPost> list = mypageService.myRecentPost(memberId);
 		
 		return ResponseEntity.ok(list);
 	}
+	
+	@GetMapping(value= "/color")
+	public ResponseEntity<?> selectColorList(){
+		List<Color> list = mypageService.selectColorList();
+		
+		return ResponseEntity.ok(list);
+	}
+	
+	@PatchMapping("/color")
+	public ResponseEntity<?> updateCurrentColor(@RequestBody MemberColor memberColor){
+		int result = mypageService.updateCurrentColor(memberColor);
+		
+		return ResponseEntity.ok(result);
+	}//
 }
 
 

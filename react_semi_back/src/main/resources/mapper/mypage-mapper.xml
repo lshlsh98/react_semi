@@ -996,4 +996,15 @@
 			where rn <= 3
 		]]>
 	</select>
+	
+	<select id ="selectColorList" resultType="color">
+		select * 
+		from color_tbl
+	</select>
+	
+	<update id="updateCurrentColor">
+		update member_tbl
+		set current_color_id = #{colorId}
+		where member_id = #{memberId}
+	</update>
 </mapper>

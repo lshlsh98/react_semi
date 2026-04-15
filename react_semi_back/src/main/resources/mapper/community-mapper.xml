@@ -29,8 +29,7 @@
 		where
 		c.community_no = cc.community_no) as comment_count
 		from community_tbl c
-		join member_tbl on (community_writer =
-		member_id)
+		join member_tbl on (community_writer = member_id)
 		where
 		community_status = 1
 
