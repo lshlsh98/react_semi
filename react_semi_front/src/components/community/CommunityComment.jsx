@@ -92,7 +92,8 @@ const CommunityComment = ({ communityNo, memberId, communityWriter }) => {
       return;
     }
 
-    axios
+    // 기존 axios는 비동기 통신인데(비동기이기에 backend에 요청보내놓고 front는 바로 다음 코드 진행함) return을 붙이면 backend에 보낸 요청을 받을 값을 받을때까지 기다림
+    return axios
       .get(
         `${import.meta.env.VITE_BACKSERVER}/communities/${communityNo}/comments?page=${page}&orderType=${orderType}&memberId=${memberId || ""}`,
       )
@@ -488,6 +489,31 @@ const CommentItem = ({
     });
   };
 
+  // // 좋아요 / 싫어요 , on / off마다 들어가는 함수 (4군대나 사용하니까 따로 함수로 지정)
+  const fetchAndScroll = () => {
+    // fetchComments에서 return axios 했으니 데이터 가져오는 걸 기다렸다가 화면 강제 이동
+    const req = fetchComments();
+    if (req) {
+      // req.then : 서버에서 데이터가 도착하면 동작
+      req.then(() => {
+        // 서버에서 데이터를 주자마자 스크롤시키면 fetchComments로 selecter에 의해 댓글 순서가 변동되었을때 예전 위치로 스크롤할수 있기에 데이터를 받고 텀을 줌(setTimeout)
+        setTimeout(() => {
+          // id로 추적. 바로 아래에 특정 댓글을 지정할수 있게 id로 스크롤할 대상 지정했음
+          const target = document.getElementById(
+            `comment-${comment.communityCommentNo}`,
+          );
+
+          if (target) {
+            // 헤더 높이(148) + 여백(20) 계산해서 스크롤 이동, 계산할때 target, window 계산방식은 위에서 설명 길게 해놨으니 여기선 생략
+            const offset =
+              target.getBoundingClientRect().top + window.scrollY - 148 - 20;
+            window.scrollTo({ top: offset, behavior: "smooth" });
+          }
+        }, 150); // 화면이 그려질 시간 0.15초 잠깐 기다려줌 (1000ms = 1초)
+      });
+    }
+  };
+
   // 좋아요 처리 함수
   const handleLike = () => {
     if (!memberId) {
@@ -507,7 +533,7 @@ const CommentItem = ({
           `${import.meta.env.VITE_BACKSERVER}/communities/comments/${comment.communityCommentNo}/likes`,
         )
         .then((res) => {
-          fetchComments(); // 화면 렌더링
+          fetchAndScroll();
         })
         .catch((err) => {
           console.log("댓글 좋아요 off 실패:", err);
@@ -518,7 +544,7 @@ const CommentItem = ({
           `${import.meta.env.VITE_BACKSERVER}/communities/comments/${comment.communityCommentNo}/likes`,
         )
         .then((res) => {
-          fetchComments(); // 화면 렌더링
+          fetchAndScroll();
         })
         .catch((err) => {
           console.log("댓글 좋아요 on 실패:", err);
@@ -545,7 +571,7 @@ const CommentItem = ({
           `${import.meta.env.VITE_BACKSERVER}/communities/comments/${comment.communityCommentNo}/dislikes`,
         )
         .then((res) => {
-          fetchComments(); // 화면 렌더링
+          fetchAndScroll();
         })
         .catch((err) => {
           console.log("댓글 싫어요 off 실패:", err);
@@ -556,7 +582,7 @@ const CommentItem = ({
           `${import.meta.env.VITE_BACKSERVER}/communities/comments/${comment.communityCommentNo}/dislikes`,
         )
         .then((res) => {
-          fetchComments(); // 화면 렌더링
+          fetchAndScroll();
         })
         .catch((err) => {
           console.log("댓글 싫어요 on 실패:", err);
@@ -565,7 +591,11 @@ const CommentItem = ({
   };
 
   return (
-    <li className={styles.comment_item}>
+    // 여기 li에 id를 줘서 스크롤할 위치를 잡음(좋아요 / 싫어요 on, off시 여기로 스크롤, 현재 위치는 commentItem 즉 조회해온 댓글중 특정 댓글)
+    <li
+      className={styles.comment_item}
+      id={`comment-${comment.communityCommentNo}`}
+    >
       {/* 헤더 영역: 프사, 아이디, 날짜, 수정/삭제 버튼 */}
       <div className={styles.comment_header}>
         <div className={styles.writer_info}>
