@@ -69,36 +69,39 @@ const MainPage = () => {
       }, 4000); // 4000ms = 4초마다
     };
 
+    // 자동 슬라이드 멈추는 함수
     const stopAutoSlide = () => {
+      // timerId에 값이 있다면 그 값을 가진 타이머를 멈춤. clearInterval()은 ()안의 타이머를 멈추게(정확히는 clear 없애는 것)함.
       if (timerId) {
         clearInterval(timerId);
       }
     };
 
-    startAutoSlide(); // 컴포넌트 마운트 시 타이머 시작
+    startAutoSlide(); // 화면이 처음 켜질때 함수 시작
 
-    // 수동 이동 시, 자동으로 넘어가는 타이머를 초기화하고 4초 뒤에 다시 시작하는 함수
+    // 수동으로 슬라이더 넘길시 자동으로 넘어가는 타이머를 초기화하고 다시 4초 뒤에 시작하는 함수
     const manualMove = (type) => {
       stopAutoSlide(); // 수동 이동 직후 자동 이동 멈춤
 
+      // type이 "이전"일때
       if (type === "prev") {
+        // 배너를 한칸 앞으로 이동(prev가 0이면 첫번째 배너일때 이전을 누르거니 마지막 배너로 이동하고 아니면 한칸 앞으로)
         setCurrentBanner((prev) =>
           prev === 0 ? bannerList.length - 1 : prev - 1,
         );
-      } else {
+      }
+      // type이 "다음"일때
+      else {
+        // 배너를 한칸 뒤로 이동(prev가 bannerList.length-1이랑 같으면 마지막 배너일때 다음을 누른거니 첫번째 배너로 이동하고 아니면 한칸 뒤로)
         setCurrentBanner((prev) =>
           prev === bannerList.length - 1 ? 0 : prev + 1,
         );
       }
 
-      startAutoSlide(); // 4초 뒤에 다시 자동 이동 시작
+      startAutoSlide(); // 앞에서 멈췄으니 다시 시작(4초 카운트 시작)
     };
 
-    // 이 manualMove 함수를 외부에 노출시키기 위해 ref 등을 활용할 수 있지만,
-    // 이 방식은 코드가 복잡해지므로, 일단은 onClick 로직에 clearInterval만 추가하는 방식으로 가겠습니다.
-    // 대신에, 수동 이동 후 일정 시간 동안 자동 이동을 멈추는 로직을 추가할 수 있습니다.
-
-    return () => stopAutoSlide(); // 컴포넌트가 사라질 때 타이머 청소
+    return () => stopAutoSlide(); // 컴포넌트가 사라질 때 타이머 청소(배너 넘어갔을때 기존의 유령 테이머 제거)
   }, [currentBanner, bannerList.length]);
 
   useEffect(() => {
