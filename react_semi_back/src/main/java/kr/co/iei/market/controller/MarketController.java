@@ -24,6 +24,8 @@ import org.springframework.web.multipart.MultipartFile;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import kr.co.iei.market.model.dto.MarketCreateResponse;
+import kr.co.iei.market.model.dto.MarketResponse;
 import kr.co.iei.market.model.service.MarketService;
 import kr.co.iei.market.model.vo.CommentListItem;
 import kr.co.iei.market.model.vo.ListItem;
@@ -99,15 +101,14 @@ public class MarketController {
 	
 	/// 마켓게시판 등록 (Markets) Create : 한진호
 	@PostMapping
-	public ResponseEntity<?> insertMarket(
+	public ResponseEntity<MarketResponse<MarketCreateResponse>> insertMarket(
 			@RequestHeader(required = false, name = "Authorization") String token,
 			@ModelAttribute Market market,
 			@RequestParam List<MultipartFile> files) {
-		Map<String, Object> serviceResponse = marketService.insertMarketComment(token,market,files);
-		
-		return ResponseEntity.ok(serviceResponse);
+		MarketResponse<MarketCreateResponse> result = marketService.insertMarket(token, market, files);
+		return ResponseEntity.ok(result);
 	}
-
+ 
 	/// 마켓게시판 조회 (Markets) Read_list : 한진호
 	@GetMapping
 	public ResponseEntity<?> selectMarketList(@ModelAttribute ListItem request) {
@@ -252,7 +253,7 @@ public class MarketController {
 	}
 
 	/// 마켓게시판-거래요청-등록 (Markets/{marketNo}/requests) Create : 한진호
-	@PostMapping(value = "{marketNo}/request")
+	@PostMapping(value = "/{marketNo}/request")
 	public ResponseEntity<?> tradeRequest(@RequestBody TradeRequest request) {
 		int result = marketService.tradeRequest(request);
 		return ResponseEntity.ok(result);
@@ -269,7 +270,7 @@ public class MarketController {
 
 	/// 마켓게시판-거래요청-수정 (Markets/{marketNo}/requests/{BuyerId}) Update : 한진호
 	// 거래확정
-	@PatchMapping(value = "{marketNo}/complete/{buyerId}")
+	@PatchMapping(value = "/{marketNo}/complete/{buyerId}")
 	public ResponseEntity<?> tradeComplete(@PathVariable Integer marketNo, @PathVariable String buyerId) {
 		System.out.println("\n거래번호 : " + marketNo);
 		System.out.println("구매자아이디" + buyerId);

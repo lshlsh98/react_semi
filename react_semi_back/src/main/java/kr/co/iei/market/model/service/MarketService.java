@@ -12,6 +12,8 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 import kr.co.iei.chat.controller.StompController;
 import kr.co.iei.market.model.dao.MarketDao;
+import kr.co.iei.market.model.dto.MarketCreateResponse;
+import kr.co.iei.market.model.dto.MarketResponse;
 import kr.co.iei.market.model.vo.CommentListItem;
 import kr.co.iei.market.model.vo.ListItem;
 import kr.co.iei.market.model.vo.ListResponse;
@@ -110,23 +112,75 @@ public class MarketService {
 
 	/// 마켓게시판 등록
 	@Transactional
-	public Map<String, Object> insertMarketComment(String token, Market market, List<MultipartFile> files) {
+	public MarketResponse<MarketCreateResponse> insertMarket(String token, Market market, List<MultipartFile> files) {
+		// 1. 토큰검증
+		LoginMember member = jwtUtil.checkToken(token);
+		if (member == null) {
+			return new MarketResponse<>(false, "401 : 인증 필요", null);
+		}
+		// 2. 로그인 객체에서 아이디 추출 및 개시물 객체에 대입
+		String requestId = member.getMemberId();
+		market.setMarketWriter(requestId);
+
+		// 파일체크 (로그용)
+		for (MultipartFile file : files) {
+			System.out.println("\n파일명: " + file.getOriginalFilename());
+			System.out.println("크기: " + file.getSize());
+			System.out.println("타입: " + file.getContentType());
+		}
+		// 3. 파일 리스트 생성 및 서버에 파일추가
+		List<MarketFile> fileList = new ArrayList<MarketFile>();
+		if (files != null) {
+			String savepath = root + "market/";
+			for (MultipartFile file : files) {
+				String marketFileName = file.getOriginalFilename();
+				String marketFilepath = fileUtil.upload(savepath, file);
+
+				MarketFile marketFile = new MarketFile();
+				marketFile.setMarketFileName(marketFileName);
+				marketFile.setMarketFilePath(marketFilepath);
+				fileList.add(marketFile);
+			}
+		}
+		// 4. 게시글 번호 생성 및 셋(시퀀스 번호 발급)
+		int marketNo = marketDao.getNewMarketNo();
+		market.setMarketNo(marketNo);
+
+		// 5. 마켓 게시글 등록 (insert market_tbl)
+		int result = marketDao.insertMarket(market);
+		if (result == 0) {
+			return new MarketResponse<>(false, "500 : DB 입력 실패", null);
+		}
+
+		// 6. 마켓 파일 DB 등록 (insert market_file_tbl)
+		int fileCount = 0;
+		for (MarketFile marketFile : fileList) {
+			marketFile.setMarketNo(marketNo);
+			fileCount += marketDao.insertMarketFile(marketFile);
+		}
+
+		System.out.println("\n" + marketNo + " 번 게시글 업로드 결과");
+		System.out.println("게시글작성 : " + result + " , 파일업로드 갯수 : " + fileCount);
+		// 7 : 결과 응답객체에 추가
+		MarketCreateResponse data = new MarketCreateResponse(marketNo, fileCount);
+		return new MarketResponse<>(true,"201 : 게시물 등록 성공",data);
+	}
+
+	@Transactional
+	public Map<String, Object> insertMarket2222(String token, Market market, List<MultipartFile> files) {
 		// 1 : 응답객체 생성
 		Map<String, Object> serviceResponse = new HashMap<String, Object>();
 		// 2 : 토큰 검증
 		LoginMember member = jwtUtil.checkToken(token);
-		if(member == null) {
+		if (member == null) {
 			serviceResponse.put("result", 0);
 			return serviceResponse;
 		}
 		/*
-		String requestId = member.getMemberId();
-		String marketWriter = market.getMarketWriter();
-		if (!requestId.equals(marketWriter)) {
-			serviceResponse.put("result",0);
-			return serviceResponse;
-		}
-		*/
+		 * String requestId = member.getMemberId(); String marketWriter =
+		 * market.getMarketWriter(); if (!requestId.equals(marketWriter)) {
+		 * serviceResponse.put("result",0); return serviceResponse; }
+		 */
 		// 3 : 마켓객체에 재셋팅
 		String requestId = member.getMemberId();
 		market.setMarketWriter(requestId);
@@ -143,7 +197,7 @@ public class MarketService {
 			for (MultipartFile file : files) {
 				String marketFileName = file.getOriginalFilename();
 				String marketFilepath = fileUtil.upload(savepath, file);
-				
+
 				MarketFile marketFile = new MarketFile();
 				marketFile.setMarketFileName(marketFileName);
 				marketFile.setMarketFilePath(marketFilepath);
@@ -162,9 +216,9 @@ public class MarketService {
 			for (MarketFile marketFile : fileList) {
 				marketFile.setMarketNo(marketNo);
 				fileCount += marketDao.insertMarketFile(marketFile);
-			}  
-			
-		}else if (result == 0) {
+			}
+
+		} else if (result == 0) {
 			System.out.println("어떻게 하지");
 		}
 		System.out.println("\n" + marketNo + " 번 게시글 업로드 결과");
