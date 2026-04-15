@@ -18,6 +18,26 @@
   font-weight: 600;
 }
 
+.title_input_box {
+  position: relative;
+}
+
+/* 제목 + placeholder*/
+.title_count {
+  position: absolute;
+  right: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+  font-size: 13px;
+  color: var(--gray3);
+}
+
+/* 제목 상자에 글자 수 50자 도달할 시 */
+.limit {
+  color: var(--danger);
+  font-weight: 600;
+}
+
 /* 내용과 에디터 간격 */
 .community_input_wrap label {
   display: block;
@@ -56,7 +76,25 @@
   border-radius: 8px;
   overflow: hidden;
   background-color: var(--light);
+  position: relative; /* ⭐ 필수 */
 }
+
+/* 오른쪽 아래 글자수 */
+.editor_count {
+  text-align: right; /* 오른쪽 정렬 원하면 */
+  bottom: 12px;
+  font-size: 13px;
+  color: var(--gray3);
+  margin-right: 20px;
+  margin-bottom: 12px;
+}
+
+/* 4000자 도달 */
+.limit {
+  color: var(--danger);
+  font-weight: 600;
+}
+
 .menu_bar {
   display: flex;
   gap: 8px;
@@ -103,6 +141,7 @@
   word-break: break-all !important; /* 긴 단어 강제로 줄 바꾸는 거*/
   margin: 0;
   min-height: 1em;
+  min-height: 400px;
 }
 
 .editor_content > div {
