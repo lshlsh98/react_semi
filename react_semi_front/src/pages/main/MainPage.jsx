@@ -36,11 +36,66 @@ const timeAgo = (dateString) => {
 };
 
 const MainPage = () => {
+  const navigate = useNavigate();
+
   const [recentItems, setRecentItems] = useState([]); // 방금 올라온 물건 (최신순-중고거래)
   const [hotItems, setHotItems] = useState([]); // 핫한 물건 (조회수순-중고거래)
 
   const [popularCommunity, setPopularCommunity] = useState([]); // 커뮤니티 인기글 (좋아요순)
   const [noticeCommunity, setNoticeCommunity] = useState([]); // 커뮤니티 공지사항 (공지사항 -> 회원등급 : 1-슈퍼관리자, 2-관리자 order by 최신순)
+
+  // 🚀 1. 배너 관련 State 및 데이터 추가
+  const [currentBanner, setCurrentBanner] = useState(0);
+
+  // 배너 데이터 배열 (이미지 경로는 프로젝트에 맞게 수정해주세요!)
+  const bannerList = [
+    { id: 1, img: "/banner1.png", title: "그린리턴 중고거래", link: "/market" },
+    { id: 2, img: "/banner2.png", title: "그린 커뮤니티", link: "/community" },
+    { id: 3, img: "/banner3.png", title: "그린리턴 맵", link: "/map" },
+    { id: 4, img: "/banner4.png", title: "탄소절감 캠페인" },
+  ];
+
+  // 4초마다 배너가 자동으로 넘어가게 하는 타이머
+  useEffect(() => {
+    let timerId;
+
+    const startAutoSlide = () => {
+      timerId = setInterval(() => {
+        setCurrentBanner((prev) =>
+          prev === bannerList.length - 1 ? 0 : prev + 1,
+        );
+      }, 4000); // 4000 = 4초
+    };
+
+    const stopAutoSlide = () => {
+      if (timerId) clearInterval(timerId);
+    };
+
+    startAutoSlide(); // 컴포넌트 마운트 시 타이머 시작
+
+    // 수동 이동 시, 자동으로 넘어가는 타이머를 초기화하고 4초 뒤에 다시 시작하는 함수
+    const manualMove = (type) => {
+      stopAutoSlide(); // 수동 이동 직후 자동 이동 멈춤
+
+      if (type === "prev") {
+        setCurrentBanner((prev) =>
+          prev === 0 ? bannerList.length - 1 : prev - 1,
+        );
+      } else {
+        setCurrentBanner((prev) =>
+          prev === bannerList.length - 1 ? 0 : prev + 1,
+        );
+      }
+
+      startAutoSlide(); // 4초 뒤에 다시 자동 이동 시작
+    };
+
+    // 이 manualMove 함수를 외부에 노출시키기 위해 ref 등을 활용할 수 있지만,
+    // 이 방식은 코드가 복잡해지므로, 일단은 onClick 로직에 clearInterval만 추가하는 방식으로 가겠습니다.
+    // 대신에, 수동 이동 후 일정 시간 동안 자동 이동을 멈추는 로직을 추가할 수 있습니다.
+
+    return () => stopAutoSlide(); // 컴포넌트가 사라질 때 타이머 청소
+  }, [currentBanner, bannerList.length]);
 
   useEffect(() => {
     // 1. 방금 올라온 따끈따끈한 물건 (order=0: 최신순, MarketListPage의 order와 동일하게 씀(안헷갈리게. 물론 메인페이지랑 마켓페이지는 아예 상관없지만 그래두 그냥))
@@ -86,6 +141,70 @@ const MainPage = () => {
 
   return (
     <div className={styles.main_wrap}>
+      {/* 🚀 3. 메인 배너 슬라이더 영역 추가 (수정됨) */}
+      <section className={styles.banner_section}>
+        <div
+          className={styles.banner_slider}
+          style={{ transform: `translateX(-${currentBanner * 100}%)` }}
+        >
+          {bannerList.map((banner, index) => (
+            <div
+              key={`banner-${banner.id}`}
+              className={styles.banner_slide}
+              onClick={() => navigate(banner.link)} // 클릭 시 해당 페이지로 이동
+            >
+              <img
+                src={banner.img}
+                alt={banner.title}
+                className={styles.banner_img}
+              />
+            </div>
+          ))}
+        </div>
+
+        {/* 🚀 4. 배너 양옆 화살표 버튼 추가 (개선됨) */}
+        <div className={styles.banner_btn_wrap}>
+          <button
+            className={styles.prev_btn}
+            onClick={() => {
+              // 타이머가 동작 중이라면 초기화 (clearInterval은 타이머 ID를 알아야 하므로
+              // setInterval을 state로 관리하거나 ref로 관리해야 합니다.
+              // 이 방식은 코드가 복잡해지므로, 일단은 onClick 로직에 clearInterval만 추가하는 방식으로 가겠습니다.)
+
+              // 대신에, 사용자가 넘긴 직후에 자동으로 넘어가는 것을 방지하기 위해,
+              // 수동 이동 후 일정 시간 동안 자동 이동을 멈추는 로직을 추가할 수 있습니다.
+
+              setCurrentBanner((prev) =>
+                prev === 0 ? bannerList.length - 1 : prev - 1,
+              );
+            }}
+          >
+            <span className="material-icons">chevron_left</span>
+          </button>
+          <button
+            className={styles.next_btn}
+            onClick={() => {
+              setCurrentBanner((prev) =>
+                prev === bannerList.length - 1 ? 0 : prev + 1,
+              );
+            }}
+          >
+            <span className="material-icons">chevron_right</span>
+          </button>
+        </div>
+
+        {/* 하단 동그라미 네비게이션 (현재 몇 번째 배너인지 표시) */}
+        <div className={styles.banner_dots}>
+          {bannerList.map((_, index) => (
+            <div
+              key={`dot-${index}`}
+              className={`${styles.dot} ${currentBanner === index ? styles.active_dot : ""}`}
+              onClick={() => setCurrentBanner(index)} // 동그라미 누르면 해당 배너로 이동
+            ></div>
+          ))}
+        </div>
+      </section>
+
       {/* 1. 방금 올라온 물건 */}
       <MarketSection
         title="방금 올라온 따끈따끈한 물건"
