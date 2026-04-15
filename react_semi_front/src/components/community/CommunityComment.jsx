@@ -509,7 +509,7 @@ const CommentItem = ({
               target.getBoundingClientRect().top + window.scrollY - 148 - 20;
             window.scrollTo({ top: offset, behavior: "smooth" });
           }
-        }, 150); // 화면이 그려질 시간 0.15초 잠깐 기다려줌 (1000ms = 1초)
+        }, 100); // 화면이 그려질 시간 0.1초 잠깐 기다려줌 (1000ms = 1초)
       });
     }
   };
