@@ -230,30 +230,24 @@
 
 	<select id="selectMainPageMarketList" resultType="market">
 		select
-		m.market_no,
-		m.market_title,
-		to_char(m.market_date, 'yyyy-mm-dd hh24:mi:ss') market_date,
-		m.market_writer,
-		m.view_count,
-		m.sell_addr,
-		m.sell_price,
-		(
-		select market_file_path
-		from (
-		select mf.market_file_path
-		from market_file_tbl mf
-		where mf.market_no = m.market_no
-		order by mf.market_file_no asc
-		)
-		where rownum = 1
-		) market_thumb,
-		mt.member_thumb as member_thumb,
-		(
-		select count(*)
-		from market_comment_tbl c
-		where c.market_no = m.market_no
-		) comment_count
-
+			m.market_no,
+			m.market_title,
+			to_char(m.market_date, 'yyyy-mm-dd hh24:mi:ss') market_date,
+			m.market_writer,
+			m.view_count,
+			m.sell_addr,
+			m.sell_price,
+			(
+				select market_file_path
+				from (
+						select mf.market_file_path
+						from market_file_tbl mf
+						where mf.market_no = m.market_no
+						order by mf.market_file_no asc
+					)
+				where rownum = 1
+			) marketThumb,
+			(select count(*) from market_like_tbl ml where ml.market_no = m.market_no) like_count
 		from market_tbl m
 		left join member_tbl mt
 		on mt.member_id = m.market_writer
@@ -492,32 +486,36 @@
 
 		<if test="request.order == 1">order by score_date desc</if>
 		<if test="request.order == 2">order by score_date asc</if>
-
-		offset #{request.page}*#{request.size} rows fetch next #{request.size}
-		rows only
-	</select>
-
-	<!-- 판매자 아이디 조회 -->
-	<select id="selectSellerId" resultType="market">
-		select market_no, market_writer from market_tbl where market_no =
-		#{marketNo}
-	</select>
-
-	<!-- 거래완료후 포인트 추가 -->
-	<insert id="addPointHistory">
-		insert into score_history_tbl values(
-		score_history_seq.nextval,
-		#{sellerId},
-		#{marketNo},
-		1,
-		100,
-		sysdate
-		)
-	</insert>
-
-	<update id="addPointMember">
-		update member_tbl set
-		member_score = member_score + 100
-		where member_id = #{sellerId}
-	</update>
+		
+		offset #{request.page}*#{request.size} rows fetch next #{request.size} rows only
+    </select>
+    
+    <!-- 판매자 아이디 조회 -->
+    <select id="selectSellerId" resultType="market">
+    	select market_no, market_writer from market_tbl where market_no = #{marketNo}
+    </select>
+    
+    <!-- 거래완료후 포인트 추가 -->
+    <insert id="addPointHistory">
+    	insert into score_history_tbl values(
+    		score_history_seq.nextval,
+    		#{sellerId},
+    		#{marketNo},
+    		1,
+    		100,
+    		sysdate
+    	)
+    </insert>
+    
+    <update id="addPointMember">
+    	update member_tbl set
+            member_score = member_score + 100
+        where member_id = #{sellerId}
+    </update>
+    
+    <select id="findOneMarketByMarketNo" resultType="market">
+    	SELECT *
+    	FROM market_tbl
+    	WHERE market_no = #{marketNo}
+    </select>
 </mapper>

@@ -1,0 +1,113 @@
+.chat_card {
+  width: 800px;
+  background-color: white;
+  border: 1px solid rgb(248, 248, 248);
+  border-radius: 8px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+  padding: 20px;
+  margin: 0 auto;
+}
+
+.chat_card > h3 {
+  font-size: 25px;
+  border-radius: 8px;
+  border: 1px solid black;
+  width: 700px;
+  text-align: center;
+  padding: 5px;
+}
+
+.chat_box {
+  width: 700px;
+  height: 650px;
+  border: 5px solid var(--primary);
+  border-radius: 8px;
+  background-color: rgb(230, 255, 230);
+  overflow-y: auto;
+}
+
+.chat_send {
+  width: 700px;
+  display: flex;
+  gap: 10px;
+}
+
+.input_zone {
+  flex: 1;
+  height: 50px;
+}
+
+.chat_send > textarea {
+  border: none;
+  outline: none;
+  background-color: rgb(226, 226, 226);
+  border-radius: 8px;
+  font-size: 20px;
+  resize: none;
+  padding: 10px;
+}
+
+.input_zone:focus {
+  box-shadow: 0 0 0 2px rgba(0, 0, 0, 0.2);
+}
+
+.btn_zone {
+  width: 70px;
+}
+
+.btn_zone > button {
+  border: none;
+  background-color: rgb(119, 175, 119);
+  width: 100%;
+  height: 100%;
+  border-radius: 8px;
+  color: white;
+  font-size: 17px;
+}
+
+.chatting {
+  border: 1px solid black;
+  width: 300px;
+  min-height: 50px;
+  margin-bottom: 5px;
+}
+
+.sent {
+}
+
+.received {
+}
+
+.chat_thumb {
+  width: 30px;
+  height: 30px;
+  background-color: var(--gray6);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 25px;
+}
+
+.chat_thumb > span {
+  font-size: 30px;
+  color: var(--gray8);
+}
+
+.chat_thumb_exists {
+  width: 30px;
+  height: 30px;
+  padding: 0px;
+  background-color: var(--gray6);
+  border-radius: 15px;
+  cursor: pointer;
+  overflow: hidden;
+}
+
+.chat_thumb_exists > img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}

@@ -32,8 +32,6 @@ public class StompController {
 	// 방법2. MessageMapping 에노테이션에만 활용
 	@MessageMapping("/{roomId}") 	
 	public void sendMessage(@DestinationVariable Long roomId, ChatMessageDto chatMessageReqDto) {
-		System.out.println(chatMessageReqDto.getMessage());
-		System.out.println(chatMessageReqDto);
 		chatService.saveMessage(roomId, chatMessageReqDto);
 		// @SendTo 의 역할
 		messageTemplate.convertAndSend("/topic/" + roomId, chatMessageReqDto);

@@ -1,6 +1,8 @@
 package kr.co.iei.chat.controller;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -54,8 +56,13 @@ public class ChatController {
 	@GetMapping("/history/{roomId}")
 	public ResponseEntity<?> getChatHistory(@PathVariable Long roomId){
 		List<ChatMessageDto> list = chatService.getChatHistory(roomId);
+		String roomName = chatService.getChatRoomName(roomId);
 		
-		return ResponseEntity.ok(list);
+		Map<String, Object> histories = new HashMap<>();
+		histories.put("messages", list);
+		histories.put("roomName", roomName);
+				
+		return ResponseEntity.ok(histories);
 	}//
 	
 	// 채팅 메시지 읽음 처리
@@ -84,8 +91,8 @@ public class ChatController {
 	
 	// 개인 채팅방 개설 또는 기존 roomId return
 	@PostMapping("/room/private/create")
-	public ResponseEntity<?> getOrCreatePrivateRoom(@RequestParam String otherMemberId){
-		Long roomId = chatService.getOrCreatePrivateRoom(otherMemberId);
+	public ResponseEntity<?> getOrCreatePrivateRoom(@RequestParam String otherMemberId, @RequestParam Long marketNo){
+		Long roomId = chatService.getOrCreatePrivateRoom(otherMemberId, marketNo);
 		
 		return ResponseEntity.ok(roomId);
 	}//

@@ -36,11 +36,73 @@ const timeAgo = (dateString) => {
 };
 
 const MainPage = () => {
+  const navigate = useNavigate();
+
   const [recentItems, setRecentItems] = useState([]); // 방금 올라온 물건 (최신순-중고거래)
   const [hotItems, setHotItems] = useState([]); // 핫한 물건 (조회수순-중고거래)
 
   const [popularCommunity, setPopularCommunity] = useState([]); // 커뮤니티 인기글 (좋아요순)
   const [noticeCommunity, setNoticeCommunity] = useState([]); // 커뮤니티 공지사항 (공지사항 -> 회원등급 : 1-슈퍼관리자, 2-관리자 order by 최신순)
+
+  const [currentBanner, setCurrentBanner] = useState(0); // 현재 배너의 번호
+
+  // 배너 데이터 배열 (id : 배너 번호, img : 경로, title : 제목, link : route해서 갈 주소)
+  const bannerList = [
+    { id: 1, img: "/banner1.png", title: "그린리턴 중고거래", link: "/market" },
+    { id: 2, img: "/banner2.png", title: "그린 커뮤니티", link: "/community" },
+    { id: 3, img: "/banner3.png", title: "그린리턴 맵", link: "/map" },
+    { id: 4, img: "/banner4.png", title: "탄소절감 캠페인" },
+  ];
+
+  // 4초마다 배너가 자동으로 넘어가게 하는 타이머
+  useEffect(() => {
+    let timerId; // 몇번 타이머인지 구분하기 위해 지정
+
+    // 자동으로 슬라이드 넘기는 함수
+    const startAutoSlide = () => {
+      // timerId에 값 대입할거고 setInterval()은 n초마다 작업 반복하는것
+      timerId = setInterval(() => {
+        // 지금 배너가 마지막 배너면 0번으로 가고, 아니면 다음(+1)으로 가기
+        setCurrentBanner((prev) =>
+          prev === bannerList.length - 1 ? 0 : prev + 1,
+        );
+      }, 4000); // 4000ms = 4초마다
+    };
+
+    // 자동 슬라이드 멈추는 함수
+    const stopAutoSlide = () => {
+      // timerId에 값이 있다면 그 값을 가진 타이머를 멈춤. clearInterval()은 ()안의 타이머를 멈추게(정확히는 clear 없애는 것)함.
+      if (timerId) {
+        clearInterval(timerId);
+      }
+    };
+
+    startAutoSlide(); // 화면이 처음 켜질때 함수 시작
+
+    // 수동으로 슬라이더 넘길시 자동으로 넘어가는 타이머를 초기화하고 다시 4초 뒤에 시작하는 함수
+    const manualMove = (type) => {
+      stopAutoSlide(); // 수동 이동 직후 자동 이동 멈춤
+
+      // type이 "이전"일때
+      if (type === "prev") {
+        // 배너를 한칸 앞으로 이동(prev가 0이면 첫번째 배너일때 이전을 누르거니 마지막 배너로 이동하고 아니면 한칸 앞으로)
+        setCurrentBanner((prev) =>
+          prev === 0 ? bannerList.length - 1 : prev - 1,
+        );
+      }
+      // type이 "다음"일때
+      else {
+        // 배너를 한칸 뒤로 이동(prev가 bannerList.length-1이랑 같으면 마지막 배너일때 다음을 누른거니 첫번째 배너로 이동하고 아니면 한칸 뒤로)
+        setCurrentBanner((prev) =>
+          prev === bannerList.length - 1 ? 0 : prev + 1,
+        );
+      }
+
+      startAutoSlide(); // 앞에서 멈췄으니 다시 시작(4초 카운트 시작)
+    };
+
+    return () => stopAutoSlide(); // 컴포넌트가 사라질 때 타이머 청소(배너 넘어갔을때 기존의 유령 테이머 제거)
+  }, [currentBanner, bannerList.length]);
 
   useEffect(() => {
     // 1. 방금 올라온 따끈따끈한 물건 (order=0: 최신순, MarketListPage의 order와 동일하게 씀(안헷갈리게. 물론 메인페이지랑 마켓페이지는 아예 상관없지만 그래두 그냥))
@@ -86,6 +148,65 @@ const MainPage = () => {
 
   return (
     <div className={styles.main_wrap}>
+      {/* 배너 슬라이더 영역 */}
+      <section className={styles.banner_section}>
+        <div
+          className={styles.banner_slider}
+          style={{ transform: `translateX(-${currentBanner * 100}%)` }}
+        >
+          {bannerList.map((banner) => (
+            <div
+              key={`banner-${banner.id}`}
+              className={styles.banner_slide}
+              onClick={() => navigate(banner.link)} // 클릭 시 해당 페이지로 이동
+            >
+              <img
+                src={banner.img}
+                alt={banner.title}
+                className={styles.banner_img}
+              />
+            </div>
+          ))}
+        </div>
+
+        {/* 배너 양옆 화살표 추가 */}
+        <div className={styles.banner_btn_wrap}>
+          <button
+            className={styles.prev_btn}
+            onClick={() => {
+              // 배너를 한칸 앞으로 이동(prev가 0이면 첫번째 배너일때 이전을 누르거니 마지막 배너로 이동하고 아니면 한칸 앞으로)
+              setCurrentBanner((prev) =>
+                prev === 0 ? bannerList.length - 1 : prev - 1,
+              );
+            }}
+          >
+            <span className="material-icons">chevron_left</span>
+          </button>
+          <button
+            className={styles.next_btn}
+            onClick={() => {
+              // 배너를 한칸 뒤로 이동(prev가 bannerList.length-1이랑 같으면 마지막 배너일때 다음을 누른거니 첫번째 배너로 이동하고 아니면 한칸 뒤로)
+              setCurrentBanner((prev) =>
+                prev === bannerList.length - 1 ? 0 : prev + 1,
+              );
+            }}
+          >
+            <span className="material-icons">chevron_right</span>
+          </button>
+        </div>
+
+        {/* 하단 동그라미 네비게이션 (현재 몇 번째 배너인지 표시) */}
+        <div className={styles.banner_dots}>
+          {bannerList.map((_, index) => (
+            <div
+              key={`dot-${index}`}
+              className={`${styles.dot} ${currentBanner === index ? styles.active_dot : ""}`}
+              onClick={() => setCurrentBanner(index)} // 동그라미 누르면 해당 배너로 이동
+            ></div>
+          ))}
+        </div>
+      </section>
+
       {/* 1. 방금 올라온 물건 */}
       <MarketSection
         title="방금 올라온 따끈따끈한 물건"
@@ -100,10 +221,18 @@ const MainPage = () => {
         items={hotItems}
       />
       <div className={styles.community_wrap}>
-        {/* 왼쪽: 3. 인기글 */}
-        <CommunitySection title="커뮤니티 인기글" items={popularCommunity} />
-        {/* 오른쪽: 4. 공지사항 */}
-        <CommunitySection title="커뮤니티 공지사항" items={noticeCommunity} />
+        {/* 왼쪽: 3. 인기글 viewType=1(게시글)을 보냄*/}
+        <CommunitySection
+          title="커뮤니티 인기글"
+          items={popularCommunity}
+          viewType={1}
+        />
+        {/* 오른쪽: 4. 공지사항 viewType=2(공지사항)을 보냄*/}
+        <CommunitySection
+          title="커뮤니티 공지사항"
+          items={noticeCommunity}
+          viewType={2}
+        />
       </div>
     </div>
   );
@@ -191,14 +320,16 @@ const MarketSection = ({ title, highlightWord, items }) => {
 };
 
 // 커뮤니티 컴포넌트 (이것도 여기서만 쓰니 여기에 만듬)
-const CommunitySection = ({ title, items }) => {
+const CommunitySection = ({ title, items, viewType }) => {
   const navigate = useNavigate();
+
+  const moreLink = viewType === 1 ? "/community?view=1" : "/community?view=2";
 
   return (
     <section className={styles.comm_section_box}>
       <div className={styles.section_header}>
         <h2 className={styles.title}>{title}</h2>
-        <Link to="/community" className={styles.more_link}>
+        <Link to={moreLink} className={styles.more_link}>
           더보기 {">"}
         </Link>
       </div>
@@ -208,7 +339,22 @@ const CommunitySection = ({ title, items }) => {
           <li
             key={`main_comm-${item.communityNo}`}
             className={styles.comm_card}
-            onClick={() => navigate(`/community/view/${item.communityNo}`)}
+            // 마켓과 커뮤니티의 조회수 증가하는 방식이 달라서 커뮤니티에만 클릭시 조회수 증가 함수
+            onClick={async () => {
+              try {
+                // axios는 기존에 비동기이기에 서버요청을 던지고 다음코드로 넘어가지만 await를 하면 서버에서 데이터를 줄때까지 다음코드로 넘어가지않고 기다림.
+                // 댓글에서 쓴 return과의 차이는 return은 데이터를 받고 바로 함수를 호출한 곳으로 값을 넘김.(애초에 자바든 파이썬이든 return의 하는일이 이거긴함.)
+                // 반면 await는 return으로 어디에 값을 보내거나 하지 않음. 값을 보낼필요없을때 return대신 await를 쓴다고 생각하면 편함(100%는 아님. 보통은 그 함수 안에서 바로 데이터를 조작하거나, 조건문을 걸거나, 다음 동작(navigate 등)을 이어서 해야 할 때 쓴다고 함.)
+                await axios.patch(
+                  `${import.meta.env.VITE_BACKSERVER}/communities/view/${item.communityNo}`,
+                  item,
+                );
+              } catch (err) {
+                console.error(err);
+              }
+              // 통신이 성공하든 실패하든 상세 페이지로는 무조건 이동
+              navigate(`/community/view/${item.communityNo}`);
+            }}
           >
             <h3 className={styles.comm_item_title}>{item.communityTitle}</h3>
 

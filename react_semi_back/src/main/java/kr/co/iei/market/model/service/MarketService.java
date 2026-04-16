@@ -300,5 +300,4 @@ public class MarketService {
 
 		return response;
 	}
-
 }

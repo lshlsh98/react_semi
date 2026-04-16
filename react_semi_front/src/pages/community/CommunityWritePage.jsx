@@ -109,13 +109,24 @@ const CommunityWritePage = () => {
       {/* 제목 필드 */}
       <div className={styles.community_input_wrap}>
         <label htmlFor="communityTitle">제목</label>
-        <Input
-          type="text"
-          name="communityTitle"
-          id="communityTitle"
-          value={community.communityTitle}
-          onChange={inputCommunityTitle}
-        ></Input>
+        <div className={styles.title_input_box}>
+          <Input
+            placeholder="제목을 입력해주세요 (최대 50자 입력 가능)"
+            type="text"
+            name="communityTitle"
+            id="communityTitle"
+            value={community.communityTitle}
+            onChange={inputCommunityTitle}
+          />
+
+          <span
+            className={`${styles.title_count} ${
+              community.communityTitle.length >= 50 ? styles.limit : ""
+            }`}
+          >
+            {community.communityTitle.length} / 50
+          </span>
+        </div>
       </div>
 
       {/* 내용 필드 */}
@@ -301,6 +312,7 @@ const MenuBar = ({ editor }) => {
 
 const TextEditor = ({ data, setData }) => {
   //console.log(data);
+  const [contentLength, setContentLength] = useState(0);
 
   let lastValidHTML = "";
   const editor = useEditor({
@@ -342,6 +354,11 @@ const TextEditor = ({ data, setData }) => {
       const html = editor.getHTML();
       const byteLength = new TextEncoder().encode(html).length;
 
+      const textLength = editor.getText().length;
+
+      setContentLength(textLength);
+      setData(editor.getHTML());
+
       if (byteLength > 4000) {
         editor.commands.setContent(lastValidHTML, false);
         console.log(byteLength);
@@ -358,6 +375,14 @@ const TextEditor = ({ data, setData }) => {
       <MenuBar editor={editor} className={styles.menu_bar} />
 
       <EditorContent editor={editor} className={styles.editor_content} />
+      {/* 👇 여기 추가 */}
+      <div
+        className={`${styles.editor_count} ${
+          contentLength >= 4000 ? styles.limit : ""
+        }`}
+      >
+        {contentLength} / 4000
+      </div>
     </div>
   );
 };
