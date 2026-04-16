@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import styles from "./StompChatPage.module.css";
 import useAuthStore from "../utils/useAuthStore";
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { Client } from "@stomp/stompjs";
 import SockJS from "sockjs-client";
 import axios from "axios";
@@ -22,8 +22,10 @@ const StompChatPage = () => {
   const senderName = useAuthStore((state) => state.memberName);
   const senderThumb = useAuthStore((state) => state.memberThumb);
   const token = useAuthStore((state) => state.token);
-
+  const isReady = useAuthStore((state) => state.isReady);
+  const [marketNo, setMarketNo] = useState(null);
   const { roomId } = useParams();
+  const navigate = useNavigate();
 
   useEffect(() => {
     if (!token) return;
@@ -33,6 +35,7 @@ const StompChatPage = () => {
       .then((res) => {
         setMessages(res.data.messages);
         setRoomName(res.data.roomName);
+        setMarketNo(res.data.marketNo);
       });
 
     connectWebsocket();
@@ -123,54 +126,65 @@ const StompChatPage = () => {
   };
 
   return (
-    <div className={styles.chat_card}>
-      <h4>{roomName}</h4>
-      <div className={styles.chat_box} ref={chatBoxRef}>
-        {messages.map((m, i) => (
-          <div
-            key={i}
-            className={`${styles.chatting} ${m.senderId === senderId ? styles.sent : styles.received}`}
-          >
-            <div className={styles.chat_writer}>
-              <div className={styles.chat_wrtier_thumb}>
-                <div
-                  className={
-                    m.senderThumb ? styles.chat_thumb_exists : styles.chat_thumb
-                  }
-                >
-                  {m.senderThumb ? (
-                    <img
-                      src={`${import.meta.env.VITE_BACKSERVER}/semi/${m.senderThumb}`}
-                    />
-                  ) : (
-                    <span className="material-icons">account_circle</span>
-                  )}
-                </div>
-              </div>
-              <div className={styles.chat_writer_name}></div>
-            </div>
-            <div className={styles.chat_message}></div>
-          </div>
-        ))}
-      </div>
-      <form className={styles.chat_send} onSubmit={sendMessage}>
-        <textarea
-          className={styles.input_zone}
-          value={newMessage}
-          onChange={(e) => setNewMessage(e.target.value)}
-          placeholder="채팅을 입력하세요"
-          onKeyDown={(e) => {
-            if (e.key === "Enter" && !e.shiftKey) {
-              e.preventDefault();
-              sendMessage(e);
-            }
+    isReady && (
+      <div className={styles.chat_card}>
+        <h4
+          className={styles.chat_room_title}
+          onClick={() => {
+            navigate(`/market/view/${marketNo}`);
           }}
-        />
-        <div className={styles.btn_zone}>
-          <button type="submit">전송</button>
+        >
+          {roomName}
+        </h4>
+        <div className={styles.chat_box} ref={chatBoxRef}>
+          {messages.map((m, i) => (
+            <div
+              key={i}
+              className={`${styles.chatting} ${m.senderId === senderId ? styles.sent : styles.received}`}
+            >
+              <div className={styles.chat_writer}>
+                <div className={styles.chat_writer_thumb}>
+                  <div
+                    className={
+                      m.senderThumb
+                        ? styles.chat_thumb_exists
+                        : styles.chat_thumb
+                    }
+                  >
+                    {m.senderThumb ? (
+                      <img
+                        src={`${import.meta.env.VITE_BACKSERVER}/semi/${m.senderThumb}`}
+                      />
+                    ) : (
+                      <span className="material-icons">account_circle</span>
+                    )}
+                  </div>
+                </div>
+                <div className={styles.chat_writer_name}>{m.senderName}</div>
+              </div>
+              <div className={styles.chat_message}>{m.message}</div>
+            </div>
+          ))}
         </div>
-      </form>
-    </div>
+        <form className={styles.chat_send} onSubmit={sendMessage}>
+          <textarea
+            className={styles.input_zone}
+            value={newMessage}
+            onChange={(e) => setNewMessage(e.target.value)}
+            placeholder="채팅을 입력하세요"
+            onKeyDown={(e) => {
+              if (e.key === "Enter" && !e.shiftKey) {
+                e.preventDefault();
+                sendMessage(e);
+              }
+            }}
+          />
+          <div className={styles.btn_zone}>
+            <button type="submit">전송</button>
+          </div>
+        </form>
+      </div>
+    )
   );
 };
 

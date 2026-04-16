@@ -374,6 +374,10 @@ const MarketViewPage = () => {
                 confirmButtonColor: "var(--primary)",
               });
 
+              axios.delete(
+                `${import.meta.env.VITE_BACKSERVER}/chat/room/private/${marketNo}`,
+              );
+
               navigate("/market");
             }
           })

@@ -140,6 +140,17 @@ public class MypageService {
 
 		return null;
 	}//
+	
+	public ReportResponseDto findPrivateReport(ReportRequestDto request) {
+		if (Objects.equals("market", request.getTblName())) {
+			return  mypageDao.findMarketReportPrivate(request);
+		} else if (Objects.equals("community", request.getTblName())) {
+			System.out.println(request);
+			return mypageDao.findCommunityReportPrivate(request); 
+		} 
+		
+		return null;
+	}//
 
 	public List<BoardSummary> findLikeDislikeAll(BoardListRequestDto request) {
 		List<BoardSummary> list = mypageDao.findLikeDislikeAll(request);

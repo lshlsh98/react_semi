@@ -58,7 +58,7 @@ public interface ChatDao {
 	void deleteChatRoom(Long roomId);
 
 	ChatRoom findExistingPrivateRoom(CreatePrivateRoomReqDto req);
-	
-	
+
+	void deleteChatRoomByMarketNo(Long marketNo);	
 	
 }

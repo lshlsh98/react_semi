@@ -140,6 +140,13 @@ public class MypageController {
 		return ResponseEntity.ok(list);
 	}//
 	
+	@GetMapping("/report/private/{boardNo}")
+	public ResponseEntity<?> findPrivateReport(@ModelAttribute ReportRequestDto request){
+		ReportResponseDto privateReport = mypageService.findPrivateReport(request);
+		
+		return ResponseEntity.ok(privateReport);
+	}//
+	
 	@GetMapping("/board/likedislike")
 	public ResponseEntity<?> findLikeDislikeAll(@ModelAttribute BoardListRequestDto request){
 		List<BoardSummary> list = mypageService.findLikeDislikeAll(request);

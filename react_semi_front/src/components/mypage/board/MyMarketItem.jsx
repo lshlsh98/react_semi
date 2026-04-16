@@ -9,6 +9,7 @@ import axios from "axios";
 import Swal from "sweetalert2";
 import ReportModal from "../ReportModal";
 import { useNavigate } from "react-router-dom";
+import PrivateReportModal from "../PrivateReportModal";
 
 const MyMarketItem = ({
   board,
@@ -18,6 +19,7 @@ const MyMarketItem = ({
   status,
   isAdminMode,
   timeAgo,
+  isPrivate,
 }) => {
   const [contentStatus, setContentStatus] = useState(board.contentStatus);
   const navigate = useNavigate();
@@ -114,7 +116,11 @@ const MyMarketItem = ({
         </div>
         <div className={styles.item_actions}>
           {/* 좋아요, 싫어요, 댓글, 신고 */}
-          <Actions board={board} isAdminMode={isAdminMode} />
+          <Actions
+            board={board}
+            isAdminMode={isAdminMode}
+            isPrivate={isPrivate}
+          />
         </div>
         <div className={styles.views_done}>
           <div className={styles.views}></div>
@@ -155,17 +161,25 @@ const MyMarketItem = ({
   );
 };
 
-const Actions = ({ board, isAdminMode }) => {
+const Actions = ({ board, isAdminMode, isPrivate }) => {
   const [open, setOpen] = useState(false);
+  const [privateOpen, setPrivateOpen] = useState(false);
 
   // 신고 모달
   const showReport = () => {
-    // 신고가 있고 관리자일 때만
-    if (board.reportCount <= 0 || isAdminMode === "false") {
-      return;
+    // 신고가 있고 관리자모드 일 때
+    if (board.reportCount > 0 && isAdminMode === "true") {
+      setOpen(true);
     }
 
-    setOpen(true);
+    // 내가 누른 신고가 있고 관리자모드가 아닐 때
+    if (
+      board.isReported === 1 &&
+      isAdminMode === "false" &&
+      isPrivate === "true"
+    ) {
+      setPrivateOpen(true);
+    }
   };
 
   return (
@@ -195,7 +209,7 @@ const Actions = ({ board, isAdminMode }) => {
         <div>{board.reportCount}</div>
       </div>
 
-      {/* 모달 */}
+      {/* 관리자 모드 모달 */}
       {open && (
         <div
           className={styles.modal_overlay}
@@ -210,6 +224,25 @@ const Actions = ({ board, isAdminMode }) => {
           >
             {/* 거래인지 커뮤인지 타입을 tblName으로 넘긴다 */}
             <ReportModal board={board} tblName="market" />
+          </div>
+        </div>
+      )}
+
+      {/* 일반 유저 모드 모달 */}
+      {privateOpen && (
+        <div
+          className={styles.modal_overlay}
+          onClick={(e) => {
+            e.stopPropagation();
+            setPrivateOpen(false);
+          }}
+        >
+          <div
+            className={styles.modal_content}
+            onClick={(e) => e.stopPropagation()}
+          >
+            {/* 거래인지 커뮤인지 타입을 tblName으로 넘긴다 */}
+            <PrivateReportModal board={board} tblName="market" />
           </div>
         </div>
       )}

@@ -97,13 +97,16 @@
 			r.name AS room_name,
 			r.is_group_chat,
 			r.my_name,
-			r.other_name
+			r.other_name,
+			r.market_no
 			
 		FROM chat_participant p
 		INNER JOIN chat_room r
 			ON (p.chat_room_id = r.id)
 		
 		WHERE p.member_id = #{memberId}
+		
+		ORDER BY p.chat_room_id DESC
 	</select>
 	
 	<select id="getCountIsReadZero" resultType="Long">
@@ -144,19 +147,10 @@
 				AND is_group_chat = 1		
 	</select>
 	
-	<!-- 
-	<select id="findExistingPrivateRoom" resultType="chatRoom">
-		SELECT DISTINCT cr.*
-		FROM chat_room cr
-		INNER JOIN chat_participant cp1 
-			ON cr.id = cp1.chat_room_id
-		INNER JOIN chat_participant cp2 
-			ON cr.id = cp2.chat_room_id
-		WHERE cp1.member_id = #{memberId}
-	  	AND cp2.member_id = #{otherMemberId}
-	  	AND cr.is_group_chat = 1
-	</select>
-	 -->
+	<delete id="deleteChatRoomByMarketNo">
+		DELETE FROM chat_room
+		WHERE market_no = #{marketNo}
+	</delete>
 	
 </mapper>
 

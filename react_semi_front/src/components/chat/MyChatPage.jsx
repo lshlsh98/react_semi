@@ -39,7 +39,14 @@ const MyChatPage = () => {
           </ul>
           {list.map((chat) => (
             <ul key={chat.roomId} className={styles.chat_item}>
-              <li className={styles.chat_room_name}>{chat.roomName}</li>
+              <li
+                className={styles.chat_room_name}
+                onClick={() => {
+                  navigate(`/market/view/${chat.marketNo}`);
+                }}
+              >
+                {chat.roomName}
+              </li>
               <li className={styles.chat_other}>
                 {myName === chat.myName ? chat.otherName : chat.myName}
               </li>

@@ -83,4 +83,13 @@ public interface MypageDao {
 	int updateCurrentColor(MemberColor memberColor);
 
 	int updateMemberScore(MemberColor memberColor);
+	ReportResponseDto findMarketReportPrivate(ReportRequestDto request);
+
+	ReportResponseDto findCommunityReportPrivate(ReportRequestDto request);
+
+	ReportResponseDto findMarketCommentReportPrivate(ReportRequestDto request);
+
+	ReportResponseDto findCommunityCommentReportPrivate(ReportRequestDto request);
+	
+	
 }
