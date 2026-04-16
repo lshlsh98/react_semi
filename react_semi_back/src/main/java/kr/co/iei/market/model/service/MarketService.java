@@ -166,68 +166,6 @@ public class MarketService {
 		return new MarketResponse<>(true,"201 : 게시물 등록 성공",data);
 	}
 
-	@Transactional
-	public Map<String, Object> insertMarket2222(String token, Market market, List<MultipartFile> files) {
-		// 1 : 응답객체 생성
-		Map<String, Object> serviceResponse = new HashMap<String, Object>();
-		// 2 : 토큰 검증
-		LoginMember member = jwtUtil.checkToken(token);
-		if (member == null) {
-			serviceResponse.put("result", 0);
-			return serviceResponse;
-		}
-		/*
-		 * String requestId = member.getMemberId(); String marketWriter =
-		 * market.getMarketWriter(); if (!requestId.equals(marketWriter)) {
-		 * serviceResponse.put("result",0); return serviceResponse; }
-		 */
-		// 3 : 마켓객체에 재셋팅
-		String requestId = member.getMemberId();
-		market.setMarketWriter(requestId);
-		// 4 : 파일체크 (로그용)
-		for (MultipartFile file : files) {
-			System.out.println("\n파일명: " + file.getOriginalFilename());
-			System.out.println("크기: " + file.getSize());
-			System.out.println("타입: " + file.getContentType());
-		}
-		// 5 : 파일 리스트 생성 및 서버에 파일추가
-		List<MarketFile> fileList = new ArrayList<MarketFile>();
-		if (files != null) {
-			String savepath = root + "market/";
-			for (MultipartFile file : files) {
-				String marketFileName = file.getOriginalFilename();
-				String marketFilepath = fileUtil.upload(savepath, file);
-
-				MarketFile marketFile = new MarketFile();
-				marketFile.setMarketFileName(marketFileName);
-				marketFile.setMarketFilePath(marketFilepath);
-				fileList.add(marketFile);
-			}
-		}
-		// 6 : 시퀀스 번호 발급
-		int marketNo = marketDao.getNewMarketNo();
-		// 7 : 마켓 객체에 set
-		market.setMarketNo(marketNo);
-		// 8 : 마켓 게시글 등록 (insert market_tbl)
-		int result = marketDao.insertMarket(market);
-		// 9 : 마켓 파일 DB 등록 (insert market_file_tbl)
-		int fileCount = 0;
-		if (result == 1) {
-			for (MarketFile marketFile : fileList) {
-				marketFile.setMarketNo(marketNo);
-				fileCount += marketDao.insertMarketFile(marketFile);
-			}
-
-		} else if (result == 0) {
-			System.out.println("어떻게 하지");
-		}
-		System.out.println("\n" + marketNo + " 번 게시글 업로드 결과");
-		System.out.println("게시글작성 : " + result + " , 파일업로드 갯수 : " + fileCount);
-		// 10 : 결과 응답객체에 추가
-		serviceResponse.put("result", result);
-		serviceResponse.put("fileCount", fileCount);
-		return serviceResponse;
-	}
 
 	// 게시글조회
 	public Market selectOneMarket(Integer marketNo, String token) {

@@ -100,7 +100,7 @@ public class MarketController {
 
 	
 	/// 마켓게시판 등록 (Markets) Create : 한진호
-	@PostMapping
+	@PostMapping	// 매핑 : /markets
 	public ResponseEntity<MarketResponse<MarketCreateResponse>> insertMarket(
 			@RequestHeader(required = false, name = "Authorization") String token,
 			@ModelAttribute Market market,
@@ -110,9 +110,10 @@ public class MarketController {
 	}
  
 	/// 마켓게시판 조회 (Markets) Read_list : 한진호
-	@GetMapping
+	@GetMapping		// 매핑 : /markets
 	public ResponseEntity<?> selectMarketList(@ModelAttribute ListItem request) {
 		ListResponse response = marketService.selectMarketList(request);
+		System.out.println(response);
 		return ResponseEntity.ok(response);
 	}
 

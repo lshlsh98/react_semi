@@ -11,7 +11,7 @@ import withReactContent from "sweetalert2-react-content";
 import MarketComment from "../../components/market/MarketComment";
 import { Modal, Box, IconButton } from "@mui/material"; // IconButton 추가
 import { ChevronLeft, ChevronRight, Close } from "@mui/icons-material";
-import MarketMap from "./MarketMap";
+import MarketMap from "../../components/market/MarketMap";
 
 /* 날짜아이콘 */
 import CalendarTodayIcon from "@mui/icons-material/CalendarToday";
@@ -28,7 +28,6 @@ const MarketViewPage = () => {
   const params = useParams();
   const marketNo = params.marketNo;
   const MySwal = withReactContent(Swal);
-
   const [market, setMarket] = useState(null);
   const imgUrl = "http://192.168.31.24:9999/market";
 

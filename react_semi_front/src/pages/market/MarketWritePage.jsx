@@ -9,8 +9,6 @@ import { Input } from "../../components/ui/Form";
 import InsertPhotoIcon from "@mui/icons-material/InsertPhoto";
 import DeleteIcon from "@mui/icons-material/Delete";
 import { useKakaoPostcode } from "@clroot/react-kakao-postcode";
-
-//tip-tap editor
 import { useEditor, EditorContent } from "@tiptap/react";
 import StarterKit from "@tiptap/starter-kit";
 import { TextStyle } from "@tiptap/extension-text-style";
