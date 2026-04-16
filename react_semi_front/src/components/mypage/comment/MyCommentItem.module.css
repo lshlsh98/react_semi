@@ -129,17 +129,17 @@
 }
 
 .isLiked div {
-  color: rgb(82, 129, 199);
+  color: var(--primary);
 }
 .isLiked svg {
-  fill: rgb(82, 129, 199);
+  fill: var(--primary);
 }
 
 .isDisliked div {
-  color: rgb(233, 153, 48);
+  color: var(--danger);
 }
 .isDisliked svg {
-  fill: rgb(233, 153, 48);
+  fill: var(--danger);
 }
 
 .isCommented div {
@@ -150,10 +150,10 @@
 }
 
 .isReported div {
-  color: rgb(255, 0, 0);
+  color: var(--danger);
 }
 .isReported svg {
-  fill: rgb(255, 0, 0);
+  fill: var(--danger);
 }
 
 .action_default div {
