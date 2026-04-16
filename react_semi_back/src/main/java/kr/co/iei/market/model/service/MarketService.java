@@ -96,13 +96,9 @@ public class MarketService {
 	public ListResponse selectMarketList(ListItem request) {
 		/// 총 게시물수 구하기
 		Integer totalCount = marketDao.selectMarketCount(request);
-		// System.out.println(request);
-		// System.out.println("토탈카운트 : " + totalCount);
-
 		/// 총 페이지수 구하기
 		int totalPage = (int) Math.ceil(totalCount / (double) request.getSize());
-		// System.out.println("토탈페이지 : " + totalPage);
-
+		
 		List<Market> list = marketDao.selectMarketList(request);
 		// System.out.println(list);
 		ListResponse response = new ListResponse(list, totalPage);

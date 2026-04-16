@@ -22,7 +22,7 @@ ol {
 }
 
 .market_searchbox input {
-  background-color: var(--light);
+  background-color: white;
 }
 
 .market_searchbox > form {
@@ -106,41 +106,115 @@ ol {
   justify-content: space-evenly; /* 세로정렬 */
   min-width: 0;
 }
+.member_wrap {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+
+  justify-content: space-between;
+}
+.member_wrap2 {
+  display: flex;
+
+  gap: 12px;
+  align-items: center;
+  padding: 4px;
+}
+
+.info_viewCount_wrap {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 4px;
+}
+
+/*멤버썸네일*/
+.member_thumb {
+  width: 32px;
+  height: 32px;
+  padding: 8px;
+  border-radius: 18px;
+  background-color: var(--gray6);
+  overflow: hidden;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border: 1px solid var(--gray6);
+}
+.member_thumb_exists {
+  width: 32px;
+  height: 32px;
+  border-radius: 18px;
+  background-color: var(--gray6);
+  overflow: hidden;
+}
+.member_thumb_exists > img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+/*판매주소*/
+.info_sellAddr {
+  font-size: 12px;
+  padding: 4px;
+}
+
 .info_title {
   /* 제목 */
-  font-size: 32px;
+  font-size: 20px;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
   width: 100%;
+  padding: 4px;
 }
 .info_price {
   /*가격*/
+  margin-left: 4px;
   color: var(--primary);
   font-size: 16px;
   font-weight: 700;
 }
 .info_price_free {
+  margin-left: 4px;
   font-size: 16px;
   font-weight: bold;
   color: var(--danger);
 }
-.info_date,
-.info_writer,
-.info_viewCount,
-.info_sellAddr {
-  font-size: 12px;
+/*아이콘랩 좋아요 댓글수 작성일*/
+.info_icon_wrap1 {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
 }
-.info_likeCount {
+
+.info_icon_wrap2 {
   display: flex;
   align-items: center;
-  gap: 3px;
-  color: var(--danger);
-  font-weight: 600;
-  font-size: 12px;
+  gap: 12px;
+  /*좋아요 아이콘 댓글수 아이콘 사이 간격*/
 }
-.info_likeCount_icon {
-  font-size: 14px !important;
+
+/*좋아요 랩*/
+.info_likeCount_wrap {
+  margin-left: 4px; /*좋아요 아이콘과 이미지 사이 간격*/
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+/*댓글수 랩*/
+.info_commentCount_wrap {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.info_date_wrap {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 4px;
 }
 
 /* 페이지네이션 */
@@ -159,4 +233,11 @@ ol {
 }
 .market_writebox button {
   margin: 12px 0px;
+}
+/* 아이콘 옵션*/
+.icon {
+  font-size: 20px !important;
+}
+.material_icons {
+  font_size: 20px;
 }

@@ -65,6 +65,7 @@
 									from member_tbl
 									where member_id = market_writer))
 			as hex_code
+		
 		from market_tbl mt
 		join member_tbl m on (mt.market_writer = m.member_id)
 

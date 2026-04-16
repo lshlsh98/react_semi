@@ -703,7 +703,7 @@ const MarketViewPage = () => {
             <div className={styles.date_view_like}>
               <p className={styles.date_wrap}>
                 <CalendarTodayIcon />
-                {market.marketDate.slice(0, 10)}
+                {market.marketDate.slice(0, 16)}
               </p>
               <p className={styles.viewCount_wrap}>
                 <VisibilityIcon />
@@ -714,6 +714,11 @@ const MarketViewPage = () => {
                 {market.likeCount}
               </p>
             </div>
+
+            <div
+              className={styles.content_wrap}
+              dangerouslySetInnerHTML={{ __html: market.marketContent }}
+            ></div>
           </div>
 
           {(!memberId || memberId !== market.marketWriter) && (
@@ -815,10 +820,6 @@ const MarketViewPage = () => {
             </div>
           )}
 
-          <div
-            className={styles.content_wrap}
-            dangerouslySetInnerHTML={{ __html: market.marketContent }}
-          ></div>
           <MarketMap market={market} />
 
           {memberId &&
