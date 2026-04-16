@@ -131,7 +131,7 @@
 			view_count,
 			member_name,
 			member_thumb,
-			to_char(community_date,'yyyy-mm-dd') as community_date,
+			to_char(community_date, 'yyyy-mm-dd HH24:mi') as community_date,
 			(select hex_code
 			from color_tbl
 			where color_id = (select current_color_id 
@@ -389,9 +389,8 @@
 	</select>
 
 	<insert id="insertReport">
-		insert into community_report_tbl (community_no, member_id)
-		values (#{communityNo}, #{memberId}
-		)
+		insert into community_report_tbl (community_no, member_id, report_reason)
+    values (#{communityNo}, #{memberId}, #{reportReason})
 	</insert>
 
 	<delete id="deleteReport">
