@@ -191,6 +191,7 @@ public class MypageService {
 		return list;
 	}
 
+	@Transactional
 	public int updateCurrentColor(MemberColor memberColor) {
 		int deduction = mypageDao.updateMemberScore(memberColor);
 		if (deduction == 1) {
