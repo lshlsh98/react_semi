@@ -39,7 +39,6 @@ const CommunityListPage = () => {
         `${import.meta.env.VITE_BACKSERVER}/communities?page=${page}&size=${size}&status=1&order=${order}&view=${view}&searchType=${searchType}&searchKeyword=${searchKeyword}`,
       )
       .then((res) => {
-        console.log(res);
         setCommunityList(res.data.items);
         setTotalPage(res.data.totalPage);
       })

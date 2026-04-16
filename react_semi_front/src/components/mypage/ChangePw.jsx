@@ -34,7 +34,6 @@ const ChangePw = () => {
       .get(`${import.meta.env.VITE_BACKSERVER}/members/${memberId}`)
       .then((res) => {
         setMemberAuth((prev) => ({ ...prev, memberId: res.data.memberId }));
-        console.log(memberAuth);
       })
       .catch((err) => {
         console.log(err);
@@ -80,8 +79,6 @@ const ChangePw = () => {
     axios
       .patch(`${import.meta.env.VITE_BACKSERVER}/members/update-pw`, memberAuth)
       .then((res) => {
-        console.log(res);
-        console.log(memberAuth);
         Swal.fire({
           icon: "success",
           title: "변경 완료",
