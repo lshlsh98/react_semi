@@ -7,7 +7,7 @@ import { useNavigate } from "react-router-dom";
 import Swal from "sweetalert2";
 
 const ColorShop = () => {
-  const { memberId, hexCode } = useAuthStore();
+  const { memberName, memberId, hexCode } = useAuthStore();
   const [colorList, setColorList] = useState([]);
   const [selectColor, setSelectColor] = useState(null);
   const [selectColorId, setSelectColorId] = useState(null);
@@ -79,6 +79,7 @@ const ColorShop = () => {
       <CarbonContributionView memberScore={memberScore} />
       <div className={styles.color_preview}>
         <span className={styles.label}>미리보기</span>
+        <h1 style={{ color: selectColor }}>{memberName}</h1>
         <h1 style={{ color: selectColor }}>{memberId}</h1>
       </div>
       <ColorList
