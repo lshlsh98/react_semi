@@ -28,4 +28,7 @@ public class Community {
     private String hexCode;
     
     private String memberName;
+    
+    private int isLike;
+    private int isDislike;
 }

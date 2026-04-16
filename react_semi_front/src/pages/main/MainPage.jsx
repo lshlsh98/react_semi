@@ -4,6 +4,7 @@ import { Link, useNavigate } from "react-router-dom";
 import styles from "./MainPage.module.css";
 import ImageNotSupportedIcon from "@mui/icons-material/ImageNotSupported";
 import FavoriteIcon from "@mui/icons-material/Favorite";
+import useAuthStore from "../../components/utils/useAuthStore";
 
 // 시간 계산 함수 ("n분 전", "n시간 전" 표시) - 아래의 중고거래, 커뮤니티 둘다 이걸 쓰기 위해 밖에 선언
 const timeAgo = (dateString) => {
@@ -37,6 +38,8 @@ const timeAgo = (dateString) => {
 
 const MainPage = () => {
   const navigate = useNavigate();
+
+  const { memberAddr, memberId } = useAuthStore(); // 주소 활용, memberId를 백엔드에 보내서 좋아요 / 싫어요 여부 확인
 
   const [recentItems, setRecentItems] = useState([]); // 방금 올라온 물건 (최신순-중고거래)
   const [hotItems, setHotItems] = useState([]); // 핫한 물건 (조회수순-중고거래)
@@ -72,7 +75,12 @@ const MainPage = () => {
   useEffect(() => {
     // 1. 방금 올라온 따끈따끈한 물건 (order=0: 최신순, MarketListPage의 order와 동일하게 씀(안헷갈리게. 물론 메인페이지랑 마켓페이지는 아예 상관없지만 그래두 그냥))
     axios
-      .get(`${import.meta.env.VITE_BACKSERVER}/markets/main?order=0`)
+      .get(`${import.meta.env.VITE_BACKSERVER}/markets/main`, {
+        params: {
+          order: 2,
+          memberId: memberId || "",
+        },
+      })
       .then((res) => {
         setRecentItems(res.data);
       })
@@ -80,9 +88,29 @@ const MainPage = () => {
         console.log("최신 목록 로딩 실패:", err);
       });
 
-    // 2. 지금 동네에서 가장 핫한 물건 (order=2: 조회수순, 이것도 MarketListPage와 동일하게)
+    // 유저 주소 가공하기 ("서울 송파구 올림픽로 ..." -> "서울 송파구")
+    let regionKeyword = "";
+
+    // 주소가 있으면(로그인하면 당연히 있음(주소는 회원가입할때 필수라서))
+    if (memberAddr) {
+      const addrParts = memberAddr.split(" "); // 공백 기준으로 자르기
+
+      // 주소가 두 덩어리이상으로 쪼개질때(거의 무조건 쪼개짐)
+      if (addrParts.length >= 2) {
+        regionKeyword = `${addrParts[0]} ${addrParts[1]}`; // 앞의 두 단어만 합치기
+      }
+    }
+
+    // 2. 우리 동네에서 가장 핫한 물건 (order=2: 조회수순, 이것도 MarketListPage와 동일하게, 동네를 보내기 위해 regionKeyword를 보냄)
+    // 비회원이라 memberAddr이 없으면 regionKeyword가 ""(빈값)으로 가기 때문에 전체 핫한 물건이 뜸
     axios
-      .get(`${import.meta.env.VITE_BACKSERVER}/markets/main?order=2`)
+      .get(`${import.meta.env.VITE_BACKSERVER}/markets/main`, {
+        params: {
+          order: 2,
+          region: regionKeyword,
+          memberId: memberId || "",
+        },
+      })
       .then((res) => {
         setHotItems(res.data);
       })
@@ -92,7 +120,9 @@ const MainPage = () => {
 
     // 3. 커뮤니티 인기글
     axios
-      .get(`${import.meta.env.VITE_BACKSERVER}/communities/main?type=popular`)
+      .get(
+        `${import.meta.env.VITE_BACKSERVER}/communities/main?type=popular&memberId=${memberId || ""}`,
+      )
       .then((res) => {
         setPopularCommunity(res.data);
       })
@@ -102,14 +132,16 @@ const MainPage = () => {
 
     // 4. 커뮤니티 공지사항
     axios
-      .get(`${import.meta.env.VITE_BACKSERVER}/communities/main?type=notice`)
+      .get(
+        `${import.meta.env.VITE_BACKSERVER}/communities/main?type=notice&memberId=${memberId || ""}`,
+      )
       .then((res) => {
         setNoticeCommunity(res.data);
       })
       .catch((err) => {
         console.log("공지사항 로딩 실패:", err);
       });
-  }, []);
+  }, [memberAddr]); // 🚀 의존성 배열에 memberAddr 추가 (로그인/로그아웃 시 화면 즉각 갱신)
 
   return (
     <div className={styles.main_wrap}>
@@ -181,7 +213,7 @@ const MainPage = () => {
 
       {/* 2. 가장 핫한 물건 */}
       <MarketSection
-        title="지금 동네에서 가장 핫한 물건"
+        title="우리 동네에서 가장 핫한 물건"
         highlightWord="가장 핫한"
         items={hotItems}
       />
@@ -234,52 +266,70 @@ const MarketSection = ({ title, highlightWord, items }) => {
         </Link>
       </div>
 
-      <ul className={styles.card_list}>
-        {items.map((item) => (
-          <li
-            key={`main_market-${item.marketNo}`}
-            className={styles.card}
-            onClick={() => navigate(`/market/view/${item.marketNo}`)}
-          >
-            <div className={styles.img_box}>
-              {item.marketThumb ? (
-                <img
-                  src={`${import.meta.env.VITE_IMAGE_SERVER}/${item.marketThumb}`}
-                  alt={item.marketTitle}
-                />
-              ) : (
-                <div className={styles.fallback_box}>
-                  <ImageNotSupportedIcon className={styles.iconFallback} />
-                  <span>물품 사진</span>
-                </div>
-              )}
-            </div>
-
-            <div className={styles.info_box}>
-              <h3 className={styles.item_title}>{item.marketTitle}</h3>
-              <p
-                className={
-                  item.sellPrice === 0 ? styles.price_free : styles.item_price
-                }
-              >
-                {/* 아까 숫자 표기법 적용, 0원이면 무료나눔만든 formatPrice 함수*/}
-                {formatPrice(item.sellPrice)}
-              </p>
-
-              <div className={styles.meta_box}>
-                <span className={styles.time_view}>
-                  {/* timeAgo : 아까만든 시간계산함수 / 가운데 점은 ㅁ한자로 했는데(집에서) 학원에서 ㅁ한자가 조금 다르길래 그냥 구글에 가운데 점이라 치고 복붙  */}
-                  {timeAgo(item.marketDate)} · 조회수: {item.viewCount}
-                </span>
-                <span className={styles.like_count}>
-                  <FavoriteIcon className={styles.heart_icon} />
-                  {item.likeCount || 0}
-                </span>
+      {/* 데이터가 없을 때와 있을 때를 분기 처리합니다. */}
+      {items.length === 0 ? (
+        <div className={styles.empty_state}>
+          <span className="material-icons">sentiment_dissatisfied</span>
+          <p>
+            지금 우리 동네가 조용합니다.. ㅠㅠ
+            <br />
+            가장 먼저 핫한 물건을 올려보세요!
+          </p>
+        </div>
+      ) : (
+        <ul className={styles.card_list}>
+          {items.map((item) => (
+            <li
+              key={`main_market-${item.marketNo}`}
+              className={styles.card}
+              onClick={() => navigate(`/market/view/${item.marketNo}`)}
+            >
+              <div className={styles.img_box}>
+                {item.marketThumb ? (
+                  <img
+                    src={`${import.meta.env.VITE_IMAGE_SERVER}/${item.marketThumb}`}
+                    alt={item.marketTitle}
+                  />
+                ) : (
+                  <div className={styles.fallback_box}>
+                    <ImageNotSupportedIcon className={styles.iconFallback} />
+                    <span>물품 사진</span>
+                  </div>
+                )}
               </div>
-            </div>
-          </li>
-        ))}
-      </ul>
+
+              <div className={styles.info_box}>
+                <h3 className={styles.item_title}>{item.marketTitle}</h3>
+                <p
+                  className={
+                    item.sellPrice === 0 ? styles.price_free : styles.item_price
+                  }
+                >
+                  {/* 아까 숫자 표기법 적용, 0원이면 무료나눔만든 formatPrice 함수*/}
+                  {formatPrice(item.sellPrice)}
+                </p>
+
+                <div className={styles.meta_box}>
+                  <span className={styles.time_view}>
+                    {/* timeAgo : 아까만든 시간계산함수 / 가운데 점은 ㅁ한자로 했는데(집에서) 학원에서 ㅁ한자가 조금 다르길래 그냥 구글에 가운데 점이라 치고 복붙  */}
+                    {timeAgo(item.marketDate)} · 조회수: {item.viewCount}
+                  </span>
+                  <span
+                    className={styles.like_count}
+                    style={{
+                      color:
+                        item.isLike === 1 ? "var(--danger)" : "var(--gray4)",
+                    }}
+                  >
+                    <FavoriteIcon className={styles.heart_icon} />
+                    {item.likeCount || 0}
+                  </span>
+                </div>
+              </div>
+            </li>
+          ))}
+        </ul>
+      )}
     </section>
   );
 };
@@ -334,12 +384,36 @@ const CommunitySection = ({ title, items, viewType }) => {
 
               <span className={styles.divider}>|</span>
 
-              <span className={styles.like_count}>
-                <FavoriteIcon className={styles.heart_icon} />
-                {item.likeCount}
+              {/* 좋아요 */}
+              <span
+                className={styles.like_count}
+                style={{
+                  color: item.isLike === 1 ? "var(--primary)" : "var(--gray4)",
+                }}
+              >
+                <span className={`material-icons ${styles.reaction_icon}`}>
+                  thumb_up
+                </span>
+                {item.likeCount || 0}
               </span>
+
               <span className={styles.divider}>|</span>
 
+              {/* 싫어요 */}
+              <span
+                className={styles.like_count}
+                style={{
+                  color:
+                    item.isDislike === 1 ? "var(--danger)" : "var(--gray4)",
+                }}
+              >
+                <span className={`material-icons ${styles.reaction_icon}`}>
+                  thumb_down
+                </span>
+                {item.dislikeCount || 0}
+              </span>
+
+              <span className={styles.divider}>|</span>
               <span>조회수: {item.viewCount}</span>
             </div>
           </li>

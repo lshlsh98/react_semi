@@ -58,9 +58,9 @@ public class MarketController {
 
 	// 메인 페이지용 5개 리스트 조회 - 이영민
 	@GetMapping("/main")
-	public ResponseEntity<?> selectMainPageMarketList(@RequestParam Integer order) {
+	public ResponseEntity<?> selectMainPageMarketList(@RequestParam Map<String, Object> params) {
 		// 저는 totalPage가 필요없어서 마켓 리스트 객체를 따로 만들게요 - 이영민
-		List<Market> list = marketService.selectMainPageMarketList(order);
+		List<Market> list = marketService.selectMainPageMarketList(params);
 		return ResponseEntity.ok(list);
 	}
 

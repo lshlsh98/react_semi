@@ -28,7 +28,7 @@ public interface MarketDao {
 
 	int insertMarketFile(MarketFile marketFile);
 	
-	List<Market> selectMainPageMarketList(Integer order);
+	List<Market> selectMainPageMarketList(Map<String, Object> params);
 	
 	int deleteMarketFileList(List<String> deleteFilePath);
 	

@@ -188,8 +188,11 @@ public class CommunityService {
 	}
 	
 	// 메인페이지
-	public List<Community> selectMainPageCommunityList(String type) {
-		List<Community> list = communityDao.selectMainPageCommunityList(type);
+	public List<Community> selectMainPageCommunityList(String type, String memberId) {
+		Map<String, Object> map = new HashMap<>();
+	    map.put("type", type);
+	    map.put("memberId", memberId);
+		List<Community> list = communityDao.selectMainPageCommunityList(map);
 		return list;
 	}
 	

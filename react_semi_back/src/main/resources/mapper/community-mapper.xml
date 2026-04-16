@@ -30,6 +30,12 @@
 		where
 		c.community_no = cc.community_no) as comment_count,
 		(select hex_code
+		
+		<if test="memberId != null and memberId != ''">
+            , (select count(*) from community_like_tbl cl where cl.community_no = c.community_no and cl.member_id = #{memberId}) as is_like
+            , (select count(*) from community_dislike_tbl cd where cd.community_no = c.community_no and cd.member_id = #{memberId}) as is_dislike
+        </if>
+        
 		from color_tbl
 		where color_id = (select current_color_id 
 							from member_tbl
@@ -39,7 +45,7 @@
 		join member_tbl on (community_writer = member_id)
 		where
 		community_status = 1
-
+		
 		<if test="searchType==1">
 			<![CDATA[
 				and (
@@ -153,12 +159,18 @@
 		c.community_writer,
 		to_char(c.community_date, 'yyyy-mm-dd hh24:mi:ss') community_date,
 		c.view_count,
-		(select count(*)
-		from community_like_tbl l
-		where c.community_no = l.community_no) like_count
+		
+		(select count(*) from community_like_tbl l where c.community_no = l.community_no) like_count,
+		(select count(*) from community_dislike_tbl d where c.community_no = d.community_no) dislike_count
+		
+		<if test="memberId != null and memberId != ''">
+			, (select count(*) from community_like_tbl cl where cl.community_no = c.community_no and cl.member_id = #{memberId}) is_like
+			, (select count(*) from community_dislike_tbl cd where cd.community_no = c.community_no and cd.member_id = #{memberId}) is_dislike
+		</if>
+
 		from community_tbl c
-		join member_tbl m on (c.community_writer = m.member_id) where
-		c.community_status = 1
+		join member_tbl m on (c.community_writer = m.member_id) 
+		where c.community_status = 1
 
 		<if test="type == 'popular'">
 			and m.member_grade in 3

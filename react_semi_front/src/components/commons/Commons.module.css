@@ -124,7 +124,7 @@
 .footer_logo {
   font-size: 28px;
   font-weight: 800;
-  color: var(--gray5);
+  color: var(--gray4);
 }
 
 .info_text {
@@ -154,7 +154,7 @@
 .follow_text {
   font-size: 16px;
   font-weight: 700;
-  color: var(--text1);
+  color: var(--gray4);
 }
 
 .sns_icons {

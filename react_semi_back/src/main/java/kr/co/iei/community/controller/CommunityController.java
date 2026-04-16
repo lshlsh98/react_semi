@@ -75,9 +75,9 @@ public class CommunityController {
 
 	// 메인 페이지용 리스트 조회 - 이영민
 	@GetMapping(value = "/main")
-	public ResponseEntity<?> selectMainPageCommunityList(@RequestParam String type) {
+	public ResponseEntity<?> selectMainPageCommunityList(@RequestParam String type, @RequestParam(required = false) String memberId) {
 		// 저는 totalPage가 필요없어서 마켓 리스트 객체를 따로 만들게요 - 이영민
-		List<Community> list = communityService.selectMainPageCommunityList(type);
+		List<Community> list = communityService.selectMainPageCommunityList(type, memberId);
 		return ResponseEntity.ok(list);
 	}
 	

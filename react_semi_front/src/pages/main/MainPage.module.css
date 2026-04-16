@@ -143,6 +143,11 @@
   font-size: 14px !important;
 }
 
+.reaction_icon {
+  font-size: 14px !important;
+  margin-right: 3px;
+}
+
 /* 중고거래 마켓 영역 */
 .section_box {
   background-color: var(--gray8);

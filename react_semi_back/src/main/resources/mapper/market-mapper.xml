@@ -225,7 +225,7 @@
 			m.view_count,
 			m.sell_addr,
 			m.sell_price,
-			(select member_name from member_tbl where member_id = m.market_writer) member_name,
+			(select member_name from member_tbl where member_id = m.market_writer) as member_name,
 			(
 				select market_file_path
 				from (
@@ -236,21 +236,27 @@
 					)
 				where rownum = 1
 			) marketThumb,
+			
 			(select count(*) from market_like_tbl ml where ml.market_no = m.market_no) like_count
+			
+			<if test="memberId != null and memberId != ''">
+                , (select count(*) from market_like_tbl ml2 where ml2.market_no = m.market_no and ml2.member_id = #{memberId}) as is_like
+            </if>
 		from market_tbl m
-		left join member_tbl mt
-		on mt.member_id = m.market_writer
-		where m.market_status = 1 and
-		m.completed = 0
-
+		where m.market_status = 1 and m.completed = 0
+		
+        <if test="region != null and region != ''">
+			and m.sell_addr like #{region} || '%'
+		</if>
+		
 		<if test="order==0">
-			order by m.market_no desc
+		    order by m.market_no desc
 		</if>
-
+		
 		<if test="order==2">
-			order by m.view_count desc
+		    order by m.view_count desc
 		</if>
-
+	
 		offset 0 rows fetch next 5 rows only
 	</select>
 

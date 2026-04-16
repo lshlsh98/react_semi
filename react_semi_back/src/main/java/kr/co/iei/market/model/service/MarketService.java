@@ -47,8 +47,8 @@ public class MarketService {
 	}
 
 	// 메인페이지
-	public List<Market> selectMainPageMarketList(Integer order) {
-		List<Market> list = marketDao.selectMainPageMarketList(order);
+	public List<Market> selectMainPageMarketList(Map<String, Object> params) {
+		List<Market> list = marketDao.selectMainPageMarketList(params);
 		return list;
 	}
 

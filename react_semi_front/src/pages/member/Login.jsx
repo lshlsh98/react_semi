@@ -32,7 +32,6 @@ const Login = () => {
     axios
       .post(`${import.meta.env.VITE_BACKSERVER}/members/login`, member)
       .then((res) => {
-        console.log(res);
         useAuthStore.getState().login(res.data);
         axios.defaults.headers.common["Authorization"] = res.data.token;
 

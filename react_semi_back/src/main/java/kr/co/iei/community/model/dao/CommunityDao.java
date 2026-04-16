@@ -24,7 +24,7 @@ public interface CommunityDao {
 	
 	int updateCommunity(Community community);
 	
-	List<Community> selectMainPageCommunityList(String type);
+	List<Community> selectMainPageCommunityList(Map<String, Object> map);
 	
 	int selectParentCommentCount(CommunityCommentListItem req);
 	
