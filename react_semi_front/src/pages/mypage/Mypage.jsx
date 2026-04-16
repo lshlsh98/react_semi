@@ -111,7 +111,13 @@ const Profile = () => {
         )}
       </div>
       <div className={styles.profile_info}>
-        <p>{memberName}</p>
+        <p
+          style={{
+            color: hexCode || "#000",
+          }}
+        >
+          {memberName}
+        </p>
         <p
           style={{
             color: hexCode || "#000",

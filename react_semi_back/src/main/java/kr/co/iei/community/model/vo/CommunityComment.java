@@ -26,4 +26,6 @@ public class CommunityComment {
 	private Integer isDislike;		// 싫어요여부
 	   
     private String hexCode;
+    
+    private String memberName;
 }

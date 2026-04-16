@@ -19,5 +19,7 @@ public class MarketComment {
     private Integer isSecret;             // 비밀댓글 여부
     private Integer isEdited; 			  // 수정 여부 (0: 일반, 1: 수정됨)
     private String memberThumb;           // 프사 (JOIN용)
+    
     private String hexCode;
+    private String memberName;
 }

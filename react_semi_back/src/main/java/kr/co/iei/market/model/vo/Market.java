@@ -34,4 +34,6 @@ public class Market {
 	private List<String> deleteFilePath;
 	
 	private String hexCode;
+	
+	private String memberName;
 }

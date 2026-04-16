@@ -26,4 +26,6 @@ public class Community {
 	private Integer commentCount;		// 댓글 수
 	   
     private String hexCode;
+    
+    private String memberName;
 }

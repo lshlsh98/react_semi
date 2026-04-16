@@ -79,7 +79,7 @@ const MarketComment = ({ marketNo, memberId, marketWriter }) => {
     scrollToCommentTop();
   };
 
-  const { memberThumb, hexCode } = useAuthStore(); // 새 댓글 작성할때 프사뜨게 하기 위해 가져옴
+  const { memberThumb, hexCode, memberName } = useAuthStore(); // 새 댓글 작성할때 프사뜨게 하기 위해 가져옴
 
   const commentWrapRef = useRef(null); // 댓글 입력시 댓글 상단으로 스크롤하기위해 스크롤할 위치를 잡을 Ref
 
@@ -195,6 +195,7 @@ const MarketComment = ({ marketNo, memberId, marketWriter }) => {
             marketNo={marketNo} // 게시글 번호
             memberThumb={memberThumb} // 답글 작성할때 프사뜨게 하기 위해 넘겨줌
             hexCode={hexCode}
+            memberName={memberName}
           />
         ))
     );
@@ -235,7 +236,13 @@ const MarketComment = ({ marketNo, memberId, marketWriter }) => {
           )}
           <span>
             {memberId ? (
-              <Nickname member={{ memberId: memberId, hexCode: hexCode }} />
+              <Nickname
+                member={{
+                  memberId: memberId,
+                  hexCode: hexCode,
+                  memberName: memberName,
+                }}
+              />
             ) : (
               "비회원"
             )}
@@ -316,6 +323,7 @@ const CommentItem = ({
   marketNo,
   memberThumb,
   hexCode,
+  memberName,
 }) => {
   // 답글(대댓글) 작성 관련 State
   const [showReplyInput, setShowReplyInput] = useState(false); // 답글달기 입력창 열림/닫힘 여부
@@ -716,7 +724,13 @@ const CommentItem = ({
               )}
               <span>
                 {memberId ? (
-                  <Nickname member={{ memberId: memberId, hexCode: hexCode }} />
+                  <Nickname
+                    member={{
+                      memberId: memberId,
+                      hexCode: hexCode,
+                      memberName: memberName,
+                    }}
+                  />
                 ) : (
                   "비회원"
                 )}
@@ -800,6 +814,7 @@ const CommentItem = ({
               marketNo={marketNo}
               memberThumb={memberThumb}
               hexCode={hexCode}
+              memberName={memberName}
             />
           ))}
         </ul>

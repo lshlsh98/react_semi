@@ -25,6 +25,7 @@
     		mt.view_count,
     		mt.sell_addr,
     		mt.sell_price,
+    		m.member_name,
     		(
         		select count(*)
         		from market_like_tbl ml
@@ -147,6 +148,7 @@
     		m.sell_price,
     		m.completed,
     		m.completed_date,
+    		(select member_name from member_tbl where member_id = m.market_writer) member_name,
 		    (select count(*) 
      		from market_like_tbl 
      		where market_no = m.market_no) as like_count,
@@ -226,6 +228,7 @@
 			m.view_count,
 			m.sell_addr,
 			m.sell_price,
+			(select member_name from member_tbl where member_id = m.market_writer) member_name,
 			(
 				select market_file_path
 				from (
@@ -274,7 +277,7 @@
 		    t.market_recomment_no, 
 		    t.is_secret, 
 		    t.is_edited,
-		    m.member_thumb,
+		    m.member_name, m.member_thumb,
 		    (
 	  			select hex_code
 				from color_tbl

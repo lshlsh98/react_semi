@@ -11,6 +11,7 @@
 		to_char(community_date, 'yyyy-mm-dd hh24:mi:ss') as
 		community_date,
 		view_count,
+		member_name,
 		member_thumb,
 		member_grade,
 		(select count(*)
@@ -122,6 +123,7 @@
 			community_content,
 			community_writer,
 			view_count,
+			member_name,
 			member_thumb,
 			to_char(community_date,'yyyy-mm-dd') as community_date,
 			(select hex_code
@@ -185,7 +187,7 @@
 		    to_char(t.community_comment_date, 'yyyy-mm-dd hh24:mi:ss') community_comment_date,
 		    t.community_recomment_no, 
 		    t.is_edited,
-		    m.member_thumb,
+		    m.member_name, m.member_thumb,
 		    (select count(*) from community_comment_like_tbl cl where cl.community_comment_no = t.community_comment_no) like_count,
 		    (select count(*) from community_comment_dislike_tbl cd where cd.community_comment_no = t.community_comment_no) dislike_count,
 		    <!-- 현재 로그인한 사람이 좋아요/싫어요를 눌렀는지 판별 (memberId 활용) -->
