@@ -8,7 +8,7 @@
 		community_title,
 		community_content,
 		community_writer,
-		to_char(community_date, 'yyyy-mm-dd') as
+		to_char(community_date, 'yyyy-mm-dd hh24:mi:ss') as
 		community_date,
 		view_count,
 		member_thumb,
@@ -27,7 +27,13 @@
 		(select count(*)
 		from community_comment_tbl cc
 		where
-		c.community_no = cc.community_no) as comment_count
+		c.community_no = cc.community_no) as comment_count,
+		(select hex_code
+		from color_tbl
+		where color_id = (select current_color_id 
+							from member_tbl
+							where member_id = community_writer))
+		as hex_code
 		from community_tbl c
 		join member_tbl on (community_writer = member_id)
 		where
@@ -117,7 +123,13 @@
 			community_writer,
 			view_count,
 			member_thumb,
-			to_char(community_date,'yyyy-mm-dd') as community_date
+			to_char(community_date,'yyyy-mm-dd') as community_date,
+			(select hex_code
+			from color_tbl
+			where color_id = (select current_color_id 
+								from member_tbl
+								where member_id = community_writer))
+			as hex_code
 		from community_tbl
 		join member_tbl on
 		(community_writer = member_id)
@@ -177,7 +189,13 @@
 		    (select count(*) from community_comment_dislike_tbl cd where cd.community_comment_no = t.community_comment_no) dislike_count,
 		    <!-- 현재 로그인한 사람이 좋아요/싫어요를 눌렀는지 판별 (memberId 활용) -->
 		    (select count(*) from community_comment_like_tbl cl where cl.community_comment_no = t.community_comment_no and cl.member_id = #{memberId}) is_like,
-		    (select count(*) from community_comment_dislike_tbl cd where cd.community_comment_no = t.community_comment_no and cd.member_id = #{memberId}) is_dislike
+		    (select count(*) from community_comment_dislike_tbl cd where cd.community_comment_no = t.community_comment_no and cd.member_id = #{memberId}) is_dislike,
+		    (select hex_code
+			from color_tbl
+			where color_id = (select current_color_id 
+								from member_tbl
+								where member_id = community_comment_writer))
+			as hex_code
 		from (
 		    select * from community_comment_tbl where community_no = #{communityNo}
 		    

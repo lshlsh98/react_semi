@@ -6,7 +6,11 @@ const Nickname = ({ member }) => {
         color: activeColor,
       }}
     >
-      {member.memberId}
+      {member.memberId ||
+        member.communityWriter ||
+        member.marketWriter ||
+        member.communityCommentWriter ||
+        member.marketCommentWriter}
     </span>
   );
 };

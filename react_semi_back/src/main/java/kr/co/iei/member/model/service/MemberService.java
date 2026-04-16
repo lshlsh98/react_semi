@@ -38,7 +38,6 @@ public class MemberService {
 
 	public Member selectOneMember(String memberId) {
 		Member m = memberDao.selectOneMember(memberId);
-		System.out.println(m);
 		return m;
 	}
 
@@ -50,7 +49,7 @@ public class MemberService {
 			login.setMemberThumb(loginMember.getMemberThumb());
 			login.setMemberName(loginMember.getMemberName());
 			login.setMemberAddr(loginMember.getMemberAddr());	//마켓게시판 글 작성시 불러올 주소정보 추가 : 한진호
-			login.setCurrentColorId(loginMember.getCurrentColorId());
+			login.setHexCode(loginMember.getHexCode());
 			return login;
 		}
 		return null;

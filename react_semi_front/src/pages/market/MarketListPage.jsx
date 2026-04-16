@@ -7,6 +7,7 @@ import Pagination from "../../components/ui/Pagination";
 import Button from "../../components/ui/Button";
 import ImageNotSupportedIcon from "@mui/icons-material/ImageNotSupported";
 import FavoriteIcon from "@mui/icons-material/Favorite";
+import Nickname from "../../components/commons/Nickname";
 
 const MarketListPage = () => {
   const navigate = useNavigate();
@@ -253,7 +254,9 @@ const MarketItem = ({ market }) => {
             {formatPrice(market.sellPrice)}
           </p>
           <p className={styles.info_date}>{timeAgo(market.marketDate)}</p>
-          <p className={styles.info_writer}>{market.marketWriter}</p>
+          <p className={styles.info_writer}>
+            <Nickname member={market} />
+          </p>
           <span className={styles.info_likeCount}>
             <FavoriteIcon className={styles.info_likeCount_icon} />
             {market.likeCount}

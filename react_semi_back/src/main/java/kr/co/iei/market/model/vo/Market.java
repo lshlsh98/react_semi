@@ -32,4 +32,6 @@ public class Market {
 	private Integer isRequest;		//거래 요청여부
 	private List<MarketFile> fileList;
 	private List<String> deleteFilePath;
+	
+	private String hexCode;
 }

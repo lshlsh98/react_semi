@@ -45,7 +45,14 @@
             			order by mf.market_file_no asc
         			)
         			where rownum = 1
-  			  ) as marketThumb
+  			  ) as marketThumb,
+  			 (
+	  			select hex_code
+				from color_tbl
+				where color_id = (select current_color_id 
+									from member_tbl
+									where member_id = market_writer))
+			as hex_code
 		from market_tbl mt
 		join member_tbl m on (mt.market_writer = m.member_id)
 		where market_status = #{status}
@@ -142,7 +149,14 @@
     		m.completed_date,
 		    (select count(*) 
      		from market_like_tbl 
-     		where market_no = m.market_no) as like_count
+     		where market_no = m.market_no) as like_count,
+     		(
+	  			select hex_code
+				from color_tbl
+				where color_id = (select current_color_id 
+									from member_tbl
+									where member_id = market_writer))
+			as hex_code
 	    <if test="memberId != null">
         	,(select count(*) 
         	from market_like_tbl 
@@ -259,7 +273,14 @@
 		    t.market_recomment_no, 
 		    t.is_secret, 
 		    t.is_edited,
-		    m.member_thumb
+		    m.member_thumb,
+		    (
+	  			select hex_code
+				from color_tbl
+				where color_id = (select current_color_id 
+									from member_tbl
+									where member_id = market_comment_writer))
+			as hex_code
 		from (
 		    select * from market_comment_tbl where market_no = #{marketNo}
 		    

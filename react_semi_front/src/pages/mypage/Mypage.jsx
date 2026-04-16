@@ -90,8 +90,7 @@ const Profile = () => {
       .get(`${import.meta.env.VITE_BACKSERVER}/members/${memberId}`)
       .then((res) => {
         setMember(res.data);
-        console.log(11);
-        console.log(res.data);
+        console.log(res.data.hexCode);
       })
       .catch((err) => {
         console.log(err);

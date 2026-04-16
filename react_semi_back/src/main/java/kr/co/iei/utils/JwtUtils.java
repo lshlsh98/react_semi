@@ -40,7 +40,6 @@ public class JwtUtils {
 							.claim("memberId", memberId)		// 토큰에 포함 될 부가정보
 							.claim("memberGrade", memberGrade)	// 토큰에 포함 될 부가정보
 							.claim("memberAddr", memberAddr)
-							.claim("currentColorId", integer)
 							.claim("hexCode", hexCode)
 							.compact();							// 생성
 		
@@ -50,6 +49,7 @@ public class JwtUtils {
 		login.setMemberAddr(memberAddr);
 		login.setToken(token);
 		login.setEndTime(c.getTimeInMillis());
+		login.setHexCode(hexCode);
 		
 		return login;
 	}//
@@ -66,11 +66,13 @@ public class JwtUtils {
 		String memberId = (String) claims.get("memberId");
 		Integer memberGrade = (Integer) claims.get("memberGrade");
 		String memberAddr = (String) claims.get("memberAddr");
+		String hexCode = (String) claims.get("hexCode");
 		
 		LoginMember login = new LoginMember();
 		login.setMemberId(memberId);
 		login.setMemberGrade(memberGrade);
 		login.setMemberAddr(memberAddr);
+		login.setHexCode(hexCode);
 		
 		return login;
 	}//
