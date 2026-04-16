@@ -81,4 +81,6 @@ public interface MypageDao {
 	List<Color> selectColorList();
 
 	int updateCurrentColor(MemberColor memberColor);
+
+	int updateMemberScore(MemberColor memberColor);
 }

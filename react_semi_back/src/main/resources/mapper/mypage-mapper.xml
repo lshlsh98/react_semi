@@ -1002,6 +1002,12 @@
 		from color_tbl
 	</select>
 	
+	<update id="updateMemberScore">
+		update member_tbl
+		set member_score = member_score - 1000
+		where member_id = #{memberId}
+	</update>
+	
 	<update id="updateCurrentColor">
 		update member_tbl
 		set current_color_id = #{colorId}
