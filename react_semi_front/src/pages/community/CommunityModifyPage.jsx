@@ -303,16 +303,14 @@ const MenuBar = ({ editor }) => {
 
 const TextEditor = ({ data, setData }) => {
   const [contentLength, setContentLength] = useState(0);
-  //console.log(data);
-
   const lastValidHTMLRef = useRef("");
+
   const editor = useEditor({
     extensions: [
       StarterKit.configure({
         paragraph: {
-          // 이 설정이 있어야 연속된 공백이 데이터에서 사라지지 않습니다.
           HTMLAttributes: {
-            class: "tiptap-paragraph", // 클래스를 부여해서 관리
+            class: "tiptap-paragraph",
           },
         },
       }),
@@ -324,63 +322,46 @@ const TextEditor = ({ data, setData }) => {
         defaultAlignment: "left",
       }),
     ],
-    content: data /* 에디터의 글자수를 제한 */,
-    editorProps: {
-      attributes: {
-        class: styles.prose_mirror_custom, // CSS 클래스로 제어하거나
-        style: "white-space: pre-wrap; word-break: break-all;", // 여기서 스타일 직접 주입
-      },
-      handleTextInput(view, from, to, text) {
-        const currentHTML = view.dom.innerHTML;
-        const newHTML = currentHTML + text;
+    content: data,
 
-        const length = new TextEncoder().encode(newHTML).length;
-        if (length > 4000) {
-          alert("4,000자를 초과함");
-          return true; // 입력 막기
-        }
-        return false;
-      },
-
-      handleKeyDown(view, event) {
-        if (event.key === "Enter") {
-          const html = view.dom.innerHTML;
-          const length = new TextEncoder().encode(html).length;
-          console.log(length);
-          if (length > 4000) {
-            alert("최대 4,000자까지 입력 가능합니다.");
-            return true;
-          }
-        }
-        return false;
-      },
-    },
     onUpdate: ({ editor }) => {
-      const textLength = editor.getText().length;
+      const text = editor.getText();
+
+      // 🔥 개행 보정 (핵심)
+      const normalizedText = text.replace(/\n\n/g, "\n");
+      const textLength = normalizedText.length;
 
       setContentLength(textLength);
-      setData(editor.getHTML());
 
-      if (length > 4000) {
-        editor.commands.undo();
+      if (textLength > 4000) {
+        alert("최대 4,000자까지 입력 가능합니다.");
 
-        alert("4,000자 초과");
+        // 이전 상태 복구
+        editor.commands.setContent(lastValidHTMLRef.current);
         return;
       }
+
+      // 정상 상태 저장
+      lastValidHTMLRef.current = editor.getHTML();
+
+      setData(editor.getHTML());
     },
   });
+
   const isSet = useRef(false);
 
   useEffect(() => {
     if (editor && data && !isSet.current) {
       editor.commands.setContent(data);
 
-      const text = editor.getText().trim();
+      const text = editor.getText().replace(/\n\n/g, "\n");
       setContentLength(text.length);
 
       isSet.current = true;
+      lastValidHTMLRef.current = data;
     }
   }, [editor, data]);
+
   return (
     <div className={styles.editor_wrap}>
       <MenuBar editor={editor} />
