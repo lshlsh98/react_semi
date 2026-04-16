@@ -24,4 +24,8 @@ public class CommunityComment {
 	private Integer dislikeCount;	// 싫어요수
 	private Integer isLike;			// 좋아요여부
 	private Integer isDislike;		// 싫어요여부
+	   
+    private String hexCode;
+    
+    private String memberName;
 }

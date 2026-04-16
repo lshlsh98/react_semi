@@ -15,6 +15,7 @@ import ThumbUpOffAltIcon from "@mui/icons-material/ThumbUpOffAlt";
 import ThumbDownAltIcon from "@mui/icons-material/ThumbDownAlt";
 import ThumbDownOffAltIcon from "@mui/icons-material/ThumbDownOffAlt";
 import CommunityComment from "../../components/community/CommunityComment";
+import Nickname from "../../components/commons/Nickname";
 const CommunityViewPage = () => {
   const navigate = useNavigate();
   const params = useParams();
@@ -89,7 +90,7 @@ const CommunityViewPage = () => {
                       <span className="material-icons">account_circle</span>
                     )}
                   </div>
-                  <span>{community.communityWriter}</span>
+                  <Nickname member={community} />
                 </div>
                 <div className={styles.community_date}>
                   <CalendarMonthIcon className={styles.icon} />

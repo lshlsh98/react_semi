@@ -1035,7 +1035,7 @@
 		            from community_tbl c
 		            left join community_like_tbl cl
 		                on c.community_no = cl.community_no
-		            where c.community_writer = #{memberId}
+		            where c.community_writer = #{memberId} and community_status = 1
 		            group by 
 		                c.community_no, c.community_title, c.view_count, c.community_date
 		
@@ -1052,7 +1052,7 @@
 		            from market_tbl m
 		            left join market_like_tbl ml
 		                on m.market_no = ml.market_no
-		            where m.market_writer = #{memberId}
+		            where m.market_writer = #{memberId} and m.market_status = 1 and m.completed = 0
 		            group by 
 		                m.market_no, m.market_title, m.view_count, m.market_date
 		        )
@@ -1063,4 +1063,20 @@
 		]]>
 	</select>
 	
+	<select id ="selectColorList" resultType="color">
+		select * 
+		from color_tbl
+	</select>
+	
+	<update id="updateMemberScore">
+		update member_tbl
+		set member_score = member_score - 1000
+		where member_id = #{memberId}
+	</update>
+	
+	<update id="updateCurrentColor">
+		update member_tbl
+		set current_color_id = #{colorId}
+		where member_id = #{memberId}
+	</update>
 </mapper>

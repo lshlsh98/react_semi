@@ -224,7 +224,7 @@
 .text_count {
   font-size: 13px;
   color: var(--gray3);
-  text-align: right; /* 👉 오른쪽 정렬 (UX 좋음) */
+  text-align: right;
 }
 
 /* 1000 도달 시 */

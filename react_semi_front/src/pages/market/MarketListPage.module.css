@@ -14,15 +14,18 @@ ol {
 /* 검색창 정렬박스 */
 .market_searchbox {
   margin: 12px 0;
-  background-color: transparent;
   display: flex;
   justify-content: center;
   position: fixed;
   top: 150px;
 }
-.market_searchbox:hover {
-  background-color: white;
+.market_searchbox div {
+  background-color: var(--light);
 }
+.market_searchbox input {
+  background-color: var(--light);
+}
+
 .market_searchbox > form {
   width: 900px;
   display: flex;
@@ -30,11 +33,11 @@ ol {
   justify-content: center;
 }
 .market_searchbox select {
-  padding: 10px;
+  padding: 100px;
   appearance: none;
   border-radius: 4px;
   padding-right: 30px;
-  border: 1px solid var(--primary);
+
   outline: none;
   color: var(--line);
 }

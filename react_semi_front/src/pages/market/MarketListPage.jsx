@@ -8,6 +8,7 @@ import Button from "../../components/ui/Button";
 import ImageNotSupportedIcon from "@mui/icons-material/ImageNotSupported";
 import FavoriteIcon from "@mui/icons-material/Favorite";
 import BasicSelect from "../../components/ui/BasicSelect";
+import Nickname from "../../components/commons/Nickname";
 
 const MarketListPage = () => {
   const navigate = useNavigate();
@@ -110,7 +111,14 @@ const MarketListPage = () => {
                 setPage(0);
               }}
               list={orderList}
-            />
+            >
+              <option value={0}>최신순</option>
+              <option value={1}>작성순</option>
+              <option value={2}>조회수</option>
+              <option value={3}>좋아요</option>
+              <option value={4}>금액순</option>
+              <option value={5}>지역순</option>
+            </BasicSelect>
 
             <BasicSelect
               state={size}
@@ -253,7 +261,9 @@ const MarketItem = ({ market }) => {
             {formatPrice(market.sellPrice)}
           </p>
           <p className={styles.info_date}>{timeAgo(market.marketDate)}</p>
-          <p className={styles.info_writer}>{market.marketWriter}</p>
+          <p className={styles.info_writer}>
+            <Nickname member={market} />
+          </p>
           <span className={styles.info_likeCount}>
             <FavoriteIcon className={styles.info_likeCount_icon} />
             {market.likeCount}

@@ -24,6 +24,8 @@ import org.springframework.web.multipart.MultipartFile;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import kr.co.iei.market.model.dto.MarketCreateResponse;
+import kr.co.iei.market.model.dto.MarketResponse;
 import kr.co.iei.market.model.service.MarketService;
 import kr.co.iei.market.model.vo.CommentListItem;
 import kr.co.iei.market.model.vo.ListItem;
@@ -34,8 +36,9 @@ import kr.co.iei.market.model.vo.MarketCommentReport;
 import kr.co.iei.market.model.vo.MarketFile;
 import kr.co.iei.market.model.vo.MarketReport;
 import kr.co.iei.market.model.vo.TradeRequest;
-
+import kr.co.iei.member.model.vo.LoginMember;
 import kr.co.iei.utils.FileUtils;
+import kr.co.iei.utils.JwtUtils;
 
 @CrossOrigin(origins = "http://localhost:5173", allowCredentials = "true")
 @RestController
@@ -46,6 +49,8 @@ public class MarketController {
 	private MarketService marketService;
 	@Value("${file.root}")
 	private String root;
+	@Autowired
+	private JwtUtils jwtutil;
 	@Autowired
 	private FileUtils fileUtil;
 	private int cookieTime = 60 * 5; // 쿠키 시간설정 5분
@@ -98,18 +103,17 @@ public class MarketController {
 
 	
 	/// 마켓게시판 등록 (Markets) Create : 한진호
-	@PostMapping
-	public ResponseEntity<?> insertMarket(
+	@PostMapping	// 매핑 : /markets
+	public ResponseEntity<MarketResponse<MarketCreateResponse>> insertMarket(
 			@RequestHeader(required = false, name = "Authorization") String token,
 			@ModelAttribute Market market,
 			@RequestParam List<MultipartFile> files) {
-		Map<String, Object> serviceResponse = marketService.insertMarketComment(token,market,files);
-		
-		return ResponseEntity.ok(serviceResponse);
+		MarketResponse<MarketCreateResponse> result = marketService.insertMarket(token, market, files);
+		return ResponseEntity.ok(result);
 	}
-
+ 
 	/// 마켓게시판 조회 (Markets) Read_list : 한진호
-	@GetMapping
+	@GetMapping		// 매핑 : /markets
 	public ResponseEntity<?> selectMarketList(@ModelAttribute ListItem request) {
 		ListResponse response = marketService.selectMarketList(request);
 		return ResponseEntity.ok(response);
@@ -120,7 +124,8 @@ public class MarketController {
 	public ResponseEntity<?> selectOneMarket(@PathVariable Integer marketNo,
 			@RequestHeader(required = false, name = "Authorization") String token, HttpServletRequest request,
 			HttpServletResponse response) {
-
+		
+		
 		Market m = marketService.selectOneMarket(marketNo, token);
 		if (m == null) {
 			return ResponseEntity.notFound().build();
@@ -167,10 +172,8 @@ public class MarketController {
 	/// 마켓게시판 수정 (Markets/{marketNo}) Update : 한진호
 	@PatchMapping(value="/{marketNo}")
 	public ResponseEntity<?> updateOneMarket(@ModelAttribute Market market, @ModelAttribute List<MultipartFile> files){
-		System.out.println("자바 연결 성공");
-		System.out.println(market);
-		System.out.println(files);
-		return ResponseEntity.ok(1);
+		int result = marketService.updateOneMarket(market,files);
+		return ResponseEntity.ok(result);
 	}
 	
 	/// 마켓게시판 삭제 (Markets/{marketNo}) Delete : 한진호
@@ -252,7 +255,7 @@ public class MarketController {
 	}
 
 	/// 마켓게시판-거래요청-등록 (Markets/{marketNo}/requests) Create : 한진호
-	@PostMapping(value = "{marketNo}/request")
+	@PostMapping(value = "/{marketNo}/request")
 	public ResponseEntity<?> tradeRequest(@RequestBody TradeRequest request) {
 		int result = marketService.tradeRequest(request);
 		return ResponseEntity.ok(result);
@@ -269,7 +272,7 @@ public class MarketController {
 
 	/// 마켓게시판-거래요청-수정 (Markets/{marketNo}/requests/{BuyerId}) Update : 한진호
 	// 거래확정
-	@PatchMapping(value = "{marketNo}/complete/{buyerId}")
+	@PatchMapping(value = "/{marketNo}/complete/{buyerId}")
 	public ResponseEntity<?> tradeComplete(@PathVariable Integer marketNo, @PathVariable String buyerId) {
 		System.out.println("\n거래번호 : " + marketNo);
 		System.out.println("구매자아이디" + buyerId);

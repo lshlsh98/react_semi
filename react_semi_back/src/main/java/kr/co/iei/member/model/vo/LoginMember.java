@@ -15,4 +15,5 @@ public class LoginMember {
     private String memberThumb;
     private String memberAddr;
     private Long endTime;
+	private String hexCode;
 }

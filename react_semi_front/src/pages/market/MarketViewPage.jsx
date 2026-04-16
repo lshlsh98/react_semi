@@ -11,7 +11,7 @@ import withReactContent from "sweetalert2-react-content";
 import MarketComment from "../../components/market/MarketComment";
 import { Modal, Box, IconButton } from "@mui/material"; // IconButton 추가
 import { ChevronLeft, ChevronRight, Close } from "@mui/icons-material";
-import MarketMap from "./MarketMap";
+import MarketMap from "../../components/market/MarketMap";
 
 /* 날짜아이콘 */
 import CalendarTodayIcon from "@mui/icons-material/CalendarToday";
@@ -21,6 +21,7 @@ import VisibilityIcon from "@mui/icons-material/Visibility";
 import PersonIcon from "@mui/icons-material/Person";
 /*좋아요 아이콘 */
 import FavoriteIcon from "@mui/icons-material/Favorite";
+import Nickname from "../../components/commons/Nickname";
 
 const MarketViewPage = () => {
   const navigate = useNavigate();
@@ -28,7 +29,6 @@ const MarketViewPage = () => {
   const params = useParams();
   const marketNo = params.marketNo;
   const MySwal = withReactContent(Swal);
-
   const [market, setMarket] = useState(null);
   const imgUrl = "http://192.168.31.24:9999/market";
 
@@ -579,7 +579,7 @@ const MarketViewPage = () => {
                       width: "100%",
                       height: "100%",
                       objectFit: "cover",
-                      borderRadius: "12px",
+                      borderRadius: "8px",
                     }}
                     onClick={() => handleOpen(index)}
                   />
@@ -682,19 +682,6 @@ const MarketViewPage = () => {
               </Button>
             </div>
           )}
-          {market.marketStatus === 2 && (
-            <div className={styles.hidden_market}>
-              <p>숨겨진 게시물 입니다.</p>
-              <Button
-                className="btn primary"
-                onClick={() => {
-                  navigate("/market");
-                }}
-              >
-                다른 상품 보러가기
-              </Button>
-            </div>
-          )}
 
           <div className={styles.title_info}>
             <p className={styles.title_info_title}>{market.marketTitle}</p>
@@ -708,7 +695,9 @@ const MarketViewPage = () => {
               >
                 {formatPrice(market.sellPrice)}
               </p>
-              <p className={styles.title_info_writer}>{market.marketWriter}</p>
+              <p className={styles.title_info_writer}>
+                <Nickname member={market} />
+              </p>
             </div>
 
             <div className={styles.date_view_like}>

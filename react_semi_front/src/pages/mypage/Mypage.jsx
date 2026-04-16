@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import styles from "./Mypage.module.css";
 import { NavLink, Route, Routes, useNavigate } from "react-router-dom";
 import MemberInfo from "../../components/mypage/MemberInfo";
@@ -15,10 +15,12 @@ import MemberManagement from "../../components/mypage/MemberManagement";
 import MemberInfoManagement from "../../components/mypage/MemberInfoManagement";
 import CarbonContribution from "../../components/mypage/CarbonContribution";
 import MypageMain from "../../components/mypage/MypageMain";
+import ColorShop from "../../components/mypage/ColorShop";
+import axios from "axios";
+import Nickname from "../../components/commons/Nickname";
 const Mypage = () => {
   const navigate = useNavigate();
   const { memberId, isReady, isNotLogout } = useAuthStore();
-  console.log(useAuthStore());
 
   if (isReady && memberId == null && !isNotLogout) {
     Swal.fire({
@@ -71,6 +73,7 @@ const Mypage = () => {
               path="carbon-contribution"
               element={<CarbonContribution />}
             ></Route>
+            <Route path="color-shop" element={<ColorShop />}></Route>
           </Routes>
         </div>
       </div>
@@ -79,7 +82,21 @@ const Mypage = () => {
 };
 
 const Profile = () => {
-  const { memberId, memberName, memberThumb } = useAuthStore();
+  const { memberId, memberName, memberThumb, hexCode } = useAuthStore();
+  const [member, setMember] = useState();
+
+  useEffect(() => {
+    axios
+      .get(`${import.meta.env.VITE_BACKSERVER}/members/${memberId}`)
+      .then((res) => {
+        setMember(res.data);
+        console.log(res.data.hexCode);
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  }, []);
+
   return (
     <section className={styles.sidebar}>
       <div
@@ -94,8 +111,20 @@ const Profile = () => {
         )}
       </div>
       <div className={styles.profile_info}>
-        <p>{memberName}</p>
-        <p>{memberId}</p>
+        <p
+          style={{
+            color: hexCode || "#000",
+          }}
+        >
+          {memberName}
+        </p>
+        <p
+          style={{
+            color: hexCode || "#000",
+          }}
+        >
+          {memberId}
+        </p>
       </div>
     </section>
   );
@@ -245,12 +274,23 @@ const SideBar = () => {
         <NavLink to="/member/mypage/carbon-contribution">
           <li
             onClick={() => {
-              setSelectMenu("Contribution");
+              setSelectMenu("carbonContribution");
               setOpenMenu(null);
             }}
-            className={selectMenu === "Contribution" ? styles.active : ""}
+            className={selectMenu === "carbonContribution" ? styles.active : ""}
           >
             나의 탄소 기여도
+          </li>
+        </NavLink>
+        <NavLink to="/member/mypage/color-shop">
+          <li
+            onClick={() => {
+              setSelectMenu("colorShop");
+              setOpenMenu(null);
+            }}
+            className={selectMenu === "colorShop" ? styles.active : ""}
+          >
+            닉네임 색상 상점
           </li>
         </NavLink>
       </ul>

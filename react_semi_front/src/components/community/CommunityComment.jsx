@@ -6,6 +6,7 @@ import Swal from "sweetalert2";
 import useAuthStore from "../utils/useAuthStore";
 import Pagination from "../../components/ui/Pagination";
 import BasicSelect from "../../components/ui/BasicSelect";
+import Nickname from "../commons/Nickname";
 
 // 메인페이지의 함수 그대로 가져옴
 const timeAgo = (dateString) => {
@@ -66,7 +67,7 @@ const CommunityComment = ({ communityNo, memberId, communityWriter }) => {
     scrollToCommentTop();
   };
 
-  const { memberThumb } = useAuthStore(); // 새 댓글 작성할때 프사뜨게 하기 위해 가져옴
+  const { memberThumb, hexCode } = useAuthStore(); // 새 댓글 작성할때 프사뜨게 하기 위해 가져옴
 
   const commentWrapRef = useRef(null); // 댓글 입력시 댓글 상단으로 스크롤하기위해 스크롤할 위치를 잡을 Ref
 
@@ -179,6 +180,7 @@ const CommunityComment = ({ communityNo, memberId, communityWriter }) => {
             allComments={commentList} // 자식이 자기 밑에 달린 답글 찾을 수 있게 전체 리스트도 넘겨줌
             communityNo={communityNo} // 게시글 번호
             memberThumb={memberThumb} // 답글 작성할때 프사뜨게 하기 위해 넘겨줌
+            hexCode={hexCode}
           />
         ))
     );
@@ -211,7 +213,13 @@ const CommunityComment = ({ communityNo, memberId, communityWriter }) => {
           ) : (
             <span className="material-icons">account_circle</span>
           )}
-          <span>{memberId ? memberId : "비회원"}</span>
+          <span>
+            {memberId ? (
+              <Nickname member={{ memberId: memberId, hexCode: hexCode }} />
+            ) : (
+              "비회원"
+            )}
+          </span>
         </div>
 
         <textarea
@@ -265,6 +273,7 @@ const CommunityComment = ({ communityNo, memberId, communityWriter }) => {
 const CommentItem = ({
   comment,
   memberId,
+  hexCode,
   fetchComments, // 부모가 준 렌더링 함수
   allComments, // 전체 댓글 리스트, commentList로 하고 싶었는데 위에서 한번 쓴 변수명이니 혹시몰라 이렇게..
   communityNo,
@@ -608,7 +617,7 @@ const CommentItem = ({
             <span className="material-icons">account_circle</span>
           )}
           <span className={styles.writer_id}>
-            {comment.communityCommentWriter}
+            <Nickname member={comment} />
           </span>
           <span className={styles.comment_date}>
             {timeAgo(comment.communityCommentDate)}
@@ -742,7 +751,13 @@ const CommentItem = ({
               ) : (
                 <span className="material-icons">account_circle</span>
               )}
-              <span>{memberId ? memberId : "비회원"}</span>
+              <span>
+                {memberId ? (
+                  <Nickname member={{ memberId: memberId, hexCode: hexCode }} />
+                ) : (
+                  "비회원"
+                )}
+              </span>
             </div>
             <textarea
               className={styles.comment_textarea}
@@ -805,6 +820,7 @@ const CommentItem = ({
               allComments={allComments}
               communityNo={communityNo}
               memberThumb={memberThumb}
+              hexCode={hexCode}
             />
           ))}
         </ul>
