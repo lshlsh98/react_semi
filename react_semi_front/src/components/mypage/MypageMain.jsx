@@ -216,7 +216,17 @@ const MyPost = ({ title, memberId, myPost, timeAgo }) => {
             <li
               key={`my-post-${post.rn}`}
               className={styles.comm_card}
-              onClick={() => navigate(`/community/view/${post.communityNo}`)}
+              onClick={async () => {
+                try {
+                  await axios.patch(
+                    `${import.meta.env.VITE_BACKSERVER}/communities/view/${post.communityNo}`,
+                    post,
+                  );
+                } catch (e) {
+                  console.error(e);
+                }
+                navigate(`/community/view/${post.communityNo}`);
+              }}
             >
               <h3 className={styles.comm_item_title}>
                 {post.rn}. [커뮤니티] {post.communityTitle}
