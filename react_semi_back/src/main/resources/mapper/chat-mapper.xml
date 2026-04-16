@@ -103,7 +103,6 @@
 			r.my_name,
 			r.other_name,
 			r.market_no
-			
 		FROM chat_participant p
 		INNER JOIN chat_room r
 			ON (p.chat_room_id = r.id)

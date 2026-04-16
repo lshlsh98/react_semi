@@ -23,7 +23,6 @@ const ColorShop = () => {
     axios
       .get(`${import.meta.env.VITE_BACKSERVER}/mypages/color`)
       .then((res) => {
-        console.log(res.data);
         setColorList(res.data);
       })
       .catch((err) => {

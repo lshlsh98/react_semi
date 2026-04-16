@@ -37,7 +37,6 @@ const CarbonContribution = () => {
       .then((res) => {
         setCarbonContributionList(res.data.items);
         setTotalPage(res.data.totalPage);
-        console.log(res.data);
       })
       .catch((err) => {
         console.log(err);

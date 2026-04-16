@@ -55,7 +55,6 @@ const MypageMain = () => {
       .get(`${import.meta.env.VITE_BACKSERVER}/mypages/today/${memberId}`)
       .then((res) => {
         console.log(res);
-        setData(res.data);
       })
       .catch((err) => {
         console.log(err);
@@ -74,7 +73,6 @@ const MypageMain = () => {
       .get(`${import.meta.env.VITE_BACKSERVER}/mypages/my-best/${memberId}`)
       .then((res) => {
         setMyBestPost(res.data);
-        console.log(res.data);
       })
       .catch((err) => {
         console.log(err);
@@ -84,7 +82,6 @@ const MypageMain = () => {
       .get(`${import.meta.env.VITE_BACKSERVER}/mypages/my-recent/${memberId}`)
       .then((res) => {
         setMyRecentPost(res.data);
-        console.log(res.data);
       })
       .catch((err) => {
         console.log(err);
@@ -183,73 +180,80 @@ const MyPost = ({ title, memberId, myPost, timeAgo }) => {
       <div className={styles.section_header}>
         <h2 className={styles.title}>{title}</h2>
       </div>
+
       <ul className={styles.comm_list}>
-        {myPost.map((post) =>
-          post.communityNo === 0 ? (
-            <li
-              key={`my-post-${post.rn}`}
-              className={styles.comm_card}
-              onClick={() => navigate(`/market/view/${post.marketNo}`)}
-            >
-              <h3 className={styles.comm_item_title}>
-                {post.rn}. [중고거래] {post.marketTitle}
-              </h3>
+        {myPost.length === 0 ? (
+          <li className={styles.comm_card_none}>
+            <p>활동이 없습니다</p>
+          </li>
+        ) : (
+          myPost.map((post) =>
+            post.communityNo === 0 ? (
+              <li
+                key={`my-post-${post.rn}`}
+                className={styles.comm_card}
+                onClick={() => navigate(`/market/view/${post.marketNo}`)}
+              >
+                <h3 className={styles.comm_item_title}>
+                  {post.rn}. [중고거래] {post.marketTitle}
+                </h3>
 
-              <div className={styles.comm_meta_box}>
-                <span className={styles.writer}>작성자: {memberId}</span>
-                <span className={styles.divider}>|</span>
+                <div className={styles.comm_meta_box}>
+                  <span className={styles.writer}>작성자: {memberId}</span>
+                  <span className={styles.divider}>|</span>
 
-                <span>{timeAgo(post.postDate)}</span>
+                  <span>{timeAgo(post.postDate)}</span>
 
-                <span className={styles.divider}>|</span>
+                  <span className={styles.divider}>|</span>
 
-                <span className={styles.like_count}>
-                  <FavoriteIcon className={styles.heart_icon} />
-                  {post.likeCount}
-                </span>
-                <span className={styles.divider}>|</span>
+                  <span className={styles.like_count}>
+                    <FavoriteIcon className={styles.heart_icon} />
+                    {post.likeCount}
+                  </span>
+                  <span className={styles.divider}>|</span>
 
-                <span>조회수: {post.viewCount}</span>
-              </div>
-            </li>
-          ) : (
-            <li
-              key={`my-post-${post.rn}`}
-              className={styles.comm_card}
-              onClick={async () => {
-                try {
-                  await axios.patch(
-                    `${import.meta.env.VITE_BACKSERVER}/communities/view/${post.communityNo}`,
-                    post,
-                  );
-                } catch (e) {
-                  console.error(e);
-                }
-                navigate(`/community/view/${post.communityNo}`);
-              }}
-            >
-              <h3 className={styles.comm_item_title}>
-                {post.rn}. [커뮤니티] {post.communityTitle}
-              </h3>
+                  <span>조회수: {post.viewCount}</span>
+                </div>
+              </li>
+            ) : (
+              <li
+                key={`my-post-${post.rn}`}
+                className={styles.comm_card}
+                onClick={async () => {
+                  try {
+                    await axios.patch(
+                      `${import.meta.env.VITE_BACKSERVER}/communities/view/${post.communityNo}`,
+                      post,
+                    );
+                  } catch (e) {
+                    console.error(e);
+                  }
+                  navigate(`/community/view/${post.communityNo}`);
+                }}
+              >
+                <h3 className={styles.comm_item_title}>
+                  {post.rn}. [커뮤니티] {post.communityTitle}
+                </h3>
 
-              <div className={styles.comm_meta_box}>
-                <span className={styles.writer}>작성자: {memberId}</span>
-                <span className={styles.divider}>|</span>
+                <div className={styles.comm_meta_box}>
+                  <span className={styles.writer}>작성자: {memberId}</span>
+                  <span className={styles.divider}>|</span>
 
-                <span>{timeAgo(post.postDate)}</span>
+                  <span>{timeAgo(post.postDate)}</span>
 
-                <span className={styles.divider}>|</span>
+                  <span className={styles.divider}>|</span>
 
-                <span className={styles.like_count}>
-                  <FavoriteIcon className={styles.heart_icon} />
-                  {post.likeCount}
-                </span>
-                <span className={styles.divider}>|</span>
+                  <span className={styles.like_count}>
+                    <FavoriteIcon className={styles.heart_icon} />
+                    {post.likeCount}
+                  </span>
+                  <span className={styles.divider}>|</span>
 
-                <span>조회수: {post.viewCount}</span>
-              </div>
-            </li>
-          ),
+                  <span>조회수: {post.viewCount}</span>
+                </div>
+              </li>
+            ),
+          )
         )}
       </ul>
     </section>

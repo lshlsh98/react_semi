@@ -54,9 +54,7 @@ const MemberInfo = () => {
     axios
       .post(`${import.meta.env.VITE_BACKSERVER}/members/pw-auth`, memberAuth)
       .then((res) => {
-        console.log(memberAuth);
         setMemberAuthSuccess(true);
-        console.log(res);
       })
       .catch((err) => {
         console.log(err);
@@ -97,7 +95,6 @@ const MemberInfo = () => {
           { headers: { "content-Type": "multipart/form-data" } },
         )
         .then((res) => {
-          console.log(res);
           useAuthStore.getState().setThumb(res.data);
         })
         .catch((err) => {
@@ -135,7 +132,6 @@ const MemberInfo = () => {
         memberEmail: newEmail,
       })
       .then((res) => {
-        console.log("인증코드:", res.data);
         Swal.fire({
           icon: "success",
           title: "발송 완료",
