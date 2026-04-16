@@ -196,7 +196,7 @@ const MyPost = ({ title, memberId, myPost, timeAgo }) => {
               </h3>
 
               <div className={styles.comm_meta_box}>
-                <span>작성자: {memberId}</span>
+                <span className={styles.writer}>작성자: {memberId}</span>
                 <span className={styles.divider}>|</span>
 
                 <span>{timeAgo(post.postDate)}</span>
@@ -223,7 +223,7 @@ const MyPost = ({ title, memberId, myPost, timeAgo }) => {
               </h3>
 
               <div className={styles.comm_meta_box}>
-                <span>작성자: {memberId}</span>
+                <span className={styles.writer}>작성자: {memberId}</span>
                 <span className={styles.divider}>|</span>
 
                 <span>{timeAgo(post.postDate)}</span>

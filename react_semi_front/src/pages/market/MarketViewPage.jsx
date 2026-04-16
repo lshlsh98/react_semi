@@ -21,6 +21,7 @@ import VisibilityIcon from "@mui/icons-material/Visibility";
 import PersonIcon from "@mui/icons-material/Person";
 /*좋아요 아이콘 */
 import FavoriteIcon from "@mui/icons-material/Favorite";
+import Nickname from "../../components/commons/Nickname";
 
 const MarketViewPage = () => {
   const navigate = useNavigate();
@@ -704,7 +705,9 @@ const MarketViewPage = () => {
               >
                 {formatPrice(market.sellPrice)}
               </p>
-              <p className={styles.title_info_writer}>{market.marketWriter}</p>
+              <p className={styles.title_info_writer}>
+                <Nickname member={market} />
+              </p>
             </div>
 
             <div className={styles.date_view_like}>

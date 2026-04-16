@@ -24,4 +24,6 @@ public class Community {
 	private Integer reportCount;		// 신고 수
 	private Integer viewCount;			// 조회수
 	private Integer commentCount;		// 댓글 수
+	   
+    private String hexCode;
 }

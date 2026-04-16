@@ -1,6 +1,7 @@
 import { useNavigate } from "react-router-dom";
 import styles from "./CommunityList.module.css";
 import axios from "axios";
+import Nickname from "../commons/Nickname";
 
 const CommunityList = ({ communityList }) => {
   return (
@@ -74,10 +75,8 @@ const CommunityItem = ({ community }) => {
               <span className="material-icons">account_circle</span>
             )}
           </div>
-          <p>
-            {community.communityWriter +
-              (community.memberGrade === 3 ? "" : " (관리자)")}
-          </p>
+          <Nickname member={community} />
+          <p>{community.memberGrade === 3 ? "" : " (관리자)"}</p>
         </div>
         <div className={styles.community_view_count}>
           <span className="material-icons">visibility</span>
