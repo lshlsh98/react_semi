@@ -355,7 +355,7 @@ const TextEditor = ({ data, setData }) => {
       <MenuBar editor={editor} className={styles.menu_bar} />
 
       <EditorContent editor={editor} className={styles.editor_content} />
-      {/* 👇 여기 추가 */}
+
       <div
         className={`${styles.editor_count} ${
           contentLength >= 4000 ? styles.limit : ""
