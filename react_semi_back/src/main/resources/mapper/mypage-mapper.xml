@@ -969,7 +969,7 @@
 		    select 
 		        t.*,
 		        row_number() over (
-		            order by t.like_count desc, t.post_date desc
+		            order by t.view_count desc, t.post_date desc
 		        ) as rn
 		    from (
 		        select *

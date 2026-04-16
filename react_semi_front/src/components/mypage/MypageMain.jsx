@@ -53,9 +53,7 @@ const MypageMain = () => {
   useEffect(() => {
     axios
       .get(`${import.meta.env.VITE_BACKSERVER}/mypages/today/${memberId}`)
-      .then((res) => {
-        console.log(res);
-      })
+      .then((res) => {})
       .catch((err) => {
         console.log(err);
       });
@@ -206,12 +204,6 @@ const MyPost = ({ title, memberId, myPost, timeAgo }) => {
 
                   <span className={styles.divider}>|</span>
 
-                  <span className={styles.like_count}>
-                    <FavoriteIcon className={styles.heart_icon} />
-                    {post.likeCount}
-                  </span>
-                  <span className={styles.divider}>|</span>
-
                   <span>조회수: {post.viewCount}</span>
                 </div>
               </li>
@@ -241,12 +233,6 @@ const MyPost = ({ title, memberId, myPost, timeAgo }) => {
 
                   <span>{timeAgo(post.postDate)}</span>
 
-                  <span className={styles.divider}>|</span>
-
-                  <span className={styles.like_count}>
-                    <FavoriteIcon className={styles.heart_icon} />
-                    {post.likeCount}
-                  </span>
                   <span className={styles.divider}>|</span>
 
                   <span>조회수: {post.viewCount}</span>
