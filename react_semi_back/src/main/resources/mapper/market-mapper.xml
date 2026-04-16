@@ -75,6 +75,7 @@
 		<if test="order==2"> order by view_count desc </if>
 		<if test="order==3"> order by like_count desc</if>
 		<if test="order==4"> order by sell_price desc</if>
+		
 
 		offset #{page}*#{size} rows fetch next #{size} rows only
 	</select>
@@ -101,36 +102,7 @@
 		null
 		)
 	</insert>
-
-	<!-- 거래 게시글 수정 (장지혁) -->
-	<update id="updateMarket">
-		update market_tbl set
-		market_title = #{marketTitle},
-		market_content = #{marketContent}
-		where market_no = #{marketNo}
-	</update>
-
-	<!-- 거래 게시글 수정 + 파일 삭제 (장지혁) -->
-	<delete id="deleteMarketFile">
-		delete from market_file_tbl where market_file_path = #{marketFilePath}
-	</delete>
-
-	<!-- 거래 게시글 수정 + 파일 리스트 삭제 (장지혁) -->
-	<delete id="deleteMarketFileList">
-		delete from market_file_tbl where market_file_path in
-		<foreach collection="list" item="marketFilePath" open="("
-			close=")" separator=",">
-			#{marketFilePath}
-		</foreach>
-	</delete>
-
-	<!-- 거래 게시글 삭제 (장지혁) -->
-	<delete id="deleteMarket">
-		delete market_tbl
-		where market_no = #{marketNo}
-	</delete>
-
-	<!-- 마켓 파일 등록 -->
+<!-- 마켓 파일 등록 -->
 	<insert id="insertMarketFile">
 		insert into market_file_tbl values(
 		market_file_seq.nextval,
@@ -344,6 +316,17 @@
 		0
 		)
 	</insert>
+	
+	<!-- 게시글수정 update_market_tbl -->
+	<update id="updateMarket">
+		update market_tbl set
+		market_title = #{marketTitle},
+		market_content = #{marketContent},
+		sell_addr = #{sellAddr},
+		sell_price = #{sellPrice}
+		where market_no = #{marketNo}
+		
+	</update>
 
 	<delete id="deleteMarketComment">
 		delete from market_comment_tbl where market_comment_no = #{commentNo}

@@ -163,9 +163,8 @@ public class MarketService {
 		System.out.println("게시글작성 : " + result + " , 파일업로드 갯수 : " + fileCount);
 		// 7 : 결과 응답객체에 추가
 		MarketCreateResponse data = new MarketCreateResponse(marketNo, fileCount);
-		return new MarketResponse<>(true,"201 : 게시물 등록 성공",data);
+		return new MarketResponse<>(true, "201 : 게시물 등록 성공", data);
 	}
-
 
 	// 게시글조회
 	public Market selectOneMarket(Integer marketNo, String token) {
@@ -299,5 +298,38 @@ public class MarketService {
 		ListResponse response = new ListResponse(list, totalPage);
 
 		return response;
+	}
+
+	@Transactional
+	public int updateOneMarket(Market market, List<MultipartFile> files) {
+		//1.market_file_tbl 삭제
+		int deleteFileCount = marketDao.deleteFileTbl(market.getMarketNo());
+		//2.파일 서버에 업로드
+		List<MarketFile> fileList = new ArrayList<MarketFile>();
+		if (files != null) {
+			String savepath = root + "market/";
+			for (MultipartFile file : files) {
+				String marketFileName = file.getOriginalFilename();
+				String marketFilepath = fileUtil.upload(savepath, file);
+
+				MarketFile marketFile = new MarketFile();
+				marketFile.setMarketFileName(marketFileName);
+				marketFile.setMarketFilePath(marketFilepath);
+				fileList.add(marketFile);
+			}
+		}
+		//3.market_file_tbl 등록
+		int newFileCount = 0;
+		for (MarketFile marketFile : fileList) {
+			marketFile.setMarketNo(market.getMarketNo());
+			newFileCount += marketDao.insertMarketFile(marketFile);
+		}
+		
+		int updateResult = marketDao.updateMarket(market);
+		System.out.println("수정 결과 : " + updateResult);
+		System.out.println("이전파일 삭제 결과 " + deleteFileCount);
+		System.out.println("새파일 업로드 결과 " + newFileCount);
+
+		return updateResult;
 	}
 }

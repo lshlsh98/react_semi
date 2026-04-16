@@ -574,7 +574,7 @@ const MarketViewPage = () => {
                       width: "100%",
                       height: "100%",
                       objectFit: "cover",
-                      borderRadius: "12px",
+                      borderRadius: "8px",
                     }}
                     onClick={() => handleOpen(index)}
                   />

@@ -36,7 +36,7 @@ import kr.co.iei.market.model.vo.MarketCommentReport;
 import kr.co.iei.market.model.vo.MarketFile;
 import kr.co.iei.market.model.vo.MarketReport;
 import kr.co.iei.market.model.vo.TradeRequest;
-
+import kr.co.iei.member.model.vo.LoginMember;
 import kr.co.iei.utils.FileUtils;
 
 @CrossOrigin(origins = "http://localhost:5173", allowCredentials = "true")
@@ -113,7 +113,6 @@ public class MarketController {
 	@GetMapping		// 매핑 : /markets
 	public ResponseEntity<?> selectMarketList(@ModelAttribute ListItem request) {
 		ListResponse response = marketService.selectMarketList(request);
-		System.out.println(response);
 		return ResponseEntity.ok(response);
 	}
 
@@ -122,7 +121,10 @@ public class MarketController {
 	public ResponseEntity<?> selectOneMarket(@PathVariable Integer marketNo,
 			@RequestHeader(required = false, name = "Authorization") String token, HttpServletRequest request,
 			HttpServletResponse response) {
-
+		
+		int memberGrade = 0;
+	
+		
 		Market m = marketService.selectOneMarket(marketNo, token);
 		if (m == null) {
 			return ResponseEntity.notFound().build();
@@ -169,10 +171,8 @@ public class MarketController {
 	/// 마켓게시판 수정 (Markets/{marketNo}) Update : 한진호
 	@PatchMapping(value="/{marketNo}")
 	public ResponseEntity<?> updateOneMarket(@ModelAttribute Market market, @ModelAttribute List<MultipartFile> files){
-		System.out.println("자바 연결 성공");
-		System.out.println(market);
-		System.out.println(files);
-		return ResponseEntity.ok(1);
+		int result = marketService.updateOneMarket(market,files);
+		return ResponseEntity.ok(result);
 	}
 	
 	/// 마켓게시판 삭제 (Markets/{marketNo}) Delete : 한진호

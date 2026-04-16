@@ -167,13 +167,14 @@ const MarketWritePage = () => {
         },
       })
       .then((res) => {
-        console.log(res);
-        if (res.data > 0) {
+        console.log(res.data.success);
+        console.log(res.data.data.marketNo);
+        if (res.data.success == true) {
           Swal.fire({
             title: "게시글 작성 완료",
             icon: "success",
           }).then(() => {
-            navigate("/market");
+            navigate(`/market/view/${res.data.data.marketNo}`);
           });
         }
       })

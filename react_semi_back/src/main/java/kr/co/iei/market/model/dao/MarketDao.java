@@ -30,8 +30,6 @@ public interface MarketDao {
 	
 	List<Market> selectMainPageMarketList(Integer order);
 	
-	int updateMarket(Market market);
-	
 	int deleteMarketFileList(List<String> deleteFilePath);
 	
 	int deleteMarket(Integer marketNo);
@@ -98,4 +96,6 @@ public interface MarketDao {
 	List<ScoreHistory> selectOneCarbonContributionList(String memberId, ListItem request);
 
 	Market findOneMarketByMarketNo(Integer marketNo);
+	
+	int updateMarket(Market market);
 }

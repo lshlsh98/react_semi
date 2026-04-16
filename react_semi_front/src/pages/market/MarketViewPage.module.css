@@ -18,13 +18,14 @@
   height: 100%;
 }
 .photo_wrap > ul > li {
-  background-color: var(--light);
+  border: 1px solid var(--gray6);
+  border-radius: 8px;
 }
 
 /*타이틀 (제목 금액 작성일 조회수 좋아요 */
 .title_info {
   border-radius: 8px;
-  background-color: var(--light);
+  border: 1px solid var(--gray6);
 }
 /*마켓 제목*/
 .title_info_title {
@@ -109,7 +110,7 @@
   padding: 4px 0;
   border-radius: 8px;
   margin: 20px 0;
-  background-color: var(--light);
+  border: 1px solid var(--gray6);
 }
 
 /*수정 삭제 버튼*/
