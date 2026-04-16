@@ -39,7 +39,7 @@ const MarketModifyPage = () => {
     axios
       .get(`${import.meta.env.VITE_BACKSERVER}/markets/${marketNo}`)
       .then((res) => {
-        setMarket(res.data);
+        setMarket({ ...res.data, fileList: [] });
       })
       .catch((err) => {
         console.log(err);
@@ -87,7 +87,6 @@ const MarketModifyPage = () => {
       return item !== file;
     });
     setMarket({ ...market, fileList: newFileList });
-    //삭제할 파일 추가(boardFilePath 를 추가)
     setDeleteFileList([...deleteFileList, file.marketFilePath]);
   };
   /* INPUT 함수 */
@@ -185,6 +184,7 @@ const MarketModifyPage = () => {
     for (let pair of form.entries()) {
       console.log(pair[0], pair[1]);
     }
+
     axios
       .patch(`${import.meta.env.VITE_BACKSERVER}/markets/${marketNo}`, form, {
         headers: {

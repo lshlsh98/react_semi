@@ -11,7 +11,7 @@ import withReactContent from "sweetalert2-react-content";
 import MarketComment from "../../components/market/MarketComment";
 import { Modal, Box, IconButton } from "@mui/material"; // IconButton 추가
 import { ChevronLeft, ChevronRight, Close } from "@mui/icons-material";
-import MarketMap from "./MarketMap";
+import MarketMap from "../../components/market/MarketMap";
 
 /* 날짜아이콘 */
 import CalendarTodayIcon from "@mui/icons-material/CalendarToday";
@@ -29,7 +29,6 @@ const MarketViewPage = () => {
   const params = useParams();
   const marketNo = params.marketNo;
   const MySwal = withReactContent(Swal);
-
   const [market, setMarket] = useState(null);
   const imgUrl = "http://192.168.31.24:9999/market";
 
@@ -576,7 +575,7 @@ const MarketViewPage = () => {
                       width: "100%",
                       height: "100%",
                       objectFit: "cover",
-                      borderRadius: "12px",
+                      borderRadius: "8px",
                     }}
                     onClick={() => handleOpen(index)}
                   />
@@ -669,19 +668,6 @@ const MarketViewPage = () => {
           {market.completed === 1 && (
             <div className={styles.sold_out}>
               <p>판매완료된 게시글입니다.</p>
-              <Button
-                className="btn primary"
-                onClick={() => {
-                  navigate("/market");
-                }}
-              >
-                다른 상품 보러가기
-              </Button>
-            </div>
-          )}
-          {market.marketStatus === 2 && (
-            <div className={styles.hidden_market}>
-              <p>숨겨진 게시물 입니다.</p>
               <Button
                 className="btn primary"
                 onClick={() => {

@@ -1,7 +1,7 @@
 .map {
   margin-top: 12px; /* 지도와 형제태그 사이 간격*/
   width: 100%;
-
+  border: 1px solid var(--gray6);
   height: fit-content;
   height: 500px;
   border-radius: 8px;
