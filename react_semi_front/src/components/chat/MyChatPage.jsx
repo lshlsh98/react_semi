@@ -13,7 +13,6 @@ const MyChatPage = () => {
     axios
       .get(`${import.meta.env.VITE_BACKSERVER}/chat/my/rooms`)
       .then((res) => {
-        console.log(res.data);
         setList(res.data);
       })
       .catch((err) => {

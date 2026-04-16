@@ -33,7 +33,7 @@ public class StompHandler implements ChannelInterceptor {
 
 		SecretKey key = Keys.hmacShaKeyFor(secretKey.getBytes());
 		if(StompCommand.CONNECT == accessor.getCommand()) {
-			System.out.println("connect 요청 시 토큰 유효성 검증");
+//			System.out.println("connect 요청 시 토큰 유효성 검증");
 			String token = accessor.getFirstNativeHeader("Authorization");
 			
 			// 토큰 검증
@@ -42,11 +42,11 @@ public class StompHandler implements ChannelInterceptor {
 				.build()
 				.parseClaimsJws(token)
 				.getBody();
-			System.out.println("토큰 검증 완료");
+//			System.out.println("토큰 검증 완료");
 		}
 		
 		if(StompCommand.SUBSCRIBE == accessor.getCommand()) {
-			System.out.println("subscribe 검증");
+//			System.out.println("subscribe 검증");
 			String token = accessor.getFirstNativeHeader("Authorization");
 			
 			// 토큰 검증

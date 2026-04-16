@@ -1,7 +1,7 @@
 import MyMarketItem from "./MyMarketItem";
 import MyBoardItem from "./MyBoardItem";
 
-const LikeDislikeList = ({ boardList }) => {
+const LikeDislikeList = ({ boardList, type }) => {
   const timeAgo = (dateString) => {
     // 받은 시간값이 없으면 return
     if (!dateString) {
@@ -42,6 +42,7 @@ const LikeDislikeList = ({ boardList }) => {
             isAdminMode={"false"} // true->관리 / false->일반
             timeAgo={timeAgo}
             isPrivate={"true"}
+            type={type}
           />
         ) : (
           <MyBoardItem // 커뮤니티 게시글
@@ -51,6 +52,7 @@ const LikeDislikeList = ({ boardList }) => {
             timeAgo={timeAgo}
             isLikedis
             isPrivate={"true"}
+            type={type}
           />
         );
       })}

@@ -144,8 +144,6 @@ public class MypageController {
 	public ResponseEntity<?> findPrivateReport(@ModelAttribute ReportRequestDto request){
 		ReportResponseDto privateReport = mypageService.findPrivateReport(request);
 		
-		System.out.println(request);
-		
 		return ResponseEntity.ok(privateReport);
 	}//
 	

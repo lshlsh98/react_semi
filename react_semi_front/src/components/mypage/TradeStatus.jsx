@@ -58,7 +58,6 @@ const TradeStatus = () => {
         },
       })
       .then((res) => {
-        console.log(res);
         setChart(res.data);
       })
       .catch((err) => {
@@ -113,7 +112,7 @@ const TradeStatus = () => {
         </div>
       </section>
       <section className={styles.chart_section}>
-        <ResponsiveContainer width="100%" height="100%">
+        <ResponsiveContainer width="100%" height={400}>
           <LineChart data={chart}>
             <CartesianGrid strokeDasharray="3 3" />
             <XAxis dataKey="marketDate" />

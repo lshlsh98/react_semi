@@ -175,3 +175,12 @@
 .notice {
   color: var(--danger);
 }
+
+.isLiked,
+.isDisliked,
+.isCommented,
+.action_default {
+  display: flex;
+  align-items: center;
+  gap: 3px;
+}

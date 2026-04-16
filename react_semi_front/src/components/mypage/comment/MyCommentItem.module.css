@@ -203,3 +203,12 @@
   gap: 5px;
   align-items: center;
 }
+
+.isLiked,
+.isDisliked,
+.isCommented,
+.action_default {
+  display: flex;
+  align-items: center;
+  gap: 3px;
+}
