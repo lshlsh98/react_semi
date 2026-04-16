@@ -208,8 +208,10 @@ public class CommunityController {
 
 	@PostMapping(value = "/{communityNo}/reports") // 커뮤 게시판 신고 클릭
 	public ResponseEntity<?> reportOn(@PathVariable Integer communityNo,
-			@RequestHeader(name = "Authorization") String token) {
-		int result = communityService.insertReport(communityNo, token);
+			@RequestHeader(name = "Authorization") String token,
+				@RequestBody Map<String, String> body) {
+		 String reportReason = body.get("reportReason");
+		int result = communityService.insertReport(communityNo, token, reportReason);
 		return ResponseEntity.ok(result);
 	}
 

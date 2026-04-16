@@ -377,9 +377,8 @@
 	</select>
 
 	<insert id="insertReport">
-		insert into community_report_tbl (community_no, member_id)
-		values (#{communityNo}, #{memberId}
-		)
+		insert into community_report_tbl (community_no, member_id, report_reason)
+    values (#{communityNo}, #{memberId}, #{reportReason})
 	</insert>
 
 	<delete id="deleteReport">

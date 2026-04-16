@@ -162,11 +162,15 @@ public class CommunityService {
 	}
 	
 	@Transactional // 신고 클릭
-	public int insertReport(Integer communityNo, String token) {
+	public int insertReport(Integer communityNo, String token, String reportReason) {
 		LoginMember login = jwtUtil.checkToken(token);
+		
 		Map<String, Object> params = new HashMap<String,Object>();
+		
 		params.put("communityNo", communityNo);
 		params.put("memberId", login.getMemberId());
+		params.put("reportReason", reportReason);
+		
 		int result = communityDao.insertReport(params);
 		return result;
 	}
@@ -313,5 +317,6 @@ public class CommunityService {
 		int result = communityDao.insertCommentReport(report);
 		return result;
 	}
+
 
 }
