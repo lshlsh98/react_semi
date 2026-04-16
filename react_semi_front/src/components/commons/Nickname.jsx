@@ -6,11 +6,12 @@ const Nickname = ({ member }) => {
     member.communityWriter ||
     member.marketWriter ||
     member.communityCommentWriter ||
-    member.marketCommentWriter;
-
-  const displayName = member.memberName
-    ? `${member.memberName} (${userId})`
-    : userId;
+    member.marketCommentWriter ||
+    member.senderId;
+  const displayName =
+    member.memberName || member.senderName
+      ? `${member.memberName || member.senderName} (${userId})`
+      : userId;
 
   return (
     <span

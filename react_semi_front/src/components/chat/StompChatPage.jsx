@@ -5,6 +5,7 @@ import { useNavigate, useParams } from "react-router-dom";
 import { Client } from "@stomp/stompjs";
 import SockJS from "sockjs-client";
 import axios from "axios";
+import Nickname from "../commons/Nickname";
 
 const StompChatPage = () => {
   /*
@@ -160,7 +161,9 @@ const StompChatPage = () => {
                     )}
                   </div>
                 </div>
-                <div className={styles.chat_writer_name}>{m.senderName}</div>
+                <div className={styles.chat_writer_name}>
+                  <Nickname member={m} />
+                </div>
               </div>
               <div className={styles.chat_message}>{m.message}</div>
             </div>

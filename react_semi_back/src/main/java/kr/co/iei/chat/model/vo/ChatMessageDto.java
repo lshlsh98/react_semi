@@ -18,4 +18,5 @@ public class ChatMessageDto {
 	private String senderId;
 	private String senderName;
 	private String senderThumb;
+	private String hexCode;
 }

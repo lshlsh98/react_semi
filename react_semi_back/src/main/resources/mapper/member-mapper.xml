@@ -47,7 +47,7 @@
 		member_postcode = #{memberPostcode},
 		member_addr = #{memberAddr},
 		member_detail_addr = #{memberDetailAddr},
-		member_grade = #{memberGrade}
+		member_grade = #{memberGrade},
 		current_color_id = #{currentColorId}
 		
 		where member_id = #{memberId}

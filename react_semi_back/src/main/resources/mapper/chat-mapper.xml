@@ -57,7 +57,11 @@
 			c.content AS message,
 			m.member_id AS sender_id,
 			m.member_name AS sender_name,
-			m.member_thumb AS sender_thumb
+			m.member_thumb AS sender_thumb,
+			(select hex_code
+			from color_tbl
+			where color_id = m.current_color_id)
+			as hex_code
 			
 		FROM chat_message c
 		INNER JOIN member_tbl m 
