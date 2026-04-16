@@ -104,6 +104,8 @@
 			ON (p.chat_room_id = r.id)
 		
 		WHERE p.member_id = #{memberId}
+		
+		ORDER BY p.chat_room_id DESC
 	</select>
 	
 	<select id="getCountIsReadZero" resultType="Long">

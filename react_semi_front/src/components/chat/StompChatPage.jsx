@@ -22,6 +22,7 @@ const StompChatPage = () => {
   const senderName = useAuthStore((state) => state.memberName);
   const senderThumb = useAuthStore((state) => state.memberThumb);
   const token = useAuthStore((state) => state.token);
+  const isReady = useAuthStore((state) => state.isReady);
 
   const { roomId } = useParams();
 
@@ -123,54 +124,58 @@ const StompChatPage = () => {
   };
 
   return (
-    <div className={styles.chat_card}>
-      <h4>{roomName}</h4>
-      <div className={styles.chat_box} ref={chatBoxRef}>
-        {messages.map((m, i) => (
-          <div
-            key={i}
-            className={`${styles.chatting} ${m.senderId === senderId ? styles.sent : styles.received}`}
-          >
-            <div className={styles.chat_writer}>
-              <div className={styles.chat_writer_thumb}>
-                <div
-                  className={
-                    m.senderThumb ? styles.chat_thumb_exists : styles.chat_thumb
-                  }
-                >
-                  {m.senderThumb ? (
-                    <img
-                      src={`${import.meta.env.VITE_BACKSERVER}/semi/${m.senderThumb}`}
-                    />
-                  ) : (
-                    <span className="material-icons">account_circle</span>
-                  )}
+    isReady && (
+      <div className={styles.chat_card}>
+        <h4>{roomName}</h4>
+        <div className={styles.chat_box} ref={chatBoxRef}>
+          {messages.map((m, i) => (
+            <div
+              key={i}
+              className={`${styles.chatting} ${m.senderId === senderId ? styles.sent : styles.received}`}
+            >
+              <div className={styles.chat_writer}>
+                <div className={styles.chat_writer_thumb}>
+                  <div
+                    className={
+                      m.senderThumb
+                        ? styles.chat_thumb_exists
+                        : styles.chat_thumb
+                    }
+                  >
+                    {m.senderThumb ? (
+                      <img
+                        src={`${import.meta.env.VITE_BACKSERVER}/semi/${m.senderThumb}`}
+                      />
+                    ) : (
+                      <span className="material-icons">account_circle</span>
+                    )}
+                  </div>
                 </div>
+                <div className={styles.chat_writer_name}>{m.senderName}</div>
               </div>
-              <div className={styles.chat_writer_name}>{m.senderName}</div>
+              <div className={styles.chat_message}>{m.message}</div>
             </div>
-            <div className={styles.chat_message}>{m.message}</div>
-          </div>
-        ))}
-      </div>
-      <form className={styles.chat_send} onSubmit={sendMessage}>
-        <textarea
-          className={styles.input_zone}
-          value={newMessage}
-          onChange={(e) => setNewMessage(e.target.value)}
-          placeholder="채팅을 입력하세요"
-          onKeyDown={(e) => {
-            if (e.key === "Enter" && !e.shiftKey) {
-              e.preventDefault();
-              sendMessage(e);
-            }
-          }}
-        />
-        <div className={styles.btn_zone}>
-          <button type="submit">전송</button>
+          ))}
         </div>
-      </form>
-    </div>
+        <form className={styles.chat_send} onSubmit={sendMessage}>
+          <textarea
+            className={styles.input_zone}
+            value={newMessage}
+            onChange={(e) => setNewMessage(e.target.value)}
+            placeholder="채팅을 입력하세요"
+            onKeyDown={(e) => {
+              if (e.key === "Enter" && !e.shiftKey) {
+                e.preventDefault();
+                sendMessage(e);
+              }
+            }}
+          />
+          <div className={styles.btn_zone}>
+            <button type="submit">전송</button>
+          </div>
+        </form>
+      </div>
+    )
   );
 };
 

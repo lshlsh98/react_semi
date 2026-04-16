@@ -145,7 +145,8 @@ public class ChatService {
 		if(chatRoom == null) {
 			throw new NotFoundException("chatRoom can not be found");
 		}
-				
+
+		System.out.println(SecurityContextHolder.getContext().getAuthentication().getName() + "11111111111111");
 		Member member = chatDao.findMemberById(SecurityContextHolder.getContext().getAuthentication().getName());
 		if(member == null) {
 			throw new NotFoundException("member can not be found");

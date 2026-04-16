@@ -80,26 +80,27 @@
   width: 300px;
   min-height: 50px;
   margin-bottom: 5px;
+  padding: 5px;
 }
 
 .chat_thumb {
-  width: 30px;
-  height: 30px;
+  width: 20px;
+  height: 20px;
   background-color: var(--gray6);
   display: flex;
   align-items: center;
   justify-content: center;
-  border-radius: 25px;
+  border-radius: 10px;
 }
 
 .chat_thumb > span {
-  font-size: 30px;
+  font-size: 20px;
   color: var(--gray8);
 }
 
 .chat_thumb_exists {
-  width: 30px;
-  height: 30px;
+  width: 20px;
+  height: 20px;
   padding: 0px;
   background-color: var(--gray6);
   border-radius: 15px;
@@ -120,5 +121,18 @@
 }
 
 .chat_message {
-  padding: 3px 5px;
+  padding-left: 20px;
+  padding-top: 5px;
+}
+
+.sent {
+  margin-left: auto;
+}
+
+.received {
+  margin-right: auto;
+}
+
+.chat_box::-webkit-scrollbar {
+  display: none;
 }
