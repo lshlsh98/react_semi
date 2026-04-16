@@ -107,6 +107,7 @@ const MarketListPage = () => {
               <option value={2}>조회수</option>
               <option value={3}>좋아요</option>
               <option value={4}>금액순</option>
+              <option value={5}>지역순</option>
             </select>
 
             <select

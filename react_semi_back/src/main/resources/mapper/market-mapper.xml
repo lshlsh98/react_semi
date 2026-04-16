@@ -61,7 +61,7 @@
 		<if test="order==2"> order by view_count desc </if>
 		<if test="order==3"> order by like_count desc</if>
 		<if test="order==4">order by sell_price desc</if>
-		
+		<if test="order==5">order by mt.sell_addr asc</if>
 
 		offset #{page}*#{size} rows fetch next #{size} rows only
 	</select>
