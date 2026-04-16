@@ -48,20 +48,9 @@
 		SELECT chat_message_seq.NEXTVAL FROM dual
 	</select>
 	
-	<select id="getGroupChatRooms" resultType="chatRoomListResDto">
-		SELECT 
-			id AS roomId,
-			name AS roomName
-		FROM chat_room
-		WHERE is_group_chat = 2
-	</select>
 	
-	<select id="findByChatRoomAndMember" resultType="int">
-		SELECT COUNT(*)
-		FROM chat_participant
-		WHERE chat_room_id = #{chatRoomId} 
-		 	  AND member_id = #{memberId}
-	</select>
+	
+	
 	
 	<select id="findByChatRoomId" resultType="chatMessageDto">
 		SELECT 
@@ -77,12 +66,7 @@
 		ORDER BY c.created_at ASC
 	</select>
 	
-	<select id="findReadStatusByChatRoomAndMember" resultType="readStatus">
-		SELECT * 
-		FROM message_read_status
-		WHERE chat_room_id = #{chatRoomId} 
-			  AND member_id = #{member_id}
-	</select>
+
 	
 	<update id="updateIsRead">
 		UPDATE message_read_status
@@ -117,24 +101,11 @@
 		        AND is_read = 0
 	</select>
 	
-	<select id="findChatParticipantByChatRoomAndMember" resultType="chatParticipant">
-		SELECT * 
-		FROM chat_participant
-		WHERE chat_room_id = #{chatRoomId}	
-				AND member_id = #{memberId}
-	</select>
 	
-	<delete id="deleteChatParticipant">
-		DELETE 
-		FROM chat_participant
-		WHERE id = #{id}
-	</delete>
 	
-	<delete id="deleteChatRoom">
-		DELETE 
-		FROM chat_room
-		WHERE id = #{roomId}
-	</delete>
+	
+	
+
 	
 	<select id="findExistingPrivateRoom" resultType="chatRoom">
 		SELECT * 

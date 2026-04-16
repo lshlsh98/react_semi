@@ -74,61 +74,6 @@ public class ChatService {
 		}
 	}//
 
-	public void createGroupRoom(String roomName) {
-		Member member = chatDao.findMemberById(SecurityContextHolder.getContext().getAuthentication().getName());
-		if(member == null) {
-			throw new NotFoundException("member can not be found");
-		}
-		
-		// 채팅방 생성
-		Long chatRoomId = chatDao.getChatRoomId();
-		ChatRoom chatRoom = ChatRoom.builder()
-				.id(chatRoomId)
-				.name(roomName)
-				.isGroupChat(2)
-				.build();
-		chatDao.saveChatRoom(chatRoom);
-		
-		// 채팅 참여자로 개설자를 추가
-		ChatParticipant chatParticipant = ChatParticipant.builder()
-				.chatRoomId(chatRoom.getId())
-				.memberId(member.getMemberId())
-				.build();
-		
-		chatDao.saveChatParticipant(chatParticipant);
-	}//
-
-	public List<ChatRoomListResDto> getGroupChatRooms() {
-		List<ChatRoomListResDto> list = chatDao.getGroupChatRooms();
-		
-		return list;
-	}//
-
-	public void addParticipantToGroupChat(Long roomId) {
-		// 채팅방 조회
-		ChatRoom chatRoom = chatDao.findChatRoomById(roomId);
-		if(chatRoom == null) {
-			throw new NotFoundException("chatRoom can not be found");
-		}
-		
-		// member 조회
-		Member member = chatDao.findMemberById(SecurityContextHolder.getContext().getAuthentication().getName());
-		if(member == null) {
-			throw new NotFoundException("member can not be found");
-		}
-		
-		if(chatRoom.getIsGroupChat() == 1) {
-			throw new IllegalArgumentException("그룹채팅이 아닙니다.");
-		}
-		
-		// 이미 참여자인지 검증
-		ChatRoomAndMemberReqDto req = new ChatRoomAndMemberReqDto(chatRoom.getId(), member.getMemberId());
-		int isDupMember =  chatDao.findByChatRoomAndMember(req); // 0: 참여자X / 1: 참여자O
-		if(isDupMember == 0) {
-			addParticipantToRoom(chatRoom, member);
-		}
-	}//
-	
 	// chatParticipant 객체 생성 후 저장 (그룹채팅, 1:1채팅 모두 사용)
 	public void addParticipantToRoom(ChatRoom chatRoom, Member member) {
 		ChatParticipant chatParticipant = ChatParticipant.builder()
@@ -218,35 +163,6 @@ public class ChatService {
 		}
 		
 		return MyChatListResDtos;
-	}//
-
-	public void leaveGroupChatRoom(Long roomId) {
-		ChatRoom chatRoom = chatDao.findChatRoomById(roomId);
-		if(chatRoom == null) {
-			throw new NotFoundException("chatRoom can not be found");
-		}
-				
-		Member member = chatDao.findMemberById(SecurityContextHolder.getContext().getAuthentication().getName());
-		if(member == null) {
-			throw new NotFoundException("member can not be found");
-		}
-		
-		if(chatRoom.getIsGroupChat() == 1) {
-			throw new IllegalArgumentException("단체 채팅방이 아닙니다.");
-		}
-		
-		ChatRoomAndMemberReqDto req = new ChatRoomAndMemberReqDto(chatRoom.getId(), member.getMemberId());
-		ChatParticipant c = chatDao.findChatParticipantByChatRoomAndMember(req);
-		if(c == null) {
-			throw new NotFoundException("참여자를 찾을 수 없습니다");
-		}
-		
-		chatDao.deleteChatParticipant(c);
-		
-		List<ChatParticipant> chatParticipants = chatDao.findChatParticipantAllById(roomId);
-		if(chatParticipants.isEmpty()) {
-			chatDao.deleteChatRoom(roomId);
-		}
 	}//
 
 	public Long getOrCreatePrivateRoom(String otherMemberId, Long marketNo) {
