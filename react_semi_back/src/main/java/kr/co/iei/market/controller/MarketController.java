@@ -38,6 +38,7 @@ import kr.co.iei.market.model.vo.MarketReport;
 import kr.co.iei.market.model.vo.TradeRequest;
 import kr.co.iei.member.model.vo.LoginMember;
 import kr.co.iei.utils.FileUtils;
+import kr.co.iei.utils.JwtUtils;
 
 @CrossOrigin(origins = "http://localhost:5173", allowCredentials = "true")
 @RestController
@@ -48,6 +49,8 @@ public class MarketController {
 	private MarketService marketService;
 	@Value("${file.root}")
 	private String root;
+	@Autowired
+	private JwtUtils jwtutil;
 	@Autowired
 	private FileUtils fileUtil;
 	private int cookieTime = 60 * 5; // 쿠키 시간설정 5분
@@ -122,8 +125,6 @@ public class MarketController {
 			@RequestHeader(required = false, name = "Authorization") String token, HttpServletRequest request,
 			HttpServletResponse response) {
 		
-		int memberGrade = 0;
-	
 		
 		Market m = marketService.selectOneMarket(marketNo, token);
 		if (m == null) {

@@ -677,19 +677,6 @@ const MarketViewPage = () => {
               </Button>
             </div>
           )}
-          {market.marketStatus === 2 && (
-            <div className={styles.hidden_market}>
-              <p>숨겨진 게시물 입니다.</p>
-              <Button
-                className="btn primary"
-                onClick={() => {
-                  navigate("/market");
-                }}
-              >
-                다른 상품 보러가기
-              </Button>
-            </div>
-          )}
 
           <div className={styles.title_info}>
             <p className={styles.title_info_title}>{market.marketTitle}</p>
