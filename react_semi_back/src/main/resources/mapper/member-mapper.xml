@@ -7,7 +7,7 @@
 		#{memberId},
 		#{memberPw}, #{memberName}, null, #{memberEmail},
 		3, sysdate,
-		#{memberPostcode}, #{memberAddr}, #{memberDetailAddr}, 0
+		#{memberPostcode}, #{memberAddr}, #{memberDetailAddr}, 0, null
 		)
 	</insert>
 
