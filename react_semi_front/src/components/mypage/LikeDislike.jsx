@@ -48,9 +48,10 @@ const LikeDislike = () => {
             state={status}
             setState={setStatus}
             list={[
-              [0, "좋아요/싫어요"],
+              [0, "전체"],
               [1, "좋아요"],
               [2, "싫어요"],
+              [3, "신고"],
             ]}
           />
           <BasicSelect

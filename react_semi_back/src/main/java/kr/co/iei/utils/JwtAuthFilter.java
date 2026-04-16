@@ -41,7 +41,6 @@ public class JwtAuthFilter extends GenericFilter{
 		HttpServletRequest httpServletRequest = (HttpServletRequest) request;
 		HttpServletResponse httpServletResponse = (HttpServletResponse) response;
 		String token = httpServletRequest.getHeader("Authorization");
-		System.out.println(token + "1111111111111111");
 		if (token == null) {
 		    chain.doFilter(request, response);
 		    return;

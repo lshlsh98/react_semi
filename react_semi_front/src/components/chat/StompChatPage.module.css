@@ -136,3 +136,12 @@
 .chat_box::-webkit-scrollbar {
   display: none;
 }
+
+.chat_room_title {
+  font-size: 20px;
+  cursor: pointer;
+}
+
+.chat_room_title:hover {
+  text-decoration: underline;
+}

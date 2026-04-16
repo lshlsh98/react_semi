@@ -41,6 +41,7 @@ const LikeDislikeList = ({ boardList }) => {
             board={board}
             isAdminMode={"false"} // true->관리 / false->일반
             timeAgo={timeAgo}
+            isPrivate={"true"}
           />
         ) : (
           <MyBoardItem // 커뮤니티 게시글
@@ -48,6 +49,8 @@ const LikeDislikeList = ({ boardList }) => {
             board={board}
             isAdminMode={"false"} // true->관리 / false->일반
             timeAgo={timeAgo}
+            isLikedis
+            isPrivate={"true"}
           />
         );
       })}

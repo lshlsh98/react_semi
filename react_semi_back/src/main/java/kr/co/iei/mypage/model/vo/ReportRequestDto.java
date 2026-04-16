@@ -11,4 +11,6 @@ public class ReportRequestDto {
 
 	private Integer boardNo;
 	private String tblName;
+	
+	private String memberId;
 }

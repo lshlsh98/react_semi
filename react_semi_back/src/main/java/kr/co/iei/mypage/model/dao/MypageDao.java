@@ -75,4 +75,14 @@ public interface MypageDao {
 	List<MyPost> myBestPost(String memberId);
 
 	List<MyPost> myRecentPost(String memberId);
+
+	ReportResponseDto findMarketReportPrivate(ReportRequestDto request);
+
+	ReportResponseDto findCommunityReportPrivate(ReportRequestDto request);
+
+	ReportResponseDto findMarketCommentReportPrivate(ReportRequestDto request);
+
+	ReportResponseDto findCommunityCommentReportPrivate(ReportRequestDto request);
+	
+	
 }

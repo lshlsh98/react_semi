@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import styles from "./StompChatPage.module.css";
 import useAuthStore from "../utils/useAuthStore";
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { Client } from "@stomp/stompjs";
 import SockJS from "sockjs-client";
 import axios from "axios";
@@ -23,8 +23,9 @@ const StompChatPage = () => {
   const senderThumb = useAuthStore((state) => state.memberThumb);
   const token = useAuthStore((state) => state.token);
   const isReady = useAuthStore((state) => state.isReady);
-
+  const [marketNo, setMarketNo] = useState(null);
   const { roomId } = useParams();
+  const navigate = useNavigate();
 
   useEffect(() => {
     if (!token) return;
@@ -34,6 +35,7 @@ const StompChatPage = () => {
       .then((res) => {
         setMessages(res.data.messages);
         setRoomName(res.data.roomName);
+        setMarketNo(res.data.marketNo);
       });
 
     connectWebsocket();
@@ -126,7 +128,14 @@ const StompChatPage = () => {
   return (
     isReady && (
       <div className={styles.chat_card}>
-        <h4>{roomName}</h4>
+        <h4
+          className={styles.chat_room_title}
+          onClick={() => {
+            navigate(`/market/view/${marketNo}`);
+          }}
+        >
+          {roomName}
+        </h4>
         <div className={styles.chat_box} ref={chatBoxRef}>
           {messages.map((m, i) => (
             <div
