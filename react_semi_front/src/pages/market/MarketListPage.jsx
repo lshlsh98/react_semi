@@ -77,6 +77,8 @@ const MarketListPage = () => {
     [2, "조회수"],
     [3, "좋아요"],
     [4, "금액순"],
+    [5, "지역순"],
+    [6, "댓글순"],
   ];
   const sizeList = [
     [10, "10개씩보기"],
@@ -115,14 +117,7 @@ const MarketListPage = () => {
                 setPage(0);
               }}
               list={orderList}
-            >
-              <option value={0}>최신순</option>
-              <option value={1}>작성순</option>
-              <option value={2}>조회수</option>
-              <option value={3}>좋아요</option>
-              <option value={4}>금액순</option>
-              <option value={5}>지역순</option>
-            </BasicSelect>
+            ></BasicSelect>
 
             <BasicSelect
               state={size}
@@ -188,18 +183,21 @@ const MarketList = ({ marketList }) => {
     <ul>
       {marketList.map((market) => {
         return (
-          <MarketItem key={`market-list-${market.marketNo}`} market={market} />
+          <MarketItem
+            key={`market-list-${market.marketNo}`}
+            market={market}
+            marketList={marketList}
+          />
         );
       })}
     </ul>
   );
 };
 
-const MarketItem = ({ market }) => {
+const MarketItem = ({ market, marketList }) => {
+  console.log(marketList);
   const navigate = useNavigate();
   /* 이미지 매핑 */
-  const imgUrl = "http://192.168.31.24:9999/market";
-
   const timeAgo = (dateString) => {
     if (!dateString) {
       return "";
@@ -244,7 +242,7 @@ const MarketItem = ({ market }) => {
       <div className={styles.market_info_wrap}>
         {market.marketThumb ? (
           <img
-            src={`${imgUrl}/${market.marketThumb}`}
+            src={`${import.meta.env.VITE_IMAGE_SERVER}/${market.marketThumb}`}
             alt={market.marketTitle}
           />
         ) : (
@@ -307,16 +305,9 @@ const MarketItem = ({ market }) => {
           <div className={styles.info_icon_wrap1}>
             <div className={styles.info_icon_wrap2}>
               <div className={styles.info_likeCount_wrap}>
-                {/*
                 <FavoriteIcon
-                  className={`${styles.icon2} ${
-                    marketList[N].isLike === 1 ? styles.liked : ""
-                  }`}
+                  className={market.isLike === 1 ? styles.icon2 : styles.icon}
                 />
-                
-                */}
-
-                <FavoriteIcon className={styles.icon} />
                 <p>{market.likeCount}</p>
               </div>
 

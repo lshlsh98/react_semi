@@ -34,8 +34,7 @@ public class Market {
 	private Integer commentCount;	//댓글수 market_comment_tbl 에서 서브쿼리로 가져옴
 	private List<MarketFile> fileList;
 	private List<String> deleteFilePath;
-	
 	private String hexCode;
-	
 	private String memberName;
+	
 }

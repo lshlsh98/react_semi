@@ -39,10 +39,7 @@ ol {
   border: 1px solid var(--primary);
   border-radius: 8px;
 }
-.market_searchbox > form > input:focus {
-  border: 1px solid var(--primary);
-  background-color: var(--light);
-}
+
 
 .market_category {
   width: 200px;
@@ -237,6 +234,10 @@ ol {
 /* 아이콘 옵션*/
 .icon {
   font-size: 20px !important;
+}
+.icon2{
+  font-size: 20px !important;
+  fill:red !important;
 }
 .material_icons {
   font_size: 20px;

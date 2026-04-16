@@ -65,6 +65,13 @@
 									from member_tbl
 									where member_id = market_writer))
 			as hex_code
+		<if test="memberId != null">
+			,(select count(*)
+			from market_like_tbl
+			where market_no = mt.market_no
+			and member_id = #{memberId}) AS is_like
+		</if>
+		
 		
 		from market_tbl mt
 		join member_tbl m on (mt.market_writer = m.member_id)
@@ -85,7 +92,7 @@
 		<if test="order==3"> order by like_count desc</if>
 		<if test="order==4">order by sell_price desc</if>
 		<if test="order==5">order by mt.sell_addr asc</if>
-
+		<if test="order==6">order by comment_count desc</if>
 		offset #{page}*#{size} rows fetch next #{size} rows only
 	</select>
 
