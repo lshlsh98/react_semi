@@ -57,7 +57,7 @@
 		order by mf.market_file_no asc
 		)
 		where rownum = 1
-		) as market_thumb
+		) as market_thumb,
 		(
 	  			select hex_code
 				from color_tbl
@@ -142,7 +142,7 @@
         ) as member_thumb,
 		(select count(*)
 		from market_like_tbl
-		where market_no = m.market_no) as like_count
+		where market_no = m.market_no) as like_count,
 		(
 	  			select hex_code
 				from color_tbl
