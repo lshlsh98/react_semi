@@ -35,6 +35,7 @@
 
 .chat_room_name {
   width: 50%;
+  cursor: pointer;
 }
 .chat_other {
   width: 20%;
@@ -44,6 +45,10 @@
 }
 .chat_btn {
   width: 10%;
+}
+
+.chat_room_name:hover {
+  text-decoration: underline;
 }
 
 .chat_btn > button {

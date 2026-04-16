@@ -145,7 +145,7 @@ public class ChatService {
 		if(chatRoom == null) {
 			throw new NotFoundException("chatRoom can not be found");
 		}
-				
+
 		Member member = chatDao.findMemberById(SecurityContextHolder.getContext().getAuthentication().getName());
 		if(member == null) {
 			throw new NotFoundException("member can not be found");
@@ -293,10 +293,14 @@ public class ChatService {
 		return newRoom.getId();
 	}//
 
-	public String getChatRoomName(Long roomId) {
+	public void deleteChatRoomByMarketNo(Long marketNo) {
+		chatDao.deleteChatRoomByMarketNo(marketNo);
+	}//
+
+	public ChatRoom findChatRoomById(Long roomId) {
 		ChatRoom chatRoom = chatDao.findChatRoomById(roomId);
-				
-		return chatRoom.getName();
+		
+		return chatRoom;
 	}//
 }
 

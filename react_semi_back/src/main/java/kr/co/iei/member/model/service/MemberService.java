@@ -45,11 +45,11 @@ public class MemberService {
 		Member loginMember = memberDao.selectOneMember(member.getMemberId());
 		
 		if (loginMember != null && bcrypt.matches(member.getMemberPw(), loginMember.getMemberPw())) {
-			LoginMember login = jwtUtil.createToken(loginMember.getMemberId(), loginMember.getMemberGrade(), loginMember.getMemberAddr());
+			LoginMember login = jwtUtil.createToken(loginMember.getMemberId(), loginMember.getMemberGrade(), loginMember.getMemberAddr(), loginMember.getCurrentColorId(), loginMember.getHexCode());
 			login.setMemberThumb(loginMember.getMemberThumb());
 			login.setMemberName(loginMember.getMemberName());
 			login.setMemberAddr(loginMember.getMemberAddr());	//마켓게시판 글 작성시 불러올 주소정보 추가 : 한진호
-			
+			login.setHexCode(loginMember.getHexCode());
 			return login;
 		}
 		return null;
@@ -70,6 +70,7 @@ public class MemberService {
 		return result;
 	}
 
+	@Transactional
 	public int updateThumbnail(Member m, String root) {
 	    Member oldM = memberDao.selectOneMember(m.getMemberId());
 	    String oldThumb = oldM.getMemberThumb();
@@ -83,6 +84,7 @@ public class MemberService {
 	    return result;
 	}
 
+	@Transactional
 	public int memberUpdate(String memberId, Member member, String root) {
 		Member oldM = memberDao.selectOneMember(memberId);
 
@@ -96,6 +98,7 @@ public class MemberService {
 		return result;
 	}
 
+	@Transactional
 	private boolean deleteFile(String filename, String root) {
 		if (filename == null || filename.isEmpty())
 			return false;
@@ -106,6 +109,7 @@ public class MemberService {
 		return false;
 	}
 
+	@Transactional
 	public int memberDelete(String memberId, String root) {
 		Member m = memberDao.selectOneMember(memberId);
 		
@@ -118,6 +122,7 @@ public class MemberService {
 		return result;
 	}
 
+	@Transactional
 	public int updatePw(Member member) {
 		String encPw = bcrypt.encode(member.getMemberPw());
 		member.setMemberPw(encPw);

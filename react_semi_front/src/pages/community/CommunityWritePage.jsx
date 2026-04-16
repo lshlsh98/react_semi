@@ -325,48 +325,28 @@ const TextEditor = ({ data, setData }) => {
       }),
     ],
     content: data /* 에디터의 글자수를 제한 */,
-    editorProps: {
-      handleTextInput(view, from, to, text) {
-        const currentHTML = view.dom.innerHTML;
-        const newHTML = currentHTML + text;
-        const byteLength = new TextEncoder().encode(newHTML).length; //console.log("새글자입력" + byteLength);
-        if (byteLength > 4000) {
-          alert("최대 입력수 초과");
-          return true; // 입력 막기
-        }
-        return false;
-      },
 
-      handleKeyDown(view, event) {
-        if (event.key === "Enter") {
-          const html = view.dom.innerHTML;
-          const byteLength = new TextEncoder().encode(html).length;
-          console.log(byteLength);
-          if (byteLength > 4000) {
-            alert("최대 4,000자까지 입력 가능합니다.");
-            return true;
-          }
-        }
-        return false;
-      },
-    },
     onUpdate: ({ editor }) => {
-      const html = editor.getHTML();
-      const byteLength = new TextEncoder().encode(html).length;
+      const text = editor.getText();
 
-      const textLength = editor.getText().length;
+      // 개행할 때마다 카운트가 1씩 증가
+      const normalizedText = text.replace(/\n\n/g, "\n");
+
+      const textLength = normalizedText.length;
 
       setContentLength(textLength);
-      setData(editor.getHTML());
 
-      if (byteLength > 4000) {
-        editor.commands.setContent(lastValidHTML, false);
-        console.log(byteLength);
-        alert("지워버린다.");
+      if (textLength > 4000) {
+        alert("최대 4,000자까지 입력 가능합니다.");
+
+        // 👉 이전 정상 상태로 복구
+        editor.commands.setContent(lastValidText);
         return;
       }
-      lastValidHTML = html;
-      setData(html);
+
+      lastValidHTML = editor.getHTML();
+
+      setData(editor.getHTML());
     },
   });
 
@@ -375,7 +355,7 @@ const TextEditor = ({ data, setData }) => {
       <MenuBar editor={editor} className={styles.menu_bar} />
 
       <EditorContent editor={editor} className={styles.editor_content} />
-      {/* 👇 여기 추가 */}
+
       <div
         className={`${styles.editor_count} ${
           contentLength >= 4000 ? styles.limit : ""

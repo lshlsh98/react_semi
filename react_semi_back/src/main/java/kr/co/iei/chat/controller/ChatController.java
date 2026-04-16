@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import kr.co.iei.chat.model.service.ChatService;
 import kr.co.iei.chat.model.vo.ChatMessageDto;
+import kr.co.iei.chat.model.vo.ChatRoom;
 import kr.co.iei.chat.model.vo.ChatRoomListResDto;
 import kr.co.iei.chat.model.vo.MyChatListResDto;
 
@@ -56,11 +57,12 @@ public class ChatController {
 	@GetMapping("/history/{roomId}")
 	public ResponseEntity<?> getChatHistory(@PathVariable Long roomId){
 		List<ChatMessageDto> list = chatService.getChatHistory(roomId);
-		String roomName = chatService.getChatRoomName(roomId);
+		ChatRoom chatRoom = chatService.findChatRoomById(roomId);
 		
 		Map<String, Object> histories = new HashMap<>();
 		histories.put("messages", list);
-		histories.put("roomName", roomName);
+		histories.put("roomName", chatRoom.getName());
+		histories.put("marketNo", chatRoom.getMarketNo());
 				
 		return ResponseEntity.ok(histories);
 	}//
@@ -95,6 +97,14 @@ public class ChatController {
 		Long roomId = chatService.getOrCreatePrivateRoom(otherMemberId, marketNo);
 		
 		return ResponseEntity.ok(roomId);
+	}//
+	
+	// 거래완료 시 marketNo에 해당하는 chatRoom 제거
+	@DeleteMapping("/room/private/{marketNo}")
+	public ResponseEntity<?> deleteChatRoomByMarketNo(@PathVariable Long marketNo){
+		chatService.deleteChatRoomByMarketNo(marketNo);
+		
+		return ResponseEntity.ok().build();
 	}//
 
 }

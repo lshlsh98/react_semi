@@ -25,6 +25,7 @@
 		mt.view_count,
 		mt.sell_addr,
 		mt.sell_price,
+		m.member_name,
 
 		(
 		select count(*)
@@ -56,7 +57,14 @@
 		order by mf.market_file_no asc
 		)
 		where rownum = 1
-		) as market_thumb
+		) as market_thumb,
+		(
+	  			select hex_code
+				from color_tbl
+				where color_id = (select current_color_id 
+									from member_tbl
+									where member_id = market_writer))
+			as hex_code
 		from market_tbl mt
 		join member_tbl m on (mt.market_writer = m.member_id)
 
@@ -74,8 +82,8 @@
 		<if test="order==1"> order by market_no asc</if>
 		<if test="order==2"> order by view_count desc </if>
 		<if test="order==3"> order by like_count desc</if>
-		<if test="order==4"> order by sell_price desc</if>
-		
+		<if test="order==4">order by sell_price desc</if>
+		<if test="order==5">order by mt.sell_addr asc</if>
 
 		offset #{page}*#{size} rows fetch next #{size} rows only
 	</select>
@@ -126,6 +134,7 @@
 		m.sell_price,
 		m.completed,
 		m.completed_date,
+		(select member_name from member_tbl where member_id = m.market_writer) member_name,
 		(
             select member_thumb
             from member_tbl mt
@@ -133,7 +142,14 @@
         ) as member_thumb,
 		(select count(*)
 		from market_like_tbl
-		where market_no = m.market_no) as like_count
+		where market_no = m.market_no) as like_count,
+		(
+	  			select hex_code
+				from color_tbl
+				where color_id = (select current_color_id 
+									from member_tbl
+									where member_id = market_writer))
+			as hex_code
 		<if test="memberId != null">
 			,(select count(*)
 			from market_like_tbl
@@ -209,6 +225,7 @@
 			m.view_count,
 			m.sell_addr,
 			m.sell_price,
+			(select member_name from member_tbl where member_id = m.market_writer) member_name,
 			(
 				select market_file_path
 				from (
@@ -251,16 +268,23 @@
 	</select>
 
 	<select id="selectMarketCommentList" resultType="marketComment">
-		select
-		t.market_comment_no,
-		t.market_no,
-		t.market_comment_writer,
-		t.market_comment_content,
-		to_char(t.market_comment_date, 'yyyy-mm-dd hh24:mi:ss') market_comment_date,
-		t.market_recomment_no,
-		t.is_secret,
-		t.is_edited,
-		m.member_thumb
+		select 
+		    t.market_comment_no, 
+		    t.market_no, 
+		    t.market_comment_writer, 
+		    t.market_comment_content, 
+		    to_char(t.market_comment_date, 'yyyy-mm-dd hh24:mi:ss') market_comment_date,
+		    t.market_recomment_no, 
+		    t.is_secret, 
+		    t.is_edited,
+		    m.member_name, m.member_thumb,
+		    (
+	  			select hex_code
+				from color_tbl
+				where color_id = (select current_color_id 
+									from member_tbl
+									where member_id = market_comment_writer))
+			as hex_code
 		from (
 		select * from market_comment_tbl where market_no = #{marketNo}
 

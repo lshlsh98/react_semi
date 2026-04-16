@@ -21,4 +21,5 @@ public class MyChatListResDto {
 	
 	private String myName;
 	private String otherName;
+	private Long marketNo;
 }

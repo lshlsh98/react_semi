@@ -1,0 +1,19 @@
+.report_wrap {
+  width: 700px;
+  border: 3px solid var(--danger);
+  border-radius: 8px;
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+
+.report_title {
+  font-size: 30px;
+  margin: 0 auto;
+}
+
+.report_reason {
+  border-top: 1px solid black;
+  font-size: 20px;
+  padding: 10px;
+}

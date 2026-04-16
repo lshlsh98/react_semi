@@ -7,7 +7,9 @@ import org.apache.ibatis.annotations.Mapper;
 import kr.co.iei.mypage.model.vo.BoardListRequestDto;
 import kr.co.iei.mypage.model.vo.BoardSummary;
 import kr.co.iei.mypage.model.vo.ChartResDto;
+import kr.co.iei.mypage.model.vo.Color;
 import kr.co.iei.mypage.model.vo.CommentSummary;
+import kr.co.iei.mypage.model.vo.MemberColor;
 import kr.co.iei.mypage.model.vo.MyPost;
 import kr.co.iei.mypage.model.vo.ReportRequestDto;
 import kr.co.iei.mypage.model.vo.ReportResponseDto;
@@ -75,4 +77,19 @@ public interface MypageDao {
 	List<MyPost> myBestPost(String memberId);
 
 	List<MyPost> myRecentPost(String memberId);
+
+	List<Color> selectColorList();
+
+	int updateCurrentColor(MemberColor memberColor);
+
+	int updateMemberScore(MemberColor memberColor);
+	ReportResponseDto findMarketReportPrivate(ReportRequestDto request);
+
+	ReportResponseDto findCommunityReportPrivate(ReportRequestDto request);
+
+	ReportResponseDto findMarketCommentReportPrivate(ReportRequestDto request);
+
+	ReportResponseDto findCommunityCommentReportPrivate(ReportRequestDto request);
+	
+	
 }

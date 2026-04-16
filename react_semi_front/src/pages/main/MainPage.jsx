@@ -56,52 +56,17 @@ const MainPage = () => {
 
   // 4초마다 배너가 자동으로 넘어가게 하는 타이머
   useEffect(() => {
-    let timerId; // 몇번 타이머인지 구분하기 위해 지정
+    // 화면이 켜지거나(mount) currentBanner가 바뀔 때마다 무조건 4초짜리 새 타이머 시작!
+    const timer = setInterval(() => {
+      // 지금 배너가 마지막 배너면 0번으로 가고, 아니면 다음(+1)으로 가기
+      setCurrentBanner((prev) =>
+        prev === bannerList.length - 1 ? 0 : prev + 1,
+      );
+    }, 4000);
 
-    // 자동으로 슬라이드 넘기는 함수
-    const startAutoSlide = () => {
-      // timerId에 값 대입할거고 setInterval()은 n초마다 작업 반복하는것
-      timerId = setInterval(() => {
-        // 지금 배너가 마지막 배너면 0번으로 가고, 아니면 다음(+1)으로 가기
-        setCurrentBanner((prev) =>
-          prev === bannerList.length - 1 ? 0 : prev + 1,
-        );
-      }, 4000); // 4000ms = 4초마다
-    };
-
-    // 자동 슬라이드 멈추는 함수
-    const stopAutoSlide = () => {
-      // timerId에 값이 있다면 그 값을 가진 타이머를 멈춤. clearInterval()은 ()안의 타이머를 멈추게(정확히는 clear 없애는 것)함.
-      if (timerId) {
-        clearInterval(timerId);
-      }
-    };
-
-    startAutoSlide(); // 화면이 처음 켜질때 함수 시작
-
-    // 수동으로 슬라이더 넘길시 자동으로 넘어가는 타이머를 초기화하고 다시 4초 뒤에 시작하는 함수
-    const manualMove = (type) => {
-      stopAutoSlide(); // 수동 이동 직후 자동 이동 멈춤
-
-      // type이 "이전"일때
-      if (type === "prev") {
-        // 배너를 한칸 앞으로 이동(prev가 0이면 첫번째 배너일때 이전을 누르거니 마지막 배너로 이동하고 아니면 한칸 앞으로)
-        setCurrentBanner((prev) =>
-          prev === 0 ? bannerList.length - 1 : prev - 1,
-        );
-      }
-      // type이 "다음"일때
-      else {
-        // 배너를 한칸 뒤로 이동(prev가 bannerList.length-1이랑 같으면 마지막 배너일때 다음을 누른거니 첫번째 배너로 이동하고 아니면 한칸 뒤로)
-        setCurrentBanner((prev) =>
-          prev === bannerList.length - 1 ? 0 : prev + 1,
-        );
-      }
-
-      startAutoSlide(); // 앞에서 멈췄으니 다시 시작(4초 카운트 시작)
-    };
-
-    return () => stopAutoSlide(); // 컴포넌트가 사라질 때 타이머 청소(배너 넘어갔을때 기존의 유령 테이머 제거)
+    // 만약 4초가 되기 전에 유저가 화살표를 눌러서 currentBanner가 바뀌면?
+    // 아래의 return문을 먼저 실행해서 돌고 있던 타이머를 없앰(clear) -> 그리고 새 배너가 생기니 다시 위로 올라가서 타이머가 돌아가기 시작
+    return () => clearInterval(timer);
   }, [currentBanner, bannerList.length]);
 
   useEffect(() => {

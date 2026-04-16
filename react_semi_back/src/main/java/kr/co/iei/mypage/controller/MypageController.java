@@ -1,7 +1,6 @@
 package kr.co.iei.mypage.controller;
 
 import java.util.HashMap;
-
 import java.util.List;
 import java.util.Map;
 
@@ -15,7 +14,6 @@ import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import kr.co.iei.mypage.model.service.MypageService;
@@ -23,8 +21,10 @@ import kr.co.iei.mypage.model.vo.BoardListRequestDto;
 import kr.co.iei.mypage.model.vo.BoardListResponseDto;
 import kr.co.iei.mypage.model.vo.BoardSummary;
 import kr.co.iei.mypage.model.vo.ChartResDto;
+import kr.co.iei.mypage.model.vo.Color;
 import kr.co.iei.mypage.model.vo.CommentListResponseDto;
 import kr.co.iei.mypage.model.vo.CommentSummary;
+import kr.co.iei.mypage.model.vo.MemberColor;
 import kr.co.iei.mypage.model.vo.MyPost;
 import kr.co.iei.mypage.model.vo.ReportRequestDto;
 import kr.co.iei.mypage.model.vo.ReportResponseDto;
@@ -140,6 +140,13 @@ public class MypageController {
 		return ResponseEntity.ok(list);
 	}//
 	
+	@GetMapping("/report/private/{boardNo}")
+	public ResponseEntity<?> findPrivateReport(@ModelAttribute ReportRequestDto request){
+		ReportResponseDto privateReport = mypageService.findPrivateReport(request);
+		
+		return ResponseEntity.ok(privateReport);
+	}//
+	
 	@GetMapping("/board/likedislike")
 	public ResponseEntity<?> findLikeDislikeAll(@ModelAttribute BoardListRequestDto request){
 		List<BoardSummary> list = mypageService.findLikeDislikeAll(request);
@@ -182,7 +189,7 @@ public class MypageController {
 		return ResponseEntity.ok(list);
 	}
 	
-	//
+	// 나의 인기글
 	@GetMapping(value= "/my-best/{memberId}")
 	public ResponseEntity<?> myBestPost(@PathVariable String memberId){
 		List<MyPost> list = mypageService.myBestPost(memberId);
@@ -190,12 +197,27 @@ public class MypageController {
 		return ResponseEntity.ok(list);
 	}
 	
+	// 나의 최신글
 	@GetMapping(value= "/my-recent/{memberId}")
 	public ResponseEntity<?> myRecentPost(@PathVariable String memberId){
 		List<MyPost> list = mypageService.myRecentPost(memberId);
 		
 		return ResponseEntity.ok(list);
 	}
+	
+	@GetMapping(value= "/color")
+	public ResponseEntity<?> selectColorList(){
+		List<Color> list = mypageService.selectColorList();
+		
+		return ResponseEntity.ok(list);
+	}
+	
+	@PatchMapping("/color")
+	public ResponseEntity<?> updateCurrentColor(@RequestBody MemberColor memberColor){
+		int result = mypageService.updateCurrentColor(memberColor);
+		
+		return ResponseEntity.ok(result);
+	}//
 }
 
 

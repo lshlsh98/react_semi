@@ -457,38 +457,86 @@
 		r.member_id = m.member_id
 		WHERE market_no = #{boardNo}
 	</select>
+	
+	<select id="findMarketReportPrivate" resultType="report">
+		SELECT
+			r.member_id AS writer_id,
+			r.market_report_reason AS reason,
+			m.member_name AS writer_name
+		FROM market_report_tbl r
+			LEFT JOIN member_tbl m ON
+			r.member_id = m.member_id
+		WHERE market_no = #{boardNo}
+			AND r.member_id = #{memberId}
+	</select>
 
 	<select id="findCommunityReportAll" resultType="report">
 		SELECT
-		r.member_id AS writer_id,
-		r.community_report_reason AS reason,
-		m.member_name AS writer_name
+			r.member_id AS writer_id,
+			r.community_report_reason AS reason,
+			m.member_name AS writer_name
 		FROM community_report_tbl r
-		LEFT JOIN member_tbl m ON
-		r.member_id = m.member_id
+			LEFT JOIN member_tbl m ON
+			r.member_id = m.member_id
 		WHERE community_no = #{boardNo}
+	</select>
+	
+	<select id="findCommunityReportPrivate" resultType="report">
+		SELECT
+			r.member_id AS writer_id,
+			r.community_report_reason AS reason,
+			m.member_name AS writer_name
+		FROM community_report_tbl r
+			LEFT JOIN member_tbl m ON
+			r.member_id = m.member_id
+		WHERE community_no = #{boardNo}
+			AND r.member_id = #{memberId}
 	</select>
 
 	<select id="findMarketCommentReportAll" resultType="report">
 		SELECT
-		r.member_id AS writer_id,
-		r.market_comment_report_reason AS reason,
-		m.member_name AS writer_name
+			r.member_id AS writer_id,
+			r.market_comment_report_reason AS reason,
+			m.member_name AS writer_name
 		FROM market_comment_report_tbl r
-		LEFT JOIN member_tbl m
-		ON r.member_id = m.member_id
+			LEFT JOIN member_tbl m
+			ON r.member_id = m.member_id
 		WHERE market_comment_no = #{boardNo}
+	</select>
+	
+	<select id="findMarketCommentReportPrivate" resultType="report">
+		SELECT
+			r.member_id AS writer_id,
+			r.market_comment_report_reason AS reason,
+			m.member_name AS writer_name
+		FROM market_comment_report_tbl r
+			LEFT JOIN member_tbl m
+			ON r.member_id = m.member_id
+		WHERE market_comment_no = #{boardNo}
+			AND r.member_id = #{memberId}
 	</select>
 
 	<select id="findCommunityCommentReportAll" resultType="report">
 		SELECT
-		r.member_id AS writer_id,
-		r.community_comment_report_reason AS reason,
-		m.member_name AS writer_name
+			r.member_id AS writer_id,
+			r.community_comment_report_reason AS reason,
+			m.member_name AS writer_name
 		FROM community_comment_report_tbl r
-		LEFT JOIN member_tbl
-		m ON r.member_id = m.member_id
+			LEFT JOIN member_tbl
+			m ON r.member_id = m.member_id
 		WHERE community_comment_no = #{boardNo}
+	</select>
+	
+	<select id="findCommunityCommentReportPrivate" resultType="report">
+		SELECT
+			r.member_id AS writer_id,
+			r.community_comment_report_reason AS reason,
+			m.member_name AS writer_name
+		FROM community_comment_report_tbl r
+			LEFT JOIN member_tbl
+			m ON r.member_id = m.member_id
+		WHERE community_comment_no = #{boardNo}	
+			AND r.member_id = #{memberId}
 	</select>
 
 	<select id="findLikeDislikeAll" resultType="boardSummary">
@@ -550,6 +598,12 @@
 		FROM market_like_tbl mkl
 		WHERE mkl.market_no = msv.market_no
 		AND mkl.member_id = #{memberId}
+		)
+		OR EXISTS (
+		SELECT 1
+		FROM market_report_tbl mkr
+		WHERE mkr.market_no = msv.market_no
+		AND mkr.member_id = #{memberId}
 		)
 
 		UNION ALL
@@ -619,6 +673,12 @@
 		WHERE cmd.community_no = csv.community_no
 		AND cmd.member_id = #{memberId}
 		)
+		OR EXISTS (
+		SELECT 1
+		FROM community_report_tbl cmr
+		WHERE cmr.community_no = csv.community_no
+		AND cmr.member_id = #{memberId}
+		)
 
 		)
 
@@ -629,6 +689,9 @@
 			</if>
 			<if test="status == 2">
 				AND is_disliked = 1
+			</if>
+			<if test="status == 3">
+				AND is_reported = 1
 			</if>
 		</where>
 
@@ -790,6 +853,9 @@
 			</if>
 			<if test="status == 2">
 				AND is_disliked = 1
+			</if>
+			<if test="status == 3">
+				AND is_reported = 1
 			</if>
 		</where>
 	</select>
@@ -969,7 +1035,7 @@
 		            from community_tbl c
 		            left join community_like_tbl cl
 		                on c.community_no = cl.community_no
-		            where c.community_writer = #{memberId}
+		            where c.community_writer = #{memberId} and community_status = 1
 		            group by 
 		                c.community_no, c.community_title, c.view_count, c.community_date
 		
@@ -986,7 +1052,7 @@
 		            from market_tbl m
 		            left join market_like_tbl ml
 		                on m.market_no = ml.market_no
-		            where m.market_writer = #{memberId}
+		            where m.market_writer = #{memberId} and m.market_status = 1 and m.completed = 0
 		            group by 
 		                m.market_no, m.market_title, m.view_count, m.market_date
 		        )
@@ -996,4 +1062,21 @@
 			where rn <= 3
 		]]>
 	</select>
+	
+	<select id ="selectColorList" resultType="color">
+		select * 
+		from color_tbl
+	</select>
+	
+	<update id="updateMemberScore">
+		update member_tbl
+		set member_score = member_score - 1000
+		where member_id = #{memberId}
+	</update>
+	
+	<update id="updateCurrentColor">
+		update member_tbl
+		set current_color_id = #{colorId}
+		where member_id = #{memberId}
+	</update>
 </mapper>

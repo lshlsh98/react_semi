@@ -1,3 +1,4 @@
+/* 전체 레이아웃 */
 .main_wrap {
   width: 100%;
   max-width: 1200px;
@@ -8,13 +9,100 @@
   gap: 40px;
 }
 
-.section_box {
-  background-color: var(--gray8);
-  border-radius: 20px;
-  padding: 30px;
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.03);
+/* 상단 배너 영역 */
+.banner_section {
+  width: 100%;
+  height: 400px;
+  border-radius: 16px;
+  overflow: hidden;
+  position: relative;
+  margin-bottom: 30px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+  cursor: pointer;
 }
 
+.banner_slider {
+  display: flex;
+  width: 100%;
+  height: 100%;
+  transition: transform 0.5s ease-in-out;
+}
+
+.banner_slide {
+  min-width: 100%;
+  height: 100%;
+  position: relative;
+}
+
+.banner_img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+/* 배너 양옆 화살표 */
+.banner_btn_wrap {
+  position: absolute;
+  top: 50%;
+  left: 0;
+  width: 100%;
+  transform: translateY(-50%);
+  display: flex;
+  justify-content: space-between;
+  padding: 0 20px;
+  box-sizing: border-box;
+  pointer-events: none;
+}
+
+.banner_btn_wrap button {
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  background-color: rgba(255, 255, 255, 0.5);
+  border: none;
+  cursor: pointer;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  transition: all 0.3s;
+  pointer-events: auto;
+}
+
+.banner_btn_wrap button:hover {
+  background-color: rgba(255, 255, 255, 0.8);
+}
+
+.banner_btn_wrap button span {
+  font-size: 32px;
+  color: #333;
+}
+
+/* 배너 하단 네비게이션 점 */
+.banner_dots {
+  position: absolute;
+  bottom: 20px;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  gap: 10px;
+}
+
+.dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background-color: rgba(255, 255, 255, 0.5);
+  cursor: pointer;
+  transition: all 0.3s;
+}
+
+.active_dot {
+  background-color: #fff;
+  width: 24px;
+  border-radius: 10px;
+}
+
+/* 공통 요소 (마켓, 커뮤니티 모두 사용) */
 .section_header {
   display: flex;
   justify-content: space-between;
@@ -43,9 +131,29 @@
   text-decoration: underline;
 }
 
+.like_count {
+  display: flex;
+  align-items: center;
+  gap: 3px;
+  color: var(--danger);
+  font-weight: 600;
+}
+
+.heart_icon {
+  font-size: 14px !important;
+}
+
+/* 중고거래 마켓 영역 */
+.section_box {
+  background-color: var(--gray8);
+  border-radius: 20px;
+  padding: 30px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.03);
+}
+
 .card_list {
   display: flex;
-  flex-wrap: wrap; /* 이건 없어도 되는데 나중에 카드(현재 5개)를 늘리거나 하면 순간적으로 css가 꼬여서 디자인 망가지는걸 방지*/
+  flex-wrap: wrap;
   gap: 20px;
   list-style: none;
   padding: 0;
@@ -70,7 +178,7 @@
 
 .img_box {
   width: 100%;
-  aspect-ratio: 1 / 1; /* 정사각형 비율 유지 -> 가로 너비가 어떻게 변하든, 세로 높이도 똑같이 1:1 비율로 맞춰서 정사각형으로 만들기*/
+  aspect-ratio: 1 / 1;
   background-color: var(--gray6);
   display: flex;
   justify-content: center;
@@ -111,7 +219,7 @@
   margin: 0;
   white-space: nowrap;
   overflow: hidden;
-  text-overflow: ellipsis; /* 글자 길면 ... 처리 */
+  text-overflow: ellipsis;
 }
 
 .item_price {
@@ -142,25 +250,12 @@
   color: var(--gray2);
 }
 
-.like_count {
-  display: flex;
-  align-items: center;
-  gap: 3px;
-  color: var(--danger);
-  font-weight: 600;
-}
-
-.heart_icon {
-  font-size: 14px !important;
-}
-
-/* 커뮤니티 영역 (좌우로 배치하기 위해 flex) */
+/* 커뮤니티 영역 */
 .community_wrap {
   display: flex;
   gap: 30px;
 }
 
-/* 각 커뮤니티 (인기글 박스, 공지사항 박스) */
 .comm_section_box {
   flex: 1;
   min-width: 0;
@@ -230,113 +325,11 @@
   color: var(--gray5);
   display: flex;
   align-items: center;
-  gap: 12px; /* 메타 정보 사이 간격 살짝 넓힘 */
+  gap: 12px;
   margin-top: 4px;
 }
 
 .divider {
   color: var(--gray6);
   font-size: 12px;
-}
-
-/* =========================================
-   🚀 메인 페이지 상단 배너 슬라이더
-   ========================================= */
-.banner_section {
-  width: 100%;
-  height: 400px; /* 배너 이미지 높이에 맞게 */
-  border-radius: 16px;
-  overflow: hidden;
-  position: relative;
-  margin-bottom: 30px; /* 배너와 마켓 리스트 사이 간격 */
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
-  cursor: pointer;
-}
-
-.banner_slider {
-  display: flex;
-  width: 100%;
-  height: 100%;
-  transition: transform 0.5s ease-in-out; /* 0.5초 동안 부드럽게 옆으로 밀리는 애니메이션 */
-}
-
-.banner_slide {
-  min-width: 100%;
-  height: 100%;
-  position: relative;
-}
-
-.banner_img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover; /* 이미지가 찌그러지지 않고 꽉 차게 */
-}
-
-/* 하단 네비게이션 점(Dot) */
-.banner_dots {
-  position: absolute;
-  bottom: 20px;
-  left: 50%;
-  transform: translateX(-50%);
-  display: flex;
-  gap: 10px;
-}
-
-.dot {
-  width: 10px;
-  height: 10px;
-  border-radius: 50%;
-  background-color: rgba(255, 255, 255, 0.5); /* 반투명 하얀색 */
-  cursor: pointer;
-  transition: all 0.3s;
-}
-
-.active_dot {
-  background-color: #fff; /* 활성화된 점은 불투명한 하얀색 */
-  width: 24px; /* 살짝 길어지게 포인트 */
-  border-radius: 10px;
-}
-
-/* =========================================
-   🚀 메인 페이지 상단 배너 슬라이더 화살표
-   ========================================= */
-.banner_btn_wrap {
-  position: absolute;
-  top: 50%;
-  left: 0;
-  width: 100%;
-  transform: translateY(-50%);
-  display: flex;
-  justify-content: space-between;
-  padding: 0 20px;
-  box-sizing: border-box;
-  pointer-events: none; /* 버튼 영역 외 클릭 방지 */
-}
-
-.banner_btn_wrap button {
-  width: 48px;
-  height: 48px;
-  border-radius: 50%;
-  background-color: rgba(255, 255, 255, 0.5); /* 반투명 하얀색 */
-  border: none;
-  cursor: pointer;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  transition: all 0.3s;
-  pointer-events: auto; /* 버튼만 클릭 가능 */
-}
-
-.banner_btn_wrap button:hover {
-  background-color: rgba(
-    255,
-    255,
-    255,
-    0.8
-  ); /* 마우스 오버 시 좀 더 불투명하게 */
-}
-
-.banner_btn_wrap button span {
-  font-size: 32px;
-  color: #333; /* 기본 검은색 화살표 */
 }

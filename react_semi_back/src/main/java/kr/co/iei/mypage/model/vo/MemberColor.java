@@ -4,13 +4,10 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-@AllArgsConstructor
 @NoArgsConstructor
+@AllArgsConstructor
 @Data
-public class ReportRequestDto {
-
-	private Integer boardNo;
-	private String tblName;
-	
+public class MemberColor {
 	private String memberId;
+	private Integer colorId;
 }
