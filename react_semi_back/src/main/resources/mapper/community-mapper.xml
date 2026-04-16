@@ -125,7 +125,7 @@
 			view_count,
 			member_name,
 			member_thumb,
-			to_char(community_date,'yyyy-mm-dd') as community_date,
+			to_char(community_date, 'yyyy-mm-dd HH24:mi') as community_date,
 			(select hex_code
 			from color_tbl
 			where color_id = (select current_color_id 

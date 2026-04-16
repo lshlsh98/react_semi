@@ -10,18 +10,19 @@
   padding: 16px;
   border-radius: 8px;
 }
+
 /* 제목 */
 .community_title {
   display: flex;
   align-items: center;
   padding: 15px 20px;
   height: 50px;
-  border: 1px solid #ccc;
-  background-color: var(--light);
-  border-radius: 6px;
+  border-radius: 0;
   margin-bottom: 20px;
   font-size: 20px;
+  border-bottom: 1px solid var(--primary); /* 아래쪽만 초록색 */
 }
+
 /* 작성자, 날짜, 조회수 */
 .community_writer,
 .community_date,
@@ -29,7 +30,7 @@
   display: flex;
   align-items: center;
   gap: 12px; /* 아이콘과 글자 사이 간격 */
-  font-size: 11px;
+  font-size: 15px;
   font-weight: bold;
 }
 
@@ -45,6 +46,7 @@
 .community_view_count {
   margin-left: 5px;
 }
+
 /* 아이콘 자체의 크기나 위치 미세 조정 */
 .icon {
   font-size: 22px !important; /* 아이콘 크기가 너무 크면 조정 */
@@ -92,11 +94,11 @@
 
 /* 내용 */
 .community_view_content {
-  border: 1px solid #ccc;
   margin-top: 20px;
   padding: 10px 20px;
-  border-radius: 8px;
-  background-color: var(--light);
+  border-radius: 0;
+  border-top: 1px solid var(--primary);
+  min-height: 150px;
   line-height: 1.6;
   white-space: pre-wrap;
   word-break: break-all;
@@ -114,6 +116,7 @@
   margin-top: 25px;
   margin-bottom: 50px;
 }
+
 /* 수정/삭제 버튼 사이의 간격 */
 .button_group {
   display: flex;
@@ -208,6 +211,7 @@
   flex-direction: column;
   gap: 12px;
 }
+
 .modal_btn_wrap {
   display: flex;
   justify-content: flex-end;
@@ -215,7 +219,7 @@
   margin-top: 10px;
 }
 
-/* 사유 입력 1,000자 입력 글씨 크기 조정 */
+/* 신고 사유 입력 1,000자 입력 글씨 크기 조정 */
 .report_modal textarea::placeholder {
   font-size: 13px;
 }
@@ -227,7 +231,7 @@
   text-align: right;
 }
 
-/* 1000 도달 시 */
+/* 신고 사유 내용 1,000자 도달 시 */
 .limit {
   color: var(--danger);
   font-weight: 700;

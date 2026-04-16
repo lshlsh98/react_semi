@@ -44,6 +44,7 @@ const CommunityWritePage = () => {
   const [community, setCommunity] = useState({
     communityTitle: "",
     communityContent: "",
+    communityText: "",
     communityWriter: memberId,
   });
 
@@ -64,12 +65,19 @@ const CommunityWritePage = () => {
   };
 
   const inputCommunityContent = (data) => {
-    setCommunity({ ...community, communityContent: data });
+    setCommunity({
+      ...community,
+      communityContent: data.html,
+      communityText: data.text,
+    });
   };
 
   /* 내용 함수 */
   const registCommunity = () => {
-    if (community.communityTitle === "" || community.communityContent === "") {
+    if (
+      community.communityTitle.trim() === "" ||
+      community.communityText.trim() === ""
+    ) {
       Swal.fire("제목과 내용을 입력해주세요.", "", "warning");
       return;
     }
@@ -85,7 +93,6 @@ const CommunityWritePage = () => {
         },
       })
       .then((res) => {
-        console.log(res);
         if (res.data > 0) {
           Swal.fire({ title: "게시글 작성 완료", icon: "success" }).then(() => {
             /* 관리자나 슈퍼 유저일 때 공지사항으로 등록 */
@@ -346,7 +353,10 @@ const TextEditor = ({ data, setData }) => {
 
       lastValidHTML = editor.getHTML();
 
-      setData(editor.getHTML());
+      setData({
+        html: editor.getHTML(),
+        text: text,
+      });
     },
   });
 

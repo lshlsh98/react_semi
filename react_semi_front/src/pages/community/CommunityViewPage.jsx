@@ -22,7 +22,7 @@ const CommunityViewPage = () => {
   const communityNo = params.communityNo;
   const { memberId, isReady } = useAuthStore();
   const [community, setCommunity] = useState(null);
-  console.log(isReady, "isReady 확인");
+
   useEffect(() => {
     if (!isReady) {
       return;
@@ -52,7 +52,6 @@ const CommunityViewPage = () => {
             `${import.meta.env.VITE_BACKSERVER}/communities/${communityNo}`,
           )
           .then((res) => {
-            console.log(res);
             if (res.data === 1) {
               Swal.fire("삭제 성공", "게시글이 삭제되었습니다.", "success");
               navigate("/community");
@@ -209,7 +208,6 @@ const LikeAndDislikeAndReport = ({ communityNo, communityWriter }) => {
         `${import.meta.env.VITE_BACKSERVER}/communities/${communityNo}/likes`,
       )
       .then((res) => {
-        console.log(res);
         if (res.data === 1) {
           setLikeInfo({
             ...likeInfo,
@@ -252,7 +250,6 @@ const LikeAndDislikeAndReport = ({ communityNo, communityWriter }) => {
         `${import.meta.env.VITE_BACKSERVER}/communities/${communityNo}/dislikes`,
       )
       .then((res) => {
-        console.log(res);
         if (res.data === 1) {
           setDislikeInfo({
             ...dislikeInfo,
@@ -277,7 +274,6 @@ const LikeAndDislikeAndReport = ({ communityNo, communityWriter }) => {
         `${import.meta.env.VITE_BACKSERVER}/communities/${communityNo}/dislikes`,
       )
       .then((res) => {
-        console.log(res);
         if (res.data === 1) {
           setDislikeInfo({
             ...dislikeInfo,

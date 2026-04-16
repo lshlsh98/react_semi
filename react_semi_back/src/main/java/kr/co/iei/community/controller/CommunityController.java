@@ -51,7 +51,6 @@ public class CommunityController {
 
 	@PostMapping // 커뮤 게시글 등록
 	public ResponseEntity<?> insertCommunity(@ModelAttribute Community community) {
-		System.out.println(community);
 		Document doc = Jsoup.parse(community.getCommunityContent());
 		int result = communityService.insertCommunity(community);
 		return ResponseEntity.ok(result);
@@ -68,7 +67,6 @@ public class CommunityController {
 	public ResponseEntity<?> updateCommunity(@PathVariable Integer communityNo,
 								@ModelAttribute Community community){
 		community.setCommunityNo(communityNo);
-		System.out.println(community);
 		int result = communityService.updateCommunity(community);
 		return ResponseEntity.ok(result);
 	}
