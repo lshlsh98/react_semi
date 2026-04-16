@@ -173,3 +173,17 @@
   color: var(--primary);
   transform: translateY(-3px);
 }
+
+.chat_btn {
+  margin-top: auto;
+}
+
+.chat_btn > svg {
+  fill: var(--primary);
+  width: 30px;
+  height: 30px;
+}
+
+.chat_btn > svg:hover {
+  transform: scale(1.2);
+}

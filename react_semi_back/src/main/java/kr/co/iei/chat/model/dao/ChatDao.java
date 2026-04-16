@@ -19,6 +19,7 @@ import kr.co.iei.member.model.vo.Member;
 @Mapper
 public interface ChatDao {
 
+
 	ChatRoom findChatRoomById(Long roomId);
 
 	Member findMemberById(String memberId);
@@ -37,25 +38,13 @@ public interface ChatDao {
 
 	Long getChatMessageId();
 
-	List<ChatRoomListResDto> getGroupChatRooms();
-
-	int findByChatRoomAndMember(ChatRoomAndMemberReqDto req);
-
 	List<ChatMessageDto> findByChatRoomId(Long id);
-
-	List<ReadStatus> findReadStatusByChatRoomAndMember(ChatRoomAndMemberReqDto req);
 
 	void updateIsRead(ChatRoomAndMemberReqDto req);
 
 	List<MyChatListResDto> getMyChatRooms(String memberId);
 
 	Long getCountIsReadZero(ChatRoomAndMemberReqDto req);
-
-	ChatParticipant findChatParticipantByChatRoomAndMember(ChatRoomAndMemberReqDto req);
-
-	void deleteChatParticipant(ChatParticipant c);
-
-	void deleteChatRoom(Long roomId);
 
 	ChatRoom findExistingPrivateRoom(CreatePrivateRoomReqDto req);
 

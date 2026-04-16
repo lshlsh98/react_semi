@@ -20,6 +20,7 @@ const MyMarketItem = ({
   isAdminMode,
   timeAgo,
   isPrivate,
+  type,
 }) => {
   const [contentStatus, setContentStatus] = useState(board.contentStatus);
   const navigate = useNavigate();
@@ -120,6 +121,7 @@ const MyMarketItem = ({
             board={board}
             isAdminMode={isAdminMode}
             isPrivate={isPrivate}
+            type={type}
           />
         </div>
         <div className={styles.views_done}>
@@ -161,7 +163,7 @@ const MyMarketItem = ({
   );
 };
 
-const Actions = ({ board, isAdminMode, isPrivate }) => {
+const Actions = ({ board, isAdminMode, isPrivate, type }) => {
   const [open, setOpen] = useState(false);
   const [privateOpen, setPrivateOpen] = useState(false);
 
@@ -176,7 +178,8 @@ const Actions = ({ board, isAdminMode, isPrivate }) => {
     if (
       board.isReported === 1 &&
       isAdminMode === "false" &&
-      isPrivate === "true"
+      isPrivate === "true" &&
+      type === "3"
     ) {
       setPrivateOpen(true);
     }

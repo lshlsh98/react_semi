@@ -3,6 +3,7 @@ import styles from "./Commons.module.css";
 import Button from "../ui/Button";
 import useAuthStore from "../utils/useAuthStore";
 import axios from "axios";
+import ForumIcon from "@mui/icons-material/Forum";
 
 const Header = () => {
   const navigate = useNavigate();
@@ -21,12 +22,12 @@ const Header = () => {
         <div className={styles.member_link_zone}>
           {memberId ? (
             <>
-              <Button
-                className="btn primary outline"
+              <div
+                className={styles.chat_btn}
                 onClick={() => navigate("/my/chat/page")}
               >
-                내 채팅
-              </Button>
+                <ForumIcon />
+              </div>
               <Button
                 className="btn primary outline"
                 onClick={() => navigate("/member/mypage")}

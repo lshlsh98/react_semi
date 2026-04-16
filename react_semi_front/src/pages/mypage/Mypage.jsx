@@ -45,7 +45,7 @@ const Mypage = () => {
           <Routes>
             <Route path="/" element={<MypageMain />} />
             <Route path="myinfo" element={<MemberInfo />} />
-            <Route path="likedislike" element={<LikeDislike />} />
+            <Route path="likedislike/:type" element={<LikeDislike />} />
             <Route
               path="market/:isAdminMode"
               element={<MyMarketPage />}
@@ -162,17 +162,64 @@ const SideBar = () => {
             비밀번호 변경
           </li>
         </NavLink>
-        <NavLink to="/member/mypage/likedislike">
-          <li
+
+        <li
+          className={
+            selectMenu === "myaction" ||
+            selectMenu === "myaction_like" ||
+            selectMenu === "myaction_dislike" ||
+            selectMenu === "myaction_report"
+              ? styles.active
+              : ""
+          }
+        >
+          <div
+            className={styles.menu_title}
             onClick={() => {
-              toggleMenu("likedislike");
-              setSelectMenu("likedislike");
+              toggleMenu("myaction");
+              setSelectMenu("myaction");
             }}
-            className={selectMenu === "likedislike" ? styles.active : ""}
           >
-            좋아요 / 싫어요 기록
-          </li>
-        </NavLink>
+            <span
+              className={`material-icons ${styles.arrow} ${
+                openMenu === "myaction" ? styles.rotate : ""
+              }`}
+            >
+              chevron_right
+            </span>
+            활동 내역
+          </div>
+          <ul className={openMenu === "myaction" ? styles.open : ""}>
+            <NavLink to={`/member/mypage/likedislike/1`}>
+              <li
+                className={selectMenu === "myaction_like" ? styles.active : ""}
+                onClick={() => setSelectMenu("myaction_like")}
+              >
+                좋아요
+              </li>
+            </NavLink>
+            <NavLink to={`/member/mypage/likedislike/2`}>
+              <li
+                className={
+                  selectMenu === "myaction_dislike" ? styles.active : ""
+                }
+                onClick={() => setSelectMenu("myaction_dislike")}
+              >
+                싫어요
+              </li>
+            </NavLink>
+            <NavLink to={`/member/mypage/likedislike/3`}>
+              <li
+                className={
+                  selectMenu === "myaction_report" ? styles.active : ""
+                }
+                onClick={() => setSelectMenu("myaction_report")}
+              >
+                신고
+              </li>
+            </NavLink>
+          </ul>
+        </li>
         <li
           className={
             selectMenu === "postManagement" ||
