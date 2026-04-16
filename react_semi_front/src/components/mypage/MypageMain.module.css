@@ -1,3 +1,14 @@
+html,
+body {
+  width: 100%;
+  overflow-x: hidden;
+  overflow-y: scroll;
+}
+
+* {
+  box-sizing: border-box;
+}
+
 .member_info_wrap {
   display: flex;
   flex-direction: column;
@@ -37,6 +48,12 @@
   color: var(--primary);
 }
 
+.chart_item_wrap {
+  width: 100%;
+  margin-bottom: 30px;
+  align-items: flex-start;
+}
+
 .chart_title {
   margin-top: 50px;
   width: 100%;
@@ -73,4 +90,108 @@
 
 .chart_wrap * {
   outline: none !important;
+}
+
+.community_wrap {
+  width: 827px;
+  display: flex;
+  gap: 30px;
+  align-items: flex-start;
+  justify-content: space-between;
+}
+
+.comm_section_box {
+  flex: 1;
+  min-width: 0;
+  max-width: 50%;
+  background-color: var(--gray8);
+  border-radius: 20px;
+  padding: 30px 20px;
+  display: flex;
+  flex-direction: column;
+  border: 1px solid var(--gray7);
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.03);
+}
+
+.comm_list {
+  display: flex;
+  flex-direction: column;
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.comm_card {
+  padding: 18px 10px;
+  cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  border-bottom: 1px solid var(--gray6);
+  transition: all 0.2s ease;
+}
+
+.comm_card:last-child {
+  border-bottom: none;
+  padding-bottom: 0;
+}
+
+.comm_card:hover {
+  background-color: var(--gray7);
+  border-radius: 8px;
+}
+
+.comm_card:hover .comm_item_title {
+  color: var(--primary);
+}
+
+.comm_item_title {
+  font-size: 16px;
+  font-weight: bold;
+  color: var(--text1);
+  margin: 0;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  transition: color 0.2s ease;
+}
+
+.comm_item_content {
+  font-size: 14px;
+  color: var(--gray4);
+  margin: 0;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.comm_meta_box {
+  font-size: 13px;
+  color: var(--gray5);
+  display: flex;
+  align-items: center;
+  gap: 12px; /* 메타 정보 사이 간격 살짝 넓힘 */
+  margin-top: 4px;
+}
+
+.divider {
+  color: var(--gray6);
+  font-size: 12px;
+}
+
+.time_view {
+  white-space: nowrap;
+  color: var(--gray2);
+}
+
+.like_count {
+  display: flex;
+  align-items: center;
+  gap: 3px;
+  color: var(--danger);
+  font-weight: 600;
+}
+
+.heart_icon {
+  font-size: 14px !important;
 }

@@ -221,7 +221,8 @@
 						order by mf.market_file_no asc
 					)
 				where rownum = 1
-			) marketThumb
+			) marketThumb,
+			(select count(*) from market_like_tbl ml where ml.market_no = m.market_no) like_count
 		from market_tbl m
 		where m.market_status = 1 and m.completed = 0
 		

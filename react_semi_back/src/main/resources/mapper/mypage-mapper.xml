@@ -1,60 +1,63 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
 <mapper namespace="kr.co.iei.mypage.model.dao.MypageDao">
-	
+
 	<select id="findCommunityAll" resultType="boardSummary">
 		SELECT
-			csv.community_no AS board_no,
-			csv.title, 
-			csv.writer_id,
-			csv.writer_name,
-			csv.content_date,
-			csv.content_status,
-			csv.view_count,
-			csv.like_count,
-			csv.dislike_count,
-			csv.comment_count,
-			csv.report_count,
-			csv.member_grade AS writer_grade,
-			
-			CASE WHEN cl.member_id IS NOT NULL THEN 1 ELSE 0 END AS is_liked,
-			CASE WHEN cd.member_id IS NOT NULL THEN 1 ELSE 0 END AS is_disliked,	
-			CASE WHEN cc.community_comment_writer IS NOT NULL
-			THEN 1 ELSE 0 END AS is_commented,
-			CASE WHEN cr.member_id IS NOT NULL THEN 1 ELSE 0 END AS is_reported
+		csv.community_no AS board_no,
+		csv.title,
+		csv.writer_id,
+		csv.writer_name,
+		csv.content_date,
+		csv.content_status,
+		csv.view_count,
+		csv.like_count,
+		csv.dislike_count,
+		csv.comment_count,
+		csv.report_count,
+		csv.member_grade AS writer_grade,
 
-		FROM community_summary_view csv
+		CASE WHEN cl.member_id IS NOT NULL THEN 1 ELSE 0 END AS is_liked,
+		CASE WHEN cd.member_id IS NOT NULL THEN 1 ELSE 0 END AS is_disliked,
+		CASE WHEN cc.community_comment_writer IS NOT NULL
+		THEN 1 ELSE 0 END AS is_commented,
+		CASE WHEN cr.member_id IS NOT NULL THEN 1 ELSE 0 END AS is_reported
+
+		FROM
+		community_summary_view csv
 
 		LEFT JOIN community_like_tbl cl
-			ON csv.community_no = cl.community_no
-			AND cl.member_id = #{memberId}
+		ON csv.community_no = cl.community_no
+		AND cl.member_id = #{memberId}
 
 		LEFT JOIN community_dislike_tbl cd
-			ON csv.community_no = cd.community_no
-			AND cd.member_id = #{memberId}
+		ON csv.community_no = cd.community_no
+		AND cd.member_id = #{memberId}
 
 		LEFT JOIN (
-    			SELECT community_no, MAX(community_comment_writer) AS community_comment_writer
-    			FROM community_comment_tbl
-		    	WHERE community_comment_writer = #{memberId}
-    			GROUP BY community_no
-			) cc ON csv.community_no = cc.community_no
+		SELECT community_no, MAX(community_comment_writer) AS
+		community_comment_writer
+		FROM community_comment_tbl
+		WHERE community_comment_writer = #{memberId}
+		GROUP BY community_no
+		) cc ON csv.community_no = cc.community_no
 
-		LEFT JOIN community_report_tbl cr
-			ON csv.community_no = cr.community_no
-			AND cr.member_id = #{memberId}
-			
+		LEFT JOIN
+		community_report_tbl cr
+		ON csv.community_no = cr.community_no
+		AND cr.member_id = #{memberId}
+
 		<where>
-		    csv.title LIKE '%'||#{searchKeyword}||'%'
-   			<if test="isAdminMode != true">
-  			      AND csv.writer_id = #{memberId}
-    		</if>
-    		<if test="notice == 1">
-    			AND csv.member_grade IN (1, 2)
-    		</if>
-    		<if test="status != 0">
-        		AND csv.content_status = #{status}
-    		</if>
+			csv.title LIKE '%'||#{searchKeyword}||'%'
+			<if test="isAdminMode != true">
+				AND csv.writer_id = #{memberId}
+			</if>
+			<if test="notice == 1">
+				AND csv.member_grade IN (1, 2)
+			</if>
+			<if test="status != 0">
+				AND csv.content_status = #{status}
+			</if>
 		</where>
 
 		<if test="order == 0">
@@ -75,46 +78,49 @@
 		<if test="order == 5">
 			ORDER BY csv.report_count DESC, csv.community_no DESC
 		</if>
-		
+
 		OFFSET #{page} * #{size} ROWS FETCH NEXT #{size} ROWS ONLY
 	</select>
-	
+
 	<select id="findCommunityCount" resultType="int">
 		SELECT
-			COUNT(*) AS count
+		COUNT(*) AS count
 
 		FROM community_summary_view csv
 
-		LEFT JOIN community_like_tbl cl
-			ON csv.community_no = cl.community_no
-			AND cl.member_id = #{memberId}
+		LEFT JOIN community_like_tbl
+		cl
+		ON csv.community_no = cl.community_no
+		AND cl.member_id = #{memberId}
 
 		LEFT JOIN community_dislike_tbl cd
-			ON csv.community_no = cd.community_no
-			AND cd.member_id = #{memberId}
+		ON csv.community_no = cd.community_no
+		AND cd.member_id = #{memberId}
 
 		LEFT JOIN (
-    			SELECT community_no, MAX(community_comment_writer) AS community_comment_writer
-    			FROM community_comment_tbl
-		    	WHERE community_comment_writer = #{memberId}
-    			GROUP BY community_no
-			) cc ON csv.community_no = cc.community_no
+		SELECT community_no, MAX(community_comment_writer) AS
+		community_comment_writer
+		FROM community_comment_tbl
+		WHERE community_comment_writer = #{memberId}
+		GROUP BY community_no
+		) cc ON csv.community_no = cc.community_no
 
-		LEFT JOIN community_report_tbl cr
-			ON csv.community_no = cr.community_no
-			AND cr.member_id = #{memberId}
-			
+		LEFT JOIN
+		community_report_tbl cr
+		ON csv.community_no = cr.community_no
+		AND cr.member_id = #{memberId}
+
 		<where>
-		    csv.title LIKE '%'||#{searchKeyword}||'%'
-   			<if test="isAdminMode != true">
-  			      AND csv.writer_id = #{memberId}
-    		</if>
-    		<if test="notice == 1">
-    			AND csv.member_grade IN (1, 2)
-    		</if>
-    		<if test="status != 0">
-        		AND csv.content_status = #{status}
-    		</if>
+			csv.title LIKE '%'||#{searchKeyword}||'%'
+			<if test="isAdminMode != true">
+				AND csv.writer_id = #{memberId}
+			</if>
+			<if test="notice == 1">
+				AND csv.member_grade IN (1, 2)
+			</if>
+			<if test="status != 0">
+				AND csv.content_status = #{status}
+			</if>
 		</where>
 
 		<if test="order == 0">
@@ -136,67 +142,69 @@
 			ORDER BY csv.report_count DESC, csv.community_no DESC
 		</if>
 	</select>
-	
+
 	<update id="updateCommunityStatus">
 		UPDATE community_tbl
 		SET community_status = #{status}
 		WHERE community_no = #{boardNo}
 	</update>
-	
+
 	<delete id="deleteCommunity">
-		DELETE 
+		DELETE
 		FROM community_tbl
 		WHERE community_no = #{boardNo}
 	</delete>
-	
+
 	<select id="findMarketAll" resultType="boardSummary">
 		SELECT
-			msv.market_no AS board_no,
-			msv.title, 
-			msv.writer_id,
-			msv.writer_name,
-			msv.content_date,
-			msv.content_status,
-			msv.view_count,
-			msv.like_count,
-			msv.comment_count,
-			msv.report_count,
-			msv.completed AS is_completed,
-			TO_CHAR(msv.completed_date, 'yyyy-mm-dd') AS completed_date,
-			
-			CASE WHEN cl.member_id IS NOT NULL THEN 1 ELSE 0 END AS is_liked,
-			CASE WHEN cc.market_comment_writer IS NOT NULL
-			THEN 1 ELSE 0 END AS is_commented,
-			CASE WHEN cr.member_id IS NOT NULL THEN 1 ELSE 0 END AS is_reported
+		msv.market_no AS board_no,
+		msv.title,
+		msv.writer_id,
+		msv.writer_name,
+		msv.content_date,
+		msv.content_status,
+		msv.view_count,
+		msv.like_count,
+		msv.comment_count,
+		msv.report_count,
+		msv.completed AS is_completed,
+		TO_CHAR(msv.completed_date, 'yyyy-mm-dd') AS completed_date,
 
-		FROM market_summary_view msv
+		CASE WHEN cl.member_id IS NOT NULL THEN 1 ELSE 0 END AS is_liked,
+		CASE WHEN cc.market_comment_writer IS NOT NULL
+		THEN 1 ELSE 0 END AS is_commented,
+		CASE WHEN cr.member_id IS NOT NULL THEN 1 ELSE 0 END AS is_reported
+
+		FROM
+		market_summary_view msv
 
 		LEFT JOIN market_like_tbl cl
-			ON msv.market_no = cl.market_no
-			AND cl.member_id = #{memberId}
+		ON msv.market_no = cl.market_no
+		AND cl.member_id = #{memberId}
 
 		LEFT JOIN (
-    		SELECT market_no, MAX(market_comment_writer) AS market_comment_writer
-    		FROM market_comment_tbl
-    		WHERE market_comment_writer = #{memberId}
-    		GROUP BY market_no
+		SELECT market_no, MAX(market_comment_writer) AS market_comment_writer
+		FROM market_comment_tbl
+		WHERE market_comment_writer = #{memberId}
+		GROUP BY market_no
 		) cc ON msv.market_no = cc.market_no
 
-		LEFT JOIN market_report_tbl cr
-			ON msv.market_no = cr.market_no
-			AND cr.member_id = #{memberId}
-			
+		LEFT JOIN
+		market_report_tbl cr
+		ON msv.market_no = cr.market_no
+		AND cr.member_id = #{memberId}
+
 		<where>
-		    msv.title LIKE '%'||#{searchKeyword}||'%'
-   			<if test="isAdminMode != true">
-  			      AND msv.writer_id = #{memberId}
-    		</if>
-    		<if test="status != 0">
-        		AND msv.content_status = #{status}
-    		</if>
-    		<if test="completed != 2">
-    			AND msv.completed = #{completed}
-    		</if>
+			msv.title LIKE '%'||#{searchKeyword}||'%'
+			<if test="isAdminMode != true">
+				AND msv.writer_id = #{memberId}
+			</if>
+			<if test="status != 0">
+				AND msv.content_status = #{status}
+			</if>
+			<if test="completed != 2">
+				AND msv.completed = #{completed}
+			</if>
 		</where>
 
 		<if test="order == 0">
@@ -215,88 +223,89 @@
 			ORDER BY msv.report_count DESC, msv.market_no DESC
 		</if>
 		<if test="order == 5">
-    		ORDER BY completed_date DESC NULLS LAST
+			ORDER BY completed_date DESC NULLS LAST
 		</if>
-		
+
 		OFFSET #{page} * #{size} ROWS FETCH NEXT #{size} ROWS ONLY
 	</select>
-	
+
 	<select id="findMarketAllCount" resultType="int">
 		SELECT
-			COUNT(*) AS count
+		COUNT(*) AS count
 
 		FROM market_summary_view msv
 
 		LEFT JOIN market_like_tbl cl
-			ON msv.market_no = cl.market_no
-			AND cl.member_id = #{memberId}
+		ON msv.market_no = cl.market_no
+		AND cl.member_id = #{memberId}
 
 		LEFT JOIN (
-    		SELECT market_no, MAX(market_comment_writer) AS market_comment_writer
-    		FROM market_comment_tbl
-    		WHERE market_comment_writer = #{memberId}
-    		GROUP BY market_no
+		SELECT market_no, MAX(market_comment_writer) AS market_comment_writer
+		FROM market_comment_tbl
+		WHERE market_comment_writer = #{memberId}
+		GROUP BY market_no
 		) cc ON msv.market_no = cc.market_no
 
-		LEFT JOIN market_report_tbl cr
-			ON msv.market_no = cr.market_no
-			AND cr.member_id = #{memberId}
-			
+		LEFT JOIN
+		market_report_tbl cr
+		ON msv.market_no = cr.market_no
+		AND cr.member_id = #{memberId}
+
 		<where>
-		    msv.title LIKE '%'||#{searchKeyword}||'%'
-   			<if test="isAdminMode != true">
-  			      AND msv.writer_id = #{memberId}
-    		</if>
-    		<if test="status != 0">
-        		AND msv.content_status = #{status}
-    		</if>
-    		<if test="completed != 2">
-    			AND msv.completed = #{completed}
-    		</if>
+			msv.title LIKE '%'||#{searchKeyword}||'%'
+			<if test="isAdminMode != true">
+				AND msv.writer_id = #{memberId}
+			</if>
+			<if test="status != 0">
+				AND msv.content_status = #{status}
+			</if>
+			<if test="completed != 2">
+				AND msv.completed = #{completed}
+			</if>
 		</where>
 
-		
+
 	</select>
-	
+
 	<update id="updateMarketStatus">
-		UPDATE market_tbl 
+		UPDATE market_tbl
 		SET market_status = #{status}
 		WHERE market_no = #{boardNo}
 	</update>
-	
+
 	<delete id="deleteMarket">
-		DELETE 
+		DELETE
 		FROM market_tbl
 		WHERE market_no = #{boardNo}
 	</delete>
-	
+
 	<select id="findMarketCommentAll" resultType="commentSummary">
-		SELECT 
-			mcsv.market_comment_no AS comment_no,
-			mcsv.market_comment_content AS comment_content,
-			mcsv.market_comment_date AS comment_date,
-			mcsv.market_no AS board_no,
-			mcsv.market_comment_writer	AS writer_id,
-			mcsv.member_name AS writer_name,
-			mcsv.member_thumb AS writer_thumb,
-			mcsv.report_count,
-			mcsv.is_edited,
-			
-			CASE WHEN cr.member_id IS NOT NULL THEN 1 ELSE 0 END AS is_reported
-	
+		SELECT
+		mcsv.market_comment_no AS comment_no,
+		mcsv.market_comment_content AS comment_content,
+		mcsv.market_comment_date AS comment_date,
+		mcsv.market_no AS board_no,
+		mcsv.market_comment_writer AS writer_id,
+		mcsv.member_name AS writer_name,
+		mcsv.member_thumb AS writer_thumb,
+		mcsv.report_count,
+		mcsv.is_edited,
+
+		CASE WHEN cr.member_id IS NOT NULL THEN 1 ELSE 0 END AS is_reported
+
 		FROM market_comment_summary_view mcsv
-		
+
 		LEFT JOIN market_comment_report_tbl cr
-			ON mcsv.market_comment_no = cr.market_comment_no
-			AND cr.member_id = #{memberId}
-			
+		ON mcsv.market_comment_no = cr.market_comment_no
+		AND cr.member_id = #{memberId}
+
 		<where>
 			mcsv.member_name LIKE '%'||#{searchKeyword}||'%'
 			<if test="isAdminMode != true">
-  			      AND mcsv.market_comment_writer = #{memberId}
-    		</if>
+				AND mcsv.market_comment_writer = #{memberId}
+			</if>
 		</where>
-		
+
 		<if test="order == 0">
 			ORDER BY comment_date DESC
 		</if>
@@ -306,91 +315,94 @@
 		<if test="order == 2">
 			ORDER BY report_count DESC
 		</if>
-		
+
 		OFFSET #{page} * #{size} ROWS FETCH NEXT #{size} ROWS ONLY
 	</select>
-	
+
 	<select id="findMarketCommentAllCount" resultType="int">
-		SELECT 
-			COUNT(*) AS count
-	
+		SELECT
+		COUNT(*) AS count
+
 		FROM market_comment_summary_view mcsv
-		
+
 		LEFT JOIN market_comment_report_tbl cr
-			ON mcsv.market_comment_no = cr.market_comment_no
-			AND cr.member_id = #{memberId}
-			
+		ON mcsv.market_comment_no = cr.market_comment_no
+		AND cr.member_id = #{memberId}
+
 		<where>
 			mcsv.member_name LIKE '%'||#{searchKeyword}||'%'
 			<if test="isAdminMode != true">
-  			      AND mcsv.market_comment_writer = #{memberId}
-    		</if>
+				AND mcsv.market_comment_writer = #{memberId}
+			</if>
 		</where>
 	</select>
-	
+
 	<update id="updateMarketComment">
 		UPDATE market_comment_tbl
-		SET market_comment_content = #{newComment}, is_edited = 1
+		SET market_comment_content =
+		#{newComment}, is_edited = 1
 		WHERE market_comment_no = #{commentNo}
 	</update>
-	
+
 	<update id="updateCommunityComment">
 		UPDATE community_comment_tbl
-		SET community_comment_content = #{newComment}, is_edited = 1
-		WHERE community_comment_no = #{commentNo}
+		SET
+		community_comment_content = #{newComment}, is_edited = 1
+		WHERE
+		community_comment_no = #{commentNo}
 	</update>
-	
+
 	<delete id="deleteMarketComment">
-		DELETE 
+		DELETE
 		FROM market_comment_tbl
 		WHERE market_comment_no = #{commentNo}
 	</delete>
-	
+
 	<delete id="deleteCommunityComment">
-		DELETE 
+		DELETE
 		FROM community_comment_tbl
 		WHERE community_comment_no = #{commentNo}
 	</delete>
-	
+
 	<select id="findCommunityCommentAll" resultType="commentSummary">
-		SELECT 
-			ccsv.community_comment_no AS comment_no,
-			ccsv.community_comment_content AS comment_content,
-			ccsv.community_comment_date AS comment_date,
-			ccsv.community_no AS board_no,
-			ccsv.community_comment_writer	AS writer_id,
-			ccsv.member_name AS writer_name,
-			ccsv.member_thumb AS writer_thumb,
-			ccsv.report_count,
-			ccsv.like_count,
-			ccsv.dislike_count,
-			ccsv.is_edited,
-			
-			CASE WHEN cr.member_id IS NOT NULL THEN 1 ELSE 0 END AS is_reported,
-			CASE WHEN cl.member_id IS NOT NULL THEN 1 ELSE 0 END AS is_liked,
-			CASE WHEN cd.member_id IS NOT NULL THEN 1 ELSE 0 END AS is_disliked
-	
+		SELECT
+		ccsv.community_comment_no AS comment_no,
+		ccsv.community_comment_content AS comment_content,
+		ccsv.community_comment_date AS comment_date,
+		ccsv.community_no AS board_no,
+		ccsv.community_comment_writer AS writer_id,
+		ccsv.member_name AS writer_name,
+		ccsv.member_thumb AS writer_thumb,
+		ccsv.report_count,
+		ccsv.like_count,
+		ccsv.dislike_count,
+		ccsv.is_edited,
+
+		CASE WHEN cr.member_id IS NOT NULL THEN 1 ELSE 0 END AS is_reported,
+		CASE WHEN cl.member_id IS NOT NULL THEN 1 ELSE 0 END AS is_liked,
+		CASE WHEN cd.member_id IS NOT NULL THEN 1 ELSE 0 END AS is_disliked
+
 		FROM community_comment_summary_view ccsv
-		
+
 		LEFT JOIN community_comment_report_tbl cr
-			ON ccsv.community_comment_no = cr.community_comment_no
-			AND cr.member_id = #{memberId}
-			
+		ON ccsv.community_comment_no = cr.community_comment_no
+		AND cr.member_id = #{memberId}
+
 		LEFT JOIN community_comment_like_tbl cl
-			ON ccsv.community_comment_no = cl.community_comment_no
-			AND cl.member_id = #{memberId}
-		
+		ON ccsv.community_comment_no = cl.community_comment_no
+		AND cl.member_id = #{memberId}
+
 		LEFT JOIN community_comment_dislike_tbl cd
-			ON ccsv.community_comment_no = cd.community_comment_no
-			AND cd.member_id = #{memberId}
-			
+		ON ccsv.community_comment_no = cd.community_comment_no
+		AND cd.member_id = #{memberId}
+
 		<where>
-    		ccsv.member_name LIKE '%' || #{searchKeyword} || '%'
-    		<if test="isAdminMode != true">
-  			      AND ccsv.community_comment_writer = #{memberId}
-    		</if>
+			ccsv.member_name LIKE '%' || #{searchKeyword} || '%'
+			<if test="isAdminMode != true">
+				AND ccsv.community_comment_writer = #{memberId}
+			</if>
 		</where>
-		
+
 		<if test="order == 0">
 			ORDER BY comment_date DESC
 		</if>
@@ -399,377 +411,419 @@
 		</if>
 		<if test="order == 2">
 			ORDER BY report_count DESC
-		</if>	
+		</if>
 		<if test="order == 3">
 			ORDER BY like_count DESC
-		</if>	
+		</if>
 		<if test="order == 4">
 			ORDER BY dislike_count DESC
-		</if>	
-		
+		</if>
+
 		OFFSET #{page} * #{size} ROWS FETCH NEXT #{size} ROWS ONLY
 	</select>
-	
+
 	<select id="findCommunityCommentAllCount" resultType="int">
-		SELECT 
-			COUNT(*) AS count
+		SELECT
+		COUNT(*) AS count
 		FROM community_comment_summary_view ccsv
-		
+
 		LEFT JOIN community_comment_report_tbl cr
-			ON ccsv.community_comment_no = cr.community_comment_no
-			AND cr.member_id = #{memberId}
-			
+		ON ccsv.community_comment_no = cr.community_comment_no
+		AND cr.member_id = #{memberId}
+
 		LEFT JOIN community_comment_like_tbl cl
-			ON ccsv.community_comment_no = cl.community_comment_no
-			AND cl.member_id = #{memberId}
-		
+		ON ccsv.community_comment_no = cl.community_comment_no
+		AND cl.member_id = #{memberId}
+
 		LEFT JOIN community_comment_dislike_tbl cd
-			ON ccsv.community_comment_no = cd.community_comment_no
-			AND cd.member_id = #{memberId}
-			
+		ON ccsv.community_comment_no = cd.community_comment_no
+		AND cd.member_id = #{memberId}
+
 		<where>
-    		ccsv.member_name LIKE '%' || #{searchKeyword} || '%'
-    		<if test="isAdminMode != true">
-  			      AND ccsv.community_comment_writer = #{memberId}
-    		</if>
+			ccsv.member_name LIKE '%' || #{searchKeyword} || '%'
+			<if test="isAdminMode != true">
+				AND ccsv.community_comment_writer = #{memberId}
+			</if>
 		</where>
 	</select>
-	
+
 	<select id="findMarketReportAll" resultType="report">
-		SELECT 
-			r.member_id AS writer_id,
-			r.market_report_reason AS reason,
-			m.member_name AS writer_name
+		SELECT
+		r.member_id AS writer_id,
+		r.market_report_reason AS reason,
+		m.member_name AS writer_name
 		FROM market_report_tbl r
-		LEFT JOIN member_tbl m ON r.member_id = m.member_id
+		LEFT JOIN member_tbl m ON
+		r.member_id = m.member_id
 		WHERE market_no = #{boardNo}
 	</select>
-	
+
 	<select id="findCommunityReportAll" resultType="report">
-		SELECT 
-			r.member_id AS writer_id,
-			r.community_report_reason AS reason,
-			m.member_name AS writer_name
+		SELECT
+		r.member_id AS writer_id,
+		r.community_report_reason AS reason,
+		m.member_name AS writer_name
 		FROM community_report_tbl r
-		LEFT JOIN member_tbl m ON r.member_id = m.member_id
+		LEFT JOIN member_tbl m ON
+		r.member_id = m.member_id
 		WHERE community_no = #{boardNo}
 	</select>
-	
+
 	<select id="findMarketCommentReportAll" resultType="report">
-		SELECT 
-			r.member_id AS writer_id,
-			r.market_comment_report_reason AS reason,
-			m.member_name AS writer_name
+		SELECT
+		r.member_id AS writer_id,
+		r.market_comment_report_reason AS reason,
+		m.member_name AS writer_name
 		FROM market_comment_report_tbl r
-		LEFT JOIN member_tbl m ON r.member_id = m.member_id
-		WHERE market_comment_no = #{boardNo}	
+		LEFT JOIN member_tbl m
+		ON r.member_id = m.member_id
+		WHERE market_comment_no = #{boardNo}
 	</select>
-	
+
 	<select id="findCommunityCommentReportAll" resultType="report">
-		SELECT 
-			r.member_id AS writer_id,
-			r.community_comment_report_reason AS reason,
-			m.member_name AS writer_name
+		SELECT
+		r.member_id AS writer_id,
+		r.community_comment_report_reason AS reason,
+		m.member_name AS writer_name
 		FROM community_comment_report_tbl r
-		LEFT JOIN member_tbl m ON r.member_id = m.member_id
+		LEFT JOIN member_tbl
+		m ON r.member_id = m.member_id
 		WHERE community_comment_no = #{boardNo}
 	</select>
-	
-	<select id="findLikeDislikeAll" resultType="boardSummary">
-		SELECT * 
-	
-		FROM 
-		(
-		
-		SELECT 
-    		msv.market_no AS board_no,
-    		'market' AS board_type,
-    		msv.title, 
-    		msv.writer_id,
-    		msv.writer_name,
-    		msv.content_date,
-    		msv.content_status, 
-    		msv.view_count, 
-    		msv.completed AS is_completed, 
-    		msv.completed_date,
-    		msv.member_grade AS writer_grade,
-    
-    		<!-- market 게시글의 좋아요, 싫어요, 댓글, 신고 수 -->
-    		msv.like_count, 
-    		0 AS dislike_count,
-    		msv.comment_count,
-    		msv.report_count,
-    		
-    		<!-- 로그인한 유저 기준으로 좋아요, 싫어요, 댓글, 신고 여부 표시 -->
-		    CASE WHEN cl.member_id IS NOT NULL THEN 1 ELSE 0 END AS is_liked,
-    		0 AS is_disliked,
-    		CASE WHEN cc.market_comment_writer IS NOT NULL THEN 1 ELSE 0 END AS is_commented,
-    		CASE WHEN cr.member_id IS NOT NULL THEN 1 ELSE 0 END AS is_reported
 
-		FROM market_summary_view msv
-		
+	<select id="findLikeDislikeAll" resultType="boardSummary">
+		SELECT *
+
+		FROM
+		(
+
+		SELECT
+		msv.market_no AS board_no,
+		'market' AS board_type,
+		msv.title,
+		msv.writer_id,
+		msv.writer_name,
+		msv.content_date,
+		msv.content_status,
+		msv.view_count,
+		msv.completed AS is_completed,
+		msv.completed_date,
+		msv.member_grade AS writer_grade,
+
+		<!-- market 게시글의 좋아요, 싫어요, 댓글, 신고 수 -->
+		msv.like_count,
+		0 AS dislike_count,
+		msv.comment_count,
+		msv.report_count,
+
+		<!-- 로그인한 유저 기준으로 좋아요, 싫어요, 댓글, 신고 여부 표시 -->
+		CASE WHEN cl.member_id IS NOT NULL THEN 1 ELSE 0 END AS is_liked,
+		0 AS is_disliked,
+		CASE WHEN cc.market_comment_writer IS NOT NULL THEN 1 ELSE 0 END AS
+		is_commented,
+		CASE WHEN cr.member_id IS NOT NULL THEN 1 ELSE 0 END AS is_reported
+
+		FROM
+		market_summary_view msv
+
 		<!-- 로그인한 유저 기준으로 좋아요, 싫어요, 댓글, 신고 여부 표시에 사용될 테이블 조인 -->
 		LEFT JOIN market_like_tbl cl
-    		ON msv.market_no = cl.market_no 
-    		AND cl.member_id = #{memberId}
-	    
+		ON msv.market_no = cl.market_no
+		AND cl.member_id = #{memberId}
+
 		LEFT JOIN (
-			<!-- MAX를 쓰는 이유: 서브쿼리에서 한 행만 반환하기 위해 (중복 방지) -->
-    		SELECT market_no, MAX(market_comment_writer) AS market_comment_writer
-    		FROM market_comment_tbl
-    		WHERE market_comment_writer = #{memberId}
-    		GROUP BY market_no
+		<!-- MAX를 쓰는 이유: 서브쿼리에서 한 행만 반환하기 위해 (중복 방지) -->
+		SELECT market_no, MAX(market_comment_writer) AS market_comment_writer
+		FROM market_comment_tbl
+		WHERE market_comment_writer = #{memberId}
+		GROUP BY market_no
 		) cc ON msv.market_no = cc.market_no
 
-		LEFT JOIN market_report_tbl cr
-				ON msv.market_no = cr.market_no
-				AND cr.member_id = #{memberId}
-    
-    	<!-- 로그인한 유저가 좋아요 누른 게시글만 남기기 (market 게시글은 좋아요밖에 없음)-->
+		LEFT JOIN
+		market_report_tbl cr
+		ON msv.market_no = cr.market_no
+		AND cr.member_id = #{memberId}
+
+		<!-- 로그인한 유저가 좋아요 누른 게시글만 남기기 (market 게시글은 좋아요밖에 없음) -->
 		WHERE EXISTS (
-  			SELECT 1
-  			FROM market_like_tbl mkl
-  			WHERE mkl.market_no = msv.market_no
-	    		AND mkl.member_id = #{memberId}
-			)
+		SELECT 1
+		FROM market_like_tbl mkl
+		WHERE mkl.market_no = msv.market_no
+		AND mkl.member_id = #{memberId}
+		)
 
 		UNION ALL
 
-		SELECT 
-    		csv.community_no AS board_no,
-    		'community' AS board_type,
-    		csv.title,
-    		csv.writer_id,
-    		csv.writer_name,
-    		csv.content_date,
-    		csv.content_status,
-    		csv.view_count,
-    		NULL AS is_completed,
-    		NULL AS completed_date,
-    		csv.member_grade AS writer_grade,
-    
-    		<!-- community 게시글의 좋아요, 싫어요, 댓글, 신고 수 -->
-    		csv.like_count, 
-		    csv.dislike_count,		
-    		csv.comment_count,
-    		csv.report_count,
-    
-    		<!-- 로그인한 유저 기준으로 좋아요, 싫어요, 댓글, 신고 여부 표시 -->
-    		CASE WHEN cl.member_id IS NOT NULL THEN 1 ELSE 0 END AS is_liked,
-    		CASE WHEN cd.member_id IS NOT NULL THEN 1 ELSE 0 END AS is_disliked,	
-			CASE WHEN cc.community_comment_writer IS NOT NULL THEN 1 ELSE 0 END AS is_commented,
-			CASE WHEN cr.member_id IS NOT NULL THEN 1 ELSE 0 END AS is_reported
+		SELECT
+		csv.community_no AS board_no,
+		'community' AS board_type,
+		csv.title,
+		csv.writer_id,
+		csv.writer_name,
+		csv.content_date,
+		csv.content_status,
+		csv.view_count,
+		NULL AS is_completed,
+		NULL AS completed_date,
+		csv.member_grade AS writer_grade,
 
-		FROM community_summary_view csv
+		<!-- community 게시글의 좋아요, 싫어요, 댓글, 신고 수 -->
+		csv.like_count,
+		csv.dislike_count,
+		csv.comment_count,
+		csv.report_count,
 
-    	<!-- 로그인한 유저 기준으로 좋아요, 싫어요, 댓글, 신고 여부 표시에 사용될 테이블 조인 -->
+		<!-- 로그인한 유저 기준으로 좋아요, 싫어요, 댓글, 신고 여부 표시 -->
+		CASE WHEN cl.member_id IS NOT NULL THEN 1 ELSE 0 END AS is_liked,
+		CASE WHEN cd.member_id IS NOT NULL THEN 1 ELSE 0 END AS is_disliked,
+		CASE WHEN cc.community_comment_writer IS NOT NULL THEN 1 ELSE 0 END AS
+		is_commented,
+		CASE WHEN cr.member_id IS NOT NULL THEN 1 ELSE 0 END AS is_reported
+
+		FROM
+		community_summary_view csv
+
+		<!-- 로그인한 유저 기준으로 좋아요, 싫어요, 댓글, 신고 여부 표시에 사용될 테이블 조인 -->
 		LEFT JOIN community_like_tbl cl
-    		ON csv.community_no = cl.community_no
-			AND cl.member_id = #{memberId}
+		ON csv.community_no = cl.community_no
+		AND cl.member_id = #{memberId}
 
 		LEFT JOIN community_dislike_tbl cd
-			ON csv.community_no = cd.community_no
-			AND cd.member_id = #{memberId}
+		ON csv.community_no = cd.community_no
+		AND cd.member_id = #{memberId}
 
 		LEFT JOIN (
-			<!-- MAX를 쓰는 이유: 서브쿼리에서 한 행만 반환하기 위해 (중복 방지) -->
-		    SELECT community_no, MAX(community_comment_writer) AS community_comment_writer
-			FROM community_comment_tbl
-		    WHERE community_comment_writer = #{memberId}
-			GROUP BY community_no
+		<!-- MAX를 쓰는 이유: 서브쿼리에서 한 행만 반환하기 위해 (중복 방지) -->
+		SELECT community_no, MAX(community_comment_writer) AS
+		community_comment_writer
+		FROM community_comment_tbl
+		WHERE community_comment_writer = #{memberId}
+		GROUP BY community_no
 		) cc ON csv.community_no = cc.community_no
 
-		LEFT JOIN community_report_tbl cr
-			ON csv.community_no = cr.community_no
-			AND cr.member_id = #{memberId}
-			
-		<!-- 로그인한 유저가 좋아요 OR 싫어요 누른 게시글만 남기기 -->	
+		LEFT JOIN
+		community_report_tbl cr
+		ON csv.community_no = cr.community_no
+		AND cr.member_id = #{memberId}
+
+		<!-- 로그인한 유저가 좋아요 OR 싫어요 누른 게시글만 남기기 -->
 		WHERE EXISTS (
-    		SELECT 1
-    		FROM community_like_tbl cml
-    		WHERE cml.community_no = csv.community_no
-      		AND cml.member_id = #{memberId}
+		SELECT 1
+		FROM community_like_tbl cml
+		WHERE cml.community_no = csv.community_no
+		AND cml.member_id = #{memberId}
 		)
 		OR EXISTS (
-    		SELECT 1
-    		FROM community_dislike_tbl cmd
-    		WHERE cmd.community_no = csv.community_no
-      		AND cmd.member_id = #{memberId}
+		SELECT 1
+		FROM community_dislike_tbl cmd
+		WHERE cmd.community_no = csv.community_no
+		AND cmd.member_id = #{memberId}
 		)
-   		
-   		)
-   		
-   		<where>
-   			content_status = 1
-   			<if test="status == 1">
-   				AND is_liked = 1
-   			</if>
-   			<if test="status == 2">
-   				AND is_disliked = 1
-   			</if>
-   		</where>
-   		
-   		<if test="order == 0">
-   			ORDER BY content_date DESC
-   		</if>
-   		<if test="order == 1">
-   			ORDER BY content_date ASC
-   		</if>
-   		<if test="order == 2"> 
-   			ORDER BY view_count DESC, board_no DESC
-   		</if>
-   		<if test="order == 3"> 
-   			ORDER BY like_count DESC, board_no DESC
-   		</if>
-   		<if test="order == 4"> 
-   			ORDER BY dislike_count DESC, board_no DESC
-   		</if>
-   		<if test="order == 5"> 
-   			ORDER BY report_count DESC, board_no DESC
-   		</if>
-   		
-   		OFFSET #{page} * #{size} ROWS FETCH NEXT #{size} ROWS ONLY
+
+		)
+
+		<where>
+			content_status = 1
+			<if test="status == 1">
+				AND is_liked = 1
+			</if>
+			<if test="status == 2">
+				AND is_disliked = 1
+			</if>
+		</where>
+
+		<if test="order == 0">
+			ORDER BY content_date DESC
+		</if>
+		<if test="order == 1">
+			ORDER BY content_date ASC
+		</if>
+		<if test="order == 2">
+			ORDER BY view_count DESC, board_no DESC
+		</if>
+		<if test="order == 3">
+			ORDER BY like_count DESC, board_no DESC
+		</if>
+		<if test="order == 4">
+			ORDER BY dislike_count DESC, board_no DESC
+		</if>
+		<if test="order == 5">
+			ORDER BY report_count DESC, board_no DESC
+		</if>
+
+		OFFSET #{page} * #{size} ROWS FETCH NEXT #{size} ROWS ONLY
 	</select>
-	
+
 	<select id="findLikeDislikeCount" resultType="int">
 		SELECT COUNT(*) AS count
-	
-		FROM 
-		(
-		
-		SELECT 
-    		msv.market_no AS board_no,
-    		'market' AS board_type,
-    		msv.title, 
-    		msv.writer_id,
-    		msv.writer_name,
-    		msv.content_date,
-    		msv.content_status, 
-    		msv.view_count, 
-    		msv.completed AS is_completed, 
-    		msv.completed_date,
-    
-    		<!-- market 게시글의 좋아요, 싫어요, 댓글, 신고 수 -->
-    		msv.like_count, 
-    		0 AS dislike_count,
-    		msv.comment_count,
-    		msv.report_count,
-    		
-    		<!-- 로그인한 유저 기준으로 좋아요, 싫어요, 댓글, 신고 여부 표시 -->
-		    CASE WHEN cl.member_id IS NOT NULL THEN 1 ELSE 0 END AS is_liked,
-    		0 AS is_disliked,
-    		CASE WHEN cc.market_comment_writer IS NOT NULL THEN 1 ELSE 0 END AS is_commented,
-    		CASE WHEN cr.member_id IS NOT NULL THEN 1 ELSE 0 END AS is_reported
 
-		FROM market_summary_view msv
-		
+		FROM
+		(
+
+		SELECT
+		msv.market_no AS board_no,
+		'market' AS board_type,
+		msv.title,
+		msv.writer_id,
+		msv.writer_name,
+		msv.content_date,
+		msv.content_status,
+		msv.view_count,
+		msv.completed AS is_completed,
+		msv.completed_date,
+
+		<!-- market 게시글의 좋아요, 싫어요, 댓글, 신고 수 -->
+		msv.like_count,
+		0 AS dislike_count,
+		msv.comment_count,
+		msv.report_count,
+
+		<!-- 로그인한 유저 기준으로 좋아요, 싫어요, 댓글, 신고 여부 표시 -->
+		CASE WHEN cl.member_id IS NOT NULL THEN 1 ELSE 0 END AS is_liked,
+		0 AS is_disliked,
+		CASE WHEN cc.market_comment_writer IS NOT NULL THEN 1 ELSE 0 END AS
+		is_commented,
+		CASE WHEN cr.member_id IS NOT NULL THEN 1 ELSE 0 END AS is_reported
+
+		FROM
+		market_summary_view msv
+
 		<!-- 로그인한 유저 기준으로 좋아요, 싫어요, 댓글, 신고 여부 표시에 사용될 테이블 조인 -->
 		LEFT JOIN market_like_tbl cl
-    		ON msv.market_no = cl.market_no 
-    		AND cl.member_id = #{memberId}
-	    
+		ON msv.market_no = cl.market_no
+		AND cl.member_id = #{memberId}
+
 		LEFT JOIN (
-			<!-- MAX를 쓰는 이유: 서브쿼리에서 한 행만 반환하기 위해 (중복 방지) -->
-    		SELECT market_no, MAX(market_comment_writer) AS market_comment_writer
-    		FROM market_comment_tbl
-    		WHERE market_comment_writer = #{memberId}
-    		GROUP BY market_no
+		<!-- MAX를 쓰는 이유: 서브쿼리에서 한 행만 반환하기 위해 (중복 방지) -->
+		SELECT market_no, MAX(market_comment_writer) AS market_comment_writer
+		FROM market_comment_tbl
+		WHERE market_comment_writer = #{memberId}
+		GROUP BY market_no
 		) cc ON msv.market_no = cc.market_no
 
-		LEFT JOIN market_report_tbl cr
-				ON msv.market_no = cr.market_no
-				AND cr.member_id = #{memberId}
-    
-    	<!-- 로그인한 유저가 좋아요 누른 게시글만 남기기 (market 게시글은 좋아요밖에 없음)-->
+		LEFT JOIN
+		market_report_tbl cr
+		ON msv.market_no = cr.market_no
+		AND cr.member_id = #{memberId}
+
+		<!-- 로그인한 유저가 좋아요 누른 게시글만 남기기 (market 게시글은 좋아요밖에 없음) -->
 		WHERE EXISTS (
-  			SELECT 1
-  			FROM market_like_tbl mkl
-  			WHERE mkl.market_no = msv.market_no
-	    		AND mkl.member_id = #{memberId}
-			)
+		SELECT 1
+		FROM market_like_tbl mkl
+		WHERE mkl.market_no = msv.market_no
+		AND mkl.member_id = #{memberId}
+		)
 
 		UNION ALL
 
-		SELECT 
-    		csv.community_no AS board_no,
-    		'community' AS board_type,
-    		csv.title,
-    		csv.writer_id,
-    		csv.writer_name,
-    		csv.content_date,
-    		csv.content_status,
-    		csv.view_count,
-    		NULL AS is_completed,
-    		NULL AS completed_date,
-    
-    		<!-- community 게시글의 좋아요, 싫어요, 댓글, 신고 수 -->
-    		csv.like_count, 
-		    csv.dislike_count,		
-    		csv.comment_count,
-    		csv.report_count,
-    
-    		<!-- 로그인한 유저 기준으로 좋아요, 싫어요, 댓글, 신고 여부 표시 -->
-    		CASE WHEN cl.member_id IS NOT NULL THEN 1 ELSE 0 END AS is_liked,
-    		CASE WHEN cd.member_id IS NOT NULL THEN 1 ELSE 0 END AS is_disliked,	
-			CASE WHEN cc.community_comment_writer IS NOT NULL THEN 1 ELSE 0 END AS is_commented,
-			CASE WHEN cr.member_id IS NOT NULL THEN 1 ELSE 0 END AS is_reported
+		SELECT
+		csv.community_no AS board_no,
+		'community' AS board_type,
+		csv.title,
+		csv.writer_id,
+		csv.writer_name,
+		csv.content_date,
+		csv.content_status,
+		csv.view_count,
+		NULL AS is_completed,
+		NULL AS completed_date,
 
-		FROM community_summary_view csv
+		<!-- community 게시글의 좋아요, 싫어요, 댓글, 신고 수 -->
+		csv.like_count,
+		csv.dislike_count,
+		csv.comment_count,
+		csv.report_count,
 
-    	<!-- 로그인한 유저 기준으로 좋아요, 싫어요, 댓글, 신고 여부 표시에 사용될 테이블 조인 -->
+		<!-- 로그인한 유저 기준으로 좋아요, 싫어요, 댓글, 신고 여부 표시 -->
+		CASE WHEN cl.member_id IS NOT NULL THEN 1 ELSE 0 END AS is_liked,
+		CASE WHEN cd.member_id IS NOT NULL THEN 1 ELSE 0 END AS is_disliked,
+		CASE WHEN cc.community_comment_writer IS NOT NULL THEN 1 ELSE 0 END AS
+		is_commented,
+		CASE WHEN cr.member_id IS NOT NULL THEN 1 ELSE 0 END AS is_reported
+
+		FROM
+		community_summary_view csv
+
+		<!-- 로그인한 유저 기준으로 좋아요, 싫어요, 댓글, 신고 여부 표시에 사용될 테이블 조인 -->
 		LEFT JOIN community_like_tbl cl
-    		ON csv.community_no = cl.community_no
-			AND cl.member_id = #{memberId}
+		ON csv.community_no = cl.community_no
+		AND cl.member_id = #{memberId}
 
 		LEFT JOIN community_dislike_tbl cd
-			ON csv.community_no = cd.community_no
-			AND cd.member_id = #{memberId}
+		ON csv.community_no = cd.community_no
+		AND cd.member_id = #{memberId}
 
 		LEFT JOIN (
-			<!-- MAX를 쓰는 이유: 서브쿼리에서 한 행만 반환하기 위해 (중복 방지) -->
-		    SELECT community_no, MAX(community_comment_writer) AS community_comment_writer
-			FROM community_comment_tbl
-		    WHERE community_comment_writer = #{memberId}
-			GROUP BY community_no
+		<!-- MAX를 쓰는 이유: 서브쿼리에서 한 행만 반환하기 위해 (중복 방지) -->
+		SELECT community_no, MAX(community_comment_writer) AS
+		community_comment_writer
+		FROM community_comment_tbl
+		WHERE community_comment_writer = #{memberId}
+		GROUP BY community_no
 		) cc ON csv.community_no = cc.community_no
 
-		LEFT JOIN community_report_tbl cr
-			ON csv.community_no = cr.community_no
-			AND cr.member_id = #{memberId}
-			
-		<!-- 로그인한 유저가 좋아요 OR 싫어요 누른 게시글만 남기기 -->	
+		LEFT JOIN
+		community_report_tbl cr
+		ON csv.community_no = cr.community_no
+		AND cr.member_id = #{memberId}
+
+		<!-- 로그인한 유저가 좋아요 OR 싫어요 누른 게시글만 남기기 -->
 		WHERE EXISTS (
-    		SELECT 1
-    		FROM community_like_tbl cml
-    		WHERE cml.community_no = csv.community_no
-      		AND cml.member_id = #{memberId}
+		SELECT 1
+		FROM community_like_tbl cml
+		WHERE cml.community_no = csv.community_no
+		AND cml.member_id = #{memberId}
 		)
 		OR EXISTS (
-    		SELECT 1
-    		FROM community_dislike_tbl cmd
-    		WHERE cmd.community_no = csv.community_no
-      		AND cmd.member_id = #{memberId}
+		SELECT 1
+		FROM community_dislike_tbl cmd
+		WHERE cmd.community_no = csv.community_no
+		AND cmd.member_id = #{memberId}
 		)
-   		
-   		)
-   		
-   		<where>
-   			content_status = 1
-   			<if test="status == 1">
-   				AND is_liked = 1
-   			</if>
-   			<if test="status == 2">
-   				AND is_disliked = 1
-   			</if>
-   		</where>
+
+		)
+
+		<where>
+			content_status = 1
+			<if test="status == 1">
+				AND is_liked = 1
+			</if>
+			<if test="status == 2">
+				AND is_disliked = 1
+			</if>
+		</where>
 	</select>
-	
+
 	<select id="findChartAll" resultType="chart">
-		SELECT 
-    		TO_CHAR(market_date, 'YYYY-MM-DD') AS market_date,
-    		COUNT(*) AS total_count,
-    		SUM(CASE WHEN completed = 1 THEN 1 ELSE 0 END) AS completed_count,
-    		SUM(CASE WHEN completed = 0 THEN 1 ELSE 0 END) AS incompleted_count
+		SELECT
+		TO_CHAR(market_date, 'YYYY-MM-DD') AS market_date,
+		COUNT(*) AS total_count,
+		SUM(CASE WHEN completed = 1 THEN 1 ELSE 0 END) AS completed_count,
+		SUM(CASE WHEN completed = 0 THEN 1 ELSE 0 END) AS incompleted_count
+		FROM
+		market_tbl
+		<where>
+			<![CDATA[
+			market_date >= #{start} AND market_date < #{end} + 1
+			]]>
+			<if test="complete != 2">
+				AND completed = #{complete}
+			</if>
+		</where>
+
+		GROUP BY TO_CHAR(market_date, 'YYYY-MM-DD')
+		ORDER BY market_date ASC
+	</select>
+
+	<select id="findListAll" resultType="tradeStatus">
+		SELECT
+		market_no,
+		market_title,
+		sell_addr,
+		sell_price,
+		completed,
+		TO_CHAR(completed_date, 'yyyy-mm-dd') AS completed_date
+
 		FROM market_tbl
 		<where>
 			<![CDATA[
@@ -779,39 +833,16 @@
 				AND completed = #{complete}
 			</if>
 		</where>
-		
-		GROUP BY TO_CHAR(market_date, 'YYYY-MM-DD')
-		ORDER BY market_date ASC
-	</select>
-	
-	<select id="findListAll" resultType="tradeStatus">
-		SELECT 
-    		market_no,
-    		market_title,
-    		sell_addr,
-    		sell_price,
-    		completed,
-    		TO_CHAR(completed_date, 'yyyy-mm-dd') AS completed_date
 
-		FROM market_tbl 
-		<where>
-			<![CDATA[
-			market_date >= #{start} AND market_date < #{end} + 1
-			]]>
-			<if test="complete != 2">
-				AND completed = #{complete}
-			</if>
-		</where>
-		
 		ORDER BY market_no DESC
-		
+
 		OFFSET #{page} * #{size} ROWS FETCH NEXT #{size} ROWS ONLY
 	</select>
-	
+
 	<select id="findListAllCount" resultType="int">
-		SELECT 
-    		COUNT(*) AS count
-		FROM market_tbl 
+		SELECT
+		COUNT(*) AS count
+		FROM market_tbl
 		<where>
 			<![CDATA[
 			market_date >= #{start} AND market_date < #{end} + 1
@@ -821,48 +852,148 @@
 			</if>
 		</where>
 	</select>
-	
-	<select id="todayOneCounts" resultType = "TodayStats">
-		select 
-		    d.today,
-		    nvl(t.community_count, 0) as community_count,
-    		nvl(t.market_count, 0) as market_count
+
+	<select id="todayOneCounts" resultType="TodayStats">
+		select
+		d.today,
+		nvl(t.community_count, 0) as community_count,
+		nvl(t.market_count, 0) as market_count
 		from (
-		    select to_char(sysdate - (level - 1), 'mm-dd') as today
-		    from dual
+		select to_char(sysdate - (level - 1), 'mm-dd') as today
+		from dual
 		    <![CDATA[
 				connect by level <= 14
 			]]>
 		) d
-		
+
 		left join (
-		    select 
-		        today,
-		        sum(community_count) as community_count,
-		        sum(market_count) as market_count
-		    from (
-		        select 
-		            to_char(community_date, 'mm-dd') as today,
-		            count(*) as community_count,
-		            0 as market_count
-		        from community_tbl
-		        where community_writer = #{memberId}
-		        group by to_char(community_date, 'mm-dd')
-		
-		        union all
-		
-		        select 
-		            to_char(market_date, 'mm-dd') as today,
-		            0 as community_count,
-		            count(*) as market_count
-		        from market_tbl
-		        where market_writer = #{memberId}
-		        group by to_char(market_date, 'mm-dd')
-		    ) temp
-		    group by today
+		select
+		today,
+		sum(community_count) as community_count,
+		sum(market_count) as market_count
+		from (
+		select
+		to_char(community_date, 'mm-dd') as today,
+		count(*) as community_count,
+		0 as market_count
+		from community_tbl
+		where community_writer = #{memberId}
+		group by to_char(community_date, 'mm-dd')
+
+		union all
+
+		select
+		to_char(market_date, 'mm-dd') as today,
+		0 as community_count,
+		count(*) as market_count
+		from market_tbl
+		where market_writer = #{memberId}
+		group by to_char(market_date, 'mm-dd')
+		) temp
+		group by today
 		) t
 		on d.today = t.today
-		
+
 		order by d.today
+	</select>
+
+	<select id="myBestPost" resultType="MyPost">
+		select *
+		from (
+		    select 
+		        t.*,
+		        row_number() over (
+		            order by t.like_count desc, t.post_date desc
+		        ) as rn
+		    from (
+		        select *
+		        from (
+		            select 
+		                c.community_no,
+		                c.community_title,
+		                0 as market_no,
+		                '' as market_title,
+		                c.view_count,
+		                count(cl.member_id) as like_count,
+		                c.community_date as post_date
+		            from community_tbl c
+		            left join community_like_tbl cl
+		                on c.community_no = cl.community_no
+		            where c.community_writer = #{memberId}
+		            group by 
+		                c.community_no, c.community_title, c.view_count, c.community_date
+		
+		            union all
+		
+		            select 
+		                0 as community_no,
+		                '' as community_title,
+		                m.market_no,
+		                m.market_title,
+		                m.view_count,
+		                count(ml.member_id) as like_count,
+		                m.market_date as post_date
+		            from market_tbl m
+		            left join market_like_tbl ml
+		                on m.market_no = ml.market_no
+		            where m.market_writer = #{memberId}
+		            group by 
+		                m.market_no, m.market_title, m.view_count, m.market_date
+		        )
+		    ) t
+		)
+		<![CDATA[
+			where rn <= 3
+		]]>
+	</select>
+	
+	<select id="myRecentPost" resultType="MyPost">
+		select *
+		from (
+		    select 
+		        t.*,
+		        row_number() over (
+		            order by t.post_date desc
+		        ) as rn
+		    from (
+		        select *
+		        from (
+		            select 
+		                c.community_no,
+		                c.community_title,
+		                0 as market_no,
+		                '' as market_title,
+		                c.view_count,
+		                count(cl.member_id) as like_count,
+		                c.community_date as post_date
+		            from community_tbl c
+		            left join community_like_tbl cl
+		                on c.community_no = cl.community_no
+		            where c.community_writer = #{memberId}
+		            group by 
+		                c.community_no, c.community_title, c.view_count, c.community_date
+		
+		            union all
+		
+		            select 
+		                0 as community_no,
+		                '' as community_title,
+		                m.market_no,
+		                m.market_title,
+		                m.view_count,
+		                count(ml.member_id) as like_count,
+		                m.market_date as post_date
+		            from market_tbl m
+		            left join market_like_tbl ml
+		                on m.market_no = ml.market_no
+		            where m.market_writer = #{memberId}
+		            group by 
+		                m.market_no, m.market_title, m.view_count, m.market_date
+		        )
+		    ) t
+		)
+		<![CDATA[
+			where rn <= 3
+		]]>
 	</select>
 </mapper>

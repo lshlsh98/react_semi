@@ -25,6 +25,7 @@ import kr.co.iei.mypage.model.vo.BoardSummary;
 import kr.co.iei.mypage.model.vo.ChartResDto;
 import kr.co.iei.mypage.model.vo.CommentListResponseDto;
 import kr.co.iei.mypage.model.vo.CommentSummary;
+import kr.co.iei.mypage.model.vo.MyPost;
 import kr.co.iei.mypage.model.vo.ReportRequestDto;
 import kr.co.iei.mypage.model.vo.ReportResponseDto;
 import kr.co.iei.mypage.model.vo.TodayStats;
@@ -173,9 +174,25 @@ public class MypageController {
 		return ResponseEntity.ok(map);
 	}//
 	
+	// 차트용
 	@GetMapping(value = "/today/{memberId}")
 	public ResponseEntity<?> todayOneCounts(@PathVariable String memberId){
 		List<TodayStats> list = mypageService.todayOneCounts(memberId);
+		
+		return ResponseEntity.ok(list);
+	}
+	
+	//
+	@GetMapping(value= "/my-best/{memberId}")
+	public ResponseEntity<?> myBestPost(@PathVariable String memberId){
+		List<MyPost> list = mypageService.myBestPost(memberId);
+		
+		return ResponseEntity.ok(list);
+	}
+	
+	@GetMapping(value= "/my-recent/{memberId}")
+	public ResponseEntity<?> myRecentPost(@PathVariable String memberId){
+		List<MyPost> list = mypageService.myRecentPost(memberId);
 		
 		return ResponseEntity.ok(list);
 	}

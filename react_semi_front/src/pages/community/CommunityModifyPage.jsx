@@ -63,10 +63,25 @@ const CommunityModifyPage = () => {
 
   /* 내용 함수 */
   const modifyCommunity = () => {
-    if (community.communityTitle === "" || community.communityContent === "") {
+    const getTextFromHTML = (html) => {
+      const div = document.createElement("div");
+      div.innerHTML = html;
+      return div.textContent || "";
+    };
+
+    const title = (community.communityTitle || "").trim();
+    const contentText = getTextFromHTML(
+      community.communityContent || "",
+    ).trim();
+
+    const isTitleEmpty = title.length === 0;
+    const isContentEmpty = contentText.length === 0;
+
+    if (isTitleEmpty || isContentEmpty) {
       Swal.fire("제목과 내용을 입력해주세요.", "", "warning");
       return;
     }
+
     const form = new FormData();
     form.append("communityTitle", community.communityTitle);
     form.append("communityContent", community.communityContent);
@@ -96,13 +111,25 @@ const CommunityModifyPage = () => {
       {/* 제목 필드 */}
       <div className={styles.community_input_wrap}>
         <label htmlFor="communityTitle">제목</label>
-        <Input
-          type="text"
-          name="communityTitle"
-          id="communityTitle"
-          value={community.communityTitle}
-          onChange={inputCommunityTitle}
-        ></Input>
+
+        <div className={styles.title_input_box}>
+          <Input
+            type="text"
+            name="communityTitle"
+            id="communityTitle"
+            value={community.communityTitle || ""}
+            placeholder="제목을 입력해주세요 (최대 50자 입력 가능)"
+            onChange={inputCommunityTitle}
+          />
+
+          <span
+            className={`${styles.title_count} ${
+              community.communityTitle.length >= 50 ? styles.limit : ""
+            }`}
+          >
+            {community.communityTitle.length} / 50
+          </span>
+        </div>
       </div>
 
       {/* 내용 필드 */}
@@ -275,9 +302,10 @@ const MenuBar = ({ editor }) => {
 };
 
 const TextEditor = ({ data, setData }) => {
+  const [contentLength, setContentLength] = useState(0);
   //console.log(data);
 
-  let lastValidHTML = "";
+  const lastValidHTMLRef = useRef("");
   const editor = useEditor({
     extensions: [
       StarterKit.configure({
@@ -305,9 +333,10 @@ const TextEditor = ({ data, setData }) => {
       handleTextInput(view, from, to, text) {
         const currentHTML = view.dom.innerHTML;
         const newHTML = currentHTML + text;
-        const byteLength = new TextEncoder().encode(newHTML).length; //console.log("새글자입력" + byteLength);
-        if (byteLength > 4000) {
-          alert("최대 입력수 초과");
+
+        const length = new TextEncoder().encode(newHTML).length;
+        if (length > 4000) {
+          alert("4,000자를 초과함");
           return true; // 입력 막기
         }
         return false;
@@ -316,9 +345,9 @@ const TextEditor = ({ data, setData }) => {
       handleKeyDown(view, event) {
         if (event.key === "Enter") {
           const html = view.dom.innerHTML;
-          const byteLength = new TextEncoder().encode(html).length;
-          console.log(byteLength);
-          if (byteLength > 4000) {
+          const length = new TextEncoder().encode(html).length;
+          console.log(length);
+          if (length > 4000) {
             alert("최대 4,000자까지 입력 가능합니다.");
             return true;
           }
@@ -327,22 +356,17 @@ const TextEditor = ({ data, setData }) => {
       },
     },
     onUpdate: ({ editor }) => {
-      let html = editor.getHTML();
+      const textLength = editor.getText().length;
 
-      // 연속된 공백 2개를 하나는 일반 공백, 하나는 &nbsp;로 치환
-      // 이렇게 하면 브라우저가 HTML을 다시 읽을 때 공백을 합치지 않음
-      const formattedHtml = html.replace(/  /g, " &nbsp;");
+      setContentLength(textLength);
+      setData(editor.getHTML());
 
-      const byteLength = new TextEncoder().encode(formattedHtml).length;
+      if (length > 4000) {
+        editor.commands.undo();
 
-      if (byteLength > 4000) {
-        editor.commands.setContent(lastValidHTML, false);
-        console.log(byteLength);
-        alert("지워버린다.");
+        alert("4,000자 초과");
         return;
       }
-      lastValidHTML = html;
-      setData(formattedHtml);
     },
   });
   const isSet = useRef(false);
@@ -350,14 +374,26 @@ const TextEditor = ({ data, setData }) => {
   useEffect(() => {
     if (editor && data && !isSet.current) {
       editor.commands.setContent(data);
+
+      const text = editor.getText().trim();
+      setContentLength(text.length);
+
       isSet.current = true;
     }
   }, [editor, data]);
   return (
     <div className={styles.editor_wrap}>
-      <MenuBar editor={editor} className={styles.menu_bar} />
+      <MenuBar editor={editor} />
 
       <EditorContent editor={editor} className={styles.editor_content} />
+
+      <div
+        className={`${styles.editor_count} ${
+          contentLength >= 4000 ? styles.limit : ""
+        }`}
+      >
+        {contentLength} / 4000
+      </div>
     </div>
   );
 };
