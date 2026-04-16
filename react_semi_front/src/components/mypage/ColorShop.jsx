@@ -53,6 +53,7 @@ const ColorShop = () => {
         setSelectColor={setSelectColor}
         setMemberColor={setMemberColor}
       />
+
       <div className={styles.return_wrap}>
         <div
           className={styles.color_div_select}
@@ -104,6 +105,17 @@ const ColorList = ({
         );
       })}
     </div>
+  );
+};
+
+const CarbonContributionView = ({ memberScore }) => {
+  return (
+    <section className={styles.carbon_contribution_wrap}>
+      <p>나의 탄소 기여도</p>
+      <div className={styles.carbon_contribution}>
+        <p>{memberScore}P</p>
+      </div>
+    </section>
   );
 };
 
