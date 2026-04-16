@@ -110,8 +110,14 @@ const MarketListPage = () => {
                 setOrder(value);
                 setPage(0);
               }}
-              list={orderList}
-            />
+            >
+              <option value={0}>최신순</option>
+              <option value={1}>작성순</option>
+              <option value={2}>조회수</option>
+              <option value={3}>좋아요</option>
+              <option value={4}>금액순</option>
+              <option value={5}>지역순</option>
+            </select>
 
             <BasicSelect
               state={size}
