@@ -7,7 +7,7 @@ import { useNavigate } from "react-router-dom";
 import Swal from "sweetalert2";
 
 const ColorShop = () => {
-  const { memberId } = useAuthStore();
+  const { memberId, hexCode } = useAuthStore();
   const [colorList, setColorList] = useState([]);
   const [selectColor, setSelectColor] = useState(null);
   const [selectColorId, setSelectColorId] = useState(null);
@@ -42,28 +42,33 @@ const ColorShop = () => {
 
   const purchaseColor = () => {
     {
-      memberScore >= 1000
-        ? axios
-            .patch(
-              `${import.meta.env.VITE_BACKSERVER}/mypages/color`,
-              memberColor,
-            )
-            .then((res) => {
-              useAuthStore.getState().setHexCode(selectColor);
-              navigate("/member/mypage");
-              Swal.fire({
-                icon: "success",
-                title: "닉네임 색상 변경 완료",
-              });
-            })
-            .catch((err) => {
-              console.log(err);
-            })
-        : Swal.fire({
+      hexCode === selectColor
+        ? Swal.fire({
             icon: "error",
-            title: "탄소 기여도 포인트가 부족합니다",
-            text: "현재 탄소 기여도 포인트를 확인하세요.",
-          });
+            title: "현재 사용 중인 색상입니다",
+          })
+        : memberScore >= 1000
+          ? axios
+              .patch(
+                `${import.meta.env.VITE_BACKSERVER}/mypages/color`,
+                memberColor,
+              )
+              .then((res) => {
+                useAuthStore.getState().setHexCode(selectColor);
+                navigate("/member/mypage");
+                Swal.fire({
+                  icon: "success",
+                  title: "닉네임 색상 변경 완료",
+                });
+              })
+              .catch((err) => {
+                console.log(err);
+              })
+          : Swal.fire({
+              icon: "error",
+              title: "탄소 기여도 포인트가 부족합니다",
+              text: "현재 탄소 기여도 포인트를 확인하세요.",
+            });
     }
   };
 
