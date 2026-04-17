@@ -57,6 +57,7 @@ const MyChatPage = () => {
                   <Nickname
                     member={{
                       memberName: chat.otherName,
+                      memberId: chat.otherId,
                       hexCode: chat.otherHexCode,
                     }}
                   />
@@ -64,6 +65,7 @@ const MyChatPage = () => {
                   <Nickname
                     member={{
                       memberName: chat.myName,
+                      memberId: chat.myId,
                       hexCode: chat.myHexCode,
                     }}
                   />
