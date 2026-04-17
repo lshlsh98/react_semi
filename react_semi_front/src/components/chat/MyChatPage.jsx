@@ -3,6 +3,7 @@ import styles from "./MyChatPage.module.css";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import useAuthStore from "../utils/useAuthStore";
+import Nickname from "../commons/Nickname";
 
 const MyChatPage = () => {
   const [list, setList] = useState([]);
@@ -13,6 +14,7 @@ const MyChatPage = () => {
     axios
       .get(`${import.meta.env.VITE_BACKSERVER}/chat/my/rooms`)
       .then((res) => {
+        console.log(res.data);
         setList(res.data);
       })
       .catch((err) => {
@@ -27,7 +29,11 @@ const MyChatPage = () => {
   return (
     <div className={styles.content}>
       {list.length === 0 ? (
-        <h3 className="page-title">"현재 참여하고 있는 채팅방이 없습니다."</h3>
+        <div className={styles.noroom}>
+          <h3 className="page-title">
+            "현재 참여하고 있는 채팅방이 없습니다."
+          </h3>
+        </div>
       ) : (
         <div className={styles.chat_list_wrap}>
           <ul className={`${styles.chat_item} ${styles.title_ul}`}>
@@ -47,7 +53,21 @@ const MyChatPage = () => {
                 {chat.roomName}
               </li>
               <li className={styles.chat_other}>
-                {myName === chat.myName ? chat.otherName : chat.myName}
+                {myName === chat.myName ? (
+                  <Nickname
+                    member={{
+                      memberName: chat.otherName,
+                      hexCode: chat.otherHexCode,
+                    }}
+                  />
+                ) : (
+                  <Nickname
+                    member={{
+                      memberName: chat.myName,
+                      hexCode: chat.myHexCode,
+                    }}
+                  />
+                )}
               </li>
               <li className={styles.chat_unread_count}>{chat.unReadCount}</li>
               <li className={styles.chat_btn}>
