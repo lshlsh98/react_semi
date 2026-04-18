@@ -52,19 +52,19 @@ const MarketListPage = () => {
         `${import.meta.env.VITE_BACKSERVER}/markets?page=${page}&size=${size}&status=${status}&order=${order}&searchType=${searchType}&searchKeyword=${searchKeyword}&location=${location}`,
       )
       .then((res) => {
-        //console.log(res.data.items);
         setMarketList(res.data.items);
         setTotalPage(res.data.totalPage);
-        console.log(res.data.items);
-        console.log(res.data.items[0].isLike);
         window.scrollTo({
           top: 0,
           behavior: "smooth",
         });
       })
       .catch((err) => {
-        console.log("리스트 조회 실패");
         console.log(err);
+        Swal.fire({
+          title: "오류발생,콘솔확인",
+          icon: "error",
+        });
       });
   }, [page, size, status, order, searchType, searchKeyword, location]);
   const list = [
@@ -195,7 +195,6 @@ const MarketList = ({ marketList }) => {
 };
 
 const MarketItem = ({ market, marketList }) => {
-  console.log(marketList);
   const navigate = useNavigate();
   /* 이미지 매핑 */
   const timeAgo = (dateString) => {

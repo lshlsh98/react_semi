@@ -89,37 +89,24 @@ const MarketViewPage = () => {
       })
       .then((res) => {
         console.log(res.data);
-        setMarket(res.data);
+        if (res.data.success) {
+          setMarket(res.data.data);
+        } else {
+          Swal.fire({
+            title: res.data.message,
+            icon: "warning",
+            confirmButtonText: "닫기",
+          }).then(() => {
+            navigate("/market");
+          });
+        }
       })
       .catch((err) => {
         console.log(err);
-        if (err.response && err.response.status === 404) {
-          console.log("존재하지 않는 게시물입니다");
-          Swal.fire({
-            title: "잘못된 요청입니다.",
-            icon: "warning",
-            confirmButtonText: "닫기",
-            confirmButtonColor: "var(--primary)",
-          }).then((result) => {
-            if (result.isConfirmed) {
-              navigate("/market");
-            }
-          });
-        }
-
-        if (err.response.status === 400) {
-          console.log("Integer 범위를 넘는 요청");
-          Swal.fire({
-            title: "Integer 범위를 넘는 요청",
-            icon: "warning",
-            confirmButtonText: "닫기",
-            confirmButtonColor: "var(--primary)",
-          }).then((result) => {
-            if (result.isConfirmed) {
-              navigate("/market");
-            }
-          });
-        }
+        Swal.fire({
+          title: "오류발생,콘솔확인",
+          icon: "error",
+        });
       });
   }, [memberId, marketNo, isReady, tradeRequestList]);
 

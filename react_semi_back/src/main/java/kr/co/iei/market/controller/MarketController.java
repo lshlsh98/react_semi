@@ -1,7 +1,6 @@
 package kr.co.iei.market.controller;
 
 import java.io.File;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -21,7 +20,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
-import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import kr.co.iei.market.model.dto.MarketCreateResponse;
@@ -33,14 +31,10 @@ import kr.co.iei.market.model.vo.ListResponse;
 import kr.co.iei.market.model.vo.Market;
 import kr.co.iei.market.model.vo.MarketComment;
 import kr.co.iei.market.model.vo.MarketCommentReport;
-import kr.co.iei.market.model.vo.MarketFile;
 import kr.co.iei.market.model.vo.MarketReport;
 import kr.co.iei.market.model.vo.TradeRequest;
-import kr.co.iei.member.model.vo.LoginMember;
-import kr.co.iei.utils.FileUtils;
-import kr.co.iei.utils.JwtUtils;
 
-@CrossOrigin(origins = "http://localhost:5173", allowCredentials = "true")
+	@CrossOrigin(origins = "http://localhost:5173", allowCredentials = "true")
 @RestController
 @RequestMapping(value = "/markets")
 
@@ -49,12 +43,8 @@ public class MarketController {
 	private MarketService marketService;
 	@Value("${file.root}")
 	private String root;
-	@Autowired
-	private JwtUtils jwtutil;
-	@Autowired
-	private FileUtils fileUtil;
-	private int cookieTime = 60 * 5; // 쿠키 시간설정 5분
-	private int addPoint = 100; // 마켓게시판 거래 성사시 지급될 포인트
+	
+	 // 마켓게시판 거래 성사시 지급될 포인트
 
 	// 메인 페이지용 5개 리스트 조회 - 이영민
 	@GetMapping("/main")
@@ -114,62 +104,27 @@ public class MarketController {
  
 	/// 마켓게시판 조회 (Markets) Read_list : 한진호
 	@GetMapping		// 매핑 : /markets
-	public ResponseEntity<?> selectMarketList(@RequestHeader(required = false, name = "Authorization") String token, @ModelAttribute ListItem request) {
-		System.out.println("토큰 : "+token);
-		System.out.println(request);
+	public ResponseEntity<?> selectMarketList(
+			@RequestHeader(required = false, name = "Authorization") String token,
+			@ModelAttribute ListItem request) {
+		//System.out.println("토큰 : "+token);
+		//System.out.println(request);
 		ListResponse response = marketService.selectMarketList(request,token);
 		return ResponseEntity.ok(response);
 	}
 
 	/// 마켓게시판 조회 (Markets/{marketNo}) Read_vo
 	@GetMapping(value = "/{marketNo:\\d+}")
-	public ResponseEntity<?> selectOneMarket(@PathVariable Integer marketNo,
-			@RequestHeader(required = false, name = "Authorization") String token, HttpServletRequest request,
+	public ResponseEntity<MarketResponse<Market>> selectOneMarket(
+			@RequestHeader(required = false, name = "Authorization") String token,
+			@PathVariable Integer marketNo,
+			HttpServletRequest request,
 			HttpServletResponse response) {
 		
+		MarketResponse<Market> result = marketService.selectOneMarket(token,marketNo,request,response);
 		
-		Market m = marketService.selectOneMarket(marketNo, token);
-		if (m == null) {
-			return ResponseEntity.notFound().build();
-			// err.response.status 404 전달 및 프론트에서 alert 후 목록으로 이동처리
-		}
+		return ResponseEntity.ok(result);
 
-		int completed = m.getCompleted(); // 거래완료여부 -> 0 :거래미완료 1 : 거래완료 (not null)
-		int status = m.getMarketStatus(); // 공개상태 -> 1 : 공개 2: 비공개 (not null)
-
-		if (completed == 1 || status == 2) {
-			System.out.println("\n완료여부 : " + completed + " / 공개상태 : " + status);
-			return ResponseEntity.ok(m); // 거래완료 or 비공개 게시글은 조회수 증가없이 리턴
-		}
-
-		// 쿠키 확인
-		Cookie[] cookies = request.getCookies();
-		boolean alreadyViewed = false;
-		if (cookies != null) {
-			for (Cookie c : cookies) {
-				if (c.getName().equals("view_" + marketNo)) {
-					alreadyViewed = true;
-					break;
-				}
-			}
-		}
-		String message = alreadyViewed ? "본게시글" : "안본 게시글";
-		System.out.println("\n" + marketNo + " 번글 - (쿠키시간 " + (cookieTime) / 60 + "분)게시글 확인 체크 : " + message);
-
-		if (!alreadyViewed) {
-			int result = marketService.incrementViewCount(marketNo);
-			if (result == 1) {
-				System.out.println("\n" + marketNo + " 번글 : 조회수 증가");
-			}
-			Cookie cookie = new Cookie("view_" + marketNo, "true");
-			cookie.setMaxAge(cookieTime); // 쿠키시간설정
-			cookie.setPath("/"); // (전체 경로 적용)
-			response.addCookie(cookie);
-			m.setViewCount(m.getViewCount() + 1);
-
-		}
-
-		return ResponseEntity.ok(m);
 	}
 	/// 마켓게시판 수정 (Markets/{marketNo}) Update : 한진호
 	@PatchMapping(value="/{marketNo}")

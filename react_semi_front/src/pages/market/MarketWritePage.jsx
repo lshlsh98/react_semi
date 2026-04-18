@@ -169,17 +169,31 @@ const MarketWritePage = () => {
       .then((res) => {
         console.log(res.data.success);
         console.log(res.data.data.marketNo);
-        if (res.data.success == true) {
+        if (res.data.success) {
           Swal.fire({
             title: "게시글 작성 완료",
             icon: "success",
           }).then(() => {
             navigate(`/market/view/${res.data.data.marketNo}`);
           });
+        } else {
+          Swal.fire({
+            title: res.data.message,
+            icon: "warning",
+            confirmButtonText: "닫기",
+          }).then(() => {
+            navigate("/market");
+          });
         }
       })
       .catch((err) => {
         console.log(err);
+        if (!res.data.success) {
+          Swal.fire({
+            title: "오류발생,콘솔확인",
+            icon: "error",
+          });
+        }
       });
   };
 
