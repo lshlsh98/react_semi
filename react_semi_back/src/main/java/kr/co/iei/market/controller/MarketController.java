@@ -114,8 +114,10 @@ public class MarketController {
  
 	/// 마켓게시판 조회 (Markets) Read_list : 한진호
 	@GetMapping		// 매핑 : /markets
-	public ResponseEntity<?> selectMarketList(@ModelAttribute ListItem request) {
-		ListResponse response = marketService.selectMarketList(request);
+	public ResponseEntity<?> selectMarketList(@RequestHeader(required = false, name = "Authorization") String token, @ModelAttribute ListItem request) {
+		System.out.println("토큰 : "+token);
+		System.out.println(request);
+		ListResponse response = marketService.selectMarketList(request,token);
 		return ResponseEntity.ok(response);
 	}
 

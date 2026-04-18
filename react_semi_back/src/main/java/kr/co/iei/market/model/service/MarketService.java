@@ -93,20 +93,25 @@ public class MarketService {
 	}
 
 	/// 진호 작업영역-----------------------------------
-	public ListResponse selectMarketList(ListItem request) {
-		/// 총 게시물수 구하기
+	public ListResponse selectMarketList(ListItem request, String token) {
+		// 1. 총 게시물수 구하기
 		Integer totalCount = marketDao.selectMarketCount(request);
-		// System.out.println(request);
-		// System.out.println("토탈카운트 : " + totalCount);
-
-		/// 총 페이지수 구하기
+		// 2. 총 페이지수 구하기
 		int totalPage = (int) Math.ceil(totalCount / (double) request.getSize());
-		// System.out.println("토탈페이지 : " + totalPage);
-
+		// 3. 토큰에서 memberId 추출 및 셋
+		String memberId = null;
+		if(token != null) {
+			LoginMember member = jwtUtil.checkToken(token);
+			if(member !=null) {
+				memberId = member.getMemberId();
+			}
+		}
+		System.out.println("로그인 아이디 : " + memberId);
+		request.setMemberId(memberId);
+		// 4. 리스트 받아오기
 		List<Market> list = marketDao.selectMarketList(request);
-		// System.out.println(list);
+		// 5. totalPage 와 리스트를 보내줄 DTO 생성
 		ListResponse response = new ListResponse(list, totalPage);
-
 		return response;
 	}
 
@@ -186,8 +191,8 @@ public class MarketService {
 		// status : 1 공개 2 비공개
 		// memberGrade : 0.비회원 1.슈퍼관리자 2.관리자 3.일반유저
 		// 비공개 상태일때 비회원과 일반유저는 접근못하게 null 리턴
-		if (status == 2 &&(memberGrade == 0 || memberGrade == 3)) {
-				return null;
+		if (status == 2 && (memberGrade == 0 || memberGrade == 3)) {
+			return null;
 		}
 
 		List<MarketFile> fileList = marketDao.selectMarketFileList(marketNo); // 파일 리스트 조회

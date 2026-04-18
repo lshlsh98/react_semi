@@ -9,7 +9,9 @@ import ImageNotSupportedIcon from "@mui/icons-material/ImageNotSupported";
 import FavoriteIcon from "@mui/icons-material/Favorite";
 import BasicSelect from "../../components/ui/BasicSelect";
 import Nickname from "../../components/commons/Nickname";
-
+import PeopleIcon from "@mui/icons-material/People";
+import CommentIcon from "@mui/icons-material/Comment";
+import CalendarTodayIcon from "@mui/icons-material/CalendarToday";
 const MarketListPage = () => {
   const navigate = useNavigate();
   const { memberId, memberGrade } = useAuthStore();
@@ -50,9 +52,11 @@ const MarketListPage = () => {
         `${import.meta.env.VITE_BACKSERVER}/markets?page=${page}&size=${size}&status=${status}&order=${order}&searchType=${searchType}&searchKeyword=${searchKeyword}&location=${location}`,
       )
       .then((res) => {
-        console.log(res.data.items);
+        //console.log(res.data.items);
         setMarketList(res.data.items);
         setTotalPage(res.data.totalPage);
+        console.log(res.data.items);
+        console.log(res.data.items[0].isLike);
         window.scrollTo({
           top: 0,
           behavior: "smooth",
@@ -73,6 +77,8 @@ const MarketListPage = () => {
     [2, "조회수"],
     [3, "좋아요"],
     [4, "금액순"],
+    [5, "지역순"],
+    [6, "댓글순"],
   ];
   const sizeList = [
     [10, "10개씩보기"],
@@ -111,7 +117,7 @@ const MarketListPage = () => {
                 setPage(0);
               }}
               list={orderList}
-            />
+            ></BasicSelect>
 
             <BasicSelect
               state={size}
@@ -177,18 +183,21 @@ const MarketList = ({ marketList }) => {
     <ul>
       {marketList.map((market) => {
         return (
-          <MarketItem key={`market-list-${market.marketNo}`} market={market} />
+          <MarketItem
+            key={`market-list-${market.marketNo}`}
+            market={market}
+            marketList={marketList}
+          />
         );
       })}
     </ul>
   );
 };
 
-const MarketItem = ({ market }) => {
+const MarketItem = ({ market, marketList }) => {
+  console.log(marketList);
   const navigate = useNavigate();
   /* 이미지 매핑 */
-  const imgUrl = "http://192.168.31.24:9999/market";
-
   const timeAgo = (dateString) => {
     if (!dateString) {
       return "";
@@ -233,7 +242,7 @@ const MarketItem = ({ market }) => {
       <div className={styles.market_info_wrap}>
         {market.marketThumb ? (
           <img
-            src={`${imgUrl}/${market.marketThumb}`}
+            src={`${import.meta.env.VITE_IMAGE_SERVER}/${market.marketThumb}`}
             alt={market.marketTitle}
           />
         ) : (
@@ -243,27 +252,75 @@ const MarketItem = ({ market }) => {
           />
         )}
         <div className={styles.info}>
-          <h3 className={styles.info_title}>{market.marketTitle}</h3>
-          <p
-            className={
-              market.sellPrice === 0
-                ? styles.info_price_free
-                : styles.info_price
-            }
-          >
-            {formatPrice(market.sellPrice)}
-          </p>
-          <p className={styles.info_date}>{timeAgo(market.marketDate)}</p>
-          <p className={styles.info_writer}>
-            <Nickname member={market} />
-          </p>
-          <span className={styles.info_likeCount}>
-            <FavoriteIcon className={styles.info_likeCount_icon} />
-            {market.likeCount}
-          </span>
-          <p className={styles.info_viewCount}>조회수 : {market.viewCount}</p>
+          <div className={styles.member_wrap}>
+            <div className={styles.member_wrap2}>
+              <div
+                className={
+                  market.memberThumb
+                    ? styles.member_thumb_exists
+                    : styles.member_thumb
+                }
+              >
+                {market.memberThumb ? (
+                  <img
+                    src={`${import.meta.env.VITE_BACKSERVER}/semi/${market.memberThumb}`}
+                  ></img>
+                ) : (
+                  <span
+                    className="material-icons"
+                    style={{ fontSize: "36px", color: "var(--gray4)" }}
+                  >
+                    account_circle
+                  </span>
+                )}
+              </div>
+              <p className={styles.info_writer}>
+                <Nickname member={market} />
+              </p>
+            </div>
+            <div className={styles.info_viewCount_wrap}>
+              <PeopleIcon className={styles.icon} />
+              <p className={styles.info_viewCount}>{market.viewCount}</p>
+            </div>
+          </div>
+
+          <div>
+            <h3 className={styles.info_title}>{market.marketTitle}</h3>
+          </div>
+
+          <div>
+            <p
+              className={
+                market.sellPrice === 0
+                  ? styles.info_price_free
+                  : styles.info_price
+              }
+            >
+              {formatPrice(market.sellPrice)}
+            </p>
+          </div>
 
           <p className={styles.info_sellAddr}>{market.sellAddr}</p>
+
+          <div className={styles.info_icon_wrap1}>
+            <div className={styles.info_icon_wrap2}>
+              <div className={styles.info_likeCount_wrap}>
+                <FavoriteIcon
+                  className={market.isLike === 1 ? styles.icon2 : styles.icon}
+                />
+                <p>{market.likeCount}</p>
+              </div>
+
+              <div className={styles.info_commentCount_wrap}>
+                <CommentIcon className={styles.icon} />
+                <p>{market.commentCount}</p>
+              </div>
+            </div>
+            <div className={styles.info_date_wrap}>
+              <CalendarTodayIcon className={styles.icon} />
+              <p className={styles.info_date}>{timeAgo(market.marketDate)}</p>
+            </div>
+          </div>
         </div>
       </div>
     </li>
