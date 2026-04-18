@@ -30,4 +30,6 @@ public interface MemberDao {
 	List<Member> selectAllMember(MemberListItem request);
 
 	Integer selectMemberCount(MemberListItem request);
+
+	String getHexCode(String memberId);
 }

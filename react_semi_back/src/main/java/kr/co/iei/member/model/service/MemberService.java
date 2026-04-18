@@ -140,5 +140,11 @@ public class MemberService {
 		return response;
 	}
 
+	public String getHexCode(String memberId) {
+		String hexCode = memberDao.getHexCode(memberId);
+		
+		return hexCode;
+	}//
+
 
 }

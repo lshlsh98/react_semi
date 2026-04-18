@@ -21,5 +21,7 @@ public class ChatRoom {
 	private Long marketNo;
 	
 	private String myName;
+	private String myId;
 	private String otherName;
+	private String otherId;
 }

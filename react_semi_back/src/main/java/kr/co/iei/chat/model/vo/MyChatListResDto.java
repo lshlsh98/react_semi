@@ -19,7 +19,11 @@ public class MyChatListResDto {
 	private String isGroupChat;
 	private Long unReadCount;
 	
+	private String myId;
 	private String myName;
+	private String myHexCode;
 	private String otherName;
+	private String otherHexCode;
+	private String otherId;
 	private Long marketNo;
 }

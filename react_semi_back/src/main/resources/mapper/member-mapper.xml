@@ -139,4 +139,12 @@
 			</if>
 		</where>
 	</select>
+	
+	<select id="getHexCode" resultType="String">
+		SELECT c.hex_code
+		FROM member_tbl m
+		INNER JOIN color_tbl c 
+			ON (m.current_color_id = c.color_id)
+		WHERE member_id = #{memberId}
+	</select>
 </mapper>

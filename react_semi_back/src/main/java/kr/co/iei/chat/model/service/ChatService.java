@@ -23,6 +23,7 @@ import kr.co.iei.chat.model.vo.ReadStatus;
 import kr.co.iei.common.exception.NotFoundException;
 import kr.co.iei.market.model.dao.MarketDao;
 import kr.co.iei.market.model.vo.Market;
+import kr.co.iei.member.model.dao.MemberDao;
 import kr.co.iei.member.model.vo.Member;
 
 @Service
@@ -33,6 +34,8 @@ public class ChatService {
 	private ChatDao chatDao;
 	@Autowired
 	private MarketDao marketDao;
+	@Autowired
+	private MemberDao memberDao;
 
 	public void saveMessage(Long roomId, ChatMessageDto chatMessageReqDto) {
 		// 채팅방 조회
@@ -159,6 +162,10 @@ public class ChatService {
 		for(MyChatListResDto d :  MyChatListResDtos) {
 			ChatRoomAndMemberReqDto req = new ChatRoomAndMemberReqDto(d.getRoomId(), member.getMemberId());
 			Long count = chatDao.getCountIsReadZero(req);
+			String myHexCode = memberDao.getHexCode(d.getMyId());
+			String otherHexCode = memberDao.getHexCode(d.getOtherId());
+			d.setMyHexCode(myHexCode);
+			d.setOtherHexCode(otherHexCode);
 			d.setUnReadCount(count == null ? 0 : count); 
 		}
 		
@@ -198,7 +205,9 @@ public class ChatService {
 				.name(market.getMarketTitle())
 				.marketNo(marketNo)
 				.myName(member.getMemberName())
+				.myId(member.getMemberId())
 				.otherName(otherMember.getMemberName())
+				.otherId(otherMemberId)
 				.build();
 		chatDao.saveChatRoom(newRoom);
 		
