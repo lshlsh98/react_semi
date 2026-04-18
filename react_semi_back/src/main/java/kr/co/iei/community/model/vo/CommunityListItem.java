@@ -13,8 +13,8 @@ public class CommunityListItem {
 	private Integer status;
 	private Integer order;
 	private Integer searchType;
-	private Integer view;
 	private String searchKeyword;
+	private Integer view;
 	private String memberId;
 	
 	private Integer grade;

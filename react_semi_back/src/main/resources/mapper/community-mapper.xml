@@ -4,70 +4,68 @@
 
 	<select id="selectCommunityList" resultType="community">
 		select
-		community_no,
-		community_title,
-		community_content,
-		community_writer,
-		to_char(community_date, 'yyyy-mm-dd hh24:mi:ss') as
-		community_date,
-		view_count,
-		member_name,
-		member_thumb,
-		member_grade,
+		c.community_no,
+		c.community_title,
+		c.community_content,
+		c.community_writer,
+		to_char(c.community_date, 'yyyy-mm-dd hh24:mi:ss') as community_date,
+		c.view_count,
+		m.member_name,
+		m.member_thumb,
+		m.member_grade,
 		(select count(*)
 		from community_like_tbl l
-		where c.community_no = l.community_no) as
-		like_count,
+		where c.community_no = l.community_no) as like_count,
+		
 		(select count(*)
 		from community_dislike_tbl d
-		where
-		c.community_no = d.community_no) as dislike_count,
+		where c.community_no = d.community_no) as dislike_count,
+		
 		(select count(*)
 		from community_report_tbl r
 		where c.community_no = r.community_no) as report_count,
+		
 		(select count(*)
 		from community_comment_tbl cc
-		where
-		c.community_no = cc.community_no) as comment_count,
+		where c.community_no = cc.community_no) as comment_count,
+		
 		(select hex_code
+		from color_tbl
+		where color_id = (select current_color_id 
+							from member_tbl
+							where member_id = c.community_writer)) as hex_code
 		
 		<if test="memberId != null and memberId != ''">
             , (select count(*) from community_like_tbl cl where cl.community_no = c.community_no and cl.member_id = #{memberId}) as is_like
             , (select count(*) from community_dislike_tbl cd where cd.community_no = c.community_no and cd.member_id = #{memberId}) as is_dislike
         </if>
         
-		from color_tbl
-		where color_id = (select current_color_id 
-							from member_tbl
-							where member_id = community_writer))
-		as hex_code
 		from community_tbl c
-		join member_tbl on (community_writer = member_id)
-		where
-		community_status = 1
+		join member_tbl m on (c.community_writer = m.member_id)
+		where c.community_status = 1
 		
 		<if test="searchType==1">
 			<![CDATA[
 				and (
-       				community_title like '%'||#{searchKeyword}||'%'
-       				or REGEXP_REPLACE(community_content, '<[^>]*>', '')
+       				c.community_title like '%'||#{searchKeyword}||'%'
+       				or REGEXP_REPLACE(c.community_content, '<[^>]*>', '')
           		 	like '%'||#{searchKeyword}||'%'
       		)]]>
 		</if>
 		<if test="searchType==2">
-			and community_writer = #{searchKeyword}
+			and c.community_writer = #{searchKeyword}
 		</if>
 
 		<if test="view==1">
-			and member_grade=3
+			and m.member_grade=3
 		</if>
 		<if test="view==2">
-			and member_grade in (1, 2)
+			and m.member_grade in (1, 2)
 		</if>
 
-		<if test="order == 1">order by community_no desc</if>
-		<if test="order == 2">order by community_no asc</if>
-		<if test="order == 3">order by view_count desc</if>
+		<if test="order == 1">order by c.community_no desc</if>
+		<if test="order == 2">order by c.community_no asc</if>
+		<if test="order == 3">order by c.view_count desc</if>
 		<if test="order == 4">order by like_count desc</if>
 		<if test="order == 5">order by dislike_count desc</if>
 		<if test="order == 6">order by report_count desc</if>

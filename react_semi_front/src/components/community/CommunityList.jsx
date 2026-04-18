@@ -106,26 +106,31 @@ const CommunityItem = ({ community }) => {
       </div>
       <div className={styles.community_info_wrap}>
         <div className={styles.community_info_item_wrap}>
+          {/* 🚀 1. 좋아요 (내가 눌렀으면(_on) 초록색, 아니면 회색) */}
           <div
             className={
-              community.likeCount === 0
-                ? styles.community_info_like_wrap
-                : styles.community_info_like_wrap_on
+              community.isLike === 1
+                ? styles.community_info_like_wrap_on
+                : styles.community_info_like_wrap
             }
           >
-            <span className="material-icons">thumb_up_off_alt</span>
+            <span className="material-icons">thumb_up</span>
             <p>{community.likeCount}</p>
           </div>
+
+          {/* 🚀 2. 싫어요 (내가 눌렀으면(_on) 빨간색, 아니면 회색) */}
           <div
             className={
-              community.dislikeCount === 0
-                ? styles.community_info_dislike_wrap
-                : styles.community_info_dislike_wrap_on
+              community.isDislike === 1
+                ? styles.community_info_dislike_wrap_on
+                : styles.community_info_dislike_wrap
             }
           >
-            <span className="material-icons">thumb_down_off_alt</span>
+            <span className="material-icons">thumb_down</span>
             <p>{community.dislikeCount}</p>
           </div>
+
+          {/* 댓글 수 */}
           <div
             className={
               community.commentCount === 0
@@ -137,6 +142,7 @@ const CommunityItem = ({ community }) => {
             <p>{community.commentCount}</p>
           </div>
         </div>
+        
         <div className={styles.community_date_wrap}>
           <p>{timeAgo(community.communityDate)}</p>
         </div>

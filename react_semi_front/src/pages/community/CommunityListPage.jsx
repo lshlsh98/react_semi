@@ -36,8 +36,18 @@ const CommunityListPage = () => {
   useEffect(() => {
     axios
       .get(
-        `${import.meta.env.VITE_BACKSERVER}/communities?page=${page}&size=${size}&status=1&order=${order}&view=${view}&searchType=${searchType}&searchKeyword=${searchKeyword}`,
-      )
+        `${import.meta.env.VITE_BACKSERVER}/communities`,{
+        params: {
+          page: page,
+          size: size,
+          status: 1,
+          order: order,
+          view: view,
+          searchType: searchType,
+          searchKeyword: searchKeyword,
+          memberId: memberId || "",
+        },
+      })
       .then((res) => {
         setCommunityList(res.data.items);
         setTotalPage(res.data.totalPage);
@@ -45,7 +55,7 @@ const CommunityListPage = () => {
       .catch((err) => {
         console.log(err);
       });
-  }, [page, order, searchType, searchKeyword, view]);
+  }, [page, order, searchType, searchKeyword, view, memberId]);
 
   return (
     <section className={styles.community_page_wrap}>

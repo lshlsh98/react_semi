@@ -130,9 +130,17 @@
 }
 
 .community_info_item_wrap > .community_info_like_wrap_on > span,
-.community_info_item_wrap > .community_info_like_wrap_on > p,
+.community_info_item_wrap > .community_info_like_wrap_on > p {
+  color: var(--primary);
+  font-size: 15px;
+}
+
 .community_info_item_wrap > .community_info_dislike_wrap_on > span,
-.community_info_item_wrap > .community_info_dislike_wrap_on > p,
+.community_info_item_wrap > .community_info_dislike_wrap_on > p {
+  color: var(--danger);
+  font-size: 15px;
+}
+
 .community_info_item_wrap > .community_info_comment_count_wrap_on > span,
 .community_info_item_wrap > .community_info_comment_count_wrap_on > p {
   color: var(--gray2);
