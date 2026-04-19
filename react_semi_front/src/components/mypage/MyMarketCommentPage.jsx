@@ -24,6 +24,7 @@ const MyMarketCommentPage = () => {
   const [searchKeyword, setSearchKeyword] = useState("");
 
   useEffect(() => {
+    // 거래 게시글 댓글 get
     axios
       .get(
         `${import.meta.env.VITE_BACKSERVER}/mypages/comment/market?isAdminMode=${isAdminMode}&page=${page}&size=${size}&order=${order}&searchKeyword=${searchKeyword}&memberId=${memberId}&memberGrade=${memberGrade}`,
@@ -122,8 +123,8 @@ const MyMarketCommentPage = () => {
               commentList={commentList}
               setCommentList={setCommentList}
               type="market"
-              isAdminMode={isAdminMode}
-              tblName="marketComment"
+              isAdminMode={isAdminMode} // 관리자 모드
+              tblName="marketComment" // 커뮤댓글과 구분을 위해
               timeAgo={timeAgo}
             />
           ))}

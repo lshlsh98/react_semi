@@ -39,8 +39,8 @@ const MyMarketList = ({ boardList, setBoardList, status, isAdminMode }) => {
           index={index}
           boardList={boardList}
           setBoardList={setBoardList}
-          status={status}
-          isAdminMode={isAdminMode}
+          status={status} // 숨김 여부
+          isAdminMode={isAdminMode} // 관리자 모드
           timeAgo={timeAgo}
         />
       ))}

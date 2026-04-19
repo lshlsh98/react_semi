@@ -26,6 +26,7 @@ const MyCommunityPage = () => {
   const [notice, setNotice] = useState(0); // 0: 전체 / 1: 공지
 
   useEffect(() => {
+    // 커뮤 게시글 get
     axios
       .get(
         `${import.meta.env.VITE_BACKSERVER}/mypages/board/community?isAdminMode=${isAdminMode}&page=${page}&size=${size}&order=${order}&status=${status}&searchKeyword=${searchKeyword}&memberId=${memberId}&memberGrade=${memberGrade}&notice=${notice}`,

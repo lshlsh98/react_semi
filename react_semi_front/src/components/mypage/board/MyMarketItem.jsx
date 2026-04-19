@@ -16,11 +16,11 @@ const MyMarketItem = ({
   index,
   boardList,
   setBoardList,
-  status,
-  isAdminMode,
+  status, // select 필터 0: 전체 / 1: 공개 / 2: 비공개
+  isAdminMode, // true->관리 / false->일반
   timeAgo,
-  isPrivate,
-  type,
+  isPrivate, // 좋아요/싫어요/신고 누른 게시글용
+  type, // 좋아요/싫어요/신고
 }) => {
   const [contentStatus, setContentStatus] = useState(board.contentStatus);
   const navigate = useNavigate();
@@ -38,8 +38,8 @@ const MyMarketItem = ({
       )
       .then((res) => {
         // status -> select 필터 0: 전체 / 1: 공개 / 2: 비공개
+        // 현재 select가 공개 or 비공개일 때 토글 누르면 리스트에서 사라지기
         if (res.data === 1 && status !== 0) {
-          // 현재 select가 공개 or 비공개일 때 토글 누르면 리스트에서 사라지기
           const newBoardList = boardList.filter((b, i) => {
             return i !== index;
           });
@@ -119,9 +119,9 @@ const MyMarketItem = ({
           {/* 좋아요, 싫어요, 댓글, 신고 */}
           <Actions
             board={board}
-            isAdminMode={isAdminMode}
-            isPrivate={isPrivate}
-            type={type}
+            isAdminMode={isAdminMode} // 관리자모드 여부
+            isPrivate={isPrivate} // 좋아요/싫어요/신고 게시글
+            type={type} // 좋아요/싫어요/신고
           />
         </div>
         <div className={styles.views_done}>

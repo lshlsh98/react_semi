@@ -14,9 +14,9 @@ const MyCommentItem = ({
   index,
   commentList,
   setCommentList,
-  type,
-  isAdminMode,
-  tblName,
+  type, // "market", "community"
+  isAdminMode, // 관리자 모드
+  tblName, // "marketComment", "communityComment"
   timeAgo,
 }) => {
   const memberThumb = comment.writerThumb;
@@ -34,13 +34,16 @@ const MyCommentItem = ({
     }
   }, [curComment]); // comment 바뀔 때마다 실행
 
+  // dis: true => 수정 모드
+  // dis: false => 실제 수정 요청
   const [dis, setDis] = useState(true);
   const updObj = {
     commentNo: comment.commentNo,
     newComment: curComment,
-    type: type,
+    type: type, // 백엔드에서 사용
   };
   const updateComment = () => {
+    // 화면에서는 완료 버튼이 눌리면 (dis = false) 댓글 수정 요청을 보낸다
     if (!dis) {
       axios
         .patch(
@@ -57,7 +60,7 @@ const MyCommentItem = ({
 
   const delObj = {
     commentNo: comment.commentNo,
-    type: type,
+    type: type, // 백엔드에서 사용
   };
   const deleteComment = () => {
     Swal.fire({
@@ -69,6 +72,7 @@ const MyCommentItem = ({
       cancelButtonText: "취소",
     }).then((result) => {
       if (result.isConfirmed) {
+        // 댓글 삭제
         axios
           .delete(
             `${import.meta.env.VITE_BACKSERVER}/mypages/comment/${comment.commentNo}`,
@@ -76,6 +80,7 @@ const MyCommentItem = ({
           )
           .then((res) => {
             if (res.data === 1) {
+              // 게시글에서 사라지게
               const newCommentList = commentList.filter((c, i) => {
                 return i !== index;
               });
@@ -94,6 +99,7 @@ const MyCommentItem = ({
     <div
       className={styles.item_wrap}
       onClick={() => {
+        // 리스트에서 받아온 타입이 market인지 community인지에 따라 다른 동작
         if (type === "market") {
           navigate(`/market/view/${comment.boardNo}`);
         } else if (type === "community") {
@@ -186,6 +192,7 @@ const MyCommentItem = ({
 const Actions = ({ comment, type, isAdminMode, tblName }) => {
   const [open, setOpen] = useState(false);
 
+  // 신고가 있고 관리자모드가 true일 때만 열기
   const showReport = () => {
     if (comment.reportCount <= 0 || isAdminMode === "false") {
       return;

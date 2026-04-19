@@ -42,6 +42,7 @@ public class MypageController {
 	@Autowired
 	private MypageService mypageService;
 
+	// 커뮤 게시글 get
 	@GetMapping("/board/community")
 	public ResponseEntity<?> findCommunityAll(@ModelAttribute BoardListRequestDto request) {
 		List<BoardSummary> list = mypageService.findCommunityAll(request);
@@ -54,6 +55,7 @@ public class MypageController {
 		return ResponseEntity.ok(response);
 	}//
 	
+	// 커뮤 게시글 숨김여부 업데이트
 	@PatchMapping("/board/community/{boardNo}")
 	public ResponseEntity<?> updateCommunityStatus(@RequestBody UpdateDto update){
 		int result = mypageService.updateCommunityStatus(update);
@@ -61,6 +63,7 @@ public class MypageController {
 		return ResponseEntity.ok(result);
 	}//
 	
+	// 커뮤 게시글 삭제
 	@DeleteMapping("/board/community/{boardNo}")
 	public ResponseEntity<?> deleteCommunity(@PathVariable int boardNo){
 		int result = mypageService.deleteCommunity(boardNo);
@@ -68,7 +71,7 @@ public class MypageController {
 		return ResponseEntity.ok(result);
 	}//
 	
-	
+	// 거래 게시글 get
 	@GetMapping("/board/market")
 	public ResponseEntity<?> findMarketAll(@ModelAttribute BoardListRequestDto request){
 		List<BoardSummary> list = mypageService.findMarketAll(request);
@@ -81,6 +84,7 @@ public class MypageController {
 		return ResponseEntity.ok(response);
 	}//
 	
+	// 거래 게시글 숨김 상태 update
 	@PatchMapping("/board/market/{boardNo}")
 	public ResponseEntity<?> updateMarketStatus(@RequestBody UpdateDto update){
 		int result = mypageService.updateMarketStatus(update);
@@ -88,6 +92,7 @@ public class MypageController {
 		return ResponseEntity.ok(result);
 	}//
 	
+	// 거래 게시글 삭제 
 	@DeleteMapping("/board/market/{boardNo}")
 	public ResponseEntity<?> deleteMarket(@PathVariable int boardNo){
 		int result = mypageService.deleteMarket(boardNo);
@@ -95,6 +100,7 @@ public class MypageController {
 		return ResponseEntity.ok(result);
 	}//
 
+	// 거래 게시글 댓글 get
 	@GetMapping("/comment/market")
 	public ResponseEntity<?> findMarketCommentAll(@ModelAttribute BoardListRequestDto request){
 		List<CommentSummary> list = mypageService.findMarketCommentAll(request);
@@ -107,6 +113,7 @@ public class MypageController {
 		return ResponseEntity.ok(response); 
 	}//
 	
+	// 댓글 수정
 	@PatchMapping("/comment/{commentNo}")
 	public ResponseEntity<?> updateComment(@RequestBody UpdateCommentDto update){
 		int result = mypageService.updateComment(update); 
@@ -114,6 +121,7 @@ public class MypageController {
 		return ResponseEntity.ok(result);
 	}//
 	
+	// 댓글 삭제
 	@DeleteMapping("/comment/{commentNo}")
 	public ResponseEntity<?> deleteComment(@RequestBody UpdateCommentDto delete){
 		int result = mypageService.deleteComment(delete);
@@ -147,6 +155,7 @@ public class MypageController {
 		return ResponseEntity.ok(privateReport);
 	}//
 	
+	// 좋아요/싫어요/신고 게시글 get
 	@GetMapping("/board/likedislike")
 	public ResponseEntity<?> findLikeDislikeAll(@ModelAttribute BoardListRequestDto request){
 		List<BoardSummary> list = mypageService.findLikeDislikeAll(request);

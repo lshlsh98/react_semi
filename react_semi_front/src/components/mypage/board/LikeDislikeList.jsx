@@ -41,8 +41,8 @@ const LikeDislikeList = ({ boardList, type }) => {
             board={board}
             isAdminMode={"false"} // true->관리 / false->일반
             timeAgo={timeAgo}
-            isPrivate={"true"}
-            type={type}
+            isPrivate={"true"} // 좋아요/싫어요/신고 누른 게시글용
+            type={type} // 좋아요/싫어요/신고 구분
           />
         ) : (
           <MyBoardItem // 커뮤니티 게시글
@@ -50,9 +50,8 @@ const LikeDislikeList = ({ boardList, type }) => {
             board={board}
             isAdminMode={"false"} // true->관리 / false->일반
             timeAgo={timeAgo}
-            isLikedis
-            isPrivate={"true"}
-            type={type}
+            isPrivate={"true"} // 좋아요/싫어요/신고 누른 게시글용
+            type={type} // 좋아요/싫어요/신고 구분
           />
         );
       })}

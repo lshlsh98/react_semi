@@ -170,6 +170,7 @@
 		msv.completed AS is_completed,
 		TO_CHAR(msv.completed_date, 'yyyy-mm-dd') AS completed_date,
 
+		<!-- 내가 좋아요, 댓글, 신고 수행했는지 여부 거래는 싫어요 없음 -->
 		CASE WHEN cl.member_id IS NOT NULL THEN 1 ELSE 0 END AS is_liked,
 		CASE WHEN cc.market_comment_writer IS NOT NULL
 		THEN 1 ELSE 0 END AS is_commented,
@@ -281,23 +282,23 @@
 
 	<select id="findMarketCommentAll" resultType="commentSummary">
 		SELECT
-		mcsv.market_comment_no AS comment_no,
-		mcsv.market_comment_content AS comment_content,
-		mcsv.market_comment_date AS comment_date,
-		mcsv.market_no AS board_no,
-		mcsv.market_comment_writer AS writer_id,
-		mcsv.member_name AS writer_name,
-		mcsv.member_thumb AS writer_thumb,
-		mcsv.report_count,
-		mcsv.is_edited,
+			mcsv.market_comment_no AS comment_no,
+			mcsv.market_comment_content AS comment_content,
+			mcsv.market_comment_date AS comment_date,
+			mcsv.market_no AS board_no,
+			mcsv.market_comment_writer AS writer_id,
+			mcsv.member_name AS writer_name,
+			mcsv.member_thumb AS writer_thumb,
+			mcsv.report_count,
+			mcsv.is_edited,	<!-- 수정 여부 -->
 
-		CASE WHEN cr.member_id IS NOT NULL THEN 1 ELSE 0 END AS is_reported
+			CASE WHEN cr.member_id IS NOT NULL THEN 1 ELSE 0 END AS is_reported
 
 		FROM market_comment_summary_view mcsv
 
 		LEFT JOIN market_comment_report_tbl cr
-		ON mcsv.market_comment_no = cr.market_comment_no
-		AND cr.member_id = #{memberId}
+			ON mcsv.market_comment_no = cr.market_comment_no
+			AND cr.member_id = #{memberId}
 
 		<where>
 			mcsv.member_name LIKE '%'||#{searchKeyword}||'%'
@@ -547,16 +548,16 @@
 
 		SELECT
 		msv.market_no AS board_no,
-		'market' AS board_type,
+		'market' AS board_type,	<!-- 거래, 커뮤 구분 -->
 		msv.title,
 		msv.writer_id,
 		msv.writer_name,
 		msv.content_date,
-		msv.content_status,
+		msv.content_status,	<!-- 숨김 상태 -->
 		msv.view_count,
-		msv.completed AS is_completed,
+		msv.completed AS is_completed,	<!-- 거래 완료 여부 -->
 		msv.completed_date,
-		msv.member_grade AS writer_grade,
+		msv.member_grade AS writer_grade, <!-- 관리자 인지 확이용 -->
 
 		<!-- market 게시글의 좋아요, 싫어요, 댓글, 신고 수 -->
 		msv.like_count,
@@ -592,7 +593,7 @@
 		ON msv.market_no = cr.market_no
 		AND cr.member_id = #{memberId}
 
-		<!-- 로그인한 유저가 좋아요 누른 게시글만 남기기 (market 게시글은 좋아요밖에 없음) -->
+		<!-- 로그인한 유저가 좋아요, 신고 누른 게시글만 남기기 (market 게시글은 좋아요, 신고밖에 없음) -->
 		WHERE EXISTS (
 		SELECT 1
 		FROM market_like_tbl mkl
@@ -610,16 +611,16 @@
 
 		SELECT
 		csv.community_no AS board_no,
-		'community' AS board_type,
+		'community' AS board_type,	<!-- 거래, 커뮤 구분 -->
 		csv.title,
 		csv.writer_id,
 		csv.writer_name,
 		csv.content_date,
-		csv.content_status,
+		csv.content_status, <!-- 숨김 상태 -->
 		csv.view_count,
-		NULL AS is_completed,
+		NULL AS is_completed, <!-- 커뮤는 거래 완료 없음 -->
 		NULL AS completed_date,
-		csv.member_grade AS writer_grade,
+		csv.member_grade AS writer_grade, <!-- 관리자 인지 확이용 -->
 
 		<!-- community 게시글의 좋아요, 싫어요, 댓글, 신고 수 -->
 		csv.like_count,
@@ -660,7 +661,7 @@
 		ON csv.community_no = cr.community_no
 		AND cr.member_id = #{memberId}
 
-		<!-- 로그인한 유저가 좋아요 OR 싫어요 누른 게시글만 남기기 -->
+		<!-- 로그인한 유저가 좋아요, 싫어요, 신고 누른 게시글만 남기기 -->
 		WHERE EXISTS (
 		SELECT 1
 		FROM community_like_tbl cml

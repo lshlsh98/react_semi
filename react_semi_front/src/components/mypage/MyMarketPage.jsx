@@ -26,6 +26,7 @@ const MyMarketPage = () => {
   const [searchKeyword, setSearchKeyword] = useState("");
 
   useEffect(() => {
+    // 거래 게시글 get
     axios
       .get(
         `${import.meta.env.VITE_BACKSERVER}/mypages/board/market?isAdminMode=${isAdminMode}&page=${page}&size=${size}&order=${order}&status=${status}&completed=${completed}&searchKeyword=${searchKeyword}&memberId=${memberId}&memberGrade=${memberGrade}`,
@@ -50,6 +51,7 @@ const MyMarketPage = () => {
     });
   }, [page]);
 
+  // 미완료일 때 완료순 안보이게
   const safeOrder = completed === 0 && order === 5 ? 0 : order;
 
   return (
@@ -122,8 +124,8 @@ const MyMarketPage = () => {
         <MyMarketList
           boardList={boardList}
           setBoardList={setBoardList}
-          status={status}
-          isAdminMode={isAdminMode}
+          status={status} // 숨김 여부
+          isAdminMode={isAdminMode} // 관리자 모드
         />
       </div>
       <div className={styles.pagination_section}>

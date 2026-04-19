@@ -17,6 +17,7 @@ const LikeDislike = () => {
   const [order, setOrder] = useState(0); // 0: 최신순 / 1: 작성순 / 2: 조회수 / 3: 좋아요 / 4: 싫어요 / 5: 신고수
 
   useEffect(() => {
+    // 좋아요/싫어요/신고 누른 거래, 커뮤 게시글 가지고오기
     axios
       .get(
         `${import.meta.env.VITE_BACKSERVER}/mypages/board/likedislike?page=${page}&size=${size}&order=${order}&status=${type}&memberId=${memberId}`,
@@ -36,8 +37,6 @@ const LikeDislike = () => {
       behavior: "smooth",
     });
   }, [page]);
-
-  useEffect(() => {}, [page]);
 
   return (
     <div className={styles.myboard_wrap}>
@@ -65,7 +64,7 @@ const LikeDislike = () => {
         </div>
       </div>
       <div className={styles.myboard_list_content}>
-        {/* axios.get으로 가지고온 좋아요/싫어요(거래, 커뮤) 게시글 리스트 넘기기 */}
+        {/* axios.get으로 가지고온 좋아요/싫어요/신고 (거래, 커뮤) 게시글 리스트 넘기기 */}
         <LikeDislikeList boardList={boardList} type={type} />
       </div>
       <div className={styles.pagination_section}>
