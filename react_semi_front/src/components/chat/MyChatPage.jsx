@@ -11,10 +11,10 @@ const MyChatPage = () => {
   const myName = useAuthStore((state) => state.memberName);
 
   useEffect(() => {
+    // 내 채팅방 get
     axios
       .get(`${import.meta.env.VITE_BACKSERVER}/chat/my/rooms`)
       .then((res) => {
-        console.log(res.data);
         setList(res.data);
       })
       .catch((err) => {

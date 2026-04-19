@@ -863,12 +863,12 @@
 
 	<select id="findChartAll" resultType="chart">
 		SELECT
-		TO_CHAR(market_date, 'YYYY-MM-DD') AS market_date,
-		COUNT(*) AS total_count,
-		SUM(CASE WHEN completed = 1 THEN 1 ELSE 0 END) AS completed_count,
-		SUM(CASE WHEN completed = 0 THEN 1 ELSE 0 END) AS incompleted_count
+			TO_CHAR(market_date, 'YYYY-MM-DD') AS market_date,
+			COUNT(*) AS total_count, <!-- 전체 count -->
+			SUM(CASE WHEN completed = 1 THEN 1 ELSE 0 END) AS completed_count, <!-- 완료 count -->
+			SUM(CASE WHEN completed = 0 THEN 1 ELSE 0 END) AS incompleted_count <!-- 미완료 count -->
 		FROM
-		market_tbl
+			market_tbl
 		<where>
 			<![CDATA[
 			market_date >= #{start} AND market_date < #{end} + 1

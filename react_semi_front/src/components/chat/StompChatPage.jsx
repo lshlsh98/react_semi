@@ -31,18 +31,20 @@ const StompChatPage = () => {
   useEffect(() => {
     if (!token) return;
 
+    // 이전 채팅 get
     axios
       .get(`${import.meta.env.VITE_BACKSERVER}/chat/history/${roomId}`)
       .then((res) => {
-        setMessages(res.data.messages);
-        setRoomName(res.data.roomName);
-        setMarketNo(res.data.marketNo);
+        setMessages(res.data.messages); // 내용, 이름, 아이디
+        setRoomName(res.data.roomName); // 채팅방 이름
+        setMarketNo(res.data.marketNo); // 거래 게시글 번호 (상세 페이지 이동용)
       });
 
     connectWebsocket();
 
     // cleanup
     return () => {
+      // 읽음 처리
       axios.post(`${import.meta.env.VITE_BACKSERVER}/chat/room/${roomId}/read`);
 
       subscriptionRef.current?.unsubscribe();
@@ -64,31 +66,36 @@ const StompChatPage = () => {
 
     const client = new Client({
       webSocketFactory: () =>
+        // SockJS를 통해 WebSocket을 연결
         new SockJS(`${import.meta.env.VITE_BACKSERVER}/connect`),
 
       reconnectDelay: 5000,
 
+      // 토큰을 가지고 요쳥
       connectHeaders: {
         Authorization: `${token}`,
       },
 
+      // WebSocket 연결이 성공했을 때 자동으로 실행되는 함수
       onConnect: () => {
         if (subscriptionRef.current) {
-          subscriptionRef.current.unsubscribe(); // 중복 방지
+          // 이미 구독 중인 게 있으면 먼저 해제하고 새로 구독(중복 방지)
+          subscriptionRef.current.unsubscribe();
         }
 
         subscriptionRef.current = client.subscribe(
-          `/topic/${roomId}`,
+          `/topic/${roomId}`, // 구독할 경로
 
           (message) => {
+            // 메시지 수신 시 실행할 함수
             let parseMessage;
             try {
-              parseMessage = JSON.parse(message.body);
+              parseMessage = JSON.parse(message.body); // JSON이면 파싱
             } catch (e) {
-              parseMessage = { message: message.body };
+              parseMessage = { message: message.body }; // 실패하면 그대로 저장
             }
 
-            setMessages((prev) => [...prev, parseMessage]);
+            setMessages((prev) => [...prev, parseMessage]); // 메시지 목록에 추가
           },
 
           {
@@ -98,7 +105,7 @@ const StompChatPage = () => {
       },
     });
 
-    client.activate();
+    client.activate(); // 위 설정들을 기반으로 실제 연결 시작
     stompClient.current = client;
   };
 

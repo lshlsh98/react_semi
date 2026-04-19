@@ -48,10 +48,6 @@
 		SELECT chat_message_seq.NEXTVAL FROM dual
 	</select>
 	
-	
-	
-	
-	
 	<select id="findByChatRoomId" resultType="chatMessageDto">
 		SELECT 
 			c.content AS message,
@@ -69,8 +65,6 @@
 		WHERE chat_room_id = #{id}
 		ORDER BY c.created_at ASC
 	</select>
-	
-
 	
 	<update id="updateIsRead">
 		UPDATE message_read_status
@@ -106,12 +100,6 @@
 		        AND member_id = #{memberId}
 		        AND is_read = 0
 	</select>
-	
-	
-	
-	
-	
-
 	
 	<select id="findExistingPrivateRoom" resultType="chatRoom">
 		SELECT * 

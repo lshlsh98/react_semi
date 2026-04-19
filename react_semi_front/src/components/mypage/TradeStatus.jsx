@@ -24,8 +24,8 @@ const TradeStatus = () => {
   const [size, setSize] = useState(10);
   const [totalPage, setTotalPage] = useState(null);
 
-  const [start, setStart] = useState(dayjs().subtract(30, "day"));
-  const [end, setEnd] = useState(dayjs());
+  const [start, setStart] = useState(dayjs().subtract(30, "day")); // 처음 시작은 오늘부터 30일 전까지
+  const [end, setEnd] = useState(dayjs()); // 처음 시작은 오늘부터 30일 전까지
   const [formStart, setFormStart] = useState(null);
   const [formEnd, setFormEnd] = useState(null);
 
@@ -41,6 +41,7 @@ const TradeStatus = () => {
     }
   }, [end]);
 
+  // "yyyy-mm-dd" 형식으로 만들기
   useEffect(() => {
     setFormStart(start ? dayjs(start).format("YYYY-MM-DD") : null);
     setFormEnd(end ? dayjs(end).format("YYYY-MM-DD") : null);
@@ -49,12 +50,13 @@ const TradeStatus = () => {
   useEffect(() => {
     if (!formStart || !formEnd) return;
 
+    // 차트용 데이터 (전체, 완료, 미완료 count) => offset없이 전부 가지고 오기
     axios
       .get(`${import.meta.env.VITE_BACKSERVER}/mypages/tradestatus/chart`, {
         params: {
-          start: formStart,
-          end: formEnd,
-          complete: complete,
+          start: formStart, // 시작일
+          end: formEnd, // 종료일
+          complete: complete, // 완료 여부
         },
       })
       .then((res) => {
@@ -68,6 +70,7 @@ const TradeStatus = () => {
   useEffect(() => {
     if (!formStart || !formEnd) return;
 
+    // 페이지네이션으로 구현하기 위해 offset으로 가지고오기
     axios
       .get(`${import.meta.env.VITE_BACKSERVER}/mypages/tradestatus/list`, {
         params: {

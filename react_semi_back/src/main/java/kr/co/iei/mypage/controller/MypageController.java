@@ -129,6 +129,7 @@ public class MypageController {
 		return ResponseEntity.ok(result);
 	}//
 	
+	// 커뮤 댓글 get
 	@GetMapping("/comment/community")
 	public ResponseEntity<?> findCommunityCommentAll(@ModelAttribute BoardListRequestDto request){
 		List<CommentSummary> list = mypageService.findCommunityCommentAll(request);

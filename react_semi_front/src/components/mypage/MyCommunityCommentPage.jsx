@@ -24,6 +24,7 @@ const MyCommunityCommentPage = () => {
   const [searchKeyword, setSearchKeyword] = useState("");
 
   useEffect(() => {
+    // 커뮤 댓글 get
     axios
       .get(
         `${import.meta.env.VITE_BACKSERVER}/mypages/comment/community?isAdminMode=${isAdminMode}&page=${page}&size=${size}&order=${order}&searchKeyword=${searchKeyword}&memberId=${memberId}&memberGrade=${memberGrade}`,
@@ -124,7 +125,7 @@ const MyCommunityCommentPage = () => {
               commentList={commentList}
               setCommentList={setCommentList}
               type="community"
-              isAdminMode={isAdminMode}
+              isAdminMode={isAdminMode} // 관리자 모드
               tblName="communityComment"
               timeAgo={timeAgo}
             />
