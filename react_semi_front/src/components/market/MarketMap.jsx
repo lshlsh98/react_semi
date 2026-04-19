@@ -69,7 +69,7 @@ const MarketMap = ({ market }) => {
     naver.maps.Event.addListener(marketMap, "click", (e) => {
       marketMap.setCenter(e.coord);
     });
-  }, [market]);
+  }, [market.sellAddr]);
   return <div className={styles.map} ref={marketMapRef}></div>;
 };
 export default MarketMap;

@@ -12,14 +12,9 @@ import MarketComment from "../../components/market/MarketComment";
 import { Modal, Box, IconButton } from "@mui/material"; // IconButton 추가
 import { ChevronLeft, ChevronRight, Close } from "@mui/icons-material";
 import MarketMap from "../../components/market/MarketMap";
-
-/* 날짜아이콘 */
-import CalendarTodayIcon from "@mui/icons-material/CalendarToday";
-/* 조회수아이콘*/
+import CalendarMonthIcon from "@mui/icons-material/CalendarMonth";
 import VisibilityIcon from "@mui/icons-material/Visibility";
-/*유저아이콘 */
 import PersonIcon from "@mui/icons-material/Person";
-/*좋아요 아이콘 */
 import FavoriteIcon from "@mui/icons-material/Favorite";
 import Nickname from "../../components/commons/Nickname";
 
@@ -89,37 +84,24 @@ const MarketViewPage = () => {
       })
       .then((res) => {
         console.log(res.data);
-        setMarket(res.data);
+        if (res.data.success) {
+          setMarket(res.data.data);
+        } else {
+          Swal.fire({
+            title: res.data.message,
+            icon: "warning",
+            confirmButtonText: "닫기",
+          }).then(() => {
+            navigate("/market");
+          });
+        }
       })
       .catch((err) => {
         console.log(err);
-        if (err.response && err.response.status === 404) {
-          console.log("존재하지 않는 게시물입니다");
-          Swal.fire({
-            title: "잘못된 요청입니다.",
-            icon: "warning",
-            confirmButtonText: "닫기",
-            confirmButtonColor: "var(--primary)",
-          }).then((result) => {
-            if (result.isConfirmed) {
-              navigate("/market");
-            }
-          });
-        }
-
-        if (err.response.status === 400) {
-          console.log("Integer 범위를 넘는 요청");
-          Swal.fire({
-            title: "Integer 범위를 넘는 요청",
-            icon: "warning",
-            confirmButtonText: "닫기",
-            confirmButtonColor: "var(--primary)",
-          }).then((result) => {
-            if (result.isConfirmed) {
-              navigate("/market");
-            }
-          });
-        }
+        Swal.fire({
+          title: "오류발생,콘솔확인",
+          icon: "error",
+        });
       });
   }, [memberId, marketNo, isReady, tradeRequestList]);
 
@@ -560,6 +542,12 @@ const MarketViewPage = () => {
 
   return (
     <main className={styles.main_wrap}>
+      <h3
+        className="page-title"
+        style={{ textAlign: "center", padding: "50px 0px" }}
+      >
+        마켓 상세보기
+      </h3>
       {market && (
         <>
           <div className={styles.photo_wrap}>
@@ -669,54 +657,58 @@ const MarketViewPage = () => {
               </Box>
             </Modal>
           </div>
-          {market.completed === 1 && (
-            <div className={styles.sold_out}>
-              <p>판매완료된 게시글입니다.</p>
-              <Button
-                className="btn primary"
-                onClick={() => {
-                  navigate("/market");
-                }}
-              >
-                다른 상품 보러가기
-              </Button>
+          <div className={styles.wrap1}>
+            <div className={styles.wrap1_title}>
+              <p className={styles.wrap1_title_in}>{market.marketTitle}</p>
             </div>
-          )}
-
-          <div className={styles.title_info}>
-            <p className={styles.title_info_title}>{market.marketTitle}</p>
-            <div className={styles.title_info_wrap}>
-              <p
-                className={
-                  market.sellPrice === 0
-                    ? styles.title_info_price_free
-                    : styles.title_info_price
-                }
-              >
-                {formatPrice(market.sellPrice)}
-              </p>
-              <p className={styles.title_info_writer}>
+            <div className={styles.wrap1_info}>
+              <div className={styles.wrap1_thumb}>
+                <div
+                  className={
+                    market.memberThumb
+                      ? styles.member_thumb_exists
+                      : styles.member_thumb
+                  }
+                >
+                  {market.memberThumb ? (
+                    <img
+                      src={`${import.meta.env.VITE_BACKSERVER}/semi/${market.memberThumb}`}
+                    ></img>
+                  ) : (
+                    <span className="material-icons">account_circle</span>
+                  )}
+                </div>
                 <Nickname member={market} />
-              </p>
-            </div>
+              </div>
+              <div className={styles.wrap1_price}>
+                <p
+                  className={
+                    market.sellPrice === 0
+                      ? styles.title_price_free
+                      : styles.title_price
+                  }
+                >
+                  {formatPrice(market.sellPrice)}
+                </p>
+              </div>
 
-            <div className={styles.date_view_like}>
-              <p className={styles.date_wrap}>
-                <CalendarTodayIcon />
-                {market.marketDate.slice(0, 16)}
-              </p>
-              <p className={styles.viewCount_wrap}>
-                <VisibilityIcon />
-                {market.viewCount}
-              </p>
-              <p className={styles.likeCount_wrap}>
-                <FavoriteIcon />
-                {market.likeCount}
-              </p>
-            </div>
+              <div className={styles.wrap1_date}>
+                <CalendarMonthIcon className={styles.date_icon} />
+                <p>{market.marketDate.slice(0, 16)}</p>
+              </div>
 
+              <div className={styles.wrap1_like}>
+                <FavoriteIcon className={styles.like_icon} />
+                <p>{market.likeCount}</p>
+              </div>
+
+              <div className={styles.wrap1_view}>
+                <VisibilityIcon className={styles.view_icon} />
+                <p>{market.viewCount}</p>
+              </div>
+            </div>
             <div
-              className={styles.content_wrap}
+              className={styles.wrap1_content}
               dangerouslySetInnerHTML={{ __html: market.marketContent }}
             ></div>
           </div>
@@ -819,9 +811,7 @@ const MarketViewPage = () => {
               )}
             </div>
           )}
-
           <MarketMap market={market} />
-
           {memberId &&
             memberId === market.marketWriter &&
             market.completed === 0 && (

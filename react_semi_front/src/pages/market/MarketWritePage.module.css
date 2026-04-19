@@ -18,6 +18,17 @@ a {
   gap: 12px;
 }
 
+/*페이지 타이틀*/
+.page_title{
+  text-align: center;
+  margin-top: 36px;
+  margin-bottom: 15px;
+  font-weight: 600;
+  color: var(--secendary);
+  font-size: 30px;
+}
+
+
 /* 제목 , 판매금액 */
 .market_input_wrap {
   display: flex;
@@ -25,9 +36,12 @@ a {
   justify-content: center;
 }
 .market_input_wrap > label {
+  font-size: 18px;
   text-align: center;
   padding: 12px;
+  font-weight: 600;
 }
+
 /*거래장소 */
 .market_addr {
   display: flex;
@@ -43,10 +57,10 @@ a {
 /* 텍스트 에디터 */
 
 .editor_wrap {
-  border: 1px solid var(--secendary);
+  border: 1px solid var(--gray6 );
   border-radius: 8px;
   overflow: hidden;
-  background-color: var(--light);
+ 
 }
 .menu_bar {
   display: flex;
@@ -64,7 +78,7 @@ a {
   border-radius: 4px;
   font-size: 14px;
   cursor: pointer;
-  background-color: var(--light); /*기본 배경*/
+  /*텍스트 에디터 내부 버튼*/
   color: var(--primary); /*기본 글자*/
 }
 
@@ -78,16 +92,19 @@ a {
   background-color: var(--primary);
   border: 1px solid var(--primary);
 }
+.delete_icon{
+  color: var(--danger);
+}
 
 .editor_content {
   padding: 16px;
 }
 .editor_content > div {
   min-height: 400px;
-  background-color: var(--light);
   padding: 12px;
   outline: none;
-  border: 1px solid var(--gray1);
+  
+  border: 1px solid var(--gray6);
   border-radius: 12px;
   line-height: 1.4;
 }

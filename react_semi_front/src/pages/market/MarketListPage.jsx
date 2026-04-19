@@ -12,6 +12,7 @@ import Nickname from "../../components/commons/Nickname";
 import PeopleIcon from "@mui/icons-material/People";
 import CommentIcon from "@mui/icons-material/Comment";
 import CalendarTodayIcon from "@mui/icons-material/CalendarToday";
+import VisibilityIcon from "@mui/icons-material/Visibility";
 const MarketListPage = () => {
   const navigate = useNavigate();
   const { memberId, memberGrade } = useAuthStore();
@@ -42,8 +43,6 @@ const MarketListPage = () => {
   /* 서버전송용 스테이트 */
   const [searchKeyword, setSearchKeyword] = useState("");
   const [searchType, setSearchType] = useState(1);
-
-  /* 지역 관리용 스테이트 0 : 강남구 1: 강동구 2: 강북구... */
   const [location, setLocation] = useState(0);
 
   useEffect(() => {
@@ -52,19 +51,19 @@ const MarketListPage = () => {
         `${import.meta.env.VITE_BACKSERVER}/markets?page=${page}&size=${size}&status=${status}&order=${order}&searchType=${searchType}&searchKeyword=${searchKeyword}&location=${location}`,
       )
       .then((res) => {
-        //console.log(res.data.items);
         setMarketList(res.data.items);
         setTotalPage(res.data.totalPage);
-        console.log(res.data.items);
-        console.log(res.data.items[0].isLike);
         window.scrollTo({
           top: 0,
           behavior: "smooth",
         });
       })
       .catch((err) => {
-        console.log("리스트 조회 실패");
         console.log(err);
+        Swal.fire({
+          title: "오류발생,콘솔확인",
+          icon: "error",
+        });
       });
   }, [page, size, status, order, searchType, searchKeyword, location]);
   const list = [
@@ -77,17 +76,42 @@ const MarketListPage = () => {
     [2, "조회수"],
     [3, "좋아요"],
     [4, "금액순"],
-    [5, "지역순"],
-    [6, "댓글순"],
+    [5, "댓글순"],
   ];
   const sizeList = [
     [10, "10개씩보기"],
     [20, "20개씩보기"],
     [50, "50개씩보기"],
   ];
+  const locationList = [
+    [0, "지역"],
+    [1, "서울"],
+    [2, "강원"],
+    [3, "경기"],
+    [4, "경남"],
+    [5, "경북"],
+    [6, "광주"],
+    [7, "대구"],
+    [8, "대전"],
+    [9, "부산"],
+    [10, "세종"],
+    [11, "울산"],
+    [12, "인천"],
+    [13, "전남"],
+    [14, "전북"],
+    [15, "제주"],
+    [16, "충남"],
+    [17, "충북"],
+  ];
   return (
     <>
       <section className={styles.market_wrap}>
+        <h3
+          className="page-title"
+          style={{ textAlign: "center", padding: "50px 0px" }}
+        >
+          그린마켓
+        </h3>
         <div className={styles.market_searchbox}>
           <form
             onSubmit={(e) => {
@@ -97,6 +121,11 @@ const MarketListPage = () => {
               setPage(0);
             }}
           >
+            <BasicSelect
+              state={location}
+              setState={setLocation}
+              list={locationList}
+            />
             <BasicSelect state={type} setState={setType} list={list} />
 
             <input
@@ -138,6 +167,7 @@ const MarketListPage = () => {
                 setSize(10);
                 setSearchType(1);
                 setSearchKeyword("");
+                setLocation(0);
               }}
             >
               초기화
@@ -147,7 +177,7 @@ const MarketListPage = () => {
 
         <div className={styles.market_list_wrap}>
           {marketList.length === 0 ? (
-            <div className={styles.no_result}>조회된 게시물이 없습니다</div>
+            <div className={styles.no_result}>조회된 게시물이 없습니다.</div>
           ) : (
             <MarketList marketList={marketList} />
           )}
@@ -195,7 +225,6 @@ const MarketList = ({ marketList }) => {
 };
 
 const MarketItem = ({ market, marketList }) => {
-  console.log(marketList);
   const navigate = useNavigate();
   /* 이미지 매핑 */
   const timeAgo = (dateString) => {
@@ -266,12 +295,7 @@ const MarketItem = ({ market, marketList }) => {
                     src={`${import.meta.env.VITE_BACKSERVER}/semi/${market.memberThumb}`}
                   ></img>
                 ) : (
-                  <span
-                    className="material-icons"
-                    style={{ fontSize: "36px", color: "var(--gray4)" }}
-                  >
-                    account_circle
-                  </span>
+                  <span className="material-icons">account_circle</span>
                 )}
               </div>
               <p className={styles.info_writer}>
@@ -279,7 +303,7 @@ const MarketItem = ({ market, marketList }) => {
               </p>
             </div>
             <div className={styles.info_viewCount_wrap}>
-              <PeopleIcon className={styles.icon} />
+              <VisibilityIcon className={styles.icon} />
               <p className={styles.info_viewCount}>{market.viewCount}</p>
             </div>
           </div>
@@ -308,12 +332,14 @@ const MarketItem = ({ market, marketList }) => {
                 <FavoriteIcon
                   className={market.isLike === 1 ? styles.icon2 : styles.icon}
                 />
-                <p>{market.likeCount}</p>
+                <p className={styles.info_likeCount}>{market.likeCount}</p>
               </div>
 
               <div className={styles.info_commentCount_wrap}>
                 <CommentIcon className={styles.icon} />
-                <p>{market.commentCount}</p>
+                <p className={styles.info_commentCount}>
+                  {market.commentCount}
+                </p>
               </div>
             </div>
             <div className={styles.info_date_wrap}>

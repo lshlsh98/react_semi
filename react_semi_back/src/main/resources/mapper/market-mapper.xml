@@ -12,12 +12,39 @@
 		<if test="searchType==2">
 			and market_writer = #{searchKeyword}
 		</if>
+		<if test="location != null">
+		and (
+		#{location} = 0
+		or sell_addr like '%' ||
+		case #{location}
+			when 1 then '서울'
+			when 2 then '강원'
+			when 3 then '경기'
+			when 4 then '경남'
+			when 5 then '경북'
+			when 6 then '광주'
+			when 7 then '대구'
+			when 8 then '대전'
+			when 9 then '부산'
+			when 10 then '세종'
+			when 11 then '울산'
+			when 12 then '인천'
+			when 13 then '전남'
+			when 14 then '전북'
+			when 15 then '제주'
+			when 16 then '충남'
+			when 17 then '충북'
+		end
+		|| '%'
+	)
+	</if>
+		
+		
 		and completed = 0
 	</select>
 
-	<!--마켓게시판 목록 조회 -->
 	<select id="selectMarketList" resultType="market">
-		select
+	select
 		mt.market_no,
 		mt.market_title,
 		to_char(mt.market_date, 'yyyy-mm-dd HH24:mi:ss') as market_date,
@@ -28,74 +55,109 @@
 		m.member_name,
 
 		(
-		select count(*)
-		from market_like_tbl ml
-		where ml.market_no = mt.market_no
+			select count(*)
+			from market_like_tbl ml
+			where ml.market_no = mt.market_no
 		) as like_count,
 
 		(
-		select count(*)
-		from market_report_tbl mr
-		where mr.market_no = mt.market_no
+			select count(*)
+			from market_report_tbl mr
+			where mr.market_no = mt.market_no
 		) as report_count,
+
 		(
-		select count(*)
-		from market_comment_tbl c
-		where c.market_no = mt.market_no
+			select count(*)
+			from market_comment_tbl c
+			where c.market_no = mt.market_no
 		) as comment_count,
+
 		(
-		select member_thumb
-		from member_tbl m2
-		where m2.member_id = mt.market_writer
+			select member_thumb
+			from member_tbl m2
+			where m2.member_id = mt.market_writer
 		) as member_thumb,
+
 		(
-		select market_file_path
-		from (
-		select mf.market_file_path
-		from market_file_tbl mf
-		where mf.market_no = mt.market_no
-		order by mf.market_file_no asc
-		)
-		where rownum = 1
+			select market_file_path
+			from (
+				select mf.market_file_path
+				from market_file_tbl mf
+				where mf.market_no = mt.market_no
+				order by mf.market_file_no asc
+			)
+			where rownum = 1
 		) as market_thumb,
+
 		(
-	  			select hex_code
-				from color_tbl
-				where color_id = (select current_color_id 
-									from member_tbl
-									where member_id = market_writer))
-			as hex_code
+			select hex_code
+			from color_tbl
+			where color_id = (
+				select current_color_id
+				from member_tbl
+				where member_id = market_writer
+			)
+		) as hex_code
+
 		<if test="memberId != null">
 			,(select count(*)
 			from market_like_tbl
 			where market_no = mt.market_no
 			and member_id = #{memberId}) AS is_like
 		</if>
-		
-		
-		from market_tbl mt
-		join member_tbl m on (mt.market_writer = m.member_id)
 
-		where market_status = #{status}
-		and completed = 0
+	from market_tbl mt
+	join member_tbl m
+		on mt.market_writer = m.member_id
 
-		<if test="searchType==1">
-			and market_title like '%'||#{searchKeyword}||'%'
-		</if>
-		<if test="searchType==2">
-			and market_writer = #{searchKeyword}
-		</if>
+	where market_status = #{status}
+	and completed = 0
 
-		<if test="order==0"> order by market_no desc</if>
-		<if test="order==1"> order by market_no asc</if>
-		<if test="order==2"> order by view_count desc </if>
-		<if test="order==3"> order by like_count desc</if>
-		<if test="order==4">order by sell_price desc</if>
-		<if test="order==5">order by mt.sell_addr asc</if>
-		<if test="order==6">order by comment_count desc</if>
-		offset #{page}*#{size} rows fetch next #{size} rows only
-	</select>
+	
+	<if test="location != null">
+		and (
+		#{location} = 0
+		or sell_addr like '%' ||
+		case #{location}
+			when 1 then '서울'
+			when 2 then '강원'
+			when 3 then '경기'
+			when 4 then '경남'
+			when 5 then '경북'
+			when 6 then '광주'
+			when 7 then '대구'
+			when 8 then '대전'
+			when 9 then '부산'
+			when 10 then '세종'
+			when 11 then '울산'
+			when 12 then '인천'
+			when 13 then '전남'
+			when 14 then '전북'
+			when 15 then '제주'
+			when 16 then '충남'
+			when 17 then '충북'
+		end
+		|| '%'
+	)
+	</if>
 
+	<if test="searchType==1">
+		and market_title like '%'||#{searchKeyword}||'%'
+	</if>
+
+	<if test="searchType==2">
+		and market_writer = #{searchKeyword}
+	</if>
+
+	<if test="order==0"> order by market_no desc</if>
+	<if test="order==1"> order by market_no asc</if>
+	<if test="order==2"> order by view_count desc </if>
+	<if test="order==3"> order by like_count desc</if>
+	<if test="order==4"> order by sell_price desc</if>
+	<if test="order==5"> order by comment_count desc</if>
+
+	offset #{page}*#{size} rows fetch next #{size} rows only
+</select>
 	<!-- 시퀀스 번호 발급 -->
 	<select id="getNewMarketNo" resultType="int">
 		select market_seq.nextval

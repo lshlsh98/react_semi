@@ -1,4 +1,4 @@
-.main_wrap {
+  .main_wrap {
   width: 900px;
   margin: 0 auto;
   display: flex;
@@ -21,79 +21,152 @@
   border: 1px solid var(--gray6);
   border-radius: 8px;
 }
-
-/*타이틀 (제목 금액 작성일 조회수 좋아요 */
-.title_info {
+/* wrap1 제목,(썸네일,날짜.조회수)*/
+.wrap1{
+  border : 1px solid var(--gray6);
+  padding:16px;
   border-radius: 8px;
-  border: 1px solid var(--gray6);
+  display: flex;
+  flex-direction: column;
 }
-/*마켓 제목*/
-.title_info_title {
-  text-align: center;
-  margin-top: 12px;
-  color: var(--gray2);
-  font-size: 20px;
-  font-weight: 700;
+.wrap1_title{/*제목*/
+  border : 1px solid var(--gray6);
+  background-color: var(--light );
+  margin-bottom: 20px;
+  border-radius: 6px;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
+  align-items: center;
 }
-/*금액 판매자아이디 wrap*/
-.title_info_wrap {
+.wrap1_title>p{
+  font-size: 20px;
+  font-weight: 700;
+  padding:15px 20px
+  
+}
+.wrap1_info{
   display: flex;
-  justify-content: space-between;
-  margin-top: 12px;
+  flex-direction: column;
+  gap:8px;
 }
-.title_info_wrap > p {
-  width: 120px;
-  text-align: center;
+
+.wrap1_thumb{/*썸네일*/
+  display: flex;
+  align-items: center;
+  gap:8px;
+  
+}
+
+/* 회원 프로필 관련*/
+.wrap1_thumb > .member_thumb {
+  width: 32px;
+  height: 32px;
+  padding: 8px;
+  border-radius: 18px;
+  background-color: var(--gray6);
+  overflow: hidden;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border: 1px solid var(--gray6);
+}
+
+.wrap1_thumb > .member_thumb > span {
+  color: var(--gray8);
+  font-size: 40px;
+}
+
+.wrap1_thumb > .member_thumb_exists {
+  width: 32px;
+  height: 32px;
+  border-radius: 18px;
+  background-color: var(--gray6);
+  overflow: hidden;
+}
+
+.wrap1_thumb > .member_thumb_exists > img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+/*작성자*/
+.title.info_writer > span{
+  font-size: 11px;
 }
 /*마켓 금액*/
-.title_info_price {
+.wrap1_price{
+  display: flex;
+  align-items: center;
+
+}
+.title_price {
   /*가격*/
   color: var(--secendary);
-  font-size: 16px;
+  font-size: 14px;
   font-weight: 700;
 }
-.title_info_price_free {
-  font-size: 16px;
+.title_price_free {
+  font-size: 14px;
   font-weight: bold;
   color: var(--danger);
 }
-.title_info_writer {
-  color: var(--gray2);
-  font-size: 16px;
-  font-weight: 700;
+
+
+
+.wrap1_date{
+  display: flex;
+  align-items: center;
+  gap:8px;
+}
+.date_icon{
+  fill : var(--gray4) !important;
+}
+.wrap1_date>p{
+  font-size: 11px;
+  color : var(--gray4);
+}
+.wrap1_like{
+  display: flex;
+  align-items: center;
+  gap:8px;
+}
+.like_icon{
+  fill : var(--danger) !important;
+}
+.wrap1_like>p{
+  font-size: 11px;
+  color : var(--gray4);
+}
+.wrap1_view{
+  display :flex;
+  align-items: center;
+  gap:8px;
+  color : var(--primary);   
+}
+.view_icon{
+  fill: var(--primary) !important;
+}
+.wrap1_view>p{
+  font-size: 11px;
 }
 
-/*(작성일 조회수 좋아요)*/
-.date_view_like {
-  margin: 12px 0;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
+.wrap1_content{
+  border : 1px solid var(--gray6);
+  margin-top: 20px;
+  background-color: var(--light );
+  padding: 10px 20px; 
+  border-radius: 8px;
+  min-height: 150px;
 }
-.date_view_like > p {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  border-radius: 4px;
-  font-size: 12px;
-  width: 120px;
-  text-align: center;
-}
-.date_wrap > svg {
-  fill: var(--gray2);
-  font-size: 24px;
-}
-.viewCount_wrap > svg {
-  fill: var(--secendary);
-  font-size: 24px;
-}
-.likeCount_wrap > svg {
-  fill: var(--danger);
-  font-size: 24px;
-}
+
+
+
+
+
+
+/*아래로 삭제*/
+
 
 .title_btn {
   display: flex;
@@ -103,15 +176,6 @@
 .title_btn > button {
   margin: 20px 0;
   width: 120px;
-}
-
-/* 내용*/
-.content_wrap {
-  padding: 4px 0;
-  border-radius: 8px;
-  margin: 4px;
-  min-height: 150px;
-  background-color: var(--light);
 }
 
 /*수정 삭제 버튼*/
@@ -144,18 +208,18 @@
 
 :global(.trade_buyerId) {
   width: 150px;
-  flex-shrink: 0; /* 👈 중요 */
+  flex-shrink: 0;
   font-weight: 600;
 }
 :global(.trade_message) {
-  flex: 1; /* flex-grow 대신 이게 더 안정적 */
+  flex: 1;
   word-break: break-word;
   overflow-wrap: break-word;
 }
 
 :global(.trade_btn) {
   width: 100px;
-  flex-shrink: 0; /* 👈 버튼 안 찌그러지게 */
+  flex-shrink: 0;
   cursor: pointer;
   font-size: 14px;
   padding: 8px 20px;
@@ -163,27 +227,6 @@
   border-radius: 6px;
   background-color: var(--primary);
   color: var(--light);
-
   transition: 0.2s;
 }
 
-/*판매완료시 노출*/
-.sold_out {
-  position: absolute;
-  inset: 0;
-  background: rgba(0, 0, 0, 0.5);
-  border-radius: 8px;
-  color: var(--light);
-  display: flex;
-  gap: 12px;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-  font-size: 72px;
-  font-weight: 900;
-  z-index: 10;
-  pointer-events: all;
-}
-.icon2 {
-  fill: var(--danger);
-}

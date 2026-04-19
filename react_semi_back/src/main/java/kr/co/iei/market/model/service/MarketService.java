@@ -4,13 +4,15 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import kr.co.iei.chat.controller.StompController;
+import kr.co.iei.community.controller.CommunityController;
 import kr.co.iei.market.model.dao.MarketDao;
 import kr.co.iei.market.model.dto.MarketCreateResponse;
 import kr.co.iei.market.model.dto.MarketResponse;
@@ -25,13 +27,12 @@ import kr.co.iei.market.model.vo.MarketReport;
 import kr.co.iei.market.model.vo.ScoreHistory;
 import kr.co.iei.market.model.vo.TradeRequest;
 import kr.co.iei.member.model.vo.LoginMember;
+import kr.co.iei.utils.CookieUtils;
 import kr.co.iei.utils.FileUtils;
 import kr.co.iei.utils.JwtUtils;
 
 @Service
 public class MarketService {
-
-	private final StompController stompController;
 
 	@Value("${file.root}")
 	private String root;
@@ -41,10 +42,11 @@ public class MarketService {
 	private JwtUtils jwtUtil;
 	@Autowired
 	private FileUtils fileUtil;
-
-	MarketService(StompController stompController) {
-		this.stompController = stompController;
-	}
+	@Autowired
+	private CookieUtils cookieUtil;
+	private int cookieTime = 60 * 5;	// 쿠키 시간설정 5분
+	private int addPoint = 100;			// 거래완료시 추가할포인트
+	
 
 	// 메인페이지
 	public List<Market> selectMainPageMarketList(Map<String, Object> params) {
@@ -93,6 +95,7 @@ public class MarketService {
 	}
 
 	/// 진호 작업영역-----------------------------------
+	/// 마켓게시판 조회 <리스트>
 	public ListResponse selectMarketList(ListItem request, String token) {
 		// 1. 총 게시물수 구하기
 		Integer totalCount = marketDao.selectMarketCount(request);
@@ -100,13 +103,13 @@ public class MarketService {
 		int totalPage = (int) Math.ceil(totalCount / (double) request.getSize());
 		// 3. 토큰에서 memberId 추출 및 셋
 		String memberId = null;
-		if(token != null) {
+		if (token != null) {
 			LoginMember member = jwtUtil.checkToken(token);
-			if(member !=null) {
+			if (member != null) {
 				memberId = member.getMemberId();
 			}
 		}
-		System.out.println("로그인 아이디 : " + memberId);
+		// System.out.println("로그인 아이디 : " + memberId);
 		request.setMemberId(memberId);
 		// 4. 리스트 받아오기
 		List<Market> list = marketDao.selectMarketList(request);
@@ -129,9 +132,9 @@ public class MarketService {
 
 		// 파일체크 (로그용)
 		for (MultipartFile file : files) {
-			System.out.println("\n파일명: " + file.getOriginalFilename());
-			System.out.println("크기: " + file.getSize());
-			System.out.println("타입: " + file.getContentType());
+			// System.out.println("\n파일명: " + file.getOriginalFilename());
+			// System.out.println("크기: " + file.getSize());
+			// System.out.println("타입: " + file.getContentType());
 		}
 		// 3. 파일 리스트 생성 및 서버에 파일추가
 		List<MarketFile> fileList = new ArrayList<MarketFile>();
@@ -164,40 +167,70 @@ public class MarketService {
 			fileCount += marketDao.insertMarketFile(marketFile);
 		}
 
-		System.out.println("\n" + marketNo + " 번 게시글 업로드 결과");
-		System.out.println("게시글작성 : " + result + " , 파일업로드 갯수 : " + fileCount);
+		// System.out.println("\n" + marketNo + " 번 게시글 업로드 결과");
+		// System.out.println("게시글작성 : " + result + " , 파일업로드 갯수 : " + fileCount);
 		// 7 : 결과 응답객체에 추가
 		MarketCreateResponse data = new MarketCreateResponse(marketNo, fileCount);
 		return new MarketResponse<>(true, "201 : 게시물 등록 성공", data);
 	}
 
-	// 게시글조회
-	public Market selectOneMarket(Integer marketNo, String token) {
+	/// 마켓게시판 조회<VO>
+	public MarketResponse<Market> selectOneMarket(
+			String token, 
+			Integer marketNo, 
+			HttpServletRequest request,
+			HttpServletResponse response) {
 		String memberId = null;
-		int memberGrade = 0;
-		int status = 0;
+		int memberGrade = 0;	//	memberGrade : 0.비회원 1.슈퍼관리자 2.관리자 3.일반유저
+		int status = 0;			//	status : 1.공개 2.비공개 3.삭제
+		int completed = -1;		//	completed : 0.미완료 1.완료
 		if (token != null) {
-			LoginMember loginMember = jwtUtil.checkToken(token); // 토큰으로 로그인 객체 생성
-			memberId = loginMember.getMemberId(); // 로그인 객체에서 아이디 추출
+			LoginMember loginMember = jwtUtil.checkToken(token); 
+			// 토큰으로 로그인 객체 생성
+			memberId = loginMember.getMemberId(); 
+			// 로그인 객체에서 아이디 추출
 			memberGrade = loginMember.getMemberGrade();
+			// 로그인 객체에서 멤버 등급 추출
 		}
-
-		Market m = marketDao.selectOneMarket(marketNo, memberId); // market 객체 생성
+		Market m = marketDao.selectOneMarket(marketNo, memberId);
+		// market 객체 생성
+		boolean alreadyViewed = cookieUtil.alreadyViewed(request, marketNo);
+		// 쿠키 조회(게시물 확인 여부를 체크)
 		if (m == null) {
-			return null;
+			// 없는 경로로 요청시 리턴 null 리턴
+			return new MarketResponse<>(false, "404 : not found", null);
 		} else {
 			status = m.getMarketStatus();
+			completed = m.getCompleted();
 		}
-		// status : 1 공개 2 비공개
-		// memberGrade : 0.비회원 1.슈퍼관리자 2.관리자 3.일반유저
-		// 비공개 상태일때 비회원과 일반유저는 접근못하게 null 리턴
 		if (status == 2 && (memberGrade == 0 || memberGrade == 3)) {
-			return null;
+			// 비공개 상태일때 비회원과 일반유저는 접근못하게 null 리턴
+			return new MarketResponse<>(false,"403 : 권한없음",null);
 		}
-
+		if(status == 3 && memberGrade != 1) {
+			// 삭제 상태일떄 슈퍼관리자(1) 이외 유저는 접근못하게 null 리턴)
+			return new MarketResponse<>(false, "404 : not found", null);
+		}
+		if(memberId != null && memberId.equals(m.getMarketWriter())) {
+			//요청자가 판매자자신일 경우 조회수 증가없이 리턴
+			List<MarketFile> fileList = marketDao.selectMarketFileList(marketNo); // 파일 리스트 조회
+			m.setFileList(fileList); // 파일리스트 추가
+			return new MarketResponse<>(true, "200 : 조회성공", m);
+		}
+		if(completed == 1 &&(memberGrade == 0 || memberGrade== 3 )) {
+			//게시글이 완료상태일때 비회원과 일반유저는 게시글 내용을 변경 변경
+			m.setMarketContent("판매 완료된 게시물입니다.");
+			
+		}
+		if(!alreadyViewed) {
+			// 쿠키 조회 결과 false 일 경우 조회수 증가
+			marketDao.incrementViewCount(marketNo); // 조회수증가
+			m.setViewCount(m.getViewCount() + 1);	// 조회수보정
+			cookieUtil.createCookie(response, marketNo, cookieTime); //쿠키생성
+		}
 		List<MarketFile> fileList = marketDao.selectMarketFileList(marketNo); // 파일 리스트 조회
-		m.setFileList(fileList); // 객체에 파일리스트 추가
-		return m;
+		m.setFileList(fileList); // 파일추가
+		return new MarketResponse<Market>(true, "200 : 조회성공", m);
 	}
 
 	@Transactional // 좋아요 클릭
@@ -347,4 +380,5 @@ public class MarketService {
 
 		return updateResult;
 	}
+
 }
