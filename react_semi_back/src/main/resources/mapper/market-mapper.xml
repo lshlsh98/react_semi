@@ -85,8 +85,8 @@
 	where market_status = #{status}
 	and completed = 0
 
-	<!-- 🔥 location CASE 조건 -->
-	<if test="location != null and location != 0">
+	
+	<if test="location != null">
 		and (
 		#{location} = 0
 		or sell_addr like '%' ||

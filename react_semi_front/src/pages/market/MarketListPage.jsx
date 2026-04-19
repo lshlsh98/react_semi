@@ -43,7 +43,7 @@ const MarketListPage = () => {
   /* 서버전송용 스테이트 */
   const [searchKeyword, setSearchKeyword] = useState("");
   const [searchType, setSearchType] = useState(1);
-  const [location, setLocation] = useState(1);
+  const [location, setLocation] = useState(0);
 
   useEffect(() => {
     axios
