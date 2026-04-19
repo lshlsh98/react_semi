@@ -39,7 +39,7 @@ ol {
 
 /* 마켓 게시물이 없을때 */
 .no_result {
-  margin-top: 50px;;
+  margin : 50px 0;
   padding: 50px 0;
   text-align: center;
   border-radius: 8px;

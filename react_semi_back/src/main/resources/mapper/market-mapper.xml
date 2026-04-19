@@ -12,6 +12,34 @@
 		<if test="searchType==2">
 			and market_writer = #{searchKeyword}
 		</if>
+		<if test="location != null">
+		and (
+		#{location} = 0
+		or sell_addr like '%' ||
+		case #{location}
+			when 1 then '서울'
+			when 2 then '강원'
+			when 3 then '경기'
+			when 4 then '경남'
+			when 5 then '경북'
+			when 6 then '광주'
+			when 7 then '대구'
+			when 8 then '대전'
+			when 9 then '부산'
+			when 10 then '세종'
+			when 11 then '울산'
+			when 12 then '인천'
+			when 13 then '전남'
+			when 14 then '전북'
+			when 15 then '제주'
+			when 16 then '충남'
+			when 17 then '충북'
+		end
+		|| '%'
+	)
+	</if>
+		
+		
 		and completed = 0
 	</select>
 
