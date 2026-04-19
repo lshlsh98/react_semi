@@ -85,7 +85,6 @@ public interface MarketDao {
 	int addPointHistory(Integer marketNo, String sellerId);
 
 	int addPointMember(String sellerId);
-	
 
 	int selectParentCommentCount(CommentListItem item);
 
@@ -98,4 +97,8 @@ public interface MarketDao {
 	Market findOneMarketByMarketNo(Integer marketNo);
 	
 	int updateMarket(Market market);
+
+	int deleteMarketFile(String marketFilePath);
+
+	String getMarketWriter(Integer marketNo);
 }

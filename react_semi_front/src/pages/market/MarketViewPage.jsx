@@ -281,7 +281,7 @@ const MarketViewPage = () => {
   const tradeComplete = () => {
     console.log(market.marketNo);
     axios
-      .get(`${import.meta.env.VITE_BACKSERVER}/markets/${marketNo}/complete`)
+      .get(`${import.meta.env.VITE_BACKSERVER}/markets/${marketNo}/requests`)
       .then((res) => {
         console.log("거래요청리스트 호출 성공");
         console.log(res);
@@ -344,7 +344,7 @@ const MarketViewPage = () => {
       if (result.isConfirmed) {
         axios
           .patch(
-            `${import.meta.env.VITE_BACKSERVER}/markets/${marketNo}/complete/${buyerId}`,
+            `${import.meta.env.VITE_BACKSERVER}/markets/${marketNo}/requests/${buyerId}`,
           )
           .then((res) => {
             console.log(res.data);
@@ -470,7 +470,7 @@ const MarketViewPage = () => {
 
         axios
           .post(
-            `${import.meta.env.VITE_BACKSERVER}/markets/reports`,
+            `${import.meta.env.VITE_BACKSERVER}/markets/${marketNo}/reports`,
             reportData,
           )
           .then((res) => {

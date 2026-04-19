@@ -421,6 +421,13 @@
 		where market_no = #{marketNo}
 		
 	</update>
+	<select id="getMarketWriter" resultType="string">
+		select market_writer from market_tbl where market_no = #{marketNo}
+	</select>
+	<!-- 게시글수정시 delete market file tbl -->
+	<delete id="deleteMarketFile">
+		delete from market_file_tbl where market_file_path = #{marketFilePath}
+	</delete>
 
 	<delete id="deleteMarketComment">
 		delete from market_comment_tbl where market_comment_no = #{commentNo}

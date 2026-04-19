@@ -38,7 +38,7 @@ const MarketModifyPage = () => {
       .get(`${import.meta.env.VITE_BACKSERVER}/markets/${marketNo}`)
       .then((res) => {
         if (res.data.success) {
-          setMarket({ ...res.data.data, fileList: [] });
+          setMarket({ ...res.data.data });
         }
       })
       .catch((err) => {
@@ -87,7 +87,8 @@ const MarketModifyPage = () => {
       return item !== file;
     });
     setMarket({ ...market, fileList: newFileList });
-    setDeleteFileList([...deleteFileList, file.marketFilePath]);
+    setDeleteFileList([...deleteFileList, file.marketFilePath]); //지워야할 마켓 파일 전달
+    //
   };
   /* INPUT 함수 */
   const inputMarket = (e) => {
@@ -189,9 +190,12 @@ const MarketModifyPage = () => {
     form.append("marketContent", market.marketContent);
     form.append("sellPrice", market.sellPrice);
     form.append("sellAddr", market.sellAddr);
-    form.append("marketWriter", market.marketWriter);
+    form.append("marketWriter", memberId);
     files.forEach((file) => {
       form.append("files", file);
+    });
+    deleteFileList.forEach((marketFilePath) => {
+      form.append("deleteFilePath", marketFilePath);
     });
 
     for (let pair of form.entries()) {
@@ -199,24 +203,46 @@ const MarketModifyPage = () => {
     }
 
     axios
-      .patch(`${import.meta.env.VITE_BACKSERVER}/markets/${marketNo}`, form, {
+      .put(`${import.meta.env.VITE_BACKSERVER}/markets/${marketNo}`, form, {
         headers: {
           "Content-Type": "multipart/form-data",
         },
       })
       .then((res) => {
-        if (res.data === 1) {
+        if (res.data.success) {
+          const { newFileCount, deleteFileCount } = res.data.data;
+
           Swal.fire({
-            title: "게시글 수정 완료",
+            title: "게시물 수정완료",
+            html: `
+          게시글 수정 성공<br/>
+          새로운 파일 수 : ${newFileCount} 개<br/>
+          삭제한 파일 수 : ${deleteFileCount} 개
+        `,
             icon: "success",
+            confirmButtonText: "닫기",
+            confirmButtonColor: "pink",
+          }).then(() => {
+            navigate(`/market/view/${marketNo}`);
+          });
+        } else {
+          // 🔥 서버에서 실패 응답 (권한없음, DB 실패 등)
+          Swal.fire({
+            title: "수정 실패",
+            text: res.data.message,
+            icon: "error",
+            confirmButtonText: "확인",
           }).then(() => {
             navigate(`/market/view/${marketNo}`);
           });
         }
-        console.log(res);
       })
       .catch((err) => {
         console.log(err);
+        Swal.fire({
+          title: "오류발생,콘솔확인",
+          icon: "error",
+        });
       });
   };
 

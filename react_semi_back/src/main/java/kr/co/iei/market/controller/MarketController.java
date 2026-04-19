@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -24,6 +25,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import kr.co.iei.market.model.dto.MarketCreateResponse;
 import kr.co.iei.market.model.dto.MarketResponse;
+import kr.co.iei.market.model.dto.MarketUpdateResponse;
 import kr.co.iei.market.model.service.MarketService;
 import kr.co.iei.market.model.vo.CommentListItem;
 import kr.co.iei.market.model.vo.ListItem;
@@ -127,9 +129,13 @@ public class MarketController {
 
 	}
 	/// 마켓게시판 수정 (Markets/{marketNo}) Update : 한진호
-	@PatchMapping(value="/{marketNo}")
-	public ResponseEntity<?> updateOneMarket(@ModelAttribute Market market, @ModelAttribute List<MultipartFile> files){
-		int result = marketService.updateOneMarket(market,files);
+	@PutMapping(value="/{marketNo}")
+	public ResponseEntity<MarketResponse<MarketUpdateResponse>> updateOneMarket(
+			@RequestHeader(required = false, name = "Authorization") String token,
+			@ModelAttribute Market market,
+			@RequestParam(value = "files", required = false	) List<MultipartFile> files,
+			@PathVariable Integer marketNo){
+		MarketResponse<MarketUpdateResponse> result = marketService.updateOneMarket(token,market,files,marketNo);
 		return ResponseEntity.ok(result);
 	}
 	
@@ -197,7 +203,7 @@ public class MarketController {
 	}
 
 	/// 마켓게시판-신고-등록 (Markets/{marketNo}/reports) Create : 한진호
-	@PostMapping(value = "/reports")
+	@PostMapping(value = "/{marketNo}reports")
 	public ResponseEntity<?> pushReport(@RequestBody MarketReport marketReport) {
 		int result = marketService.pushReport(marketReport);
 		return ResponseEntity.ok(result);
@@ -219,7 +225,7 @@ public class MarketController {
 	}
 
 	/// 마켓게시판-거래요청-조회 (Markets/{marketNo}/requests) Read_list : 한진호
-	@GetMapping(value = "/{marketNo}/complete")
+	@GetMapping(value = "/{marketNo}/requests")
 	public ResponseEntity<?> selectAllTradeRequest(@PathVariable Integer marketNo) {
 		// System.out.println("글번호확인 : " + marketNo);
 		List<TradeRequest> list = marketService.selectAllTradeRequest(marketNo);
@@ -229,7 +235,7 @@ public class MarketController {
 
 	/// 마켓게시판-거래요청-수정 (Markets/{marketNo}/requests/{BuyerId}) Update : 한진호
 	// 거래확정
-	@PatchMapping(value = "/{marketNo}/complete/{buyerId}")
+	@PatchMapping(value = "/{marketNo}/requests/{buyerId}")
 	public ResponseEntity<?> tradeComplete(@PathVariable Integer marketNo, @PathVariable String buyerId) {
 		System.out.println("\n거래번호 : " + marketNo);
 		System.out.println("구매자아이디" + buyerId);
