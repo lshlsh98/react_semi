@@ -9,8 +9,6 @@ import { Input } from "../../components/ui/Form";
 import InsertPhotoIcon from "@mui/icons-material/InsertPhoto";
 import DeleteIcon from "@mui/icons-material/Delete";
 import { useKakaoPostcode } from "@clroot/react-kakao-postcode";
-
-//tip-tap editor
 import { useEditor, EditorContent } from "@tiptap/react";
 import StarterKit from "@tiptap/starter-kit";
 import { TextStyle } from "@tiptap/extension-text-style";
@@ -39,7 +37,9 @@ const MarketModifyPage = () => {
     axios
       .get(`${import.meta.env.VITE_BACKSERVER}/markets/${marketNo}`)
       .then((res) => {
-        setMarket({ ...res.data, fileList: [] });
+        if (res.data.success) {
+          setMarket({ ...res.data.data, fileList: [] });
+        }
       })
       .catch((err) => {
         console.log(err);
@@ -82,7 +82,7 @@ const MarketModifyPage = () => {
   /* 기존파일 삭제용 함수 */
   const [deleteFileList, setDeleteFileList] = useState([]);
   const addDeleteFileList = (file) => {
-    //화면에서 기존파일을 없애는 작업 - board.fileList를 변환
+    //화면에서 기존파일을 없애는 작업 - market.fileList를 변환
     const newFileList = market.fileList.filter((item) => {
       return item !== file;
     });
@@ -115,23 +115,36 @@ const MarketModifyPage = () => {
   const inputMarketPrice = (e) => {
     const name = e.target.name;
     const value = e.target.value;
-    const num = Number(value);
+
+    const onlyNumber = value.replace(/[^0-9]/g, "");
+
+    if (onlyNumber === "") {
+      setMarket({ ...market, [name]: "" });
+      return;
+    }
+
+    const num = Number(onlyNumber);
+
     if (num < 0) {
       Swal.fire({
         icon: "warning",
         title: "0원 보다 작게 설정하실 수는 없어요!",
       });
-      setMarket({ ...market, [name]: "" });
       return;
-    } else if (num > 10000000) {
+    }
+
+    if (num > 10000000) {
       Swal.fire({
         icon: "warning",
         title: "최대 1,000만원까지 설정 가능해요!",
       });
-      setMarket({ ...market, [name]: "" });
       return;
     }
-    setMarket({ ...market, [name]: value });
+
+    setMarket({
+      ...market,
+      [name]: num,
+    });
   };
   /* 테스트 에디터용 함수 */
 
@@ -209,6 +222,7 @@ const MarketModifyPage = () => {
 
   return (
     <section className={styles.market_write_wrap}>
+      <h3 className={styles.page_title}>마켓 게시글 수정</h3>
       {/* 제목 필드 */}
       <div className={styles.market_input_wrap}>
         <label htmlFor="marketTitle">제목</label>
@@ -224,7 +238,7 @@ const MarketModifyPage = () => {
       <div className={styles.market_input_wrap}>
         <label htmlFor="sellPrice">판매금액(원)</label>
         <Input
-          type="number"
+          type="text"
           name="sellPrice"
           id="sellPrice"
           value={market.sellPrice}

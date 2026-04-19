@@ -25,6 +25,7 @@ import FormatAlignRightIcon from "@mui/icons-material/FormatAlignRight";
 import ClearIcon from "@mui/icons-material/Clear";
 import UndoIcon from "@mui/icons-material/Undo";
 import RedoIcon from "@mui/icons-material/Redo";
+import MarketMap from "../../components/market/MarketMap";
 
 const MarketWritePage = () => {
   const { memberId, memberAddr } = useAuthStore();
@@ -48,6 +49,7 @@ const MarketWritePage = () => {
     sellPrice: "",
     sellAddr: memberAddr,
   });
+
   /* 파일 관리용 스테이트 */
   const [files, setFiles] = useState([]);
 
@@ -108,23 +110,36 @@ const MarketWritePage = () => {
   const inputMarketPrice = (e) => {
     const name = e.target.name;
     const value = e.target.value;
-    const num = Number(value);
+
+    const onlyNumber = value.replace(/[^0-9]/g, "");
+
+    if (onlyNumber === "") {
+      setMarket({ ...market, [name]: "" });
+      return;
+    }
+
+    const num = Number(onlyNumber);
+
     if (num < 0) {
       Swal.fire({
         icon: "warning",
         title: "0원 보다 작게 설정하실 수는 없어요!",
       });
-      setMarket({ ...market, [name]: "" });
       return;
-    } else if (num > 10000000) {
+    }
+
+    if (num > 10000000) {
       Swal.fire({
         icon: "warning",
         title: "최대 1,000만원까지 설정 가능해요!",
       });
-      setMarket({ ...market, [name]: "" });
       return;
     }
-    setMarket({ ...market, [name]: value });
+
+    setMarket({
+      ...market,
+      [name]: num,
+    });
   };
   /* 테스트 에디터용 함수 */
 
@@ -214,6 +229,7 @@ const MarketWritePage = () => {
   });
   return (
     <section className={styles.market_write_wrap}>
+      <h3 className={styles.page_title}>마켓 게시글 작성</h3>
       {/* 제목 필드 */}
       <div className={styles.market_input_wrap}>
         <label htmlFor="marketTitle">제목</label>
@@ -229,7 +245,7 @@ const MarketWritePage = () => {
       <div className={styles.market_input_wrap}>
         <label htmlFor="sellPrice">판매금액(원)</label>
         <Input
-          type="number"
+          type="text"
           name="sellPrice"
           id="sellPrice"
           value={market.sellPrice}
@@ -251,7 +267,7 @@ const MarketWritePage = () => {
 
         <div className={styles.market_addr}>
           <Input
-            style={{ backgroundColor: "var(--light)" }}
+            style={{ backgroundColor: "white" }}
             type="text"
             name="sellAddr"
             id="sellAddr"
@@ -274,7 +290,7 @@ const MarketWritePage = () => {
       </div>
       {/* MAP API 영역 */}
       <div className={styles.market_input_wrap}>
-        <label>API 등록 예정</label>
+        <MarketMap market={market} />
       </div>
 
       {/* 내용 필드 */}
@@ -496,7 +512,7 @@ const MenuBar = ({ editor }) => {
 
       {/* 삭제 */}
       <button
-        style={{ backgroundColor: "var(--danger)" }}
+        className={styles.delet_icon}
         type="button"
         disabled={editor.isEmpty}
         onClick={() => {
@@ -514,7 +530,7 @@ const MenuBar = ({ editor }) => {
         }}
         title="지우기"
       >
-        <DeleteIcon />
+        <DeleteIcon className={styles.delete_icon} />
       </button>
     </div>
   );

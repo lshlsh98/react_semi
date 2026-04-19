@@ -13,12 +13,9 @@ ol {
 
 /* 검색창 정렬박스 */
 .market_searchbox {
-  padding: 12px 0;
   background-color: white;
   display: flex;
   justify-content: center;
-  position: fixed;
-  top: 150px;
 }
 
 .market_searchbox input {
@@ -40,30 +37,22 @@ ol {
   border-radius: 8px;
 }
 
-
-.market_category {
-  width: 200px;
-  flex-shrink: 0;
-  padding: 24px;
-  background-color: var(--light);
-  border-radius: 8px;
-}
-
 /* 마켓 게시물이 없을때 */
 .no_result {
-  margin-top: 200px;
-  padding: 16px 0;
+  margin-top: 50px;;
+  padding: 50px 0;
   text-align: center;
   border-radius: 8px;
-  color: var(--primary);
+  background-color: var(--gray7);
   font-weight: 900;
+  font-size: 1.17em;
 }
 
 /* 마켓리스트*/
 
 .market_list_wrap > ul {
   display: flex;
-  margin-top: 70px;
+  margin-top: 48px;
   flex-direction: column;
 
   gap: 12px;
@@ -71,7 +60,6 @@ ol {
 .market_list_wrap > ul > li {
   border-radius: 8px;
   border: 1px solid var(--gray6);
-
   padding: 12px;
   cursor: pointer;
   transition: 0.5s;
@@ -107,7 +95,6 @@ ol {
   display: flex;
   gap: 8px;
   align-items: center;
-
   justify-content: space-between;
 }
 .member_wrap2 {
@@ -123,6 +110,10 @@ ol {
   align-items: center;
   gap: 8px;
   padding: 4px;
+}
+.info_viewCount
+{
+  color:var(--gray4);
 }
 
 /*멤버썸네일*/
@@ -150,11 +141,16 @@ ol {
   height: 100%;
   object-fit: cover;
 }
+.member_thumb>span{
+  color: var(--gray8);
+  font-size: 40px
+}
 
 /*판매주소*/
 .info_sellAddr {
   font-size: 12px;
   padding: 4px;
+  color: var(--gray4);
 }
 
 .info_title {
@@ -200,11 +196,17 @@ ol {
   gap: 8px;
   align-items: center;
 }
+.info_likeCount{
+  color:var(--gray4)
+}
 /*댓글수 랩*/
 .info_commentCount_wrap {
   display: flex;
   align-items: center;
   gap: 8px;
+}
+.info_commentCount{
+  color : var(--gray4);
 }
 
 .info_date_wrap {
@@ -212,6 +214,9 @@ ol {
   align-items: center;
   gap: 8px;
   padding: 4px;
+}
+.info_date{
+  color : var(--gray4)
 }
 
 /* 페이지네이션 */
@@ -234,6 +239,7 @@ ol {
 /* 아이콘 옵션*/
 .icon {
   font-size: 20px !important;
+  color: var(--gray4);
 }
 .icon2{
   font-size: 20px !important;
@@ -241,4 +247,5 @@ ol {
 }
 .material_icons {
   font_size: 20px;
+
 }
