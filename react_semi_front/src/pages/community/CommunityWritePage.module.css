@@ -69,22 +69,6 @@
   position: relative;
 }
 
-/* 오른쪽 아래 글자수 */
-.editor_count {
-  text-align: right; /* 오른쪽 정렬 원하면 */
-  bottom: 12px;
-  font-size: 13px;
-  color: var(--gray3);
-  margin-right: 20px;
-  margin-bottom: 12px;
-}
-
-/* 내용 4,000자 도달 */
-.limit {
-  color: var(--danger);
-  font-weight: 600;
-}
-
 .menu_bar {
   display: flex;
   margin-top: 20px;
@@ -143,4 +127,20 @@
 /* 휴지통 버튼만 빨간색 */
 .delete_icon {
   color: var(--danger);
+}
+
+/* 오른쪽 아래 글자수 */
+.editor_count {
+  text-align: right; /* 오른쪽 정렬 원하면 */
+  bottom: 12px;
+  font-size: 13px;
+  color: var(--gray3);
+  margin-right: 20px;
+  margin-bottom: 12px;
+}
+
+/* 내용 4,000자 도달 */
+.limit {
+  color: var(--danger);
+  font-weight: 600;
 }

@@ -302,23 +302,15 @@ const MenuBar = ({ editor }) => {
 
 const TextEditor = ({ data, setData }) => {
   const [contentLength, setContentLength] = useState(0);
-  const lastValidHTMLRef = useRef("");
+  let lastValidHTML = useRef("");
 
   const editor = useEditor({
     extensions: [
-      StarterKit.configure({
-        paragraph: {
-          HTMLAttributes: {
-            class: "tiptap-paragraph",
-          },
-        },
-      }),
+      StarterKit,
       TextStyle,
       Color,
       TextAlign.configure({
         types: ["heading", "paragraph"],
-        alignments: ["left", "center", "right"],
-        defaultAlignment: "left",
       }),
     ],
     content: data,
@@ -326,8 +318,8 @@ const TextEditor = ({ data, setData }) => {
     onUpdate: ({ editor }) => {
       const text = editor.getText();
 
-      // 🔥 개행 보정 (핵심)
       const normalizedText = text.replace(/\n\n/g, "\n");
+
       const textLength = normalizedText.length;
 
       setContentLength(textLength);
@@ -335,35 +327,22 @@ const TextEditor = ({ data, setData }) => {
       if (textLength > 4000) {
         alert("최대 4,000자까지 입력 가능합니다.");
 
-        // 이전 상태 복구
-        editor.commands.setContent(lastValidHTMLRef.current);
+        editor.commands.setContent(lastValidHTML.current, false);
         return;
       }
 
-      // 정상 상태 저장
-      lastValidHTMLRef.current = editor.getHTML();
+      lastValidHTML.current = editor.getHTML();
 
-      setData(editor.getHTML());
+      setData({
+        html: editor.getHTML(),
+        text: text,
+      });
     },
   });
 
-  const isSet = useRef(false);
-
-  useEffect(() => {
-    if (editor && data && !isSet.current) {
-      editor.commands.setContent(data);
-
-      const text = editor.getText().replace(/\n\n/g, "\n");
-      setContentLength(text.length);
-
-      isSet.current = true;
-      lastValidHTMLRef.current = data;
-    }
-  }, [editor, data]);
-
   return (
     <div className={styles.editor_wrap}>
-      <MenuBar editor={editor} />
+      <MenuBar editor={editor} className={styles.menu_bar} />
 
       <EditorContent editor={editor} className={styles.editor_content} />
 
