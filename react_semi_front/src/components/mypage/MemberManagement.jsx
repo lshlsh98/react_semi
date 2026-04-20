@@ -27,7 +27,6 @@ const MemberManagement = () => {
         `${import.meta.env.VITE_BACKSERVER}/members?page=${page}&size=${size}&order=${order}&selectedGrade=${selectedGrade}&searchType=${searchType}&searchKeyword=${searchKeyword}`,
       )
       .then((res) => {
-        console.log(res);
         setMemberList(res.data.items);
         setTotalPage(res.data.totalPage);
         window.scrollTo(0, 0);
