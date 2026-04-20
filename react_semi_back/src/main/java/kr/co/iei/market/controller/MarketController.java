@@ -203,7 +203,7 @@ public class MarketController {
 	}
 
 	/// 마켓게시판-신고-등록 (Markets/{marketNo}/reports) Create : 한진호
-	@PostMapping(value = "/{marketNo}reports")
+	@PostMapping(value = "/{marketNo}/reports")
 	public ResponseEntity<?> pushReport(@RequestBody MarketReport marketReport) {
 		int result = marketService.pushReport(marketReport);
 		return ResponseEntity.ok(result);

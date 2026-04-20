@@ -45,15 +45,32 @@
 		where c.community_status = 1
 		
 		<if test="searchType==1">
-			<![CDATA[
-				and (
-       				c.community_title like '%'||#{searchKeyword}||'%'
-       				or REGEXP_REPLACE(c.community_content, '<[^>]*>', '')
-          		 	like '%'||#{searchKeyword}||'%'
-      		)]]>
+		<![CDATA[
+		and (
+		    c.community_title like '%' || 
+		        replace(replace(replace(#{searchKeyword}, '\', '\\'), '_', '\_'), '%', '\%')
+		    || '%' escape '\'
+		    or regexp_replace(c.community_content, '<[^>]*>', '') like '%' || 
+		        replace(replace(replace(#{searchKeyword}, '\', '\\'), '_', '\_'), '%', '\%')
+		    || '%' escape '\'
+		)
+		]]>
 		</if>
+		
 		<if test="searchType==2">
-			and c.community_writer = #{searchKeyword}
+		<![CDATA[
+		and (
+		    c.community_writer like '%' || 
+		        replace(replace(replace(#{searchKeyword}, '\', '\\'), '_', '\_'), '%', '\%')
+		    || '%' escape '\'
+		    or regexp_replace(c.community_writer, '<[^>]*>', '') like '%' || 
+		        replace(replace(replace(#{searchKeyword}, '\', '\\'), '_', '\_'), '%', '\%')
+		    || '%' escape '\'
+		    or m.member_name like '%' || 
+		        replace(replace(replace(#{searchKeyword}, '\', '\\'), '_', '\_'), '%', '\%')
+		    || '%' escape '\'
+		)
+		]]>
 		</if>
 
 		<if test="view==1">
@@ -74,22 +91,39 @@
 
 	<select id="selectCommunityCount" resultType="Integer">
 		select count(*)
-		from community_tbl
+		from community_tbl c
 		join member_tbl m on
 		(community_writer = m.member_id)
 		where
 		community_status = 1
 
 		<if test="searchType==1">
-			<![CDATA[
-				and (
-       				community_title like '%'||#{searchKeyword}||'%'
-       				or REGEXP_REPLACE(community_content, '<[^>]*>', '')
-          		 	like '%'||#{searchKeyword}||'%'
-      		)]]>
+		<![CDATA[
+		and (
+		    c.community_title like '%' || 
+		        replace(replace(replace(#{searchKeyword}, '\', '\\'), '_', '\_'), '%', '\%')
+		    || '%' escape '\'
+		    or regexp_replace(c.community_content, '<[^>]*>', '') like '%' || 
+		        replace(replace(replace(#{searchKeyword}, '\', '\\'), '_', '\_'), '%', '\%')
+		    || '%' escape '\'
+		)
+		]]>
 		</if>
+		
 		<if test="searchType==2">
-			and community_writer = #{searchKeyword}
+		<![CDATA[
+		and (
+		    c.community_writer like '%' || 
+		        replace(replace(replace(#{searchKeyword}, '\', '\\'), '_', '\_'), '%', '\%')
+		    || '%' escape '\'
+		    or regexp_replace(c.community_writer, '<[^>]*>', '') like '%' || 
+		        replace(replace(replace(#{searchKeyword}, '\', '\\'), '_', '\_'), '%', '\%')
+		    || '%' escape '\'
+		    or m.member_name like '%' || 
+		        replace(replace(replace(#{searchKeyword}, '\', '\\'), '_', '\_'), '%', '\%')
+		    || '%' escape '\'
+		)
+		]]>
 		</if>
 
 		<if test="view==1">

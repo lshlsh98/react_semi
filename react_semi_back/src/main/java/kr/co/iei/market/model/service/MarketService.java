@@ -217,7 +217,7 @@ public class MarketService {
 		if (completed == 1 && (memberGrade == 0 || memberGrade == 3)) {
 			// 게시글이 완료상태일때 비회원과 일반유저는 게시글 내용을 변경 변경
 			m.setMarketContent("판매 완료된 게시물입니다.");
-
+			
 		}
 		if (!alreadyViewed) {
 			// 쿠키 조회 결과 false 일 경우 조회수 증가
@@ -234,11 +234,7 @@ public class MarketService {
 	@Transactional
 	public MarketResponse<MarketUpdateResponse> updateOneMarket(String token, Market market, List<MultipartFile> files,
 			Integer marketNo) {
-		//System.out.println("토큰 : " + token);
-		//System.out.println("마켓 : " + market);
-		//System.out.println("파일 : " + files);
-		//System.out.println("번호 : " + marketNo);
-
+		
 		if (token == null) {
 			return new MarketResponse<MarketUpdateResponse>(false, "권한없음", null);
 		}

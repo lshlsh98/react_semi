@@ -474,7 +474,7 @@
 	<select id="findCommunityReportAll" resultType="report">
 		SELECT
 			r.member_id AS writer_id,
-			r.community_report_reason AS reason,
+			r.report_reason AS reason,
 			m.member_name AS writer_name
 		FROM community_report_tbl r
 			LEFT JOIN member_tbl m ON
@@ -485,7 +485,7 @@
 	<select id="findCommunityReportPrivate" resultType="report">
 		SELECT
 			r.member_id AS writer_id,
-			r.community_report_reason AS reason,
+			r.report_reason AS reason,
 			m.member_name AS writer_name
 		FROM community_report_tbl r
 			LEFT JOIN member_tbl m ON

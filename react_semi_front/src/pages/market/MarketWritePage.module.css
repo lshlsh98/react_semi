@@ -59,7 +59,7 @@ a {
 /* 텍스트 에디터 */
 
 .editor_wrap {
-  border: 1px solid var(--gray5);
+  border: 1px solid var(--gray6);
   border-radius: 8px;
   overflow: hidden;
 }
@@ -96,9 +96,8 @@ a {
   background-color: var(--primary);
   border: 1px solid var(--primary);
 }
-
-.menu_bar button.active svg {
-  fill: var(--light);
+.delete_icon {
+  color: var(--danger);
 }
 
 .editor_content {
@@ -109,7 +108,8 @@ a {
   min-height: 400px;
   padding: 12px;
   outline: none;
-  border: 1px solid var(--gray3);
+
+  border: 1px solid var(--gray6);
   border-radius: 12px;
   line-height: 1.4;
 }

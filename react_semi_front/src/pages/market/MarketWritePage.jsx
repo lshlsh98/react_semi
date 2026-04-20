@@ -252,7 +252,7 @@ const MarketWritePage = () => {
           id="marketTitle"
           value={market.marketTitle}
           onChange={inputMarketTitle}
-          placeholder="제목을 입력해 주세요. 최대 50자"
+          placeholder="제목을 입력해 주세요.(최대 50자 입력가능)"
         ></Input>
       </div>
       {/* 금액 필드 */}
@@ -551,9 +551,8 @@ const MenuBar = ({ editor }) => {
 };
 
 const TextEditor = ({ data, setData }) => {
-  //console.log(data);
-
-  let lastValidHTML = "";
+  const [contentLength, setContentLength] = useState(0);
+  let lastValidHTML = useRef("");
   const editor = useEditor({
     extensions: [
       StarterKit,
@@ -564,52 +563,45 @@ const TextEditor = ({ data, setData }) => {
       }),
     ],
     content: data,
-    /* 에디터의 글자수를 제한 */
-    editorProps: {
-      handleTextInput(view, from, to, text) {
-        const currentHTML = view.dom.innerHTML;
-        const newHTML = currentHTML + text;
-        const byteLength = new TextEncoder().encode(newHTML).length;
-        //console.log("새글자입력" + byteLength);
-        if (byteLength > 4000) {
-          alert("최대입력수 초과");
-          return true; // 입력 막기
-        }
-        return false;
-      },
 
-      handleKeyDown(view, event) {
-        if (event.key === "Enter") {
-          const html = view.dom.innerHTML;
-          const byteLength = new TextEncoder().encode(html).length;
-          //console.log(byteLength);
-          if (byteLength > 4000) {
-            alert("더이상 입력할수 없어요");
-            return true;
-          }
-        }
-        return false;
-      },
-    },
     onUpdate: ({ editor }) => {
-      const html = editor.getHTML();
-      const byteLength = new TextEncoder().encode(html).length;
+      const text = editor.getText();
 
-      if (byteLength > 4000) {
-        editor.commands.setContent(lastValidHTML, false);
-        //console.log(byteLength);
-        alert("지워버린다.");
+      const normalizedText = text.replace(/\n\n/g, "\n");
+
+      const textLength = normalizedText.length;
+
+      setContentLength(textLength);
+
+      if (textLength > 4000) {
+        alert("최대 4,000자까지 입력 가능합니다.");
+
+        editor.commands.setContent(lastValidHTML.current, false);
         return;
       }
-      lastValidHTML = html;
-      setData(html);
+
+      lastValidHTML.current = editor.getHTML();
+
+      setData({
+        html: editor.getHTML(),
+        text: text,
+      });
     },
   });
 
   return (
     <div className={styles.editor_wrap}>
       <MenuBar editor={editor} className={styles.menu_bar} />
+
       <EditorContent editor={editor} className={styles.editor_content} />
+
+      <div
+        className={`${styles.editor_count} ${
+          contentLength >= 4000 ? styles.limit : ""
+        }`}
+      >
+        {contentLength} / 4000
+      </div>
     </div>
   );
 };

@@ -27,8 +27,6 @@ const MarketViewPage = () => {
   const [market, setMarket] = useState(null);
   const imgUrl = "http://192.168.31.24:9999/market";
 
-  /* 모달용 스테이트 */
-
   const images = market?.fileList || [];
 
   const [bannerIndex, setBannerIndex] = useState(0); // 현재 화면에 보여지는 배너 이미지의 인덱스(순서)를 기억하는 state
@@ -48,22 +46,7 @@ const MarketViewPage = () => {
 
   /* 거래요청 리스트용 스테이트 */
   const [tradeRequestList, setTradeRequestList] = useState([]);
-  /* F5키 ctrl+r 제한 */
-  /*
-  useEffect(() => {
-    const handleKeyDown = (e) => {
-      if (e.key === "F5" || (e.ctrlKey && e.key === "r")) {
-        e.preventDefault();
-      }
-    };
 
-    window.addEventListener("keydown", handleKeyDown);
-
-    return () => {
-      window.removeEventListener("keydown", handleKeyDown);
-    };
-  }, []);
-  */
   /*금액 함수*/
   const formatPrice = (price) => {
     if (price === 0) {
@@ -80,7 +63,7 @@ const MarketViewPage = () => {
         withCredentials: true,
       })
       .then((res) => {
-        //console.log(res.data);
+        //console.log(res.data.data);
         if (res.data.success) {
           setMarket(res.data.data);
         } else {
@@ -641,7 +624,6 @@ const MarketViewPage = () => {
                           거래요청
                         </Button>
                       )}
-
                       {market.isRequest === 1 && (
                         <Button
                           className="btn primary"
