@@ -178,7 +178,7 @@ const MarketWritePage = () => {
     //console.log("작성하기 버튼클릭");
     const form = new FormData();
     form.append("marketTitle", market.marketTitle);
-    form.append("marketContent", market.marketContent);
+    form.append("marketContent", market.marketContent.html);
     form.append("sellPrice", market.sellPrice);
     form.append("sellAddr", market.sellAddr);
     form.append("marketWriter", market.marketWriter);
@@ -188,6 +188,7 @@ const MarketWritePage = () => {
     for (let pair of form.entries()) {
       //console.log(pair[0], pair[1]);
     }
+
     axios
       .post(`${import.meta.env.VITE_BACKSERVER}/markets`, form, {
         headers: {
