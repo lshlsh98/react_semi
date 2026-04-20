@@ -152,7 +152,7 @@ const LikeAndDislikeAndReport = ({ communityNo, communityWriter }) => {
     if (reportReason.trim() !== "") {
       Swal.fire({
         title: "작성 중인 내용이 있습니다.",
-        text: "취소를 누르면 작성 중인 글이 사라집니다.",
+        text: "네를 누르면 작성 중인 내용이 사라집니다.",
         icon: "warning",
         showCancelButton: true,
         confirmButtonText: "네",
