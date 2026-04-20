@@ -65,7 +65,8 @@
 .carbon_contribution_status {
   width: 10%;
 }
-.carbon_contribution_market_title {
+.carbon_contribution_market_title,
+.carbon_contribution_market_title_none {
   width: 50%;
   overflow: hidden;
   white-space: nowrap;
