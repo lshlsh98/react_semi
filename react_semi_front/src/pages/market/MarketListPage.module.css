@@ -19,6 +19,7 @@ ol {
 }
 .market_searchbox > form > div > input {
   height: 42px;
+  width: 363px;
 }
 .market_searchbox > form > button {
   height: 42px;

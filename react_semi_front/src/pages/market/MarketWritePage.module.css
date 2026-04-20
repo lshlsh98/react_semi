@@ -162,6 +162,8 @@ a {
   justify-content: center;
   gap: 12px;
 }
+
+/*에디터 내부 글자제한 텍스트*/
 .editor_count {
   text-align: right;
   bottom: 12px;

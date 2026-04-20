@@ -578,10 +578,8 @@ const MenuBar = ({ editor }) => {
 };
 
 const TextEditor = ({ data, setData }) => {
-  //console.log(data);
   const [contentLength, setContentLength] = useState(0);
-
-  let lastValidHTML = "";
+  let lastValidHTML = useRef("");
   const editor = useEditor({
     extensions: [
       StarterKit,
@@ -591,10 +589,10 @@ const TextEditor = ({ data, setData }) => {
         types: ["heading", "paragraph"],
       }),
     ],
-    content: data /* 에디터의 글자수를 제한 */,
+    content: data,
 
     onUpdate: ({ editor }) => {
-      const text = editor.getText(); // 개행할 때마다 카운트가 1씩 증가
+      const text = editor.getText();
 
       const normalizedText = text.replace(/\n\n/g, "\n");
 
@@ -603,13 +601,13 @@ const TextEditor = ({ data, setData }) => {
       setContentLength(textLength);
 
       if (textLength > 4000) {
-        alert("최대 4,000자까지 입력 가능합니다."); // :point_right: 이전 정상 상태로 복구
+        alert("최대 4,000자까지 입력 가능합니다.");
 
-        editor.commands.setContent(lastValidText);
+        editor.commands.setContent(lastValidHTML.current, false);
         return;
       }
 
-      lastValidHTML = editor.getHTML();
+      lastValidHTML.current = editor.getHTML();
 
       setData({
         html: editor.getHTML(),
@@ -634,5 +632,4 @@ const TextEditor = ({ data, setData }) => {
     </div>
   );
 };
-
 export default MarketModifyPage;
