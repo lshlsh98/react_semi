@@ -178,7 +178,7 @@ const MarketWritePage = () => {
     //console.log("작성하기 버튼클릭");
     const form = new FormData();
     form.append("marketTitle", market.marketTitle);
-    form.append("marketContent", market.marketContent.html);
+    form.append("marketContent", market.marketContent);
     form.append("sellPrice", market.sellPrice);
     form.append("sellAddr", market.sellAddr);
     form.append("marketWriter", market.marketWriter);
@@ -583,10 +583,7 @@ const TextEditor = ({ data, setData }) => {
 
       lastValidHTML.current = editor.getHTML();
 
-      setData({
-        html: editor.getHTML(),
-        text: text,
-      });
+      setData(editor.getHTML());
     },
   });
 

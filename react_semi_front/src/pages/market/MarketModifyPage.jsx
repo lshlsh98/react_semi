@@ -47,9 +47,8 @@ const MarketModifyPage = () => {
       .then((res) => {
         if (res.data.success) {
           const data = res.data.data;
-          setMarket({ ...data });
-          console.log(data.fileList);
-          console.log("파일배열 : ", files);
+          console.log(data);
+          setMarket(data);
         }
       })
       .catch((err) => {
@@ -214,7 +213,7 @@ const MarketModifyPage = () => {
 
     const form = new FormData();
     form.append("marketTitle", market.marketTitle);
-    form.append("marketContent", market.marketContent.html);
+    form.append("marketContent", market.marketContent);
     form.append("sellPrice", market.sellPrice);
     form.append("sellAddr", market.sellAddr);
     form.append("marketWriter", memberId);
@@ -609,12 +608,14 @@ const TextEditor = ({ data, setData }) => {
 
       lastValidHTML.current = editor.getHTML();
 
-      setData({
-        html: editor.getHTML(),
-        text: text,
-      });
+      setData(editor.getHTML());
     },
   });
+  useEffect(() => {
+    if (editor && data && editor.getHTML() !== data) {
+      editor.commands.setContent(data);
+    }
+  }, [data, editor]);
 
   return (
     <div className={styles.editor_wrap}>
