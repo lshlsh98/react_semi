@@ -46,7 +46,10 @@ const MarketModifyPage = () => {
       .get(`${import.meta.env.VITE_BACKSERVER}/markets/${marketNo}`)
       .then((res) => {
         if (res.data.success) {
-          setMarket({ ...res.data.data });
+          const data = res.data.data;
+          setMarket({ ...data });
+          console.log(data.fileList);
+          console.log("파일배열 : ", files);
         }
       })
       .catch((err) => {
@@ -171,6 +174,7 @@ const MarketModifyPage = () => {
 
   /* 수정하기버튼 클릭이벤트 연결 함수 */
   const modify = () => {
+    const totalImageCount = market.fileList.length + files.length;
     if (market.marketTitle === "") {
       Swal.fire({
         icon: "warning",
@@ -199,10 +203,11 @@ const MarketModifyPage = () => {
       });
       return;
     }
-    if (files.length === 0) {
+
+    if (totalImageCount === 0) {
       Swal.fire({
         icon: "warning",
-        title: "사진을 첨부해주세요.",
+        title: "사진을 한 장 이상 유지하거나 첨부해주세요.",
       });
       return;
     }
@@ -247,7 +252,6 @@ const MarketModifyPage = () => {
             navigate(`/market/view/${marketNo}`);
           });
         } else {
-          // 🔥 서버에서 실패 응답 (권한없음, DB 실패 등)
           Swal.fire({
             title: "수정 실패",
             text: res.data.message,
@@ -307,7 +311,7 @@ const MarketModifyPage = () => {
 
         <div className={styles.market_addr}>
           <Input
-            style={{ backgroundColor: "var(--light)" }}
+            style={{ backgroundColor: "white" }}
             type="text"
             name="sellAddr"
             id="sellAddr"
@@ -575,6 +579,7 @@ const MenuBar = ({ editor }) => {
 
 const TextEditor = ({ data, setData }) => {
   //console.log(data);
+  const [contentLength, setContentLength] = useState(0);
 
   let lastValidHTML = "";
   const editor = useEditor({
@@ -586,63 +591,46 @@ const TextEditor = ({ data, setData }) => {
         types: ["heading", "paragraph"],
       }),
     ],
-    content: data,
+    content: data /* 에디터의 글자수를 제한 */,
+
     onUpdate: ({ editor }) => {
-      const html = editor.getHTML();
-      setData(html);
-    },
+      const text = editor.getText(); // 개행할 때마다 카운트가 1씩 증가
 
-    /* 에디터의 글자수를 제한 */
-    editorProps: {
-      handleTextInput(view, from, to, text) {
-        const currentHTML = view.dom.innerHTML;
-        const newHTML = currentHTML + text;
-        const byteLength = new TextEncoder().encode(newHTML).length;
-        //console.log("새글자입력" + byteLength);
-        if (byteLength > 4000) {
-          alert("최대입력수 초과");
-          return true; // 입력 막기
-        }
-        return false;
-      },
+      const normalizedText = text.replace(/\n\n/g, "\n");
 
-      handleKeyDown(view, event) {
-        if (event.key === "Enter") {
-          const html = view.dom.innerHTML;
-          const byteLength = new TextEncoder().encode(html).length;
-          //console.log(byteLength);
-          if (byteLength > 4000) {
-            alert("더이상 입력할수 없어요");
-            return true;
-          }
-        }
-        return false;
-      },
-    },
-    onUpdate: ({ editor }) => {
-      const html = editor.getHTML();
-      const byteLength = new TextEncoder().encode(html).length;
+      const textLength = normalizedText.length;
 
-      if (byteLength > 4000) {
-        editor.commands.setContent(lastValidHTML, false);
-        //console.log(byteLength);
-        alert("지워버린다.");
+      setContentLength(textLength);
+
+      if (textLength > 4000) {
+        alert("최대 4,000자까지 입력 가능합니다."); // :point_right: 이전 정상 상태로 복구
+
+        editor.commands.setContent(lastValidText);
         return;
       }
-      lastValidHTML = html;
-      setData(html);
+
+      lastValidHTML = editor.getHTML();
+
+      setData({
+        html: editor.getHTML(),
+        text: text,
+      });
     },
   });
-  useEffect(() => {
-    if (editor && data) {
-      editor.commands.setContent(data);
-    }
-  }, [data, editor]);
 
   return (
     <div className={styles.editor_wrap}>
       <MenuBar editor={editor} className={styles.menu_bar} />
+
       <EditorContent editor={editor} className={styles.editor_content} />
+
+      <div
+        className={`${styles.editor_count} ${
+          contentLength >= 4000 ? styles.limit : ""
+        }`}
+      >
+        {contentLength} / 4000
+      </div>
     </div>
   );
 };
