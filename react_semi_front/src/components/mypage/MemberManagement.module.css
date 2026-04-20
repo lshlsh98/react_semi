@@ -20,7 +20,7 @@
   gap: 4px;
 }
 
-form {
+.search_wrap > form {
   max-height: 42.22px;
 }
 
