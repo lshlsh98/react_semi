@@ -225,10 +225,12 @@ public class MarketService {
 			m.setFileList(fileList); // 파일리스트 추가
 			return new MarketResponse<>(true, "200 : 조회성공", m);
 		}
+		/*
 		if (memberGrade==3) {
 			//슈퍼관리자는 수정 삭제된 모든 파일을 가져옴, 조회수 증가 없음
 			
 		}
+		*/
 	
 		if (!alreadyViewed) {
 			// 쿠키 조회 결과 false 일 경우 조회수 증가
@@ -283,16 +285,16 @@ public class MarketService {
 			return new MarketResponse<MarketUpdateResponse>(false, "marketDB 업데이트 실패", null);
 		}
 		// 파일DB삭제
-		List<MarketFile> history = new ArrayList<>();
+		//List<MarketFile> history = new ArrayList<>();
 		int deleteFileCount = 0;
 		if (market.getDeleteFilePath() != null) {
 			for (String marketFilePath : market.getDeleteFilePath()) {
-				MarketFile getHistoryFile = marketDao.getHistoryMarketFile(marketFilePath);
-				history.add(getHistoryFile);
+				//MarketFile getHistoryFile = marketDao.getHistoryMarketFile(marketFilePath);
+				//history.add(getHistoryFile);
 				deleteFileCount += marketDao.deleteMarketFile(marketFilePath);
 							
 			}
-			marketDao.insertHistoryMarketFile(history);
+			//marketDao.insertHistoryMarketFile(history);
 		}
 		
 		// 파일은DB에 남겨둠
