@@ -17,24 +17,18 @@ ol {
   display: flex;
   justify-content: center;
 }
-
-.market_searchbox input {
-  background-color: white;
+.market_searchbox > form > div > input {
+  height: 42px;
 }
-
+.market_searchbox > form > button {
+  height: 42px;
+}
 .market_searchbox > form {
   width: 900px;
   display: flex;
   gap: 4px;
   justify-content: center;
-}
-
-.market_searchbox > form > input {
-  flex-grow: 1;
-  outline: none;
-  padding: 8px 4px 8px 16px;
-  border: 1px solid var(--primary);
-  border-radius: 4px;
+  align-items: center;
 }
 
 /* 마켓 게시물이 없을때 */
