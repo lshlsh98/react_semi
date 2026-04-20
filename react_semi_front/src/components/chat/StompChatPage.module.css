@@ -8,7 +8,7 @@
   align-items: center;
   gap: 16px;
   padding: 24px;
-  margin: 0 auto;
+  margin: 30px auto;
   box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
 }
 
@@ -143,6 +143,8 @@
 .chat_message {
   padding-left: 20px;
   padding-top: 5px;
+  overflow-wrap: break-word;
+  word-break: break-word;
 }
 
 .sent {
