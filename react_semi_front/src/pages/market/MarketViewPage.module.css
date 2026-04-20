@@ -37,7 +37,7 @@
   cursor: pointer;
 }
 
-/* 화살표 버튼 공통 스타일 (메인페이지 감성 이식!) */
+/* 화살표 버튼 */
 .banner_btn_wrap {
   position: absolute;
   top: 50%;
@@ -75,14 +75,14 @@
   color: #333; /* 짙은 회색 화살표 */
 }
 
-/* 🚀 사진 개수 표시기 (1 / 3) */
+/* 사진 개수 표시 */
 .banner_counter {
   position: absolute;
   bottom: 20px;
   left: 50%;
   transform: translateX(-50%);
   background-color: rgba(0, 0, 0, 0.5); /* 반투명 검은 배경 */
-  color: var(--light, #ffffff); /* 깔끔한 흰색 글씨 */
+  color: var(--light); /* 깔끔한 흰색 글씨 */
   padding: 6px 16px;
   border-radius: 20px; /* 양끝이 둥근 캡슐 모양 */
   font-size: 14px;
@@ -247,8 +247,6 @@
   border-radius: 8px;
   min-height: 150px;
 }
-
-/*아래로 삭제*/
 
 .title_btn {
   display: flex;

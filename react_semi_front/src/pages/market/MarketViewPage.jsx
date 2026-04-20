@@ -29,12 +29,16 @@ const MarketViewPage = () => {
 
   const images = market?.fileList || [];
 
-  const [bannerIndex, setBannerIndex] = useState(0);
+  const [bannerIndex, setBannerIndex] = useState(0); // 현재 화면에 보여지는 배너 이미지의 인덱스(순서)를 기억하는 state
 
+  // 이전 이미지 버튼용 (첫 사진에서 누르면 마지막 사진으로 루프되도록 처리)
   const prevBanner = (e) => {
+    // e.stopPropagation(): 화살표 클릭 시 모달창이 열리는 등 부모 요소의 클릭 이벤트가 실행되는 것을 방지
     e.stopPropagation();
     setBannerIndex((prev) => (prev === 0 ? images.length - 1 : prev - 1));
   };
+
+  // 다음 이미지 버튼용 (마지막 사진에서 누르면 첫 사진으로 루프되도록 처리)
   const nextBanner = (e) => {
     e.stopPropagation();
     setBannerIndex((prev) => (prev === images.length - 1 ? 0 : prev + 1));
