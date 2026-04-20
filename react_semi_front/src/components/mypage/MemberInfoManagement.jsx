@@ -60,9 +60,7 @@ const MemberInfoManagement = () => {
           form,
           { headers: { "content-Type": "multipart/form-data" } },
         )
-        .then((res) => {
-          console.log(res);
-        })
+        .then((res) => {})
         .catch((err) => {
           console.log(err);
         });
@@ -92,7 +90,6 @@ const MemberInfoManagement = () => {
         axios
           .delete(`${import.meta.env.VITE_BACKSERVER}/members/${memberId}`)
           .then((res) => {
-            console.log(res);
             if (res.data === 1) {
               Swal.fire({
                 title: "삭제가 완료되었습니다.",
