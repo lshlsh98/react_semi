@@ -47,7 +47,7 @@ ol {
 
 .market_list_wrap > ul {
   display: flex;
-  margin-top: 48px;
+  margin-top: 24px;
   flex-direction: column;
 
   gap: 12px;
@@ -224,12 +224,11 @@ ol {
 
 /* 글쓰기 버튼 박스 */
 .market_writebox {
+  margin-top: 20px;
   display: flex;
   justify-content: flex-end;
 }
-.market_writebox button {
-  margin: 12px 0px;
-}
+
 /* 아이콘 옵션*/
 .icon {
   font-size: 20px !important;

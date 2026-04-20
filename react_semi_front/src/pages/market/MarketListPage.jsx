@@ -178,21 +178,19 @@ const MarketListPage = () => {
             </Button>
           </form>
         </div>
+        <div className={styles.market_writebox}>
+          {memberId && (
+            <Link to="/market/writeFrm">
+              <Button className="btn primary">글작성</Button>
+            </Link>
+          )}
+        </div>
 
         <div className={styles.market_list_wrap}>
           {marketList.length === 0 ? (
             <div className={styles.no_result}>조회된 게시물이 없습니다.</div>
           ) : (
             <MarketList marketList={marketList} />
-          )}
-        </div>
-
-        {/* 로그인시 글쓰기 필드 */}
-        <div className={styles.market_writebox}>
-          {memberId && (
-            <Link to="/market/writeFrm">
-              <Button className="btn primary">글작성</Button>
-            </Link>
           )}
         </div>
 

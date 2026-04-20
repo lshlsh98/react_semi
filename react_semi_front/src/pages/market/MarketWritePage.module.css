@@ -176,7 +176,17 @@ a {
   gap: 12px;
 }
 
-/* 휴지통 버튼만 빨간색 */
-.delete_icon {
-  color: var(--danger);
+/*에디터 내부 글자제한 텍스트*/
+.editor_count {
+  text-align: right;
+  bottom: 12px;
+  font-size: 13px;
+  color: var(--gray3);
+  margin-right: 20px;
+  margin-bottom: 12px;
+}
+
+.limit {
+  color: var(--danger) !important;
+  font-weight: 600;
 }

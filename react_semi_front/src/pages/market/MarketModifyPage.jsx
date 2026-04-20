@@ -214,7 +214,7 @@ const MarketModifyPage = () => {
 
     const form = new FormData();
     form.append("marketTitle", market.marketTitle);
-    form.append("marketContent", market.marketContent);
+    form.append("marketContent", market.marketContent.html);
     form.append("sellPrice", market.sellPrice);
     form.append("sellAddr", market.sellAddr);
     form.append("marketWriter", memberId);
