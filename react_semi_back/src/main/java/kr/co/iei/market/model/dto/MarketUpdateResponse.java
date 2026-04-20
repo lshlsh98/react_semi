@@ -8,7 +8,8 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @Data
 public class MarketUpdateResponse {
-	private Integer filecount;
+	
 	private Integer newFileCount;
+	private Integer deleteFileCount;
 
 }

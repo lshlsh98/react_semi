@@ -101,4 +101,11 @@ public interface MarketDao {
 	int deleteMarketFile(String marketFilePath);
 
 	String getMarketWriter(Integer marketNo);
+
+	MarketFile getHistoryMarketFile(String marketFilePath);
+
+	void insertHistoryMarketFile(List<MarketFile> history);
+
+
+
 }

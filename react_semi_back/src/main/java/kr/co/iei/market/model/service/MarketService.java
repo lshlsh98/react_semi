@@ -191,6 +191,8 @@ public class MarketService {
 		}
 		Market m = marketDao.selectOneMarket(marketNo, memberId);
 		// market 객체 생성
+		List<MarketFile> fileList = marketDao.selectMarketFileList(marketNo);
+		// 파일 리스트 조회
 		boolean alreadyViewed = cookieUtil.alreadyViewed(request, marketNo);
 		// 쿠키 조회(게시물 확인 여부를 체크)
 		if (m == null) {
@@ -210,22 +212,31 @@ public class MarketService {
 		}
 		if (memberId != null && memberId.equals(m.getMarketWriter())) {
 			// 요청자가 판매자자신일 경우 조회수 증가없이 리턴
-			List<MarketFile> fileList = marketDao.selectMarketFileList(marketNo); // 파일 리스트 조회
 			m.setFileList(fileList); // 파일리스트 추가
 			return new MarketResponse<>(true, "200 : 조회성공", m);
 		}
 		if (completed == 1 && (memberGrade == 0 || memberGrade == 3)) {
 			// 게시글이 완료상태일때 비회원과 일반유저는 게시글 내용을 변경 변경
 			m.setMarketContent("판매 완료된 게시물입니다.");
+
+		} 
+		if (memberGrade == 2) {
+			//관리자는 조회수 증가 없이 리턴
+			m.setFileList(fileList); // 파일리스트 추가
+			return new MarketResponse<>(true, "200 : 조회성공", m);
+		}
+		if (memberGrade==3) {
+			//슈퍼관리자는 수정 삭제된 모든 파일을 가져옴, 조회수 증가 없음
 			
 		}
+	
 		if (!alreadyViewed) {
 			// 쿠키 조회 결과 false 일 경우 조회수 증가
 			marketDao.incrementViewCount(marketNo); // 조회수증가
 			m.setViewCount(m.getViewCount() + 1); // 조회수보정
 			cookieUtil.createCookie(response, marketNo, cookieTime); // 쿠키생성
 		}
-		List<MarketFile> fileList = marketDao.selectMarketFileList(marketNo); // 파일 리스트 조회
+		
 		m.setFileList(fileList); // 파일추가
 		return new MarketResponse<Market>(true, "200 : 조회성공", m);
 	}
@@ -234,9 +245,9 @@ public class MarketService {
 	@Transactional
 	public MarketResponse<MarketUpdateResponse> updateOneMarket(String token, Market market, List<MultipartFile> files,
 			Integer marketNo) {
-		
+
 		if (token == null) {
-			return new MarketResponse<MarketUpdateResponse>(false, "권한없음", null);
+			return new MarketResponse<MarketUpdateResponse>(false, "토큰 없음", null);
 		}
 		LoginMember loginMember = jwtUtil.checkToken(token);
 		if (loginMember == null) {
@@ -244,7 +255,7 @@ public class MarketService {
 		}
 		String memberId = loginMember.getMemberId();
 		String writer = marketDao.getMarketWriter(marketNo);
-		if(!memberId.equals(writer)) {
+		if (!memberId.equals(writer)) {
 			return new MarketResponse<MarketUpdateResponse>(false, "작성자 불일치", null);
 		}
 		market.setMarketNo(marketNo);
@@ -271,16 +282,22 @@ public class MarketService {
 		} else {
 			return new MarketResponse<MarketUpdateResponse>(false, "marketDB 업데이트 실패", null);
 		}
-		//파일DB삭제
+		// 파일DB삭제
+		List<MarketFile> history = new ArrayList<>();
 		int deleteFileCount = 0;
-		if(market.getDeleteFilePath() != null) {
-			for(String marketFilePath : market.getDeleteFilePath()) {
+		if (market.getDeleteFilePath() != null) {
+			for (String marketFilePath : market.getDeleteFilePath()) {
+				MarketFile getHistoryFile = marketDao.getHistoryMarketFile(marketFilePath);
+				history.add(getHistoryFile);
 				deleteFileCount += marketDao.deleteMarketFile(marketFilePath);
+							
 			}
+			marketDao.insertHistoryMarketFile(history);
 		}
-		//파일은DB에 남겨둠
-		MarketUpdateResponse data = new MarketUpdateResponse(deleteFileCount, newFileCount);
 		
+		// 파일은DB에 남겨둠
+		MarketUpdateResponse data = new MarketUpdateResponse(newFileCount, deleteFileCount);
+
 		return new MarketResponse<MarketUpdateResponse>(true, "성공", data);
 	}
 
@@ -394,7 +411,5 @@ public class MarketService {
 
 		return response;
 	}
-
-	
 
 }

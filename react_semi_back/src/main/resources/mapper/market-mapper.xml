@@ -180,7 +180,7 @@
 		null
 		)
 	</insert>
-<!-- 마켓 파일 등록 -->
+	<!-- 마켓 파일 등록 -->
 	<insert id="insertMarketFile">
 		insert into market_file_tbl values(
 		market_file_seq.nextval,
@@ -189,7 +189,7 @@
 		#{marketNo}
 		)
 	</insert>
-
+	
 	<!-- 마켓게시글 조회 -->
 	<select id="selectOneMarket" resultType="market">
 		select
@@ -251,7 +251,7 @@
 		select * from
 		market_file_tbl where market_no=#{marketNo}
 	</select>
-
+	
 	<!-- 조회수 증가 -->
 	<update id="incrementViewCount">
 		update market_tbl set view_count = view_count+1 where
@@ -430,6 +430,36 @@
 	<select id="getMarketWriter" resultType="string">
 		select market_writer from market_tbl where market_no = #{marketNo}
 	</select>
+	<!-- 이력테이블에 저장할 마켓파일 조회 -->
+	<select id="getHistoryMarketFile" resultType="marketFile">
+		select
+			market_file_no,
+        	market_file_name,
+        	market_file_path,
+        	market_no 
+		from market_file_tbl where market_file_path = #{marketFilePath}
+	</select>
+	<!-- 이력테이블에 저장 -->
+	<insert id="insertHistoryMarketFile" parameterType="java.util.List">
+    INSERT INTO market_file_history (
+        market_file_no,
+        market_file_name,
+        market_file_path,
+        market_no
+    )
+    VALUES
+    <foreach collection="list" item="item" separator=",">
+        (
+            #{item.marketFileNo},
+            #{item.marketFileName},
+            #{item.marketFilePath},
+            #{item.marketNo}
+        )
+    </foreach>
+</insert>
+	
+	
+	
 	<!-- 게시글수정시 delete market file tbl -->
 	<delete id="deleteMarketFile">
 		delete from market_file_tbl where market_file_path = #{marketFilePath}

@@ -47,7 +47,7 @@ const MarketModifyPage = () => {
       .then((res) => {
         if (res.data.success) {
           const data = res.data.data;
-          console.log(data);
+          //console.log(data);
           setMarket(data);
         }
       })
@@ -239,9 +239,11 @@ const MarketModifyPage = () => {
           const { newFileCount, deleteFileCount } = res.data.data;
 
           Swal.fire({
-            title: "게시물 수정완료",
+            title: "거래게시글 수정완료",
             html: `
           게시글 수정 성공<br/>
+          게시글 번호 : ${marketNo}<br/>
+          삭제한 파일 수 : ${deleteFileCount} 개<br/>
           새로운 파일 수 : ${newFileCount} 개<br/>
         `,
             icon: "success",

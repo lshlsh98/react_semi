@@ -200,8 +200,15 @@ const MarketWritePage = () => {
         //console.log(res.data.data.marketNo);
         if (res.data.success) {
           Swal.fire({
-            title: "게시글 작성 완료",
+            title: "거래게시글 작성완료",
+            html: `
+          게시글 작성 성공<br/>
+          게시글 작성 번호 : ${res.data.data.marketNo} <br/>
+          새로운 파일 수 : ${res.data.data.fileCount} 개<br/>
+        `,
             icon: "success",
+            confirmButtonText: "닫기",
+            confirmButtonColor: "pink",
           }).then(() => {
             navigate(`/market/view/${res.data.data.marketNo}`);
           });
