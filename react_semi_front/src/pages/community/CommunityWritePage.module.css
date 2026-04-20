@@ -81,6 +81,7 @@
 
 .menu_bar button,
 .menu_bar input {
+  background-color: white;
   width: 50px;
   height: 50px;
   padding: 8px 12px;
@@ -91,9 +92,6 @@
   color: var(--primary); /*기본 글자*/
 }
 
-.menu_bar button:hover {
-  background-color: var(--secendary);
-}
 .menu_bar button:hover svg {
   fill: var(--light);
 }
