@@ -522,7 +522,7 @@ const MenuBar = ({ editor }) => {
         }}
         title="지우기"
       >
-        <DeleteIcon />
+        <DeleteIcon className={styles.delete_icon} />
       </button>
     </div>
   );

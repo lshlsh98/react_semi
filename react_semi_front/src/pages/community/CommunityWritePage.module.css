@@ -141,12 +141,6 @@
 }
 
 /* 휴지통 버튼만 빨간색 */
-.delete_btn {
+.delete_icon {
   color: var(--danger);
-  border: 1px solid var(--danger);
-}
-
-/* hover 시 */
-.delete_btn:hover {
-  background-color: var(--danger);
 }

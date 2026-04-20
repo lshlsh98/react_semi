@@ -4,3 +4,8 @@
   margin: 12px auto;
   gap: 12px;
 }
+
+/* 휴지통 버튼만 빨간색 */
+.delete_icon {
+  color: var(--danger);
+}

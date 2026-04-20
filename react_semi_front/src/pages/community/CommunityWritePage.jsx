@@ -294,6 +294,7 @@ const MenuBar = ({ editor }) => {
 
       <button
         type="button"
+        className="delete_btn"
         disabled={editor.isEmpty}
         onClick={() => {
           Swal.fire({
@@ -310,7 +311,7 @@ const MenuBar = ({ editor }) => {
         }}
         title="지우기"
       >
-        <DeleteIcon />
+        <DeleteIcon className={styles.delete_icon} />
       </button>
     </div>
   );
