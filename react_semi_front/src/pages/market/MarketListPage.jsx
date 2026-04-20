@@ -13,6 +13,7 @@ import PeopleIcon from "@mui/icons-material/People";
 import CommentIcon from "@mui/icons-material/Comment";
 import CalendarTodayIcon from "@mui/icons-material/CalendarToday";
 import VisibilityIcon from "@mui/icons-material/Visibility";
+import { Input } from "../../components/ui/Form";
 const MarketListPage = () => {
   const navigate = useNavigate();
   const { memberId, memberGrade } = useAuthStore();
@@ -128,13 +129,15 @@ const MarketListPage = () => {
             />
             <BasicSelect state={type} setState={setType} list={list} />
 
-            <input
-              type="text"
-              value={keyword}
-              onChange={(e) => {
-                setKeyword(e.target.value);
-              }}
-            ></input>
+            <div>
+              <Input
+                type="text"
+                value={keyword}
+                onChange={(e) => {
+                  setKeyword(e.target.value);
+                }}
+              ></Input>
+            </div>
 
             <Button className="btn primary" type="submit">
               검색
