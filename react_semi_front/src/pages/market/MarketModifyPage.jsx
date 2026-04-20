@@ -552,7 +552,6 @@ const MenuBar = ({ editor }) => {
 
       {/* 삭제 */}
       <button
-        style={{ backgroundColor: "var(--danger)" }}
         type="button"
         disabled={editor.isEmpty}
         onClick={() => {
@@ -570,7 +569,7 @@ const MenuBar = ({ editor }) => {
         }}
         title="지우기"
       >
-        <DeleteIcon />
+        <DeleteIcon className={styles.delete_icon} />
       </button>
     </div>
   );

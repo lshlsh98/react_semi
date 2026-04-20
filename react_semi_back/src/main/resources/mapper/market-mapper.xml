@@ -549,7 +549,7 @@
 		</if>
 	</select>
 
-	<!-- 탘소 기여도 출력 -->
+	<!-- 탄소 기여도 출력 -->
 	<select id="selectOneCarbonContributionList"
 		resultType="scoreHistory">
 		select

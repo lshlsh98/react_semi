@@ -27,7 +27,7 @@
   color: var(--gray3);
 }
 
-/* 50자 도달 시 */
+/* 제목 50자 도달 시 */
 .limit {
   color: var(--danger);
   font-weight: 600;
@@ -69,22 +69,6 @@
   position: relative;
 }
 
-/* 오른쪽 아래 글자수 */
-.editor_count {
-  text-align: right; /* 오른쪽 정렬 원하면 */
-  bottom: 12px;
-  font-size: 13px;
-  color: var(--gray3);
-  margin-right: 20px;
-  margin-bottom: 12px;
-}
-
-/* 4,000자 도달 */
-.limit {
-  color: var(--danger);
-  font-weight: 600;
-}
-
 .menu_bar {
   display: flex;
   margin-top: 20px;
@@ -94,8 +78,10 @@
   justify-content: center;
   align-items: center;
 }
+
 .menu_bar button,
 .menu_bar input {
+  background-color: white;
   width: 50px;
   height: 50px;
   padding: 8px 12px;
@@ -106,9 +92,6 @@
   color: var(--primary); /*기본 글자*/
 }
 
-.menu_bar button:hover {
-  background-color: var(--secendary);
-}
 .menu_bar button:hover svg {
   fill: var(--light);
 }
@@ -140,12 +123,22 @@
 }
 
 /* 휴지통 버튼만 빨간색 */
-.delete_btn {
+.delete_icon {
   color: var(--danger);
-  border: 1px solid var(--danger);
 }
 
-/* hover 시 */
-.delete_btn:hover {
-  background-color: var(--danger);
+/* 오른쪽 아래 글자수 */
+.editor_count {
+  text-align: right; /* 오른쪽 정렬 원하면 */
+  bottom: 12px;
+  font-size: 13px;
+  color: var(--gray3);
+  margin-right: 20px;
+  margin-bottom: 12px;
+}
+
+/* 내용 4,000자 도달 */
+.limit {
+  color: var(--danger);
+  font-weight: 600;
 }

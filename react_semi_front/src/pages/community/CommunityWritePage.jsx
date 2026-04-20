@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import styles from "./CommunityWritePage.module.css";
 import Button from "../../components/ui/Button";
 import { Input } from "../../components/ui/Form";
@@ -294,6 +294,7 @@ const MenuBar = ({ editor }) => {
 
       <button
         type="button"
+        className="delete_btn"
         disabled={editor.isEmpty}
         onClick={() => {
           Swal.fire({
@@ -310,17 +311,16 @@ const MenuBar = ({ editor }) => {
         }}
         title="지우기"
       >
-        <DeleteIcon />
+        <DeleteIcon className={styles.delete_icon} />
       </button>
     </div>
   );
 };
 
 const TextEditor = ({ data, setData }) => {
-  //console.log(data);
   const [contentLength, setContentLength] = useState(0);
+  let lastValidHTML = useRef("");
 
-  let lastValidHTML = "";
   const editor = useEditor({
     extensions: [
       StarterKit,
@@ -330,12 +330,11 @@ const TextEditor = ({ data, setData }) => {
         types: ["heading", "paragraph"],
       }),
     ],
-    content: data /* 에디터의 글자수를 제한 */,
+    content: data,
 
     onUpdate: ({ editor }) => {
       const text = editor.getText();
 
-      // 개행할 때마다 카운트가 1씩 증가
       const normalizedText = text.replace(/\n\n/g, "\n");
 
       const textLength = normalizedText.length;
@@ -345,12 +344,11 @@ const TextEditor = ({ data, setData }) => {
       if (textLength > 4000) {
         alert("최대 4,000자까지 입력 가능합니다.");
 
-        // 👉 이전 정상 상태로 복구
-        editor.commands.setContent(lastValidText);
+        editor.commands.setContent(lastValidHTML.current, false);
         return;
       }
 
-      lastValidHTML = editor.getHTML();
+      lastValidHTML.current = editor.getHTML();
 
       setData({
         html: editor.getHTML(),

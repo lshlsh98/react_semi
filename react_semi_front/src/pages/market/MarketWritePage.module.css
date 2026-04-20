@@ -34,6 +34,7 @@ a {
   flex-direction: column;
   justify-content: center;
 }
+
 .market_input_wrap > label {
   font-size: 18px;
   text-align: center;
@@ -46,9 +47,11 @@ a {
   display: flex;
   gap: 8px;
 }
+
 .market_addr > input {
   flex-grow: 1;
 }
+
 .market_addr > button {
   width: 150px;
 }
@@ -60,13 +63,17 @@ a {
   border-radius: 8px;
   overflow: hidden;
 }
+
 .menu_bar {
   display: flex;
+  margin-top: 20px;
   gap: 8px;
   flex-wrap: wrap;
   padding: 12px;
   justify-content: center;
+  align-items: center;
 }
+
 .menu_bar button,
 .menu_bar input {
   background-color: white;
@@ -77,7 +84,6 @@ a {
   border-radius: 4px;
   font-size: 14px;
   cursor: pointer;
-  /*텍스트 에디터 내부 버튼*/
   color: var(--primary); /*기본 글자*/
 }
 
@@ -98,6 +104,7 @@ a {
 .editor_content {
   padding: 16px;
 }
+
 .editor_content > div {
   min-height: 400px;
   padding: 12px;
@@ -107,9 +114,11 @@ a {
   border-radius: 12px;
   line-height: 1.4;
 }
+
 .editor_content > div:hover {
   background-color: var(--bg);
 }
+
 .editor_content > div ul {
   padding-left: 20px;
 }
@@ -133,6 +142,7 @@ a {
   color: var(--gray8);
   border-radius: 8px;
 }
+
 .file_btn:hover {
   background-color: var(--primary);
 }
@@ -140,6 +150,7 @@ a {
 .file_wrap {
   width: 100%;
 }
+
 .file_item {
   display: flex;
   align-items: center;
@@ -149,10 +160,12 @@ a {
   border-radius: 8px;
   margin-bottom: 8px;
 }
+
 .file_name {
   flex-grow: 1;
   font-size: 14px;
 }
+
 .file_delete {
   cursor: pointer;
 }

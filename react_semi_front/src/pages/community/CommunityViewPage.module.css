@@ -236,3 +236,8 @@
   color: var(--danger);
   font-weight: 700;
 }
+
+/* 휴지통 버튼만 빨간색 */
+.delete_icon {
+  color: var(--danger);
+}
