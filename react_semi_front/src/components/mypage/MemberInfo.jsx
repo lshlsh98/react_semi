@@ -519,6 +519,7 @@ const MemberInfo = () => {
                 placeholder="비밀번호를 입력하세요."
                 value={memberAuth.memberPw}
                 onChange={inputMember}
+                autoComplete="off"
               ></Input>
             </div>
             <Button type="submit" className="btn primary lg">
