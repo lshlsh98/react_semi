@@ -118,17 +118,7 @@ const MarketWritePage = () => {
       return;
     }
 
-    const num = Number(onlyNumber);
-
-    if (num < 0) {
-      Swal.fire({
-        icon: "warning",
-        title: "0원 보다 작게 설정하실 수는 없어요!",
-      });
-      return;
-    }
-
-    if (num > 10000000) {
+    if (onlyNumber > 10000000) {
       Swal.fire({
         icon: "warning",
         title: "최대 1,000만원까지 설정 가능해요!",
@@ -138,7 +128,7 @@ const MarketWritePage = () => {
 
     setMarket({
       ...market,
-      [name]: num,
+      [name]: onlyNumber,
     });
   };
   /* 테스트 에디터용 함수 */
@@ -149,19 +139,42 @@ const MarketWritePage = () => {
 
   /* 글 등록 함수 */
   const registMarket = () => {
-    if (
-      market.marketTitle === "" ||
-      market.marketContent === "" ||
-      market.sellPrice === "" ||
-      market.sellAddr === "" ||
-      files.length === 0
-    ) {
+    if (market.marketTitle === "") {
       Swal.fire({
         icon: "warning",
-        title: "빠짐없이 작성해주세요.",
+        title: "제목을 작성해주세요.",
       });
       return;
     }
+    if (market.sellPrice === "") {
+      Swal.fire({
+        icon: "warning",
+        title: "판매금액을 입력해주세요.",
+      });
+      return;
+    }
+    if (market.sellAddr === "") {
+      Swal.fire({
+        icon: "warning",
+        title: "판매장소를 입력해주세요.",
+      });
+      return;
+    }
+    if (market.marketContent === "") {
+      Swal.fire({
+        icon: "warning",
+        title: "내용을 작성해주세요.",
+      });
+      return;
+    }
+    if (files.length === 0) {
+      Swal.fire({
+        icon: "warning",
+        title: "사진을 첨부해주세요.",
+      });
+      return;
+    }
+
     //console.log("작성하기 버튼클릭");
     const form = new FormData();
     form.append("marketTitle", market.marketTitle);
@@ -173,7 +186,7 @@ const MarketWritePage = () => {
       form.append("files", file);
     });
     for (let pair of form.entries()) {
-      console.log(pair[0], pair[1]);
+      //console.log(pair[0], pair[1]);
     }
     axios
       .post(`${import.meta.env.VITE_BACKSERVER}/markets`, form, {
@@ -182,8 +195,8 @@ const MarketWritePage = () => {
         },
       })
       .then((res) => {
-        console.log(res.data.success);
-        console.log(res.data.data.marketNo);
+        //console.log(res.data.success);
+        //console.log(res.data.data.marketNo);
         if (res.data.success) {
           Swal.fire({
             title: "게시글 작성 완료",
@@ -239,6 +252,7 @@ const MarketWritePage = () => {
           id="marketTitle"
           value={market.marketTitle}
           onChange={inputMarketTitle}
+          placeholder="제목을 입력해 주세요. 최대 50자"
         ></Input>
       </div>
       {/* 금액 필드 */}
@@ -250,7 +264,7 @@ const MarketWritePage = () => {
           id="sellPrice"
           value={market.sellPrice}
           onChange={inputMarketPrice}
-          placeholder="숫자만 입력 가능"
+          placeholder="숫자만 입력 가능합니다."
         ></Input>
       </div>
 
@@ -568,7 +582,7 @@ const TextEditor = ({ data, setData }) => {
         if (event.key === "Enter") {
           const html = view.dom.innerHTML;
           const byteLength = new TextEncoder().encode(html).length;
-          console.log(byteLength);
+          //console.log(byteLength);
           if (byteLength > 4000) {
             alert("더이상 입력할수 없어요");
             return true;
@@ -583,7 +597,7 @@ const TextEditor = ({ data, setData }) => {
 
       if (byteLength > 4000) {
         editor.commands.setContent(lastValidHTML, false);
-        console.log(byteLength);
+        //console.log(byteLength);
         alert("지워버린다.");
         return;
       }

@@ -1,4 +1,4 @@
-  .main_wrap {
+.main_wrap {
   width: 900px;
   margin: 0 auto;
   display: flex;
@@ -9,53 +9,127 @@
 
 /* 사진 */
 .photo_wrap {
-  margin: 20px 0;
+  margin: 50px 0;
   display: flex;
   justify-content: center;
   align-items: center;
+  width: 100%;
 }
-.photo_wrap > ul {
-  height: 100%;
-}
-.photo_wrap > ul > li {
-  border: 1px solid var(--gray6);
+
+.banner_container {
+  position: relative;
+  width: 900px;
+  height: 500px;
   border-radius: 8px;
+  overflow: hidden;
+  background-color: var(--gray8);
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
+
+.banner_image {
+  width: 100%;
+  height: 100%;
+  object-fit: scale-down;
+  display: block;
+  max-width: 100%;
+  cursor: pointer;
+}
+
+/* 화살표 버튼 공통 스타일 (메인페이지 감성 이식!) */
+.banner_btn_wrap {
+  position: absolute;
+  top: 50%;
+  left: 0;
+  width: 100%;
+  transform: translateY(-50%);
+  display: flex;
+  justify-content: space-between;
+  padding: 0 20px;
+  box-sizing: border-box;
+  pointer-events: none; /* 클릭 이벤트가 뚫고 지나가게 해서 이미지가 클릭되도록 함 */
+  z-index: 2;
+}
+
+.banner_btn_wrap button {
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  background-color: var(--gray7);
+  border: none;
+  cursor: pointer;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  transition: all 0.3s;
+  pointer-events: auto; /* 버튼만 클릭 가능하게 살려줌 */
+}
+
+.banner_btn_wrap button:hover {
+  background-color: var(--gray6);
+}
+
+.banner_btn_wrap button span {
+  font-size: 32px;
+  color: #333; /* 짙은 회색 화살표 */
+}
+
+/* 🚀 사진 개수 표시기 (1 / 3) */
+.banner_counter {
+  position: absolute;
+  bottom: 20px;
+  left: 50%;
+  transform: translateX(-50%);
+  background-color: rgba(0, 0, 0, 0.5); /* 반투명 검은 배경 */
+  color: var(--light, #ffffff); /* 깔끔한 흰색 글씨 */
+  padding: 6px 16px;
+  border-radius: 20px; /* 양끝이 둥근 캡슐 모양 */
+  font-size: 14px;
+  font-weight: bold;
+  letter-spacing: 2px; /* 숫자 사이 간격을 살짝 띄워서 고급스럽게 */
+  pointer-events: none; /* 클릭 방해 금지 */
+  z-index: 2;
+}
+
 /* wrap1 제목,(썸네일,날짜.조회수)*/
-.wrap1{
-  border : 1px solid var(--gray6);
-  padding:16px;
+.wrap1 {
+  border: 1px solid var(--primary);
+  padding: 16px;
   border-radius: 8px;
   display: flex;
   flex-direction: column;
 }
-.wrap1_title{/*제목*/
-  border : 1px solid var(--gray6);
-  background-color: var(--light );
-  margin-bottom: 20px;
-  border-radius: 6px;
+.wrap1_title {
+  /*제목*/
+
+  border-bottom: 1px solid var(--primary);
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
   align-items: center;
 }
-.wrap1_title>p{
+.wrap1_title > p {
   font-size: 20px;
   font-weight: 700;
-  padding:15px 20px
-  
+  padding: 15px 20px;
 }
-.wrap1_info{
+.wrap1_info {
+  margin: 20px 0;
+
   display: flex;
   flex-direction: column;
-  gap:8px;
+  gap: 8px;
+  border-bottom: 1px solid var(--primary);
 }
 
-.wrap1_thumb{/*썸네일*/
+.wrap1_thumb {
+  /*썸네일*/
   display: flex;
   align-items: center;
-  gap:8px;
-  
+  gap: 8px;
+  font-weight: bold;
+  font-size: 13px;
 }
 
 /* 회원 프로필 관련*/
@@ -91,14 +165,33 @@
   object-fit: cover;
 }
 /*작성자*/
-.title.info_writer > span{
+.title.info_writer > span {
   font-size: 11px;
 }
-/*마켓 금액*/
-.wrap1_price{
-  display: flex;
-  align-items: center;
 
+.wrap2 {
+  display: flex;
+
+  justify-content: space-between;
+}
+.wrap2_1 {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.wrap2_2 {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.wrap2 > div {
+  width: 200px;
+}
+/*마켓 금액*/
+.wrap1_price {
+  display: flex;
+  justify-content: end;
 }
 .title_price {
   /*가격*/
@@ -112,61 +205,50 @@
   color: var(--danger);
 }
 
-
-
-.wrap1_date{
+.wrap1_date {
   display: flex;
   align-items: center;
-  gap:8px;
+  gap: 8px;
 }
-.date_icon{
-  fill : var(--gray4) !important;
+
+.wrap1_date > p {
+  font-size: 12px;
+  font-weight: bold;
 }
-.wrap1_date>p{
-  font-size: 11px;
-  color : var(--gray4);
-}
-.wrap1_like{
+.wrap1_like {
   display: flex;
   align-items: center;
-  gap:8px;
+  gap: 8px;
 }
-.like_icon{
-  fill : var(--danger) !important;
+.like_icon {
+  fill: var(--danger) !important;
 }
-.wrap1_like>p{
+.wrap1_like > p {
   font-size: 11px;
-  color : var(--gray4);
+  font-weight: bold;
 }
-.wrap1_view{
-  display :flex;
+.wrap1_view {
+  margin-bottom: 20px;
+  display: flex;
+  justify-content: end;
   align-items: center;
-  gap:8px;
-  color : var(--primary);   
+  gap: 8px;
 }
-.view_icon{
+.view_icon {
   fill: var(--primary) !important;
 }
-.wrap1_view>p{
+.wrap1_view > p {
   font-size: 11px;
+  font-weight: bold;
 }
 
-.wrap1_content{
-  border : 1px solid var(--gray6);
-  margin-top: 20px;
-  background-color: var(--light );
-  padding: 10px 20px; 
+.wrap1_content {
+  padding: 0 20px;
   border-radius: 8px;
   min-height: 150px;
 }
 
-
-
-
-
-
 /*아래로 삭제*/
-
 
 .title_btn {
   display: flex;
@@ -229,4 +311,3 @@
   color: var(--light);
   transition: 0.2s;
 }
-

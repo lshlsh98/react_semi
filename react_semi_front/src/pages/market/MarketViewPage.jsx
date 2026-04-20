@@ -33,6 +33,18 @@ const MarketViewPage = () => {
 
   const images = market?.fileList || [];
 
+  // 🚀 배너용 상태와 화살표 함수 추가
+  const [bannerIndex, setBannerIndex] = useState(0);
+
+  const prevBanner = (e) => {
+    e.stopPropagation();
+    setBannerIndex((prev) => (prev === 0 ? images.length - 1 : prev - 1));
+  };
+  const nextBanner = (e) => {
+    e.stopPropagation();
+    setBannerIndex((prev) => (prev === images.length - 1 ? 0 : prev + 1));
+  };
+
   const handleOpen = (index) => {
     setCurrentIndex(index);
     setOpen(true);
@@ -83,7 +95,7 @@ const MarketViewPage = () => {
         withCredentials: true,
       })
       .then((res) => {
-        console.log(res.data);
+        //console.log(res.data);
         if (res.data.success) {
           setMarket(res.data.data);
         } else {
@@ -179,7 +191,7 @@ const MarketViewPage = () => {
             requestData,
           )
           .then((res) => {
-            console.log(res);
+            //console.log(res);
             if (res.data === 1) {
               setMarket({ ...market, isRequest: 1 });
               Swal.fire({
@@ -191,7 +203,7 @@ const MarketViewPage = () => {
             }
           })
           .catch((err) => {
-            console.log("거래요청 실패:", err);
+            console.log(err);
           });
       }
     });
@@ -225,7 +237,7 @@ const MarketViewPage = () => {
             }
           })
           .catch((err) => {
-            console.log("거래요청취소 실패");
+            //console.log("거래요청취소 실패");
             console.log(err);
           });
       }
@@ -251,7 +263,7 @@ const MarketViewPage = () => {
         axios
           .delete(`${import.meta.env.VITE_BACKSERVER}/markets/${marketNo}`)
           .then((res) => {
-            console.log(res.data);
+            //console.log(res.data);
             const { fileCount, allDeleted, result } = res.data;
 
             Swal.fire({
@@ -281,10 +293,10 @@ const MarketViewPage = () => {
   const tradeComplete = () => {
     console.log(market.marketNo);
     axios
-      .get(`${import.meta.env.VITE_BACKSERVER}/markets/${marketNo}/complete`)
+      .get(`${import.meta.env.VITE_BACKSERVER}/markets/${marketNo}/requests`)
       .then((res) => {
-        console.log("거래요청리스트 호출 성공");
-        console.log(res);
+        //console.log("거래요청리스트 호출 성공");
+        //console.log(res);
         setTradeRequestList(res.data);
         if (res.data.length === 0) {
           MySwal.fire("알림", "대기 중인 거래 요청이 없습니다.", "info");
@@ -330,7 +342,7 @@ const MarketViewPage = () => {
   };
   /* 거래 확정 함수 */
   const requestAccepted = (buyerId) => {
-    console.log(buyerId);
+    //console.log(buyerId);
     Swal.fire({
       title: `${buyerId} 님과 거래완료 하시겠습니까?`,
       icon: "question",
@@ -344,10 +356,10 @@ const MarketViewPage = () => {
       if (result.isConfirmed) {
         axios
           .patch(
-            `${import.meta.env.VITE_BACKSERVER}/markets/${marketNo}/complete/${buyerId}`,
+            `${import.meta.env.VITE_BACKSERVER}/markets/${marketNo}/requests/${buyerId}`,
           )
           .then((res) => {
-            console.log(res.data);
+            //console.log(res.data);
             if (res.data > 1) {
               Swal.fire({
                 icon: "success", // 성공 아이콘 (체크 표시)
@@ -364,7 +376,7 @@ const MarketViewPage = () => {
             }
           })
           .catch((err) => {
-            console.log("거래확정실패");
+            //console.log("거래확정실패");
             console.log(err);
           });
       }
@@ -470,7 +482,7 @@ const MarketViewPage = () => {
 
         axios
           .post(
-            `${import.meta.env.VITE_BACKSERVER}/markets/reports`,
+            `${import.meta.env.VITE_BACKSERVER}/markets/${marketNo}/reports`,
             reportData,
           )
           .then((res) => {
@@ -485,7 +497,7 @@ const MarketViewPage = () => {
             }
           })
           .catch((err) => {
-            console.log("신고 실패:", err);
+            console.log(err);
           });
       }
     });
@@ -508,7 +520,7 @@ const MarketViewPage = () => {
             `${import.meta.env.VITE_BACKSERVER}/markets/${marketNo}/reports`,
           )
           .then((res) => {
-            console.log(res.data);
+            //console.log(res.data);
             if (res.data === 1) {
               setMarket({ ...market, isReport: 0 });
               Swal.fire({
@@ -520,7 +532,7 @@ const MarketViewPage = () => {
             }
           })
           .catch((err) => {
-            console.log("신고취소 실패");
+            //console.log("신고취소 실패");
             console.log(err);
           });
       }
@@ -542,38 +554,32 @@ const MarketViewPage = () => {
 
   return (
     <main className={styles.main_wrap}>
-      <h3
-        className="page-title"
-        style={{ textAlign: "center", padding: "50px 0px" }}
-      >
-        마켓 상세보기
-      </h3>
       {market && (
         <>
           <div className={styles.photo_wrap}>
-            <ImageList
-              sx={{ width: 900, height: 360 }}
-              cols={3}
-              rowHeight={164}
-            >
-              {market.fileList.map((file, index) => (
-                <ImageListItem key={index}>
-                  <img
-                    src={`${imgUrl}/${file.marketFilePath}?w=164&h=164&fit=crop&auto=format`}
-                    alt="상품 이미지"
-                    loading="lazy"
-                    style={{
-                      cursor: "pointer",
-                      width: "100%",
-                      height: "100%",
-                      objectFit: "cover",
-                      borderRadius: "8px",
-                    }}
-                    onClick={() => handleOpen(index)}
-                  />
-                </ImageListItem>
-              ))}
-            </ImageList>
+            <div className={styles.banner_container}>
+              <img
+                src={`${imgUrl}/${images[bannerIndex]?.marketFilePath}`}
+                alt="상품 이미지"
+                className={styles.banner_image}
+                onClick={() => handleOpen(bannerIndex)}
+              />
+
+              {/* 화살표 띄움 */}
+              <div className={styles.banner_btn_wrap}>
+                <button onClick={prevBanner}>
+                  <span className="material-icons">chevron_left</span>
+                </button>
+                <button onClick={nextBanner}>
+                  <span className="material-icons">chevron_right</span>
+                </button>
+              </div>
+
+              {/* 이미지 개수 표시 */}
+              <div className={styles.banner_counter}>
+                {bannerIndex + 1} / {images.length}
+              </div>
+            </div>
 
             {/* 이미지 상세 모달 */}
             <Modal open={open} onClose={handleClose}>
@@ -680,33 +686,39 @@ const MarketViewPage = () => {
                 </div>
                 <Nickname member={market} />
               </div>
-              <div className={styles.wrap1_price}>
-                <p
-                  className={
-                    market.sellPrice === 0
-                      ? styles.title_price_free
-                      : styles.title_price
-                  }
-                >
-                  {formatPrice(market.sellPrice)}
-                </p>
-              </div>
 
-              <div className={styles.wrap1_date}>
-                <CalendarMonthIcon className={styles.date_icon} />
-                <p>{market.marketDate.slice(0, 16)}</p>
-              </div>
+              <div className={styles.wrap2}>
+                <div className={styles.wrap2_1}>
+                  <div className={styles.wrap1_date}>
+                    <CalendarMonthIcon className={styles.date_icon} />
+                    <p>{market.marketDate.slice(0, 16)}</p>
+                  </div>
 
-              <div className={styles.wrap1_like}>
-                <FavoriteIcon className={styles.like_icon} />
-                <p>{market.likeCount}</p>
-              </div>
-
-              <div className={styles.wrap1_view}>
-                <VisibilityIcon className={styles.view_icon} />
-                <p>{market.viewCount}</p>
+                  <div className={styles.wrap1_like}>
+                    <FavoriteIcon className={styles.like_icon} />
+                    <p>{market.likeCount}</p>
+                  </div>
+                </div>
+                <div className={styles.wrap2_2}>
+                  <div className={styles.wrap1_price}>
+                    <p
+                      className={
+                        market.sellPrice === 0
+                          ? styles.title_price_free
+                          : styles.title_price
+                      }
+                    >
+                      {formatPrice(market.sellPrice)}
+                    </p>
+                  </div>
+                  <div className={styles.wrap1_view}>
+                    <VisibilityIcon className={styles.view_icon} />
+                    <p>{market.viewCount}</p>
+                  </div>
+                </div>
               </div>
             </div>
+
             <div
               className={styles.wrap1_content}
               dangerouslySetInnerHTML={{ __html: market.marketContent }}

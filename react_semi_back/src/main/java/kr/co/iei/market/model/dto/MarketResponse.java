@@ -8,7 +8,6 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 @Data
-@Builder
 public class MarketResponse<T> {
 	//마켓 공통응답용 DTO 제네릭으로 확장가능
 	private boolean success;
