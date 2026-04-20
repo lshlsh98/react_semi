@@ -61,7 +61,6 @@ const Find_pw = () => {
         memberEmail: member.memberEmail,
       })
       .then((res) => {
-        console.log("인증코드:", res.data); // 인증코드 f12로 편하게 보는용 (나중에 지워야함.)
         Swal.fire({
           icon: "success",
           title: "발송 완료",
@@ -146,7 +145,6 @@ const Find_pw = () => {
     axios
       .post(`${import.meta.env.VITE_BACKSERVER}/members/find-pw`, member)
       .then((res) => {
-        console.log("임시 비밀번호:", res.data); // 임시 비밀번호를 f12로 편하게 보는용 (나중에 지워야함.)
         // 성공 시 팝업 띄우고 로그인 페이지로 이동
         Swal.fire({
           icon: "success",

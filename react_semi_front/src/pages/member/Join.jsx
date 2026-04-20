@@ -102,8 +102,6 @@ const Join = () => {
 
   const { open } = useKakaoPostcode({
     onComplete: (data) => {
-      console.log(data); // 주소 찾기했을떄 그 주소에 대한 정보 쫙 뜨게 뭐있는지 확인용 (나중에 진짜로 서비스를 한다 생각하면 없애야함 그때 없애면 됨)
-
       setMember({
         ...member,
         memberPostcode: data.zonecode,

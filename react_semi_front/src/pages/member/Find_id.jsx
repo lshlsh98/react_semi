@@ -62,7 +62,6 @@ const Find_id = () => {
         memberEmail: member.memberEmail,
       })
       .then((res) => {
-        console.log("인증코드:", res.data); // 인증코드 f12로 편하게 보는용 (나중에 지워야함.)
         Swal.fire({
           icon: "success",
           title: "발송 완료",
