@@ -6,7 +6,7 @@
 }
 .community_view_wrap {
   margin-top: 50px;
-  border: 1px solid var(--gray5);
+  border: 1px solid var(--line);
   padding: 16px;
   border-radius: 8px;
 }
