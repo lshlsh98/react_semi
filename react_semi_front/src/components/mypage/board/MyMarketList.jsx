@@ -1,4 +1,5 @@
 import MyMarketItem from "./MyMarketItem";
+import styles from "./MyMarketList.module.css";
 
 const MyMarketList = ({ boardList, setBoardList, status, isAdminMode }) => {
   const timeAgo = (dateString) => {
@@ -31,7 +32,7 @@ const MyMarketList = ({ boardList, setBoardList, status, isAdminMode }) => {
   };
 
   return (
-    <div>
+    <div className={isAdminMode === "true" ? styles.left : ""}>
       {boardList.map((board, index) => (
         <MyMarketItem
           key={board.boardNo}
