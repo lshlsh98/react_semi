@@ -47,13 +47,20 @@
 		<if test="searchType==1">
 			<![CDATA[
 				and (
-       				c.community_title like '%'||#{searchKeyword}||'%'
-       				or REGEXP_REPLACE(c.community_content, '<[^>]*>', '')
-          		 	like '%'||#{searchKeyword}||'%'
-      		)]]>
+    				c.community_title like '%' || replace(replace(#{searchKeyword}, '_', '\_'), '%', '\%') || '%' escape '\'
+    				or regexp_replace(c.community_content, '<[^>]*>', '') 
+       				like '%' || replace(replace(#{searchKeyword}, '_', '\_'), '%', '\%') || '%' escape '\'
+				)]]>
 		</if>
 		<if test="searchType==2">
-			and c.community_writer = #{searchKeyword}
+			<![CDATA[
+				and (
+				    c.community_writer like '%' || replace(replace(#{searchKeyword}, '_', '\_'), '%', '\%') || '%' escape '\'
+				    or regexp_replace(c.community_writer, '<[^>]*>', '') 
+				        like '%' || replace(replace(#{searchKeyword}, '_', '\_'), '%', '\%') || '%' escape '\'
+				    or m.member_name 
+				        like '%' || replace(replace(#{searchKeyword}, '_', '\_'), '%', '\%') || '%' escape '\'
+				)]]>
 		</if>
 
 		<if test="view==1">
