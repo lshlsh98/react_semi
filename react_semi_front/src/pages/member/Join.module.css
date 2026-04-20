@@ -48,7 +48,6 @@
   width: auto;
   background-color: var(--bg);
   border: 1px solid var(--soft);
-  border-radius: 8px;
 }
 
 .addr_rows {

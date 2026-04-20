@@ -34,12 +34,12 @@ ol {
   outline: none;
   padding: 8px 4px 8px 16px;
   border: 1px solid var(--primary);
-  border-radius: 8px;
+  border-radius: 4px;
 }
 
 /* 마켓 게시물이 없을때 */
 .no_result {
-  margin : 50px 0;
+  margin: 50px 0;
   padding: 50px 0;
   text-align: center;
   border-radius: 8px;
@@ -111,9 +111,8 @@ ol {
   gap: 8px;
   padding: 4px;
 }
-.info_viewCount
-{
-  color:var(--gray4);
+.info_viewCount {
+  color: var(--gray4);
 }
 
 /*멤버썸네일*/
@@ -141,9 +140,9 @@ ol {
   height: 100%;
   object-fit: cover;
 }
-.member_thumb>span{
+.member_thumb > span {
   color: var(--gray8);
-  font-size: 40px
+  font-size: 40px;
 }
 
 /*판매주소*/
@@ -196,8 +195,8 @@ ol {
   gap: 8px;
   align-items: center;
 }
-.info_likeCount{
-  color:var(--gray4)
+.info_likeCount {
+  color: var(--gray4);
 }
 /*댓글수 랩*/
 .info_commentCount_wrap {
@@ -205,8 +204,8 @@ ol {
   align-items: center;
   gap: 8px;
 }
-.info_commentCount{
-  color : var(--gray4);
+.info_commentCount {
+  color: var(--gray4);
 }
 
 .info_date_wrap {
@@ -215,8 +214,8 @@ ol {
   gap: 8px;
   padding: 4px;
 }
-.info_date{
-  color : var(--gray4)
+.info_date {
+  color: var(--gray4);
 }
 
 /* 페이지네이션 */
@@ -241,11 +240,10 @@ ol {
   font-size: 20px !important;
   color: var(--gray4);
 }
-.icon2{
+.icon2 {
   font-size: 20px !important;
-  fill:red !important;
+  fill: red !important;
 }
 .material_icons {
-  font_size: 20px;
-
+  font-size: 20px;
 }

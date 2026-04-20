@@ -33,6 +33,18 @@ const MarketViewPage = () => {
 
   const images = market?.fileList || [];
 
+  // 🚀 배너용 상태와 화살표 함수 추가
+  const [bannerIndex, setBannerIndex] = useState(0);
+
+  const prevBanner = (e) => {
+    e.stopPropagation();
+    setBannerIndex((prev) => (prev === 0 ? images.length - 1 : prev - 1));
+  };
+  const nextBanner = (e) => {
+    e.stopPropagation();
+    setBannerIndex((prev) => (prev === images.length - 1 ? 0 : prev + 1));
+  };
+
   const handleOpen = (index) => {
     setCurrentIndex(index);
     setOpen(true);
@@ -542,38 +554,32 @@ const MarketViewPage = () => {
 
   return (
     <main className={styles.main_wrap}>
-      <h3
-        className="page-title"
-        style={{ textAlign: "center", padding: "50px 0px" }}
-      >
-        마켓 상세보기
-      </h3>
       {market && (
         <>
           <div className={styles.photo_wrap}>
-            <ImageList
-              sx={{ width: 900, height: 360 }}
-              cols={3}
-              rowHeight={164}
-            >
-              {market.fileList.map((file, index) => (
-                <ImageListItem key={index}>
-                  <img
-                    src={`${imgUrl}/${file.marketFilePath}?w=164&h=164&fit=crop&auto=format`}
-                    alt="상품 이미지"
-                    loading="lazy"
-                    style={{
-                      cursor: "pointer",
-                      width: "100%",
-                      height: "100%",
-                      objectFit: "cover",
-                      borderRadius: "8px",
-                    }}
-                    onClick={() => handleOpen(index)}
-                  />
-                </ImageListItem>
-              ))}
-            </ImageList>
+            <div className={styles.banner_container}>
+              <img
+                src={`${imgUrl}/${images[bannerIndex]?.marketFilePath}`}
+                alt="상품 이미지"
+                className={styles.banner_image}
+                onClick={() => handleOpen(bannerIndex)}
+              />
+
+              {/* 화살표 띄움 */}
+              <div className={styles.banner_btn_wrap}>
+                <button onClick={prevBanner}>
+                  <span className="material-icons">chevron_left</span>
+                </button>
+                <button onClick={nextBanner}>
+                  <span className="material-icons">chevron_right</span>
+                </button>
+              </div>
+
+              {/* 이미지 개수 표시 */}
+              <div className={styles.banner_counter}>
+                {bannerIndex + 1} / {images.length}
+              </div>
+            </div>
 
             {/* 이미지 상세 모달 */}
             <Modal open={open} onClose={handleClose}>
