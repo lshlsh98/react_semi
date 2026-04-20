@@ -550,10 +550,15 @@
 		history_status,
 		member_id,
 		market_no,
-		(select market_title
-		from market_tbl m
-		where m.market_no = s.market_no) as
-		market_title,
+		case
+        	when s.market_no is null then '닉네임 변경'
+        	else (
+            	select m.market_title
+            	from market_tbl m
+            	where m.market_no = s.market_no
+        	)
+    		end 
+    	as market_title,
 		changed_score,
 		score_date
 		from score_history_tbl s

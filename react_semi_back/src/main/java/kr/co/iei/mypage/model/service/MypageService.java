@@ -204,6 +204,7 @@ public class MypageService {
 	@Transactional
 	public int updateCurrentColor(MemberColor memberColor) {
 		int deduction = mypageDao.updateMemberScore(memberColor);
+		int history = mypageDao.insertHistory(memberColor);
 		if (deduction == 1) {
 			int count = mypageDao.updateCurrentColor(memberColor);
 			return count;

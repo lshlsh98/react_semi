@@ -90,6 +90,8 @@ public interface MypageDao {
 	ReportResponseDto findMarketCommentReportPrivate(ReportRequestDto request);
 
 	ReportResponseDto findCommunityCommentReportPrivate(ReportRequestDto request);
+
+	int insertHistory(MemberColor memberColor);
 	
 	
 }

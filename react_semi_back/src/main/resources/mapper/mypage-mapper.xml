@@ -1075,6 +1075,17 @@
 		where member_id = #{memberId}
 	</update>
 	
+	<insert id="insertHistory">
+    	insert into score_history_tbl values(
+    		score_history_seq.nextval,
+    		#{memberId},
+    		null,
+    		2,
+    		1000,
+    		sysdate
+    	)
+    </insert>
+	
 	<update id="updateCurrentColor">
 		update member_tbl
 		set current_color_id = #{colorId}
