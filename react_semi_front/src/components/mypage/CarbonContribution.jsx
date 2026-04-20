@@ -65,7 +65,7 @@ const CarbonContribution = () => {
               }}
               list={[
                 [0, "전체"],
-                [1, "획득"],
+                [1, "적립"],
                 [2, "소모"],
               ]}
             />
@@ -103,7 +103,7 @@ const CarbonContributionList = ({ carbonContributionList }) => {
     <>
       <ul className={styles.carbon_contribution_list_title}>
         <li className={styles.carbon_contribution_status}>상태</li>
-        <li className={styles.carbon_contribution_market_title}>거래명</li>
+        <li className={styles.carbon_contribution_market_title_none}>거래명</li>
         <li className={styles.carbon_contribution_changed_score}>
           기여도 획득량
         </li>
@@ -137,15 +137,21 @@ const CarbonContributionItem = ({ carbonContribution }) => {
           소모
         </li>
       )}
+      {carbonContribution.marketNo === null ? (
+        <li className={styles.carbon_contribution_market_title_none}>
+          {carbonContribution.marketTitle}
+        </li>
+      ) : (
+        <li
+          className={styles.carbon_contribution_market_title}
+          onClick={() => {
+            navigate(`/market/view/${carbonContribution.marketNo}`);
+          }}
+        >
+          {carbonContribution.marketTitle}
+        </li>
+      )}
 
-      <li
-        className={styles.carbon_contribution_market_title}
-        onClick={() => {
-          navigate(`/market/view/${carbonContribution.marketNo}`);
-        }}
-      >
-        {carbonContribution.marketTitle}
-      </li>
       {carbonContribution.historyStatus === 1 ? (
         <li
           className={`${styles.carbon_contribution_changed_score} ${styles.green}`}
