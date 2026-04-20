@@ -28,12 +28,9 @@ const MarketViewPage = () => {
   const imgUrl = "http://192.168.31.24:9999/market";
 
   /* 모달용 스테이트 */
-  const [open, setOpen] = useState(false);
-  const [currentIndex, setCurrentIndex] = useState(0);
 
   const images = market?.fileList || [];
 
-  // 🚀 배너용 상태와 화살표 함수 추가
   const [bannerIndex, setBannerIndex] = useState(0);
 
   const prevBanner = (e) => {
@@ -43,22 +40,6 @@ const MarketViewPage = () => {
   const nextBanner = (e) => {
     e.stopPropagation();
     setBannerIndex((prev) => (prev === images.length - 1 ? 0 : prev + 1));
-  };
-
-  const handleOpen = (index) => {
-    setCurrentIndex(index);
-    setOpen(true);
-  };
-
-  const handleClose = () => setOpen(false);
-  const prevImage = (e) => {
-    e.stopPropagation();
-    setCurrentIndex((prev) => (prev === 0 ? images.length - 1 : prev - 1));
-  };
-
-  const nextImage = (e) => {
-    e.stopPropagation();
-    setCurrentIndex((prev) => (prev === images.length - 1 ? 0 : prev + 1));
   };
 
   /* 거래요청 리스트용 스테이트 */
@@ -562,7 +543,6 @@ const MarketViewPage = () => {
                 src={`${imgUrl}/${images[bannerIndex]?.marketFilePath}`}
                 alt="상품 이미지"
                 className={styles.banner_image}
-                onClick={() => handleOpen(bannerIndex)}
               />
 
               {/* 화살표 띄움 */}
@@ -582,86 +562,6 @@ const MarketViewPage = () => {
             </div>
 
             {/* 이미지 상세 모달 */}
-            <Modal open={open} onClose={handleClose}>
-              <Box
-                sx={{
-                  position: "absolute",
-                  top: "50%",
-                  left: "50%",
-                  transform: "translate(-50%, -50%)",
-                  bgcolor: "var(--light)",
-                  boxShadow: 24,
-                  outline: "none",
-                  display: "flex",
-                  alignItems: "center",
-                  justifyContent: "center",
-                  width: "900px",
-                  height: "720px",
-                  borderRadius: "8px",
-                  overflow: "hidden",
-                }}
-              >
-                <IconButton
-                  onClick={handleClose}
-                  sx={{
-                    position: "absolute",
-                    top: 10,
-                    right: 10,
-                    color: "var(--danger)",
-                    zIndex: 10,
-                  }}
-                >
-                  <Close />
-                </IconButton>
-
-                <IconButton
-                  onClick={prevImage}
-                  sx={{
-                    position: "absolute",
-                    left: 20,
-                    color: "var(--light)",
-                    bgcolor: "var(--secendary)",
-                    "&:hover": { bgcolor: "var(--primary)" },
-                  }}
-                >
-                  <ChevronLeft fontSize="large" />
-                </IconButton>
-
-                <img
-                  src={`${imgUrl}/${images[currentIndex]?.marketFilePath}`}
-                  alt="상세보기"
-                  style={{
-                    maxWidth: "100%",
-                    maxHeight: "100%",
-                    objectFit: "contain",
-                  }}
-                />
-
-                <IconButton
-                  onClick={nextImage}
-                  sx={{
-                    position: "absolute",
-                    right: 20,
-                    color: "var(--light)",
-                    bgcolor: "var(--secendary)",
-                    "&:hover": { bgcolor: "var(--primary)" },
-                  }}
-                >
-                  <ChevronRight fontSize="large" />
-                </IconButton>
-
-                <div
-                  style={{
-                    position: "absolute",
-                    bottom: 20,
-                    color: "var(--primary)",
-                    fontWeight: "bold",
-                  }}
-                >
-                  {currentIndex + 1} / {images.length}
-                </div>
-              </Box>
-            </Modal>
           </div>
           <div className={styles.wrap1}>
             <div className={styles.wrap1_title}>
