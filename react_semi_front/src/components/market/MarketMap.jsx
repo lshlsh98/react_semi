@@ -5,7 +5,7 @@ const MarketMap = ({ market }) => {
   const marketMapRef = useRef(null);
 
   useEffect(() => {
-    if (!marketMapRef.current || !window.naver) return;
+    if (!marketMapRef.current || !window.naver || !market?.sellAddr) return;
 
     const marketMap = new naver.maps.Map(marketMapRef.current, {
       center: new naver.maps.LatLng(37.5665, 126.978), // 초기값 (서울)

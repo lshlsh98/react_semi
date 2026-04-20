@@ -234,10 +234,10 @@ public class MarketService {
 	@Transactional
 	public MarketResponse<MarketUpdateResponse> updateOneMarket(String token, Market market, List<MultipartFile> files,
 			Integer marketNo) {
-		System.out.println("토큰 : " + token);
-		System.out.println("마켓 : " + market);
-		System.out.println("파일 : " + files);
-		System.out.println("번호 : " + marketNo);
+		//System.out.println("토큰 : " + token);
+		//System.out.println("마켓 : " + market);
+		//System.out.println("파일 : " + files);
+		//System.out.println("번호 : " + marketNo);
 
 		if (token == null) {
 			return new MarketResponse<MarketUpdateResponse>(false, "권한없음", null);
@@ -327,19 +327,15 @@ public class MarketService {
 		int result1 = marketDao.tradeAccepted(marketNo, buyerId);
 		// 2. !buyerId = 거래거절(Status = 3) completed_date = sysdate (거래요청 수만큼 반환)
 		int result2 = marketDao.tradeReject(marketNo, buyerId);
-
 		// 3. marketNo completed = 1, completed_date = sysdate
 		int result3 = marketDao.marketCompleted(marketNo);
-
 		// 4. score_history_table에 포인트 기록 추가(
 		Market m = marketDao.selectSellerId(marketNo);
 		String sellerId = m.getMarketWriter();
 		int result4 = marketDao.addPointHistory(marketNo, sellerId);
 		// 5. member_tbl에 sellerId 포인트 증가
 		int result5 = marketDao.addPointMember(sellerId);
-
 		int result = result1 + result2 + result3 + result4;
-
 		return result;
 	}
 

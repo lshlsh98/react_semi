@@ -150,8 +150,8 @@ public class MarketController {
 		serviceResponse = marketService.deleteOneMarketAndFileTbl(marketNo);
 		int fileCount = (int) serviceResponse.get("fileCount");
 		int result = (int) serviceResponse.get("result");
-		System.out.println("\n 파일TBL 삭제 결과 (1~10) : " + fileCount);
-		System.out.println("마켓TBL 삭제 결과 (0~1) : " + result);
+		//System.out.println("\n 파일TBL 삭제 결과 (1~10) : " + fileCount);
+		//System.out.println("마켓TBL 삭제 결과 (0~1) : " + result);
 
 		// 3. 파일 삭제
 		String savepath = root + "market/";
@@ -166,7 +166,7 @@ public class MarketController {
 				}
 			}
 		}
-		System.out.println("전체파일 삭제결과 : " + allDeleted);
+		//System.out.println("전체파일 삭제결과 : " + allDeleted);
 
 		Map<String, Object> response = new HashMap<String, Object>();
 		response.put("fileCount", fileCount); // 프론트에 전달할 삭제파일 갯수
@@ -237,13 +237,11 @@ public class MarketController {
 	// 거래확정
 	@PatchMapping(value = "/{marketNo}/requests/{buyerId}")
 	public ResponseEntity<?> tradeComplete(@PathVariable Integer marketNo, @PathVariable String buyerId) {
-		System.out.println("\n거래번호 : " + marketNo);
-		System.out.println("구매자아이디" + buyerId);
 		int result = marketService.tradeComplete(marketNo, buyerId);
 		return ResponseEntity.ok(result);
 	}
 
-	/// 마켓게시판-거래요청-삭제 (Markets/{marketNo}/requests{BuyerId}) Delete : 한진호
+	/// 마켓게시판-거래요청-삭제 (Markets/{marketNo}/requests}) Delete : 한진호
 	@DeleteMapping(value = "{marketNo}/request")
 	public ResponseEntity<?> tradeRequestCancel(@PathVariable Integer marketNo,
 			@RequestHeader(name = "Authorization") String token) {

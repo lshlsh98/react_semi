@@ -25,7 +25,7 @@ import FormatAlignRightIcon from "@mui/icons-material/FormatAlignRight";
 import ClearIcon from "@mui/icons-material/Clear";
 import UndoIcon from "@mui/icons-material/Undo";
 import RedoIcon from "@mui/icons-material/Redo";
-
+import MarketMap from "../../components/market/MarketMap";
 const MarketModifyPage = () => {
   const { memberId, memberAddr } = useAuthStore();
   const navigate = useNavigate();
@@ -34,6 +34,14 @@ const MarketModifyPage = () => {
   const [market, setMarket] = useState({});
 
   useEffect(() => {
+    if (!memberId) {
+      Swal.fire({
+        icon: "warning",
+        title: "로그인이 필요합니다.",
+      }).then(() => {
+        navigate("/member/login");
+      });
+    }
     axios
       .get(`${import.meta.env.VITE_BACKSERVER}/markets/${marketNo}`)
       .then((res) => {
@@ -126,14 +134,6 @@ const MarketModifyPage = () => {
 
     const num = Number(onlyNumber);
 
-    if (num < 0) {
-      Swal.fire({
-        icon: "warning",
-        title: "0원 보다 작게 설정하실 수는 없어요!",
-      });
-      return;
-    }
-
     if (num > 10000000) {
       Swal.fire({
         icon: "warning",
@@ -144,7 +144,7 @@ const MarketModifyPage = () => {
 
     setMarket({
       ...market,
-      [name]: num,
+      [name]: onlyNumber,
     });
   };
   /* 테스트 에디터용 함수 */
@@ -171,20 +171,42 @@ const MarketModifyPage = () => {
 
   /* 수정하기버튼 클릭이벤트 연결 함수 */
   const modify = () => {
-    if (
-      market.marketTitle === "" ||
-      market.marketContent === "" ||
-      market.sellPrice === "" ||
-      market.sellAddr === "" ||
-      (files.length === 0 && (!market.fileList || market.fileList.length === 0))
-    ) {
+    if (market.marketTitle === "") {
       Swal.fire({
         icon: "warning",
-        title: "빠짐없이 작성해주세요.",
+        title: "제목을 작성해주세요.",
       });
       return;
     }
-    //console.log("수정하기 버튼클릭");
+    if (market.sellPrice === "") {
+      Swal.fire({
+        icon: "warning",
+        title: "판매금액을 입력해주세요.",
+      });
+      return;
+    }
+    if (market.sellAddr === "") {
+      Swal.fire({
+        icon: "warning",
+        title: "판매장소를 입력해주세요.",
+      });
+      return;
+    }
+    if (market.marketContent === "") {
+      Swal.fire({
+        icon: "warning",
+        title: "내용을 작성해주세요.",
+      });
+      return;
+    }
+    if (files.length === 0) {
+      Swal.fire({
+        icon: "warning",
+        title: "사진을 첨부해주세요.",
+      });
+      return;
+    }
+
     const form = new FormData();
     form.append("marketTitle", market.marketTitle);
     form.append("marketContent", market.marketContent);
@@ -199,7 +221,7 @@ const MarketModifyPage = () => {
     });
 
     for (let pair of form.entries()) {
-      console.log(pair[0], pair[1]);
+      //console.log(pair[0], pair[1]);
     }
 
     axios
@@ -217,7 +239,6 @@ const MarketModifyPage = () => {
             html: `
           게시글 수정 성공<br/>
           새로운 파일 수 : ${newFileCount} 개<br/>
-          삭제한 파일 수 : ${deleteFileCount} 개
         `,
             icon: "success",
             confirmButtonText: "닫기",
@@ -307,10 +328,7 @@ const MarketModifyPage = () => {
           />
         </div>
       </div>
-      {/* MAP API 영역 */}
-      <div className={styles.market_input_wrap}>
-        <label>API 등록 예정</label>
-      </div>
+      <MarketMap market={market} />
 
       {/* 내용 필드 */}
       <div>
@@ -592,7 +610,7 @@ const TextEditor = ({ data, setData }) => {
         if (event.key === "Enter") {
           const html = view.dom.innerHTML;
           const byteLength = new TextEncoder().encode(html).length;
-          console.log(byteLength);
+          //console.log(byteLength);
           if (byteLength > 4000) {
             alert("더이상 입력할수 없어요");
             return true;
@@ -607,7 +625,7 @@ const TextEditor = ({ data, setData }) => {
 
       if (byteLength > 4000) {
         editor.commands.setContent(lastValidHTML, false);
-        console.log(byteLength);
+        //console.log(byteLength);
         alert("지워버린다.");
         return;
       }
