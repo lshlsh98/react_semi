@@ -505,7 +505,6 @@ const MenuBar = ({ editor }) => {
 
       {/* 삭제 */}
       <button
-        style={{ backgroundColor: "var(--danger)" }}
         type="button"
         disabled={editor.isEmpty}
         onClick={() => {

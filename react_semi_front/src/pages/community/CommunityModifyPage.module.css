@@ -72,11 +72,12 @@
 
 /* 텍스트 에디터 */
 .editor_wrap {
-  border: 1px solid var(--secendary);
+  border: 1px solid var(--gray5);
   border-radius: 8px;
   overflow: hidden;
-  background-color: var(--light);
-  position: relative; /* ⭐ 필수 */
+
+  /* ⭐ 기준점 */
+  position: relative;
 }
 
 /* 오른쪽 아래 글자수 */
@@ -89,7 +90,7 @@
   margin-bottom: 12px;
 }
 
-/* 4000자 도달 */
+/* 4,000자 도달 */
 .limit {
   color: var(--danger);
   font-weight: 600;
@@ -97,6 +98,7 @@
 
 .menu_bar {
   display: flex;
+  margin-top: 20px;
   gap: 8px;
   flex-wrap: wrap;
   padding: 12px;
@@ -112,7 +114,6 @@
   border-radius: 4px;
   font-size: 14px;
   cursor: pointer;
-  background-color: var(--light); /*기본 배경*/
   color: var(--primary); /*기본 글자*/
 }
 
@@ -134,33 +135,28 @@
 .editor_content {
   padding: 16px;
 }
-
-/* 에디터 내부 전역 처리 */
-.editor_content :global(.ProseMirror) {
-  white-space: pre-wrap !important; /* 줄 바꿈 및 공백 여러 개 유지 */
-  word-break: break-all !important; /* 긴 단어 강제로 줄 바꾸는 거*/
-  margin: 0;
-  min-height: 1em;
-  min-height: 400px;
-}
-
 .editor_content > div {
   min-height: 400px;
-  background-color: var(--light);
-  padding: 10px 20px;
+  padding: 12px;
   outline: none;
-  border: 1px solid var(--gray1);
+  border: 1px solid var(--gray3);
   border-radius: 12px;
   line-height: 1.4;
-}
-
-.communityContent {
-  white-space: pre-wrap;
-  word-break: break-all;
 }
 .editor_content > div:hover {
   background-color: var(--bg);
 }
 .editor_content > div ul {
   padding-left: 20px;
+}
+
+/* 휴지통 버튼만 빨간색 */
+.delete_btn {
+  color: var(--danger);
+  border: 1px solid var(--danger);
+}
+
+/* hover 시 */
+.delete_btn:hover {
+  background-color: var(--danger);
 }

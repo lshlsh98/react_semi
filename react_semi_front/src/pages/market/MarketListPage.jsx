@@ -110,7 +110,7 @@ const MarketListPage = () => {
           className="page-title"
           style={{ textAlign: "center", padding: "50px 0px" }}
         >
-          그린마켓
+          중고거래
         </h3>
         <div className={styles.market_searchbox}>
           <form

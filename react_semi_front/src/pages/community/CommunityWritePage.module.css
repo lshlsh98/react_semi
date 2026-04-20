@@ -27,7 +27,7 @@
   color: var(--gray3);
 }
 
-/* 50자 도달 시 */
+/* 제목 50자 도달 시 */
 .limit {
   color: var(--danger);
   font-weight: 600;
@@ -79,7 +79,7 @@
   margin-bottom: 12px;
 }
 
-/* 4,000자 도달 */
+/* 내용 4,000자 도달 */
 .limit {
   color: var(--danger);
   font-weight: 600;
@@ -94,6 +94,7 @@
   justify-content: center;
   align-items: center;
 }
+
 .menu_bar button,
 .menu_bar input {
   width: 50px;
