@@ -34,17 +34,29 @@ const Join = () => {
 
   const [checkId, setCheckId] = useState(0); // 중복 확인용 state
 
+  // 🚀 1. 아이디 중복 체크 & 유효성 검사 (숫자는 선택)
   const idDupCheck = () => {
-    if (member.memberId === "") return;
+    if (member.memberId === "") {
+      setCheckId(0);
+      return;
+    }
+
+    // 아이디 정규식: 영문 1개 이상 필수, 숫자 선택, 6자 이상 (한글/특수문자 불가)
+    const idRegex = /^(?=.*[a-zA-Z])[a-zA-Z0-9]{6,}$/;
+    if (!idRegex.test(member.memberId)) {
+      setCheckId(3); // 3: 형식 오류
+      return;
+    }
+
     axios
       .get(
         `${import.meta.env.VITE_BACKSERVER}/members/exists?memberId=${member.memberId}`,
       )
       .then((res) => {
         if (res.data) {
-          setCheckId(2);
+          setCheckId(1); // 1: 사용 가능
         } else {
-          setCheckId(1);
+          setCheckId(2); // 2: 중복 (이미 있음)
         }
       })
       .catch((err) => {
@@ -54,11 +66,29 @@ const Join = () => {
 
   const [checkPw, setCheckPw] = useState(0); // 비밀번호 확인 맞는지 틀린지 보는용도 state
 
+  // 🚀 비밀번호 유효성 검사 & 일치 여부
   const pwDupCheck = () => {
-    if (member.memberPw === memberPwRe && member.memberPw !== "") {
-      setCheckPw(1);
+    if (member.memberPw === "") {
+      setCheckPw(0);
+      return;
+    }
+
+    // 비밀번호 정규식: 영문 1개 이상, 특수문자 1개 이상 필수, 숫자 선택, 8자 이상
+    const pwRegex =
+      /^(?=.*[a-zA-Z])(?=.*[!@#$%^&*()_+~`\-={}\[\]:;"'<>,.?\/\\|])[a-zA-Z\d!@#$%^&*()_+~`\-={}\[\]:;"'<>,.?\/\\|]{8,}$/;
+
+    if (!pwRegex.test(member.memberPw)) {
+      setCheckPw(3); // 3: 형식 오류 (비밀번호 칸 아래에 띄울 용도)
+      return;
+    }
+
+    // 형식이 맞으면, 이제 비밀번호 확인(memberPwRe)과 일치하는지 검사
+    if (memberPwRe === "") {
+      setCheckPw(0); // 아직 확인 칸을 안 쳤으면 아무 메시지도 안 띄움
+    } else if (member.memberPw === memberPwRe) {
+      setCheckPw(1); // 1: 일치 (비밀번호 확인 칸 아래에 띄울 용도)
     } else {
-      setCheckPw(2);
+      setCheckPw(2); // 2: 불일치 (비밀번호 확인 칸 아래에 띄울 용도)
     }
   };
 
@@ -151,20 +181,23 @@ const Join = () => {
   };
 
   // 위에서부터 순서대로 체크해서 alert띄우기
+  // 🚀 3. 최종 가입 전 검사 로직 보완
   const joinMember = () => {
-    if (checkId !== 2) {
+    // 기존에 checkId !== 2 라고 하셨는데, 아예 체크를 안 한 상태(0)나 형식 오류(3)일 때도 못 넘어가게 checkId !== 1 로 바꿨습니다!
+    if (checkId !== 1) {
       Swal.fire({
         icon: "warning",
         title: "확인 필요",
-        text: "아이디 중복 체크를 해주세요.",
+        text: "아이디 중복 체크 및 형식을 확인해주세요.",
       });
       return;
     }
+    // 비밀번호도 완벽하게 일치(1)할 때만 통과!
     if (checkPw !== 1) {
       Swal.fire({
         icon: "warning",
         title: "확인 필요",
-        text: "비밀번호 일치 확인을 해주세요.",
+        text: "비밀번호 형식과 일치 여부를 확인해주세요.",
       });
       return;
     }
@@ -246,11 +279,14 @@ const Join = () => {
             </div>
             {checkId > 0 && (
               <p
-                className={`${styles.validation_msg} ${checkId === 2 ? styles.valid : styles.invalid}`}
+                className={`${styles.validation_msg} ${
+                  checkId === 1 ? styles.valid : styles.invalid
+                }`}
               >
-                {checkId === 2
-                  ? "사용 가능한 아이디 입니다."
-                  : "이미 사용중인 아이디 입니다."}
+                {checkId === 1 && "사용 가능한 아이디 입니다."}
+                {checkId === 2 && "이미 사용중인 아이디 입니다."}
+                {checkId === 3 &&
+                  "아이디는 영문(필수)과 숫자(선택)로 6자 이상이어야 합니다."}
               </p>
             )}
           </div>
@@ -285,6 +321,12 @@ const Join = () => {
                 </span>
               )}
             </div>
+            {checkPw === 3 && (
+              <p className={`${styles.validation_msg} ${styles.invalid}`}>
+                비밀번호는 영문, 특수문자(필수)와 숫자(선택)로 8자 이상이어야
+                합니다.
+              </p>
+            )}
           </div>
 
           <div className={styles.form_group}>
@@ -319,11 +361,12 @@ const Join = () => {
             </div>
             {checkPw > 0 && (
               <p
-                className={`${styles.validation_msg} ${checkPw === 1 ? styles.valid : styles.invalid}`}
+                className={`${styles.validation_msg} ${
+                  checkPw === 1 ? styles.valid : styles.invalid
+                }`}
               >
-                {checkPw === 1
-                  ? "비밀번호가 일치합니다."
-                  : "비밀번호가 일치하지 않습니다."}
+                {checkPw === 1 && "비밀번호가 일치합니다."}
+                {checkPw === 2 && "비밀번호가 일치하지 않습니다."}
               </p>
             )}
           </div>

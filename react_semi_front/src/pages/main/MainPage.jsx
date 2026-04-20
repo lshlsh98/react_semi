@@ -77,7 +77,7 @@ const MainPage = () => {
     axios
       .get(`${import.meta.env.VITE_BACKSERVER}/markets/main`, {
         params: {
-          order: 2,
+          order: 0,
           memberId: memberId || "",
         },
       })
