@@ -87,7 +87,7 @@ const MyMarketItem = ({
 
   return (
     <div
-      className={styles.item}
+      className={`${styles.item} isAdminMode === "true" ? ${styles.item_admin} : ""`}
       onClick={() => {
         navigate(`/market/view/${board.boardNo}`);
       }}

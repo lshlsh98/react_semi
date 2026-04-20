@@ -54,7 +54,7 @@ const MypageMain = () => {
     axios
       .get(`${import.meta.env.VITE_BACKSERVER}/mypages/today/${memberId}`)
       .then((res) => {
-        console.log(res);
+        setData(res.data);
       })
       .catch((err) => {
         console.log(err);

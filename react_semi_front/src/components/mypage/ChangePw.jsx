@@ -118,6 +118,7 @@ const ChangePw = () => {
                 value={memberAuth.memberPw}
                 onChange={inputMember}
                 readOnly={memberAuthSuccess}
+                autoComplete="off"
               ></Input>
             </li>
             <li>
@@ -151,6 +152,7 @@ const ChangePw = () => {
                   onChange={(e) => {
                     setNewPw(e.target.value);
                   }}
+                  autoComplete="off"
                 ></Input>
               </li>
               <li>
@@ -180,11 +182,9 @@ const ChangePw = () => {
               <ul className={styles.member_new_pw_comment}>
                 <li></li>
                 <li>
-                  <li>
-                    <p className={`${styles.validation_msg} ${styles.invalid}`}>
-                      기존 비밀번호와 다른 비밀번호를 입력해주세요.
-                    </p>
-                  </li>
+                  <p className={`${styles.validation_msg} ${styles.invalid}`}>
+                    기존 비밀번호와 다른 비밀번호를 입력해주세요.
+                  </p>
                 </li>
                 <li></li>
               </ul>
@@ -204,6 +204,7 @@ const ChangePw = () => {
                   onChange={(e) => {
                     setNewPwRe(e.target.value);
                   }}
+                  autoComplete="off"
                 ></Input>
               </li>
               <li>
