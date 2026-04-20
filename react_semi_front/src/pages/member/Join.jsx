@@ -34,16 +34,21 @@ const Join = () => {
 
   const [checkId, setCheckId] = useState(0); // 중복 확인용 state
 
-  // 🚀 1. 아이디 중복 체크 & 유효성 검사 (숫자는 선택)
+  // 아이디 중복 체크 및 유효성 검사
   const idDupCheck = () => {
+    // 회원 아이디가 비어있다면
     if (member.memberId === "") {
+      // 아이디 체크해서 에러 문구띄우는 state인 checkId 0으로 초기화
       setCheckId(0);
       return;
     }
 
-    // 아이디 정규식: 영문 1개 이상 필수, 숫자 선택, 6자 이상 (한글/특수문자 불가)
-    const idRegex = /^(?=.*[a-zA-Z])[a-zA-Z0-9]{6,}$/;
+    // 아이디 정규식: 영문 1개 이상 필수, 숫자/특수문자 선택, 6자 이상 (한글 불가)
+    const idRegex =
+      /^(?=.*[a-zA-Z])[a-zA-Z0-9!@#$%^&*()_+~`\-={}\[\]:;"'<>,.?\/\\|]{6,}$/;
+    // .text => 정규식 규칙이 맞는지 검사해서 true / false 반환
     if (!idRegex.test(member.memberId)) {
+      // 정규식이 false이니 형식 오류 반환
       setCheckId(3); // 3: 형식 오류
       return;
     }
@@ -66,9 +71,11 @@ const Join = () => {
 
   const [checkPw, setCheckPw] = useState(0); // 비밀번호 확인 맞는지 틀린지 보는용도 state
 
-  // 🚀 비밀번호 유효성 검사 & 일치 여부
+  // 비밀번호 유효성 검사 및 일치 여부
   const pwDupCheck = () => {
+    // 회원 비번이 공백이면
     if (member.memberPw === "") {
+      // 비번 체크해서 에러 문구띄우는 state인 checkPw 0으로 초기화
       setCheckPw(0);
       return;
     }
@@ -78,7 +85,8 @@ const Join = () => {
       /^(?=.*[a-zA-Z])(?=.*[!@#$%^&*()_+~`\-={}\[\]:;"'<>,.?\/\\|])[a-zA-Z\d!@#$%^&*()_+~`\-={}\[\]:;"'<>,.?\/\\|]{8,}$/;
 
     if (!pwRegex.test(member.memberPw)) {
-      setCheckPw(3); // 3: 형식 오류 (비밀번호 칸 아래에 띄울 용도)
+      // 정규식이 false이니 형식 오류 반환
+      setCheckPw(3); // 3: 형식 오류
       return;
     }
 
@@ -86,9 +94,9 @@ const Join = () => {
     if (memberPwRe === "") {
       setCheckPw(0); // 아직 확인 칸을 안 쳤으면 아무 메시지도 안 띄움
     } else if (member.memberPw === memberPwRe) {
-      setCheckPw(1); // 1: 일치 (비밀번호 확인 칸 아래에 띄울 용도)
+      setCheckPw(1); // 1: 일치
     } else {
-      setCheckPw(2); // 2: 불일치 (비밀번호 확인 칸 아래에 띄울 용도)
+      setCheckPw(2); // 2: 불일치
     }
   };
 
@@ -135,7 +143,6 @@ const Join = () => {
         memberEmail: member.memberEmail,
       })
       .then((res) => {
-        console.log("인증코드:", res.data); // 인증코드 f12로 편하게 보는용 (나중에 지워야함.)
         Swal.fire({
           icon: "success",
           title: "발송 완료",
@@ -180,10 +187,9 @@ const Join = () => {
     return `${min}:${sec}`;
   };
 
-  // 위에서부터 순서대로 체크해서 alert띄우기
-  // 🚀 3. 최종 가입 전 검사 로직 보완
+  // 최종 가입 전 검사 로직 - 위에서부터 순서대로 체크해서 alert띄우기
   const joinMember = () => {
-    // 기존에 checkId !== 2 라고 하셨는데, 아예 체크를 안 한 상태(0)나 형식 오류(3)일 때도 못 넘어가게 checkId !== 1 로 바꿨습니다!
+    // checkId가 1이어야 정규식도 맞고 중복여부도 가능한 상태
     if (checkId !== 1) {
       Swal.fire({
         icon: "warning",
@@ -192,7 +198,7 @@ const Join = () => {
       });
       return;
     }
-    // 비밀번호도 완벽하게 일치(1)할 때만 통과!
+    // 비밀번호도 완벽하게 일치(1)할 때만 통과
     if (checkPw !== 1) {
       Swal.fire({
         icon: "warning",
@@ -201,6 +207,7 @@ const Join = () => {
       });
       return;
     }
+    // 이름칸 비어있다면
     if (member.memberName === "") {
       Swal.fire({
         icon: "warning",
@@ -209,6 +216,7 @@ const Join = () => {
       });
       return;
     }
+    // mailAuth => 0 : 대기중 (인증전) / 1 : 발송중 / 2 : 입력 대기 / 3 : 인증 성공
     if (mailAuth !== 3) {
       Swal.fire({
         icon: "warning",
@@ -217,6 +225,7 @@ const Join = () => {
       });
       return;
     }
+    // 주소가 비어있다면
     if (member.memberPostcode === "" || member.memberDetailAddr === "") {
       Swal.fire({
         icon: "warning",
@@ -286,7 +295,7 @@ const Join = () => {
                 {checkId === 1 && "사용 가능한 아이디 입니다."}
                 {checkId === 2 && "이미 사용중인 아이디 입니다."}
                 {checkId === 3 &&
-                  "아이디는 영문(필수)과 숫자(선택)로 6자 이상이어야 합니다."}
+                  "아이디는 영문(필수)과 숫자/특수문자(선택)로 6자 이상이어야 합니다."}
               </p>
             )}
           </div>
@@ -359,7 +368,7 @@ const Join = () => {
                 </span>
               )}
             </div>
-            {checkPw > 0 && (
+            {(checkPw === 1 || checkPw === 2) && (
               <p
                 className={`${styles.validation_msg} ${
                   checkPw === 1 ? styles.valid : styles.invalid
