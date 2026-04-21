@@ -31,6 +31,10 @@ public class StompHandler implements ChannelInterceptor {
 	public @Nullable Message<?> preSend(Message<?> message, MessageChannel channel) {
 		final StompHeaderAccessor accessor = StompHeaderAccessor.wrap(message);
 
+		if (accessor.getCommand() == null) {
+		    return message;
+		}
+
 		SecretKey key = Keys.hmacShaKeyFor(secretKey.getBytes());
 		if(StompCommand.CONNECT == accessor.getCommand()) {
 //			System.out.println("connect 요청 시 토큰 유효성 검증");
