@@ -184,6 +184,7 @@ const MemberInfo = () => {
         ...member,
         memberPostcode: data.zonecode,
         memberAddr: data.roadAddress,
+        memberDetailAddr: "",
       });
       setTimeout(() => {
         close();
