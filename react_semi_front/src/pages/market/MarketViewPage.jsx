@@ -67,6 +67,7 @@ const MarketViewPage = () => {
         if (res.data.success) {
           setMarket(res.data.data);
         } else {
+          console.log(res.data);
           Swal.fire({
             title: res.data.message,
             icon: "warning",
