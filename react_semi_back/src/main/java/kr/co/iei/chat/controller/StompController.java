@@ -6,11 +6,13 @@ import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.handler.annotation.SendTo;
 import org.springframework.messaging.simp.SimpMessageSendingOperations;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.CrossOrigin;
 
 import kr.co.iei.chat.model.service.ChatService;
 import kr.co.iei.chat.model.vo.ChatMessageDto;
 import kr.co.iei.member.model.service.MemberService;
 
+@CrossOrigin("*")
 @Controller
 public class StompController {
 	
