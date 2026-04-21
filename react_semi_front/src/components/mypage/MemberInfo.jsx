@@ -211,7 +211,7 @@ const MemberInfo = () => {
             `${import.meta.env.VITE_BACKSERVER}/members/${member.memberId}`,
           )
           .then((res) => {
-            if (res.date === 1) {
+            if (res.data === 1) {
               Swal.fire({
                 title: "탈퇴 완료되었습니다.",
                 text: "이용해주셔서 감사합니다.",
