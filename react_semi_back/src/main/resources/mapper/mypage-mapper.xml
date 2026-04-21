@@ -281,7 +281,7 @@
 	WHERE market_no = #{boardNo} 
 	-->	
 		UPDATE market_tbl
-		SET market_status = 3
+		SET market_status = 4
 		WHERE market_no = #{boardNo}  
 	</delete>
 
