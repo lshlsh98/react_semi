@@ -197,18 +197,18 @@ public class MarketService {
 		// 쿠키 조회(게시물 확인 여부를 체크)
 		if (m == null) {
 			// 없는 경로로 요청시 리턴 null 리턴
-			return new MarketResponse<>(false, "404 : not found", null);
+			return new MarketResponse<>(false, "찾을수 없습니다.", null);
 		} else {
 			status = m.getMarketStatus();
 			completed = m.getCompleted();
 		}
 		if (status == 2 && (memberGrade == 0 || memberGrade == 3)) {
 			// 비공개 상태일때 비회원과 일반유저는 접근못하게 null 리턴
-			return new MarketResponse<>(false, "403 : 권한없음", null);
+			return new MarketResponse<>(false, "비공개 게시글입니다.", null);
 		}
 		if (status == 3 && memberGrade != 1) {
 			// 삭제 상태일떄 슈퍼관리자(1) 이외 유저는 접근못하게 null 리턴)
-			return new MarketResponse<>(false, "404 : not found", null);
+			return new MarketResponse<>(false, "삭제된 게시글입니다.", null);
 		}
 		if (memberId != null && memberId.equals(m.getMarketWriter())) {
 			// 요청자가 판매자자신일 경우 조회수 증가없이 리턴
