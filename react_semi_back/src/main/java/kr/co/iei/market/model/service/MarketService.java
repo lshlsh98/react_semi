@@ -228,7 +228,7 @@ public class MarketService {
 		/*
 		if (memberGrade==3) {
 			//슈퍼관리자는 수정 삭제된 모든 파일을 가져옴, 조회수 증가 없음
-			
+						
 		}
 		*/
 	
