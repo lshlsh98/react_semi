@@ -206,6 +206,11 @@ public class MarketService {
 			// 비공개 상태일때 비회원과 일반유저는 접근못하게 null 리턴
 			return new MarketResponse<>(false, "비공개 게시글입니다.", null);
 		}
+		if (status == 2 &&(memberGrade ==2)) {
+			m.setMarketTitle("[비공개 처리]" + m.getMarketTitle());
+		}
+			
+		
 		if (status == 3 && memberGrade != 1) {
 			// 삭제 상태일떄 슈퍼관리자(1) 이외 유저는 접근못하게 null 리턴)
 			return new MarketResponse<>(false, "삭제된 게시글입니다.", null);
@@ -226,8 +231,9 @@ public class MarketService {
 			return new MarketResponse<>(true, "200 : 조회성공", m);
 		}
 		/*
-		if (memberGrade==3) {
+		if (memberGrade==3 && status == 3) {
 			//슈퍼관리자는 수정 삭제된 모든 파일을 가져옴, 조회수 증가 없음
+			//m.setMarketTitle("[삭제]" + m.getMarketTitle());
 						
 		}
 		*/
@@ -340,19 +346,24 @@ public class MarketService {
 	public int tradeComplete(Integer marketNo, String buyerId) {
 		// 1. buyerId = 거래완료(Status = 2) completed_date = sysdate
 		int result1 = marketDao.tradeAccepted(marketNo, buyerId);
+		
 		// 2. !buyerId = 거래거절(Status = 3) completed_date = sysdate (거래요청 수만큼 반환)
 		int result2 = marketDao.tradeReject(marketNo, buyerId);
+		
 		// 3. marketNo completed = 1, completed_date = sysdate
 		int result3 = marketDao.marketCompleted(marketNo);
+		
 		// 4. score_history_table에 포인트 기록 추가(
 		Market m = marketDao.selectSellerId(marketNo);
 		String sellerId = m.getMarketWriter();
 		int result4 = marketDao.addPointHistory(marketNo, sellerId);
+		
 		// 5. member_tbl에 sellerId 포인트 증가
 		int result5 = marketDao.addPointMember(sellerId);
 		
 		// 6. score_history_table에 buyer 포인트 기록 추가
 		int result6 = marketDao.addPointHistory2(marketNo, buyerId);
+		
 		// 7. member_tbl에 buyerId 포인트 증가
 		int result7 = marketDao.addPointMember2(buyerId);
 		

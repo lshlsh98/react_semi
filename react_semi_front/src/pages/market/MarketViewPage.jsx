@@ -268,7 +268,13 @@ const MarketViewPage = () => {
         //console.log(res);
         setTradeRequestList(res.data);
         if (res.data.length === 0) {
-          MySwal.fire("알림", "대기 중인 거래 요청이 없습니다.", "info");
+          MySwal.fire({
+            title: "알림",
+            text: "대기 중인 거래 요청이 없습니다.",
+            icon: "info",
+            confirmButtonText: "닫기",
+            confirmButtonColor: "var(--primary)",
+          });
           return;
         }
         MySwal.fire({
