@@ -58,7 +58,11 @@ const CommunityModifyPage = () => {
   };
 
   const inputCommunityContent = (data) => {
-    setCommunity({ ...community, communityContent: data });
+    setCommunity({
+      ...community,
+      communityContent: data.html,
+      communityText: data.text,
+    });
   };
 
   /* 내용 함수 */
@@ -113,14 +117,16 @@ const CommunityModifyPage = () => {
         <label htmlFor="communityTitle">제목</label>
 
         <div className={styles.title_input_box}>
-          <Input
-            type="text"
-            name="communityTitle"
-            id="communityTitle"
-            value={community.communityTitle || ""}
-            placeholder="제목을 입력해주세요 (최대 50자 입력 가능)"
-            onChange={inputCommunityTitle}
-          />
+          {community.communityTitle !== "" && (
+            <Input
+              type="text"
+              name="communityTitle"
+              id="communityTitle"
+              value={community.communityTitle || ""}
+              placeholder="제목을 입력해주세요 (최대 50자 입력 가능)"
+              onChange={inputCommunityTitle}
+            />
+          )}
 
           <span
             className={`${styles.title_count} ${
@@ -135,10 +141,12 @@ const CommunityModifyPage = () => {
       {/* 내용 필드 */}
       <div className={styles.community_input_wrap}>
         <label htmlFor="communityContent">내용</label>
-        <TextEditor
-          data={community.communityContent}
-          setData={inputCommunityContent}
-        />
+        {community.communityContent !== "" && (
+          <TextEditor
+            data={community.communityContent}
+            setData={inputCommunityContent}
+          />
+        )}
       </div>
 
       <div className={styles.btn_wrap}>

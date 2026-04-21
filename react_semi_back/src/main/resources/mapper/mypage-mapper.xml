@@ -196,7 +196,8 @@
 		AND cr.member_id = #{memberId}
 
 		<where>
-			msv.title LIKE '%'||#{searchKeyword}||'%'
+			msv.content_status != 3
+			AND msv.title LIKE '%'||#{searchKeyword}||'%'
 			<if test="isAdminMode != true">
 				AND msv.writer_id = #{memberId}
 			</if>
@@ -253,7 +254,8 @@
 		AND cr.member_id = #{memberId}
 
 		<where>
-			msv.title LIKE '%'||#{searchKeyword}||'%'
+			msv.content_status != 3
+			AND msv.title LIKE '%'||#{searchKeyword}||'%'
 			<if test="isAdminMode != true">
 				AND msv.writer_id = #{memberId}
 			</if>
@@ -281,7 +283,7 @@
 	WHERE market_no = #{boardNo} 
 	-->	
 		UPDATE market_tbl
-		SET market_status = 4
+		SET market_status = 3
 		WHERE market_no = #{boardNo}  
 	</delete>
 
