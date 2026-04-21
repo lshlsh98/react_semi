@@ -275,9 +275,14 @@
 	</update>
 
 	<delete id="deleteMarket">
-		DELETE
-		FROM market_tbl
-		WHERE market_no = #{boardNo}
+	<!--
+	 DELETE
+	FROM market_tbl
+	WHERE market_no = #{boardNo} 
+	-->	
+		UPDATE market_tbl
+		SET market_status = 3
+		WHERE market_no = #{boardNo}  
 	</delete>
 
 	<select id="findMarketCommentAll" resultType="commentSummary">
@@ -684,7 +689,7 @@
 		)
 
 		<where>
-			content_status = 1
+			content_status != 3
 			<if test="status == 1">
 				AND is_liked = 1
 			</if>
@@ -848,7 +853,7 @@
 		)
 
 		<where>
-			content_status = 1
+			content_status != 3
 			<if test="status == 1">
 				AND is_liked = 1
 			</if>
