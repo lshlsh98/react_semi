@@ -129,7 +129,7 @@
   align-items: center;
   gap: 8px;
   font-weight: bold;
-  font-size: 13px;
+  font-size: 15px;
 }
 
 /* 회원 프로필 관련*/
@@ -166,12 +166,11 @@
 }
 /*작성자*/
 .title.info_writer > span {
-  font-size: 11px;
+  font-size: 15px;
 }
 
 .wrap2 {
   display: flex;
-
   justify-content: space-between;
 }
 .wrap2_1 {
@@ -196,11 +195,11 @@
 .title_price {
   /*가격*/
   color: var(--secendary);
-  font-size: 14px;
+  font-size: 15px;
   font-weight: 700;
 }
 .title_price_free {
-  font-size: 14px;
+  font-size: 15px;
   font-weight: bold;
   color: var(--danger);
 }
@@ -212,7 +211,7 @@
 }
 
 .wrap1_date > p {
-  font-size: 12px;
+  font-size: 15px;
   font-weight: bold;
 }
 .wrap1_like {
@@ -224,7 +223,7 @@
   fill: var(--danger) !important;
 }
 .wrap1_like > p {
-  font-size: 11px;
+  font-size: 15px;
   font-weight: bold;
 }
 .wrap1_view {
@@ -238,7 +237,7 @@
   fill: var(--primary) !important;
 }
 .wrap1_view > p {
-  font-size: 11px;
+  font-size: 15px;
   font-weight: bold;
 }
 
