@@ -27,6 +27,29 @@ const ChangePw = () => {
     setMemberAuth({ ...memberAuth, [e.target.name]: e.target.value });
   };
 
+  const [checkPw, setCheckPw] = useState(0); // 비밀번호 확인 맞는지 틀린지 보는용도 state
+
+  const pwCheck = () => {
+    if (newPw === "") {
+      // 비번 체크해서 에러 문구띄우는 state인 checkPw 0으로 초기화
+      setCheckPw(0);
+      return;
+    }
+
+    // 비밀번호 정규식: 영문 1개 이상, 특수문자 1개 이상 필수, 숫자 선택, 8자 이상
+    const pwRegex =
+      /^(?=.*[a-zA-Z])(?=.*[!@#$%^&*()_+~`\-={}\[\]:;"'<>,.?\/\\|])[a-zA-Z\d!@#$%^&*()_+~`\-={}\[\]:;"'<>,.?\/\\|]{8,}$/;
+
+    if (!pwRegex.test(newPw)) {
+      // 정규식이 false이니 형식 오류 반환
+      setCheckPw(2);
+      return;
+    } else {
+      setCheckPw(1);
+      return;
+    }
+  };
+
   useEffect(() => {
     if (!memberId) return;
 
@@ -68,7 +91,8 @@ const ChangePw = () => {
       memberAuth.memberPw === newPw ||
       newPw === "" ||
       newPwRe === "" ||
-      newPw !== newPwRe
+      newPw !== newPwRe ||
+      checkPw !== 1
     ) {
       alert("비밀번호를 다시 확인해주십시오.");
       return;
@@ -152,6 +176,7 @@ const ChangePw = () => {
                   onChange={(e) => {
                     setNewPw(e.target.value);
                   }}
+                  onBlur={pwCheck}
                   autoComplete="off"
                 ></Input>
               </li>
@@ -178,7 +203,7 @@ const ChangePw = () => {
               </li>
             </ul>
 
-            {memberAuth.memberPw === newPw && (
+            {memberAuth.memberPw === newPw ? (
               <ul className={styles.member_new_pw_comment}>
                 <li></li>
                 <li>
@@ -188,6 +213,19 @@ const ChangePw = () => {
                 </li>
                 <li></li>
               </ul>
+            ) : (
+              checkPw === 2 && (
+                <ul className={styles.member_new_pw_comment}>
+                  <li></li>
+                  <li>
+                    <p className={`${styles.validation_msg} ${styles.invalid}`}>
+                      비밀번호는 영문, 특수문자(필수)와 숫자(선택)로 8자
+                      이상이어야 합니다.
+                    </p>
+                  </li>
+                  <li></li>
+                </ul>
+              )
             )}
 
             <ul className={styles.member_new_pw}>
