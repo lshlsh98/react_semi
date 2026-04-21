@@ -35,8 +35,7 @@ const CommunityListPage = () => {
 
   useEffect(() => {
     axios
-      .get(
-        `${import.meta.env.VITE_BACKSERVER}/communities`,{
+      .get(`${import.meta.env.VITE_BACKSERVER}/communities`, {
         params: {
           page: page,
           size: size,
@@ -95,9 +94,53 @@ const CommunityListPage = () => {
         </form>
       </div>
       {communityList.length === 0 ? (
-        <div className={styles.community_list_none}>
-          <h3>존재하는 게시글이 없습니다.</h3>
-        </div>
+        <>
+          <div className={styles.order_item_wrap}>
+            <BasicSelect
+              state={view}
+              setState={setView}
+              onChange={(e) => {
+                setPage(0);
+              }}
+              list={[
+                [1, "게시글"],
+                [2, "공지사항"],
+              ]}
+            />
+            <div className={styles.order_wrap}>
+              {memberId && (
+                <div className={styles.write_btn_zone}>
+                  <Button
+                    className="btn primary"
+                    onClick={() => {
+                      navigete("/community/write");
+                    }}
+                  >
+                    글쓰기
+                  </Button>
+                </div>
+              )}
+              <BasicSelect
+                state={order}
+                setState={setOrder}
+                onChange={(e) => {
+                  setPage(0);
+                }}
+                list={[
+                  [1, "최신순"],
+                  [2, "작성순"],
+                  [3, "조회수"],
+                  [4, "좋아요"],
+                  [5, "싫어요"],
+                  [6, "신고수"],
+                ]}
+              />
+            </div>
+          </div>
+          <div className={styles.community_list_none}>
+            <h3>존재하는 게시글이 없습니다.</h3>
+          </div>
+        </>
       ) : (
         <>
           <div className={styles.order_item_wrap}>

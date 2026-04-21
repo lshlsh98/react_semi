@@ -71,4 +71,5 @@
   padding: 50px;
   border-radius: 8px;
   text-align: center;
+  min-height: 200px;
 }
