@@ -36,7 +36,12 @@ import kr.co.iei.market.model.vo.MarketCommentReport;
 import kr.co.iei.market.model.vo.MarketReport;
 import kr.co.iei.market.model.vo.TradeRequest;
 
-	@CrossOrigin(origins = "http://localhost:5173", allowCredentials = "true")
+@CrossOrigin(
+	    origins = {
+	        "http://192.168.31.24:5173"
+	    },
+	    allowCredentials = "true"
+	)
 @RestController
 @RequestMapping(value = "/markets")
 
