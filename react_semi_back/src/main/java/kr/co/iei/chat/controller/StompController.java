@@ -12,7 +12,6 @@ import kr.co.iei.chat.model.service.ChatService;
 import kr.co.iei.chat.model.vo.ChatMessageDto;
 import kr.co.iei.member.model.service.MemberService;
 
-@CrossOrigin("*")
 @Controller
 public class StompController {
 	
