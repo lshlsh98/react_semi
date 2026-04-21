@@ -134,7 +134,7 @@ const MarketViewPage = () => {
 
         // 신고 사유(신고의 텍스트 박스 내용)가 없다면 쓰라고 하기
         if (!reason.trim()) {
-          Swal.showValidationMessage("신고 사유를 입력해주세요."); // 빈칸이면 못 넘어가게 막기
+          Swal.showValidationMessage("요청 메시지를 남겨주세요."); // 빈칸이면 못 넘어가게 막기
 
           // sweetalert 스타일 맞추기 위해
           const validationMsg = Swal.getValidationMessage();
