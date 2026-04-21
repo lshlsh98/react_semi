@@ -257,7 +257,10 @@ const MemberInfo = () => {
           <form
             onSubmit={(e) => {
               e.preventDefault();
-              if (mailAuth === 0 || mailAuth === 3) {
+              if (
+                newEmail === member.memberEmail &&
+                (mailAuth === 0 || mailAuth === 3)
+              ) {
                 changeThumb();
                 memberUpdate();
               } else {
