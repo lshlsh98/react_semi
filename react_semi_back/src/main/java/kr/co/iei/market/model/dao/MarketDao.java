@@ -83,8 +83,12 @@ public interface MarketDao {
 	Market selectSellerId(Integer marketNo);
 
 	int addPointHistory(Integer marketNo, String sellerId);
+	
+	int addPointHistory2(Integer marketNo, String buyerId);
 
 	int addPointMember(String sellerId);
+	
+	int addPointMember2(String buyerId);
 
 	int selectParentCommentCount(CommentListItem item);
 
@@ -105,6 +109,9 @@ public interface MarketDao {
 	MarketFile getHistoryMarketFile(String marketFilePath);
 
 	void insertHistoryMarketFile(List<MarketFile> history);
+
+	
+	
 
 
 

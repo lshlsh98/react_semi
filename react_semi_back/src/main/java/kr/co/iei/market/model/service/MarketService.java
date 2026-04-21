@@ -350,7 +350,16 @@ public class MarketService {
 		int result4 = marketDao.addPointHistory(marketNo, sellerId);
 		// 5. member_tbl에 sellerId 포인트 증가
 		int result5 = marketDao.addPointMember(sellerId);
+		
+		// 6. score_history_table에 buyer 포인트 기록 추가
+		int result6 = marketDao.addPointHistory2(marketNo, buyerId);
+		// 7. member_tbl에 buyerId 포인트 증가
+		int result7 = marketDao.addPointMember2(buyerId);
+		
 		int result = result1 + result2 + result3 + result4;
+		
+		
+		
 		return result;
 	}
 
