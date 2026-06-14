@@ -1,0 +1,45 @@
+services:
+
+  backend:
+    build:
+      context: ./react_semi_back
+    container_name: semi_backend
+    ports:
+      - "9999:9999"
+    environment:
+      # DB (AWS RDS)
+      DB_URL: jdbc:mysql://${DB_HOST}:${DB_PORT}/${DB_NAME}?serverTimezone=UTC&characterEncoding=UTF-8&useSSL=true
+      DB_USERNAME: ${DB_USERNAME}
+      DB_PASSWORD: ${DB_PASSWORD}
+      # JWT
+      JWT_SECRET_KEY: ${JWT_SECRET_KEY}
+      JWT_EXPIRE_HOUR: ${JWT_EXPIRE_HOUR}
+      # Email
+      MAIL_USERNAME: ${MAIL_USERNAME}
+      MAIL_PASSWORD: ${MAIL_PASSWORD}
+      # AWS
+      AWS_ACCESS_KEY: ${AWS_ACCESS_KEY}
+      AWS_SECRET_KEY: ${AWS_SECRET_KEY}
+      AWS_S3_BUCKET: ${AWS_S3_BUCKET}
+      AWS_S3_REGION: ${AWS_S3_REGION}
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "wget", "-qO-", "http://localhost:9999/actuator/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 60s
+
+  frontend:
+    build:
+      context: ./react_semi_front
+      args:
+        VITE_BACKSERVER: ${VITE_BACKSERVER}
+        VITE_NAVER_MAP_KEY: ${VITE_NAVER_MAP_KEY}
+        VITE_GREEN_RETURN_API_KEY: ${VITE_GREEN_RETURN_API_KEY}
+    container_name: semi_frontend
+    ports:
+      - "80:80"
+    depends_on:
+      - backend
+    restart: unless-stopped
