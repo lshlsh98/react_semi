@@ -83,7 +83,7 @@ const CommunityViewPage = () => {
                   >
                     {community.memberThumb ? (
                       <img
-                        src={`${import.meta.env.VITE_BACKSERVER}/semi/${community.memberThumb}`}
+                        src={community.memberThumb}
                       ></img>
                     ) : (
                       <span className="material-icons">account_circle</span>

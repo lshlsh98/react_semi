@@ -287,7 +287,7 @@ const MarketSection = ({ title, highlightWord, items }) => {
               <div className={styles.img_box}>
                 {item.marketThumb ? (
                   <img
-                    src={`${import.meta.env.VITE_IMAGE_SERVER}/${item.marketThumb}`}
+                    src={item.marketThumb}
                     alt={item.marketTitle}
                   />
                 ) : (

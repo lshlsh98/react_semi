@@ -25,8 +25,6 @@ const MarketViewPage = () => {
   const marketNo = params.marketNo;
   const MySwal = withReactContent(Swal);
   const [market, setMarket] = useState(null);
-  const imgUrl = "http://192.168.31.24:9999/market";
-
   const images = market?.fileList || [];
 
   const [bannerIndex, setBannerIndex] = useState(0); // 현재 화면에 보여지는 배너 이미지의 인덱스(순서)를 기억하는 state
@@ -534,7 +532,7 @@ const MarketViewPage = () => {
           <div className={styles.photo_wrap}>
             <div className={styles.banner_container}>
               <img
-                src={`${imgUrl}/${images[bannerIndex]?.marketFilePath}`}
+                src={images[bannerIndex]?.marketFilePath}
                 alt="상품 이미지"
                 className={styles.banner_image}
               />
@@ -572,7 +570,7 @@ const MarketViewPage = () => {
                 >
                   {market.memberThumb ? (
                     <img
-                      src={`${import.meta.env.VITE_BACKSERVER}/semi/${market.memberThumb}`}
+                      src={market.memberThumb}
                     ></img>
                   ) : (
                     <span className="material-icons">account_circle</span>

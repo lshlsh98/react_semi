@@ -5,7 +5,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
@@ -35,8 +34,6 @@ import kr.co.iei.utils.JwtUtils;
 @Service
 public class MarketService {
 
-	@Value("${file.root}")
-	private String root;
 	@Autowired
 	private MarketDao marketDao;
 	@Autowired
@@ -136,13 +133,12 @@ public class MarketService {
 			// System.out.println("크기: " + file.getSize());
 			// System.out.println("타입: " + file.getContentType());
 		}
-		// 3. 파일 리스트 생성 및 서버에 파일추가
+		// 3. 파일 리스트 생성 및 S3에 파일 업로드
 		List<MarketFile> fileList = new ArrayList<MarketFile>();
 		if (files != null) {
-			String savepath = root + "market/";
 			for (MultipartFile file : files) {
 				String marketFileName = file.getOriginalFilename();
-				String marketFilepath = fileUtil.upload(savepath, file);
+				String marketFilepath = fileUtil.upload("market", file);
 
 				MarketFile marketFile = new MarketFile();
 				marketFile.setMarketFileName(marketFileName);
@@ -272,10 +268,9 @@ public class MarketService {
 		if (result == 1) {
 			List<MarketFile> addFileList = new ArrayList<MarketFile>();
 			if (files != null) {
-				String savepath = root + "market/";
 				for (MultipartFile file : files) {
 					String marketFileName = file.getOriginalFilename();
-					String marketFilePath = fileUtil.upload(savepath, file);
+					String marketFilePath = fileUtil.upload("market", file);
 					MarketFile marketFile = new MarketFile();
 					marketFile.setMarketFileName(marketFileName);
 					marketFile.setMarketFilePath(marketFilePath);
@@ -290,17 +285,13 @@ public class MarketService {
 		} else {
 			return new MarketResponse<MarketUpdateResponse>(false, "marketDB 업데이트 실패", null);
 		}
-		// 파일DB삭제
-		//List<MarketFile> history = new ArrayList<>();
+		// 파일 DB 삭제 + S3 삭제
 		int deleteFileCount = 0;
 		if (market.getDeleteFilePath() != null) {
 			for (String marketFilePath : market.getDeleteFilePath()) {
-				//MarketFile getHistoryFile = marketDao.getHistoryMarketFile(marketFilePath);
-				//history.add(getHistoryFile);
 				deleteFileCount += marketDao.deleteMarketFile(marketFilePath);
-							
+				fileUtil.deleteFile(marketFilePath);
 			}
-			//marketDao.insertHistoryMarketFile(history);
 		}
 		
 		// 파일은DB에 남겨둠

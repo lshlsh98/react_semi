@@ -104,7 +104,7 @@ const Profile = () => {
         }
       >
         {memberThumb ? ( //여기확인
-          <img src={`${import.meta.env.VITE_BACKSERVER}/semi/${memberThumb}`} />
+          <img src={memberThumb} />
         ) : (
           <span className="material-icons">account_circle</span>
         )}

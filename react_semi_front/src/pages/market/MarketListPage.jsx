@@ -273,7 +273,7 @@ const MarketItem = ({ market, marketList }) => {
       <div className={styles.market_info_wrap}>
         {market.marketThumb ? (
           <img
-            src={`${import.meta.env.VITE_IMAGE_SERVER}/${market.marketThumb}`}
+            src={market.marketThumb}
             alt={market.marketTitle}
           />
         ) : (
@@ -294,7 +294,7 @@ const MarketItem = ({ market, marketList }) => {
               >
                 {market.memberThumb ? (
                   <img
-                    src={`${import.meta.env.VITE_BACKSERVER}/semi/${market.memberThumb}`}
+                    src={market.memberThumb}
                   ></img>
                 ) : (
                   <span className="material-icons">account_circle</span>

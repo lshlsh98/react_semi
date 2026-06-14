@@ -4,7 +4,6 @@ import java.util.Map;
 import java.util.Random;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -40,9 +39,6 @@ public class MemberController {
 
 	@Autowired
 	private FileUtils fileUtil;
-
-	@Value("${file.root}")
-	private String root;
 
 	// 1. 회원가입
 	@PostMapping
@@ -186,30 +182,27 @@ public class MemberController {
 	// 회원 프로필 썸네일 업데이트
 	@PatchMapping(value = "/{memberId}/thumbnail/update")
 	public ResponseEntity<?> updateThumbnail(@PathVariable String memberId, @ModelAttribute MultipartFile file) {
-		String savepath = root + "semi/";
-		String memberThumb = fileUtil.upload(savepath, file);
+		String memberThumb = fileUtil.upload("semi", file);
 
 		Member m = new Member();
 		m.setMemberThumb(memberThumb);
 		m.setMemberId(memberId);
 
-		int result = memberService.updateThumbnail(m, savepath);
+		int result = memberService.updateThumbnail(m);
 		return ResponseEntity.ok(memberThumb);
 	}
 
 	// 회원 정보 수정 완료
 	@PatchMapping(value = "/{memberId}")
 	public ResponseEntity<?> memberUpdate(@PathVariable String memberId, @RequestBody Member member) {
-		String savepath = root + "semi/";
-		int result = memberService.memberUpdate(memberId, member, savepath);
+		int result = memberService.memberUpdate(memberId, member);
 		return ResponseEntity.ok(member);
 	}
 
 	// 회원 탈퇴
 	@DeleteMapping(value = "/{memberId}")
 	public ResponseEntity<?> memberDelete(@PathVariable String memberId) {
-		String savepath = root + "semi/";
-		int result = memberService.memberDelete(memberId, savepath);
+		int result = memberService.memberDelete(memberId);
 		return ResponseEntity.ok(result);
 	}
 

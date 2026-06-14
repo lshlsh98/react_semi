@@ -1,11 +1,9 @@
 package kr.co.iei.market.controller;
 
-import java.io.File;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -48,9 +46,9 @@ import kr.co.iei.market.model.vo.TradeRequest;
 public class MarketController {
 	@Autowired
 	private MarketService marketService;
-	@Value("${file.root}")
-	private String root;
-	
+	@Autowired
+	private kr.co.iei.utils.FileUtils fileUtil;
+
 	 // 마켓게시판 거래 성사시 지급될 포인트
 
 	// 메인 페이지용 5개 리스트 조회 - 이영민
@@ -158,16 +156,13 @@ public class MarketController {
 		//System.out.println("\n 파일TBL 삭제 결과 (1~10) : " + fileCount);
 		//System.out.println("마켓TBL 삭제 결과 (0~1) : " + result);
 
-		// 3. 파일 삭제
-		String savepath = root + "market/";
+		// 3. S3에서 파일 삭제
 		boolean allDeleted = true;
 		if (result == 1) {
 			if (fileList != null && !fileList.isEmpty()) {
-				for (String fileName : fileList) {
-					boolean bool = deleteFile(fileName, savepath);
-					if (!bool) {
-						allDeleted = false;
-					}
+				for (String s3Url : fileList) {
+					boolean deleted = fileUtil.deleteFile(s3Url);
+					if (!deleted) allDeleted = false;
 				}
 			}
 		}
@@ -178,17 +173,6 @@ public class MarketController {
 		response.put("allDeleted", allDeleted); // 프론트에 전달할 전체 삭제 정상 여부
 		response.put("result", result); // 프론트에 전달할 게시물 삭제 여부
 		return ResponseEntity.ok(response);
-	}
-
-	// FileUtils 로 이동완료 추후 삭제
-	private boolean deleteFile(String filename, String root) {
-		if (filename == null || filename.isEmpty())
-			return false;
-		File file = new File(root + filename);
-		if (file.exists()) {
-			return file.delete(); // 파일 삭제 성공시 true 리턴
-		}
-		return false;
 	}
 
 	/// 마켓게시판-좋아요-등록 (Markets/{marketNo}/likes) Create : 한진호
