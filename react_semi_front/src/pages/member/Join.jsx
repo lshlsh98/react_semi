@@ -146,6 +146,7 @@ const Join = () => {
           title: "발송 완료",
           text: "이메일로 인증번호가 발송되었습니다.",
         });
+        console.log(res.data);
         setMailAuthCode(res.data);
         setMailAuth(2);
 
