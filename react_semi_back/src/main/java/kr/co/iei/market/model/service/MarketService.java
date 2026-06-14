@@ -146,11 +146,7 @@ public class MarketService {
 				fileList.add(marketFile);
 			}
 		}
-		// 4. 게시글 번호 생성 및 셋(시퀀스 번호 발급)
-		int marketNo = marketDao.getNewMarketNo();
-		market.setMarketNo(marketNo);
-
-		// 5. 마켓 게시글 등록 (insert market_tbl)
+		// 4. 마켓 게시글 등록 (insert market_tbl) — useGeneratedKeys로 marketNo 자동 세팅
 		int result = marketDao.insertMarket(market);
 		if (result == 0) {
 			return new MarketResponse<>(false, "500 : DB 입력 실패", null);
@@ -159,14 +155,12 @@ public class MarketService {
 		// 6. 마켓 파일 DB 등록 (insert market_file_tbl)
 		int fileCount = 0;
 		for (MarketFile marketFile : fileList) {
-			marketFile.setMarketNo(marketNo);
+			marketFile.setMarketNo(market.getMarketNo());
 			fileCount += marketDao.insertMarketFile(marketFile);
 		}
 
-		// System.out.println("\n" + marketNo + " 번 게시글 업로드 결과");
-		// System.out.println("게시글작성 : " + result + " , 파일업로드 갯수 : " + fileCount);
 		// 7 : 결과 응답객체에 추가
-		MarketCreateResponse data = new MarketCreateResponse(marketNo, fileCount);
+		MarketCreateResponse data = new MarketCreateResponse(market.getMarketNo(), fileCount);
 		return new MarketResponse<>(true, "201 : 게시물 등록 성공", data);
 	}
 

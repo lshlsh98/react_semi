@@ -3,159 +3,109 @@
 <mapper namespace="kr.co.iei.community.model.dao.CommunityDao">
 
 	<select id="selectCommunityList" resultType="community">
-		select
-		c.community_no,
-		c.community_title,
-		c.community_content,
-		c.community_writer,
-		to_char(c.community_date, 'yyyy-mm-dd hh24:mi:ss') as community_date,
-		c.view_count,
-		m.member_name,
-		m.member_thumb,
-		m.member_grade,
-		(select count(*)
-		from community_like_tbl l
-		where c.community_no = l.community_no) as like_count,
-		
-		(select count(*)
-		from community_dislike_tbl d
-		where c.community_no = d.community_no) as dislike_count,
-		
-		(select count(*)
-		from community_report_tbl r
-		where c.community_no = r.community_no) as report_count,
-		
-		(select count(*)
-		from community_comment_tbl cc
-		where c.community_no = cc.community_no) as comment_count,
-		
-		(select hex_code
-		from color_tbl
-		where color_id = (select current_color_id 
-							from member_tbl
-							where member_id = c.community_writer)) as hex_code
-		
-		<if test="memberId != null and memberId != ''">
-            , (select count(*) from community_like_tbl cl where cl.community_no = c.community_no and cl.member_id = #{memberId}) as is_like
-            , (select count(*) from community_dislike_tbl cd where cd.community_no = c.community_no and cd.member_id = #{memberId}) as is_dislike
-        </if>
-        
-		from community_tbl c
-		join member_tbl m on (c.community_writer = m.member_id)
-		where c.community_status = 1
-		
+		SELECT
+			c.community_no,
+			c.community_title,
+			c.community_content,
+			c.community_writer,
+			DATE_FORMAT(c.community_date, '%Y-%m-%d %H:%i:%s') AS community_date,
+			c.view_count,
+			m.member_name,
+			m.member_thumb,
+			m.member_grade,
+			(SELECT COUNT(*) FROM community_like_tbl l WHERE c.community_no = l.community_no) AS like_count,
+			(SELECT COUNT(*) FROM community_dislike_tbl d WHERE c.community_no = d.community_no) AS dislike_count,
+			(SELECT COUNT(*) FROM community_report_tbl r WHERE c.community_no = r.community_no) AS report_count,
+			(SELECT COUNT(*) FROM community_comment_tbl cc WHERE c.community_no = cc.community_no) AS comment_count,
+			(
+				SELECT hex_code FROM color_tbl
+				WHERE color_id = (
+					SELECT current_color_id FROM member_tbl
+					WHERE member_id = c.community_writer
+				)
+			) AS hex_code
+			<if test="memberId != null and memberId != ''">
+				,(SELECT COUNT(*) FROM community_like_tbl cl WHERE cl.community_no = c.community_no AND cl.member_id = #{memberId}) AS is_like
+				,(SELECT COUNT(*) FROM community_dislike_tbl cd WHERE cd.community_no = c.community_no AND cd.member_id = #{memberId}) AS is_dislike
+			</if>
+		FROM community_tbl c
+		JOIN member_tbl m ON c.community_writer = m.member_id
+		WHERE c.community_status = 1
+
 		<if test="searchType==1">
 		<![CDATA[
-		and (
-		    c.community_title like '%' || 
-		        replace(replace(replace(#{searchKeyword}, '\', '\\'), '_', '\_'), '%', '\%')
-		    || '%' escape '\'
-		    or regexp_replace(c.community_content, '<[^>]*>', '') like '%' || 
-		        replace(replace(replace(#{searchKeyword}, '\', '\\'), '_', '\_'), '%', '\%')
-		    || '%' escape '\'
-		)
+			AND (
+				c.community_title LIKE CONCAT('%', #{searchKeyword}, '%')
+				OR REGEXP_REPLACE(c.community_content, '<[^>]*>', '') LIKE CONCAT('%', #{searchKeyword}, '%')
+			)
 		]]>
 		</if>
-		
+
 		<if test="searchType==2">
-		<![CDATA[
-		and (
-		    c.community_writer like '%' || 
-		        replace(replace(replace(#{searchKeyword}, '\', '\\'), '_', '\_'), '%', '\%')
-		    || '%' escape '\'
-		    or regexp_replace(c.community_writer, '<[^>]*>', '') like '%' || 
-		        replace(replace(replace(#{searchKeyword}, '\', '\\'), '_', '\_'), '%', '\%')
-		    || '%' escape '\'
-		    or m.member_name like '%' || 
-		        replace(replace(replace(#{searchKeyword}, '\', '\\'), '_', '\_'), '%', '\%')
-		    || '%' escape '\'
-		)
-		]]>
+			AND (
+				c.community_writer LIKE CONCAT('%', #{searchKeyword}, '%')
+				OR m.member_name LIKE CONCAT('%', #{searchKeyword}, '%')
+			)
 		</if>
 
 		<if test="view==1">
-			and m.member_grade=3
+			AND m.member_grade = 3
 		</if>
 		<if test="view==2">
-			and m.member_grade in (1, 2)
+			AND m.member_grade IN (1, 2)
 		</if>
 
-		<if test="order == 1">order by c.community_no desc</if>
-		<if test="order == 2">order by c.community_no asc</if>
-		<if test="order == 3">order by c.view_count desc</if>
-		<if test="order == 4">order by like_count desc</if>
-		<if test="order == 5">order by dislike_count desc</if>
-		<if test="order == 6">order by report_count desc</if>
-		offset #{page}*#{size} rows fetch next #{size} rows only
+		<if test="order == 1">ORDER BY c.community_no DESC</if>
+		<if test="order == 2">ORDER BY c.community_no ASC</if>
+		<if test="order == 3">ORDER BY c.view_count DESC</if>
+		<if test="order == 4">ORDER BY like_count DESC</if>
+		<if test="order == 5">ORDER BY dislike_count DESC</if>
+		<if test="order == 6">ORDER BY report_count DESC</if>
+		LIMIT #{size} OFFSET ${page*size}
 	</select>
 
 	<select id="selectCommunityCount" resultType="Integer">
-		select count(*)
-		from community_tbl c
-		join member_tbl m on
-		(community_writer = m.member_id)
-		where
-		community_status = 1
+		SELECT COUNT(*)
+		FROM community_tbl c
+		JOIN member_tbl m ON c.community_writer = m.member_id
+		WHERE community_status = 1
 
 		<if test="searchType==1">
 		<![CDATA[
-		and (
-		    c.community_title like '%' || 
-		        replace(replace(replace(#{searchKeyword}, '\', '\\'), '_', '\_'), '%', '\%')
-		    || '%' escape '\'
-		    or regexp_replace(c.community_content, '<[^>]*>', '') like '%' || 
-		        replace(replace(replace(#{searchKeyword}, '\', '\\'), '_', '\_'), '%', '\%')
-		    || '%' escape '\'
-		)
+			AND (
+				c.community_title LIKE CONCAT('%', #{searchKeyword}, '%')
+				OR REGEXP_REPLACE(c.community_content, '<[^>]*>', '') LIKE CONCAT('%', #{searchKeyword}, '%')
+			)
 		]]>
 		</if>
-		
+
 		<if test="searchType==2">
-		<![CDATA[
-		and (
-		    c.community_writer like '%' || 
-		        replace(replace(replace(#{searchKeyword}, '\', '\\'), '_', '\_'), '%', '\%')
-		    || '%' escape '\'
-		    or regexp_replace(c.community_writer, '<[^>]*>', '') like '%' || 
-		        replace(replace(replace(#{searchKeyword}, '\', '\\'), '_', '\_'), '%', '\%')
-		    || '%' escape '\'
-		    or m.member_name like '%' || 
-		        replace(replace(replace(#{searchKeyword}, '\', '\\'), '_', '\_'), '%', '\%')
-		    || '%' escape '\'
-		)
-		]]>
+			AND (
+				c.community_writer LIKE CONCAT('%', #{searchKeyword}, '%')
+				OR m.member_name LIKE CONCAT('%', #{searchKeyword}, '%')
+			)
 		</if>
 
 		<if test="view==1">
-			and member_grade=3
+			AND member_grade = 3
 		</if>
 		<if test="view==2">
-			and member_grade in (1, 2)
+			AND member_grade IN (1, 2)
 		</if>
 	</select>
 
-	<insert id="insertCommunity">
-		insert into community_tbl (
-		community_no,
-		community_title,
-		community_content,
-		community_date,
-		community_status,
-		community_writer,
-		view_count
-		) values (
-		community_seq.nextval,
-		#{communityTitle},
-		#{communityContent},
-		sysdate,
-		1,
-		#{communityWriter},
-		0
+	<insert id="insertCommunity" useGeneratedKeys="true" keyProperty="communityNo">
+		INSERT INTO community_tbl (
+			community_title, community_content, community_date,
+			community_status, community_writer, view_count
+		) VALUES (
+			#{communityTitle}, #{communityContent}, NOW(),
+			1, #{communityWriter}, 0
 		)
 	</insert>
 
 	<select id="selectOneCommunity" resultType="community">
-		select
+		SELECT
 			community_no,
 			community_title,
 			community_content,
@@ -163,276 +113,265 @@
 			view_count,
 			member_name,
 			member_thumb,
-			to_char(community_date, 'yyyy-mm-dd HH24:mi') as community_date,
-			(select hex_code
-			from color_tbl
-			where color_id = (select current_color_id 
-								from member_tbl
-								where member_id = community_writer))
-			as hex_code
-		from community_tbl
-		join member_tbl on
-		(community_writer = member_id)
-		where community_no = #{communityNo}
+			DATE_FORMAT(community_date, '%Y-%m-%d %H:%i') AS community_date,
+			(
+				SELECT hex_code FROM color_tbl
+				WHERE color_id = (
+					SELECT current_color_id FROM member_tbl
+					WHERE member_id = community_writer
+				)
+			) AS hex_code
+		FROM community_tbl
+		JOIN member_tbl ON community_writer = member_id
+		WHERE community_no = #{communityNo}
 	</select>
 
 	<update id="updateCommunity">
-		update community_tbl set
+		UPDATE community_tbl SET
 		community_title = #{communityTitle},
 		community_content = #{communityContent}
-		where community_no = #{communityNo}
+		WHERE community_no = #{communityNo}
 	</update>
 
 	<select id="selectMainPageCommunityList" resultType="community">
-		select
-		c.community_no,
-		c.community_title,
-		c.community_content,
-		c.community_writer,
-		to_char(c.community_date, 'yyyy-mm-dd hh24:mi:ss') community_date,
-		c.view_count,
-		
-		(select count(*) from community_like_tbl l where c.community_no = l.community_no) like_count,
-		(select count(*) from community_dislike_tbl d where c.community_no = d.community_no) dislike_count
-		
-		<if test="memberId != null and memberId != ''">
-			, (select count(*) from community_like_tbl cl where cl.community_no = c.community_no and cl.member_id = #{memberId}) is_like
-			, (select count(*) from community_dislike_tbl cd where cd.community_no = c.community_no and cd.member_id = #{memberId}) is_dislike
-		</if>
-
-		from community_tbl c
-		join member_tbl m on (c.community_writer = m.member_id) 
-		where c.community_status = 1
+		SELECT
+			c.community_no,
+			c.community_title,
+			c.community_content,
+			c.community_writer,
+			DATE_FORMAT(c.community_date, '%Y-%m-%d %H:%i:%s') AS community_date,
+			c.view_count,
+			(SELECT COUNT(*) FROM community_like_tbl l WHERE c.community_no = l.community_no) AS like_count,
+			(SELECT COUNT(*) FROM community_dislike_tbl d WHERE c.community_no = d.community_no) AS dislike_count
+			<if test="memberId != null and memberId != ''">
+				,(SELECT COUNT(*) FROM community_like_tbl cl WHERE cl.community_no = c.community_no AND cl.member_id = #{memberId}) AS is_like
+				,(SELECT COUNT(*) FROM community_dislike_tbl cd WHERE cd.community_no = c.community_no AND cd.member_id = #{memberId}) AS is_dislike
+			</if>
+		FROM community_tbl c
+		JOIN member_tbl m ON c.community_writer = m.member_id
+		WHERE c.community_status = 1
 
 		<if test="type == 'popular'">
-			and m.member_grade in 3
-			order by like_count desc, c.community_no desc
+			AND m.member_grade = 3
+			ORDER BY like_count DESC, c.community_no DESC
 		</if>
-
 		<if test="type == 'notice'">
-			and m.member_grade in (1, 2) 
-			order by c.community_no desc
+			AND m.member_grade IN (1, 2)
+			ORDER BY c.community_no DESC
 		</if>
-
-		offset 0 rows fetch next 5 rows only
+		LIMIT 5
 	</select>
-	
+
 	<select id="selectParentCommentCount" resultType="int">
-		select count(*) from community_comment_tbl 
-		where community_no = #{communityNo} and community_recomment_no is null
+		SELECT COUNT(*) FROM community_comment_tbl
+		WHERE community_no = #{communityNo} AND community_recomment_no IS NULL
 	</select>
 
+	<!-- 댓글 + 대댓글 목록 (MySQL 재귀 CTE) -->
 	<select id="selectCommunityCommentList" resultType="communityComment">
-		select 
-		    t.community_comment_no, 
-		    t.community_no, 
-		    t.community_comment_writer, 
-		    t.community_comment_content, 
-		    to_char(t.community_comment_date, 'yyyy-mm-dd hh24:mi:ss') community_comment_date,
-		    t.community_recomment_no, 
-		    t.is_edited,
-		    m.member_name, m.member_thumb,
-		    (select count(*) from community_comment_like_tbl cl where cl.community_comment_no = t.community_comment_no) like_count,
-		    (select count(*) from community_comment_dislike_tbl cd where cd.community_comment_no = t.community_comment_no) dislike_count,
-		    <!-- 현재 로그인한 사람이 좋아요/싫어요를 눌렀는지 판별 (memberId 활용) -->
-		    (select count(*) from community_comment_like_tbl cl where cl.community_comment_no = t.community_comment_no and cl.member_id = #{memberId}) is_like,
-		    (select count(*) from community_comment_dislike_tbl cd where cd.community_comment_no = t.community_comment_no and cd.member_id = #{memberId}) is_dislike,
-		    (select hex_code
-			from color_tbl
-			where color_id = (select current_color_id 
-								from member_tbl
-								where member_id = community_comment_writer))
-			as hex_code
-		from (
-		    select * from community_comment_tbl where community_no = #{communityNo}
-		    
-		    <!-- 1. 부모 댓글 10개를 뽑을 때 정렬을 싹 다 적용! (비밀댓글이 없으므로 정렬만 수행) -->
-		    start with community_comment_no in (
-		        select community_comment_no from (
-		            select community_comment_no from community_comment_tbl 
-		            where community_no = #{communityNo} and community_recomment_no is null
-		            
-		            <if test="orderType == 'oldest'">
-		                order by community_comment_no asc
-		            </if>
-		            
-		            <if test="orderType == 'newest' or orderType == null">
-		                order by community_comment_no desc
-		            </if>
-		            
-		            <if test="orderType == 'like'">
-                		order by 
-                		(select count(*) from community_comment_like_tbl 
-                		where community_comment_no = community_comment_tbl.community_comment_no) desc, community_comment_no desc
-            		</if>
-            		
-            		<if test="orderType == 'dislike'">
-              		  	order by 
-              		  	(select count(*) from community_comment_dislike_tbl 
-              		  	where community_comment_no = community_comment_tbl.community_comment_no) desc, community_comment_no desc
-            		</if>
-		        )
-		        offset #{page} * #{size} rows fetch next #{size} rows only
-		    )
-		    
-		    <!-- 2. 자식 답글들 전부 끌고 오기 -->
-		    connect by prior community_comment_no = community_recomment_no
-		    
-		    <!-- 3. 전체 데이터를 조건에 맞춰 정렬해서 프론트로 넘김 -->
-		    <if test="orderType == 'oldest'">
-		        order by community_comment_no asc
-		    </if>
-		    
-		    <if test="orderType == 'newest' or orderType == null">
-		        order by community_comment_no desc
-		    </if>
-		    
-		    <if test="orderType == 'like'">
-		        order by 
-		        (select count(*) from community_comment_like_tbl 
-		        where community_comment_no = community_comment_tbl.community_comment_no) desc, community_comment_no desc
-		    </if>
-		    
-		    <if test="orderType == 'dislike'">
-		        order by 
-		        (select count(*) from community_comment_dislike_tbl 
-		        where community_comment_no = community_comment_tbl.community_comment_no) desc, community_comment_no desc
-		    </if>
-		) t
-		left join member_tbl m on (t.community_comment_writer = m.member_id)
+		WITH RECURSIVE comment_tree AS (
+			SELECT * FROM community_comment_tbl
+			WHERE community_comment_no IN (
+				SELECT community_comment_no FROM (
+					SELECT community_comment_no FROM community_comment_tbl
+					WHERE community_no = #{communityNo} AND community_recomment_no IS NULL
+					<if test="orderType == 'oldest'">
+						ORDER BY community_comment_no ASC
+					</if>
+					<if test="orderType == 'newest' or orderType == null">
+						ORDER BY community_comment_no DESC
+					</if>
+					<if test="orderType == 'like'">
+						ORDER BY (
+							SELECT COUNT(*) FROM community_comment_like_tbl
+							WHERE community_comment_no = community_comment_tbl.community_comment_no
+						) DESC, community_comment_no DESC
+					</if>
+					<if test="orderType == 'dislike'">
+						ORDER BY (
+							SELECT COUNT(*) FROM community_comment_dislike_tbl
+							WHERE community_comment_no = community_comment_tbl.community_comment_no
+						) DESC, community_comment_no DESC
+					</if>
+					LIMIT #{size} OFFSET ${page*size}
+				) AS paged_parents
+			)
+			UNION ALL
+			SELECT c.* FROM community_comment_tbl c
+			INNER JOIN comment_tree ct ON c.community_recomment_no = ct.community_comment_no
+		)
+		SELECT
+			t.community_comment_no,
+			t.community_no,
+			t.community_comment_writer,
+			t.community_comment_content,
+			DATE_FORMAT(t.community_comment_date, '%Y-%m-%d %H:%i:%s') AS community_comment_date,
+			t.community_recomment_no,
+			t.is_edited,
+			m.member_name,
+			m.member_thumb,
+			(SELECT COUNT(*) FROM community_comment_like_tbl cl WHERE cl.community_comment_no = t.community_comment_no) AS like_count,
+			(SELECT COUNT(*) FROM community_comment_dislike_tbl cd WHERE cd.community_comment_no = t.community_comment_no) AS dislike_count,
+			(SELECT COUNT(*) FROM community_comment_like_tbl cl WHERE cl.community_comment_no = t.community_comment_no AND cl.member_id = #{memberId}) AS is_like,
+			(SELECT COUNT(*) FROM community_comment_dislike_tbl cd WHERE cd.community_comment_no = t.community_comment_no AND cd.member_id = #{memberId}) AS is_dislike,
+			(
+				SELECT hex_code FROM color_tbl
+				WHERE color_id = (
+					SELECT current_color_id FROM member_tbl
+					WHERE member_id = t.community_comment_writer
+				)
+			) AS hex_code
+		FROM comment_tree t
+		LEFT JOIN member_tbl m ON t.community_comment_writer = m.member_id
+		<if test="orderType == 'oldest'">
+			ORDER BY t.community_comment_no ASC
+		</if>
+		<if test="orderType == 'newest' or orderType == null">
+			ORDER BY t.community_comment_no DESC
+		</if>
+		<if test="orderType == 'like'">
+			ORDER BY (
+				SELECT COUNT(*) FROM community_comment_like_tbl
+				WHERE community_comment_no = t.community_comment_no
+			) DESC, t.community_comment_no DESC
+		</if>
+		<if test="orderType == 'dislike'">
+			ORDER BY (
+				SELECT COUNT(*) FROM community_comment_dislike_tbl
+				WHERE community_comment_no = t.community_comment_no
+			) DESC, t.community_comment_no DESC
+		</if>
 	</select>
 
-	<insert id="insertCommunityComment">
-		insert into community_comment_tbl values (
-			community_comment_seq.NEXTVAL,
-			#{communityCommentContent},
-			sysdate,
-			#{communityNo},
-			#{communityCommentWriter},
-			#{communityRecommentNo},
-			0
+	<insert id="insertCommunityComment" useGeneratedKeys="true" keyProperty="communityCommentNo">
+		INSERT INTO community_comment_tbl (
+			community_comment_content, community_comment_date, community_no,
+			community_comment_writer, community_recomment_no, is_edited
+		) VALUES (
+			#{communityCommentContent}, NOW(), #{communityNo},
+			#{communityCommentWriter}, #{communityRecommentNo}, 0
 		)
 	</insert>
 
 	<update id="updateCommunityComment">
-		update community_comment_tbl 
-		set
-			community_comment_content = #{communityCommentContent},
-			is_edited = 1
-		where community_comment_no = #{communityCommentNo}
+		UPDATE community_comment_tbl SET
+		community_comment_content = #{communityCommentContent},
+		is_edited = 1
+		WHERE community_comment_no = #{communityCommentNo}
 	</update>
 
 	<delete id="deleteCommunityComment">
-		delete from community_comment_tbl where community_comment_no = #{communityCommentNo}
+		DELETE FROM community_comment_tbl WHERE community_comment_no = #{communityCommentNo}
 	</delete>
 
 	<select id="selectCommentLikeCount" resultType="int">
-		select count(*) from community_comment_like_tbl where community_comment_no = #{communityCommentNo}
+		SELECT COUNT(*) FROM community_comment_like_tbl
+		WHERE community_comment_no = #{communityCommentNo}
 	</select>
-	
+
 	<select id="selectCommentDislikeCount" resultType="int">
-		select count(*) from community_comment_dislike_tbl where community_comment_no = #{communityCommentNo}
+		SELECT COUNT(*) FROM community_comment_dislike_tbl
+		WHERE community_comment_no = #{communityCommentNo}
 	</select>
 
 	<select id="selectCommentIsLike" resultType="int">
-		select count(*) from community_comment_like_tbl where community_comment_no = #{communityCommentNo} and member_id = #{memberId}
+		SELECT COUNT(*) FROM community_comment_like_tbl
+		WHERE community_comment_no = #{communityCommentNo} AND member_id = #{memberId}
 	</select>
-	
+
 	<select id="selectCommentIsDislike" resultType="int">
-		select count(*) from community_comment_dislike_tbl where community_comment_no = #{communityCommentNo} and member_id = #{memberId}
+		SELECT COUNT(*) FROM community_comment_dislike_tbl
+		WHERE community_comment_no = #{communityCommentNo} AND member_id = #{memberId}
 	</select>
 
 	<insert id="commentLikeOn">
-		insert into community_comment_like_tbl values (#{communityCommentNo}, #{memberId})
+		INSERT INTO community_comment_like_tbl VALUES (#{communityCommentNo}, #{memberId})
 	</insert>
 
 	<delete id="commentLikeOff">
-		delete from community_comment_like_tbl where community_comment_no = #{communityCommentNo} and member_id = #{memberId}
+		DELETE FROM community_comment_like_tbl
+		WHERE community_comment_no = #{communityCommentNo} AND member_id = #{memberId}
 	</delete>
 
 	<insert id="commentDislikeOn">
-		insert into community_comment_dislike_tbl values (#{communityCommentNo}, #{memberId})
+		INSERT INTO community_comment_dislike_tbl VALUES (#{communityCommentNo}, #{memberId})
 	</insert>
 
 	<delete id="commentDislikeOff">
-		delete from community_comment_dislike_tbl where community_comment_no = #{communityCommentNo} and member_id = #{memberId}
+		DELETE FROM community_comment_dislike_tbl
+		WHERE community_comment_no = #{communityCommentNo} AND member_id = #{memberId}
 	</delete>
 
 	<insert id="insertCommentReport">
-		insert into community_comment_report_tbl values (#{communityCommentNo}, #{memberId}, #{communityCommentReportReason})
+		INSERT INTO community_comment_report_tbl
+		VALUES (#{communityCommentNo}, #{memberId}, #{communityCommentReportReason})
 	</insert>
 
 	<delete id="deleteCommunity">
-		delete community_tbl
-		where community_no = #{communityNo}
+		DELETE FROM community_tbl
+		WHERE community_no = #{communityNo}
 	</delete>
 
 	<select id="selectLikeCount" resultType="int">
-		select count(*) from community_like_tbl where community_no = #{communityNo}
+		SELECT COUNT(*) FROM community_like_tbl WHERE community_no = #{communityNo}
 	</select>
 
 	<select id="selectIsLike" resultType="int">
-		select count(*) from community_like_tbl
-		where community_no = #{communityNo} and member_id = #{memberId}
+		SELECT COUNT(*) FROM community_like_tbl
+		WHERE community_no = #{communityNo} AND member_id = #{memberId}
 	</select>
 
 	<insert id="insertLike">
-		insert into community_like_tbl (community_no, member_id)
-		values (#{communityNo}, #{memberId})
+		INSERT INTO community_like_tbl (community_no, member_id)
+		VALUES (#{communityNo}, #{memberId})
 	</insert>
 
 	<delete id="deleteLike">
-		delete from community_like_tbl
-		where community_no = #{communityNo} and member_id = #{memberId}
+		DELETE FROM community_like_tbl
+		WHERE community_no = #{communityNo} AND member_id = #{memberId}
 	</delete>
 
 	<select id="selectDislikeCount" resultType="int">
-		select count(*)
-		from community_dislike_tbl
-		where community_no = #{communityNo}
+		SELECT COUNT(*) FROM community_dislike_tbl WHERE community_no = #{communityNo}
 	</select>
 
 	<select id="selectIsDislike" resultType="int">
-		select count(*)
-		from community_dislike_tbl
-		where community_no = #{communityNo} and member_id = #{memberId}
+		SELECT COUNT(*) FROM community_dislike_tbl
+		WHERE community_no = #{communityNo} AND member_id = #{memberId}
 	</select>
 
 	<insert id="insertDislike">
-		insert into community_dislike_tbl (community_no, member_id)
-		values (#{communityNo}, #{memberId})
+		INSERT INTO community_dislike_tbl (community_no, member_id)
+		VALUES (#{communityNo}, #{memberId})
 	</insert>
 
 	<delete id="deleteDislike">
-		delete from community_dislike_tbl
-		where community_no = #{communityNo} and member_id = #{memberId}
+		DELETE FROM community_dislike_tbl
+		WHERE community_no = #{communityNo} AND member_id = #{memberId}
 	</delete>
 
 	<select id="selectReportCount" resultType="int">
-		select count(*)
-		from community_report_tbl
-		where community_no = #{communityNo}
+		SELECT COUNT(*) FROM community_report_tbl WHERE community_no = #{communityNo}
 	</select>
 
 	<select id="selectIsReport" resultType="int">
-		select count(*)
-		from community_report_tbl
-		where community_no = #{communityNo} and member_id = #{memberId}
+		SELECT COUNT(*) FROM community_report_tbl
+		WHERE community_no = #{communityNo} AND member_id = #{memberId}
 	</select>
 
 	<insert id="insertReport">
-		insert into community_report_tbl (community_no, member_id, report_reason)
-    values (#{communityNo}, #{memberId}, #{reportReason})
+		INSERT INTO community_report_tbl (community_no, member_id, report_reason)
+		VALUES (#{communityNo}, #{memberId}, #{reportReason})
 	</insert>
 
 	<delete id="deleteReport">
-		delete from community_report_tbl where community_no=#{communityNo} and
-		member_id = #{memberId}
+		DELETE FROM community_report_tbl
+		WHERE community_no = #{communityNo} AND member_id = #{memberId}
 	</delete>
 
 	<update id="updateViewCountCommunity">
-		update community_tbl 
-		set view_count = #{viewCount} + 1
-		where community_no = #{communityNo}
+		UPDATE community_tbl
+		SET view_count = #{viewCount} + 1
+		WHERE community_no = #{communityNo}
 	</update>
 </mapper>

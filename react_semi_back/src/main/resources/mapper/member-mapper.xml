@@ -3,16 +3,16 @@
 <mapper namespace="kr.co.iei.member.model.dao.MemberDao">
 
 	<insert id="insertMember">
-		insert into member_tbl values (
+		INSERT INTO member_tbl VALUES (
 		#{memberId},
 		#{memberPw}, #{memberName}, null, #{memberEmail},
-		3, sysdate,
+		3, NOW(),
 		#{memberPostcode}, #{memberAddr}, #{memberDetailAddr}, 0, null
 		)
 	</insert>
 
 	<select id="selectOneMember" resultType="member">
-		SELECT 
+		SELECT
 		    m.*,
 		    c.hex_code
 		FROM member_tbl m
@@ -22,25 +22,25 @@
 	</select>
 
 	<select id="findId" resultType="string">
-		select member_id from member_tbl
-		where member_name = #{memberName} and
-		member_email = #{memberEmail}
+		SELECT member_id FROM member_tbl
+		WHERE member_name = #{memberName}
+		AND member_email = #{memberEmail}
 	</select>
 
 	<update id="updateTempPw">
-		update member_tbl set member_pw = #{memberPw} 
-		where member_id = #{memberId}
-				and member_email = #{memberEmail}
+		UPDATE member_tbl SET member_pw = #{memberPw}
+		WHERE member_id = #{memberId}
+		AND member_email = #{memberEmail}
 	</update>
 
 	<update id="updateThumbnail">
-		update member_tbl set
+		UPDATE member_tbl SET
 		member_thumb = #{memberThumb}
-		where member_id = #{memberId}
+		WHERE member_id = #{memberId}
 	</update>
 
 	<update id="memberUpdate">
-		update member_tbl set
+		UPDATE member_tbl SET
 		member_thumb = #{memberThumb},
 		member_name = #{memberName},
 		member_email = #{memberEmail},
@@ -49,102 +49,99 @@
 		member_detail_addr = #{memberDetailAddr},
 		member_grade = #{memberGrade},
 		current_color_id = #{currentColorId}
-		
-		where member_id = #{memberId}
+		WHERE member_id = #{memberId}
 	</update>
 
 	<delete id="memberDelete">
-		delete from member_tbl
-		where member_id = #{memberId}
+		DELETE FROM member_tbl
+		WHERE member_id = #{memberId}
 	</delete>
 
 	<update id="updatePw">
-		update member_tbl
-		set member_pw = #{memberPw}
-		where
-		member_id = #{memberId}
+		UPDATE member_tbl
+		SET member_pw = #{memberPw}
+		WHERE member_id = #{memberId}
 	</update>
 
 	<select id="selectAllMember" resultType="member">
-		select *
-		from member_tbl
+		SELECT *
+		FROM member_tbl
 
 		<if test="searchKeyword != ''">
 			<where>
 				<if test="searchType==1">
-					member_name like '%'||#{searchKeyword}||'%'
+					member_name LIKE CONCAT('%', #{searchKeyword}, '%')
 				</if>
 				<if test="searchType==2">
-					member_id like '%'||#{searchKeyword}||'%'
+					member_id LIKE CONCAT('%', #{searchKeyword}, '%')
 				</if>
 				<if test="searchType==3">
-					member_email like '%'||#{searchKeyword}||'%'
+					member_email LIKE CONCAT('%', #{searchKeyword}, '%')
 				</if>
 			</where>
 		</if>
 
 		<where>
 			<if test="selectedGrade==1">
-				and member_grade = 1
+				AND member_grade = 1
 			</if>
 			<if test="selectedGrade==2">
-				and member_grade = 2
+				AND member_grade = 2
 			</if>
 			<if test="selectedGrade==3">
-				and member_grade = 3
+				AND member_grade = 3
 			</if>
 		</where>
 
-
 		<if test="order==1">
-			order by member_id asc
+			ORDER BY member_id ASC
 		</if>
 		<if test="order==2">
-			order by member_id desc
+			ORDER BY member_id DESC
 		</if>
 		<if test="order==3">
-			order by member_name asc
+			ORDER BY member_name ASC
 		</if>
 		<if test="order==4">
-			order by member_name desc
+			ORDER BY member_name DESC
 		</if>
 
-		offset #{page}*#{size} rows fetch next #{size} rows only
+		LIMIT #{size} OFFSET ${page*size}
 	</select>
 
 	<select id="selectMemberCount" resultType="Integer">
-		select count(*)
-		from member_tbl
+		SELECT COUNT(*)
+		FROM member_tbl
 
 		<where>
 			<if test="searchType==1">
-				member_name like '%'||#{searchKeyword}||'%'
+				member_name LIKE CONCAT('%', #{searchKeyword}, '%')
 			</if>
 			<if test="searchType==2">
-				member_id like '%'||#{searchKeyword}||'%'
+				member_id LIKE CONCAT('%', #{searchKeyword}, '%')
 			</if>
 			<if test="searchType==3">
-				member_email like '%'||#{searchKeyword}||'%'
+				member_email LIKE CONCAT('%', #{searchKeyword}, '%')
 			</if>
 		</where>
 		<where>
 			<if test="selectedGrade==1">
-				and member_grade = 1
+				AND member_grade = 1
 			</if>
 			<if test="selectedGrade==2">
-				and member_grade = 2
+				AND member_grade = 2
 			</if>
 			<if test="selectedGrade==3">
-				and member_grade = 3
+				AND member_grade = 3
 			</if>
 		</where>
 	</select>
-	
+
 	<select id="getHexCode" resultType="String">
 		SELECT c.hex_code
 		FROM member_tbl m
-		INNER JOIN color_tbl c 
-			ON (m.current_color_id = c.color_id)
+		INNER JOIN color_tbl c
+			ON m.current_color_id = c.color_id
 		WHERE member_id = #{memberId}
 	</select>
 </mapper>

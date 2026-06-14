@@ -2,663 +2,534 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
 <mapper namespace="kr.co.iei.market.model.dao.MarketDao">
 
-	<!--마켓 총게시물수 구하기 -->
+	<!-- 마켓 총게시물수 -->
 	<select id="selectMarketCount" resultType="Integer">
-		select count(*) from
-		market_tbl where market_status = #{status}
+		SELECT COUNT(*) FROM market_tbl
+		WHERE market_status = #{status}
 		<if test="searchType==1">
-			and market_title like '%'||#{searchKeyword}||'%'
+			AND market_title LIKE CONCAT('%', #{searchKeyword}, '%')
 		</if>
 		<if test="searchType==2">
-			and market_writer = #{searchKeyword}
+			AND market_writer = #{searchKeyword}
 		</if>
 		<if test="location != null">
-		and (
-		#{location} = 0
-		or sell_addr like '%' ||
-		case #{location}
-			when 1 then '서울'
-			when 2 then '강원'
-			when 3 then '경기'
-			when 4 then '경남'
-			when 5 then '경북'
-			when 6 then '광주'
-			when 7 then '대구'
-			when 8 then '대전'
-			when 9 then '부산'
-			when 10 then '세종'
-			when 11 then '울산'
-			when 12 then '인천'
-			when 13 then '전남'
-			when 14 then '전북'
-			when 15 then '제주'
-			when 16 then '충남'
-			when 17 then '충북'
-		end
-		|| '%'
-	)
-	</if>
-		
-		
-		and completed = 0
+			AND (
+				#{location} = 0
+				OR sell_addr LIKE CONCAT('%',
+					CASE #{location}
+						WHEN 1 THEN '서울'
+						WHEN 2 THEN '강원'
+						WHEN 3 THEN '경기'
+						WHEN 4 THEN '경남'
+						WHEN 5 THEN '경북'
+						WHEN 6 THEN '광주'
+						WHEN 7 THEN '대구'
+						WHEN 8 THEN '대전'
+						WHEN 9 THEN '부산'
+						WHEN 10 THEN '세종'
+						WHEN 11 THEN '울산'
+						WHEN 12 THEN '인천'
+						WHEN 13 THEN '전남'
+						WHEN 14 THEN '전북'
+						WHEN 15 THEN '제주'
+						WHEN 16 THEN '충남'
+						WHEN 17 THEN '충북'
+					END,
+				'%')
+			)
+		</if>
+		AND completed = 0
 	</select>
 
 	<select id="selectMarketList" resultType="market">
-	select
-		mt.market_no,
-		mt.market_title,
-		to_char(mt.market_date, 'yyyy-mm-dd HH24:mi:ss') as market_date,
-		mt.market_writer,
-		mt.view_count,
-		mt.sell_addr,
-		mt.sell_price,
-		m.member_name,
+		SELECT
+			mt.market_no,
+			mt.market_title,
+			DATE_FORMAT(mt.market_date, '%Y-%m-%d %H:%i:%s') AS market_date,
+			mt.market_writer,
+			mt.view_count,
+			mt.sell_addr,
+			mt.sell_price,
+			m.member_name,
 
-		(
-			select count(*)
-			from market_like_tbl ml
-			where ml.market_no = mt.market_no
-		) as like_count,
+			(SELECT COUNT(*) FROM market_like_tbl ml WHERE ml.market_no = mt.market_no) AS like_count,
+			(SELECT COUNT(*) FROM market_report_tbl mr WHERE mr.market_no = mt.market_no) AS report_count,
+			(SELECT COUNT(*) FROM market_comment_tbl c WHERE c.market_no = mt.market_no) AS comment_count,
 
-		(
-			select count(*)
-			from market_report_tbl mr
-			where mr.market_no = mt.market_no
-		) as report_count,
+			(SELECT member_thumb FROM member_tbl m2 WHERE m2.member_id = mt.market_writer) AS member_thumb,
 
-		(
-			select count(*)
-			from market_comment_tbl c
-			where c.market_no = mt.market_no
-		) as comment_count,
+			(
+				SELECT mf.market_file_path
+				FROM market_file_tbl mf
+				WHERE mf.market_no = mt.market_no
+				ORDER BY mf.market_file_no ASC
+				LIMIT 1
+			) AS market_thumb,
 
-		(
-			select member_thumb
-			from member_tbl m2
-			where m2.member_id = mt.market_writer
-		) as member_thumb,
+			(
+				SELECT hex_code FROM color_tbl
+				WHERE color_id = (
+					SELECT current_color_id FROM member_tbl
+					WHERE member_id = mt.market_writer
+				)
+			) AS hex_code
 
-		(
-			select market_file_path
-			from (
-				select mf.market_file_path
-				from market_file_tbl mf
-				where mf.market_no = mt.market_no
-				order by mf.market_file_no asc
+			<if test="memberId != null">
+				,(SELECT COUNT(*) FROM market_like_tbl
+				WHERE market_no = mt.market_no
+				AND member_id = #{memberId}) AS is_like
+			</if>
+
+		FROM market_tbl mt
+		JOIN member_tbl m ON mt.market_writer = m.member_id
+
+		WHERE market_status = #{status}
+		AND completed = 0
+
+		<if test="location != null">
+			AND (
+				#{location} = 0
+				OR sell_addr LIKE CONCAT('%',
+					CASE #{location}
+						WHEN 1 THEN '서울'
+						WHEN 2 THEN '강원'
+						WHEN 3 THEN '경기'
+						WHEN 4 THEN '경남'
+						WHEN 5 THEN '경북'
+						WHEN 6 THEN '광주'
+						WHEN 7 THEN '대구'
+						WHEN 8 THEN '대전'
+						WHEN 9 THEN '부산'
+						WHEN 10 THEN '세종'
+						WHEN 11 THEN '울산'
+						WHEN 12 THEN '인천'
+						WHEN 13 THEN '전남'
+						WHEN 14 THEN '전북'
+						WHEN 15 THEN '제주'
+						WHEN 16 THEN '충남'
+						WHEN 17 THEN '충북'
+					END,
+				'%')
 			)
-			where rownum = 1
-		) as market_thumb,
-
-		(
-			select hex_code
-			from color_tbl
-			where color_id = (
-				select current_color_id
-				from member_tbl
-				where member_id = market_writer
-			)
-		) as hex_code
-
-		<if test="memberId != null">
-			,(select count(*)
-			from market_like_tbl
-			where market_no = mt.market_no
-			and member_id = #{memberId}) AS is_like
 		</if>
 
-	from market_tbl mt
-	join member_tbl m
-		on mt.market_writer = m.member_id
+		<if test="searchType==1">
+			AND market_title LIKE CONCAT('%', #{searchKeyword}, '%')
+		</if>
+		<if test="searchType==2">
+			AND market_writer = #{searchKeyword}
+		</if>
 
-	where market_status = #{status}
-	and completed = 0
+		<if test="order==0"> ORDER BY market_no DESC</if>
+		<if test="order==1"> ORDER BY market_no ASC</if>
+		<if test="order==2"> ORDER BY view_count DESC</if>
+		<if test="order==3"> ORDER BY like_count DESC</if>
+		<if test="order==4"> ORDER BY sell_price DESC</if>
+		<if test="order==5"> ORDER BY comment_count DESC</if>
 
-	
-	<if test="location != null">
-		and (
-		#{location} = 0
-		or sell_addr like '%' ||
-		case #{location}
-			when 1 then '서울'
-			when 2 then '강원'
-			when 3 then '경기'
-			when 4 then '경남'
-			when 5 then '경북'
-			when 6 then '광주'
-			when 7 then '대구'
-			when 8 then '대전'
-			when 9 then '부산'
-			when 10 then '세종'
-			when 11 then '울산'
-			when 12 then '인천'
-			when 13 then '전남'
-			when 14 then '전북'
-			when 15 then '제주'
-			when 16 then '충남'
-			when 17 then '충북'
-		end
-		|| '%'
-	)
-	</if>
-
-	<if test="searchType==1">
-		and market_title like '%'||#{searchKeyword}||'%'
-	</if>
-
-	<if test="searchType==2">
-		and market_writer = #{searchKeyword}
-	</if>
-
-	<if test="order==0"> order by market_no desc</if>
-	<if test="order==1"> order by market_no asc</if>
-	<if test="order==2"> order by view_count desc </if>
-	<if test="order==3"> order by like_count desc</if>
-	<if test="order==4"> order by sell_price desc</if>
-	<if test="order==5"> order by comment_count desc</if>
-
-	offset #{page}*#{size} rows fetch next #{size} rows only
-</select>
-	<!-- 시퀀스 번호 발급 -->
-	<select id="getNewMarketNo" resultType="int">
-		select market_seq.nextval
-		from dual
+		LIMIT #{size} OFFSET ${page*size}
 	</select>
 
-	<!-- 판매게시글 등록 -->
-	<insert id="insertMarket">
-		insert into market_tbl values(
-		#{marketNo},
-		#{marketTitle},
-		#{marketContent},
-		sysdate,
-		1,
-		#{marketWriter},
-		0,
-		#{sellAddr},
-		#{sellPrice},
-		0,
-		null
+	<!-- 판매게시글 등록 (useGeneratedKeys로 AUTO_INCREMENT ID 반환) -->
+	<insert id="insertMarket" useGeneratedKeys="true" keyProperty="marketNo">
+		INSERT INTO market_tbl (
+			market_title, market_content, market_date, market_status,
+			market_writer, view_count, sell_addr, sell_price, completed, completed_date
+		) VALUES (
+			#{marketTitle}, #{marketContent}, NOW(), 1,
+			#{marketWriter}, 0, #{sellAddr}, #{sellPrice}, 0, null
 		)
 	</insert>
+
 	<!-- 마켓 파일 등록 -->
-	<insert id="insertMarketFile">
-		insert into market_file_tbl values(
-		market_file_seq.nextval,
-		#{marketFileName},
-		#{marketFilePath},
-		#{marketNo}
-		)
+	<insert id="insertMarketFile" useGeneratedKeys="true" keyProperty="marketFileNo">
+		INSERT INTO market_file_tbl (market_file_name, market_file_path, market_no)
+		VALUES (#{marketFileName}, #{marketFilePath}, #{marketNo})
 	</insert>
-	
-	<!-- 마켓게시글 조회 -->
+
+	<!-- 마켓게시글 단건 조회 -->
 	<select id="selectOneMarket" resultType="market">
-		select
-		m.market_no,
-		m.market_title,
-		m.market_content,
-		m.market_date,
-		m.market_status,
-		m.market_writer,
-		m.view_count,
-		m.sell_addr,
-		m.sell_price,
-		m.completed,
-		m.completed_date,
-		(select member_name from member_tbl where member_id = m.market_writer) member_name,
-		(
-            select member_thumb
-            from member_tbl mt
-            where mt.member_id = m.market_writer
-        ) as member_thumb,
-		(select count(*)
-		from market_like_tbl
-		where market_no = m.market_no) as like_count,
-		(
-	  			select hex_code
-				from color_tbl
-				where color_id = (select current_color_id 
-									from member_tbl
-									where member_id = market_writer))
-			as hex_code
-		<if test="memberId != null">
-			,(select count(*)
-			from market_like_tbl
-			where market_no = m.market_no
-			and member_id = #{memberId}) AS is_like
-		</if>
-		,(select count(*)
-		from market_report_tbl
-		where market_no = m.market_no) as report_count
-		<if test="memberId != null">
-			,(select count(*)
-			from market_report_tbl
-			where market_no = m.market_no
-			and member_id = #{memberId}) as is_report
-		</if>
-		<if test="memberId != null">
-			,(select count(*)
-			from trade_request_tbl
-			where market_no = m.market_no
-			and buyer_id = #{memberId}) as is_request
-
-		</if>
-		from market_tbl m
-		where m.market_no = #{marketNo}
-	</select>
-
-	<!-- 마켓게시글 조회시 파일리스트 조회 -->
-	<select id="selectMarketFileList" resultType="marketFile">
-		select * from
-		market_file_tbl where market_no=#{marketNo}
-	</select>
-	
-	<!-- 조회수 증가 -->
-	<update id="incrementViewCount">
-		update market_tbl set view_count = view_count+1 where
-		market_no = #{marketNo}
-
-	</update>
-	<!-- 총 좋아요 수 조회 -->
-	<select id="selectLikeCount" resultType="int">
-		select count(*) from
-		market_like_tbl where market_no = #{marketNo}
-	</select>
-
-	<!-- 좋아요 여부 조회 -->
-	<select id="selectIsLike" resultType="int">
-		select count(*) from
-		market_like_tbl
-		where market_no = #{marketNo}
-		and member_id =
-		#{memberId}
-	</select>
-
-	<!-- 로그인후 좋아요 클릭 -->
-	<insert id="likeOn">
-		insert into market_like_tbl values
-		(#{memberId},#{marketNo})
-	</insert>
-
-	<!-- 로그인후 좋아요 해제 -->
-	<delete id="likeOff">
-		delete from market_like_tbl
-		where market_no = #{marketNo}
-		and member_id = #{memberId}
-	</delete>
-
-	<select id="selectMainPageMarketList" resultType="market">
-		select
+		SELECT
 			m.market_no,
 			m.market_title,
-			to_char(m.market_date, 'yyyy-mm-dd hh24:mi:ss') market_date,
+			m.market_content,
+			m.market_date,
+			m.market_status,
 			m.market_writer,
 			m.view_count,
 			m.sell_addr,
 			m.sell_price,
-			(select member_name from member_tbl where member_id = m.market_writer) as member_name,
+			m.completed,
+			m.completed_date,
+			(SELECT member_name FROM member_tbl WHERE member_id = m.market_writer) AS member_name,
+			(SELECT member_thumb FROM member_tbl mt WHERE mt.member_id = m.market_writer) AS member_thumb,
+			(SELECT COUNT(*) FROM market_like_tbl WHERE market_no = m.market_no) AS like_count,
 			(
-				select market_file_path
-				from (
-						select mf.market_file_path
-						from market_file_tbl mf
-						where mf.market_no = m.market_no
-						order by mf.market_file_no asc
-					)
-				where rownum = 1
-			) marketThumb,
-			
-			(select count(*) from market_like_tbl ml where ml.market_no = m.market_no) like_count
-			
+				SELECT hex_code FROM color_tbl
+				WHERE color_id = (
+					SELECT current_color_id FROM member_tbl
+					WHERE member_id = m.market_writer
+				)
+			) AS hex_code
+			<if test="memberId != null">
+				,(SELECT COUNT(*) FROM market_like_tbl
+				WHERE market_no = m.market_no
+				AND member_id = #{memberId}) AS is_like
+			</if>
+			,(SELECT COUNT(*) FROM market_report_tbl WHERE market_no = m.market_no) AS report_count
+			<if test="memberId != null">
+				,(SELECT COUNT(*) FROM market_report_tbl
+				WHERE market_no = m.market_no
+				AND member_id = #{memberId}) AS is_report
+			</if>
+			<if test="memberId != null">
+				,(SELECT COUNT(*) FROM trade_request_tbl
+				WHERE market_no = m.market_no
+				AND buyer_id = #{memberId}) AS is_request
+			</if>
+		FROM market_tbl m
+		WHERE m.market_no = #{marketNo}
+	</select>
+
+	<!-- 마켓 파일 리스트 조회 -->
+	<select id="selectMarketFileList" resultType="marketFile">
+		SELECT * FROM market_file_tbl WHERE market_no = #{marketNo}
+	</select>
+
+	<!-- 조회수 증가 -->
+	<update id="incrementViewCount">
+		UPDATE market_tbl SET view_count = view_count + 1
+		WHERE market_no = #{marketNo}
+	</update>
+
+	<!-- 총 좋아요 수 -->
+	<select id="selectLikeCount" resultType="int">
+		SELECT COUNT(*) FROM market_like_tbl WHERE market_no = #{marketNo}
+	</select>
+
+	<!-- 좋아요 여부 -->
+	<select id="selectIsLike" resultType="int">
+		SELECT COUNT(*) FROM market_like_tbl
+		WHERE market_no = #{marketNo} AND member_id = #{memberId}
+	</select>
+
+	<!-- 좋아요 등록 -->
+	<insert id="likeOn">
+		INSERT INTO market_like_tbl VALUES (#{memberId}, #{marketNo})
+	</insert>
+
+	<!-- 좋아요 해제 -->
+	<delete id="likeOff">
+		DELETE FROM market_like_tbl
+		WHERE market_no = #{marketNo} AND member_id = #{memberId}
+	</delete>
+
+	<!-- 메인페이지 마켓 리스트 -->
+	<select id="selectMainPageMarketList" resultType="market">
+		SELECT
+			m.market_no,
+			m.market_title,
+			DATE_FORMAT(m.market_date, '%Y-%m-%d %H:%i:%s') AS market_date,
+			m.market_writer,
+			m.view_count,
+			m.sell_addr,
+			m.sell_price,
+			(SELECT member_name FROM member_tbl WHERE member_id = m.market_writer) AS member_name,
+			(
+				SELECT mf.market_file_path
+				FROM market_file_tbl mf
+				WHERE mf.market_no = m.market_no
+				ORDER BY mf.market_file_no ASC
+				LIMIT 1
+			) AS market_thumb,
+			(SELECT COUNT(*) FROM market_like_tbl ml WHERE ml.market_no = m.market_no) AS like_count
 			<if test="memberId != null and memberId != ''">
-                , (select count(*) from market_like_tbl ml2 where ml2.market_no = m.market_no and ml2.member_id = #{memberId}) as is_like
-            </if>
-		from market_tbl m
-		where m.market_status = 1 and m.completed = 0
-		
-        <if test="region != null and region != ''">
-			and m.sell_addr like #{region} || '%'
+				,(SELECT COUNT(*) FROM market_like_tbl ml2
+				WHERE ml2.market_no = m.market_no AND ml2.member_id = #{memberId}) AS is_like
+			</if>
+		FROM market_tbl m
+		WHERE m.market_status = 1 AND m.completed = 0
+		<if test="region != null and region != ''">
+			AND m.sell_addr LIKE CONCAT(#{region}, '%')
 		</if>
-		
 		<if test="order==0">
-		    order by m.market_no desc
+			ORDER BY m.market_no DESC
 		</if>
-		
 		<if test="order==2">
-		    order by m.view_count desc
+			ORDER BY m.view_count DESC
 		</if>
-	
-		offset 0 rows fetch next 5 rows only
+		LIMIT 5
 	</select>
 
+	<!-- 부모 댓글 수 -->
 	<select id="selectParentCommentCount" resultType="int">
-		select count(*) from market_comment_tbl
-		where market_no = #{marketNo} and market_recomment_no is null
-
+		SELECT COUNT(*) FROM market_comment_tbl
+		WHERE market_no = #{marketNo} AND market_recomment_no IS NULL
 		<if test="filterType == 'secret'">
-			and is_secret = 1
+			AND is_secret = 1
 		</if>
-
 		<if test="filterType == 'normal'">
-			and is_secret = 0
+			AND is_secret = 0
 		</if>
 	</select>
 
+	<!-- 댓글 + 대댓글 목록 조회 (MySQL 재귀 CTE) -->
 	<select id="selectMarketCommentList" resultType="marketComment">
-		select 
-		    t.market_comment_no, 
-		    t.market_no, 
-		    t.market_comment_writer, 
-		    t.market_comment_content, 
-		    to_char(t.market_comment_date, 'yyyy-mm-dd hh24:mi:ss') market_comment_date,
-		    t.market_recomment_no, 
-		    t.is_secret, 
-		    t.is_edited,
-		    m.member_name, m.member_thumb,
-		    (
-	  			select hex_code
-				from color_tbl
-				where color_id = (select current_color_id 
-									from member_tbl
-									where member_id = market_comment_writer))
-			as hex_code
-		from (
-		select * from market_comment_tbl where market_no = #{marketNo}
-
-		<!-- 1. 부모 댓글 10개를 뽑을 때 필터와 정렬을 싹 다 적용! -->
-		start with market_comment_no in (
-		select market_comment_no from (
-		select market_comment_no from market_comment_tbl
-		where market_no = #{marketNo} and market_recomment_no is null
-
-		<if test="filterType == 'secret'">
-			and is_secret = 1
-		</if>
-
-		<if test="filterType == 'normal'">
-			and is_secret = 0
-		</if>
-
-		<if test="orderType == 'oldest'">
-			order by market_comment_no asc
-		</if>
-
-		<if test="orderType == 'newest' or orderType == null">
-			order by market_comment_no desc
-		</if>
+		WITH RECURSIVE comment_tree AS (
+			SELECT * FROM market_comment_tbl
+			WHERE market_comment_no IN (
+				SELECT market_comment_no FROM (
+					SELECT market_comment_no FROM market_comment_tbl
+					WHERE market_no = #{marketNo} AND market_recomment_no IS NULL
+					<if test="filterType == 'secret'">
+						AND is_secret = 1
+					</if>
+					<if test="filterType == 'normal'">
+						AND is_secret = 0
+					</if>
+					<if test="orderType == 'oldest'">
+						ORDER BY market_comment_no ASC
+					</if>
+					<if test="orderType == 'newest' or orderType == null">
+						ORDER BY market_comment_no DESC
+					</if>
+					LIMIT #{size} OFFSET ${page*size}
+				) AS paged_parents
+			)
+			UNION ALL
+			SELECT c.* FROM market_comment_tbl c
+			INNER JOIN comment_tree ct ON c.market_recomment_no = ct.market_comment_no
 		)
-		offset #{page} * #{size} rows fetch next #{size} rows only
-		)
-
-		<!-- 2. 자식 답글들 전부 끌고 오기 -->
-		connect by prior market_comment_no = market_recomment_no
-
-		<!-- 3. 전체 데이터를 조건에 맞춰 정렬해서 프론트로 넘김 -->
+		SELECT
+			t.market_comment_no,
+			t.market_no,
+			t.market_comment_writer,
+			t.market_comment_content,
+			DATE_FORMAT(t.market_comment_date, '%Y-%m-%d %H:%i:%s') AS market_comment_date,
+			t.market_recomment_no,
+			t.is_secret,
+			t.is_edited,
+			m.member_name,
+			m.member_thumb,
+			(
+				SELECT hex_code FROM color_tbl
+				WHERE color_id = (
+					SELECT current_color_id FROM member_tbl
+					WHERE member_id = t.market_comment_writer
+				)
+			) AS hex_code
+		FROM comment_tree t
+		LEFT JOIN member_tbl m ON t.market_comment_writer = m.member_id
 		<if test="orderType == 'oldest'">
-			order by market_comment_no asc
+			ORDER BY t.market_comment_no ASC
 		</if>
-
 		<if test="orderType == 'newest' or orderType == null">
-			order by market_comment_no desc
+			ORDER BY t.market_comment_no DESC
 		</if>
-		) t
-		left join member_tbl m on (t.market_comment_writer = m.member_id)
 	</select>
 
-	<insert id="insertMarketComment">
-		insert into market_comment_tbl values (
-		market_comment_seq.NEXTVAL,
-		#{marketCommentContent},
-		sysdate,
-		#{marketNo},
-		#{marketCommentWriter},
-		#{marketRecommentNo},
-		#{isSecret},
-		0
+	<!-- 댓글 등록 -->
+	<insert id="insertMarketComment" useGeneratedKeys="true" keyProperty="marketCommentNo">
+		INSERT INTO market_comment_tbl (
+			market_comment_content, market_comment_date, market_no,
+			market_comment_writer, market_recomment_no, is_secret, is_edited
+		) VALUES (
+			#{marketCommentContent}, NOW(), #{marketNo},
+			#{marketCommentWriter}, #{marketRecommentNo}, #{isSecret}, 0
 		)
 	</insert>
-	
-	<!-- 게시글수정 update_market_tbl -->
+
+	<!-- 게시글 수정 -->
 	<update id="updateMarket">
-		update market_tbl set
+		UPDATE market_tbl SET
 		market_title = #{marketTitle},
 		market_content = #{marketContent},
 		sell_addr = #{sellAddr},
 		sell_price = #{sellPrice}
-		where market_no = #{marketNo}
-		
+		WHERE market_no = #{marketNo}
 	</update>
+
 	<select id="getMarketWriter" resultType="string">
-		select market_writer from market_tbl where market_no = #{marketNo}
+		SELECT market_writer FROM market_tbl WHERE market_no = #{marketNo}
 	</select>
-	<!-- 이력테이블에 저장할 마켓파일 조회 -->
+
+	<!-- 이력 테이블용 마켓파일 조회 -->
 	<select id="getHistoryMarketFile" resultType="marketFile">
-		select
-			market_file_no,
-        	market_file_name,
-        	market_file_path,
-        	market_no 
-		from market_file_tbl where market_file_path = #{marketFilePath}
+		SELECT market_file_no, market_file_name, market_file_path, market_no
+		FROM market_file_tbl WHERE market_file_path = #{marketFilePath}
 	</select>
-	<!-- 이력테이블에 저장 -->
+
+	<!-- 이력 테이블 저장 -->
 	<insert id="insertHistoryMarketFile" parameterType="java.util.List">
-    INSERT INTO market_file_history (
-        market_file_no,
-        market_file_name,
-        market_file_path,
-        market_no
-    )
-    VALUES
-    <foreach collection="list" item="item" separator=",">
-        (
-            #{item.marketFileNo},
-            #{item.marketFileName},
-            #{item.marketFilePath},
-            #{item.marketNo}
-        )
-    </foreach>
-</insert>
-	
-	
-	
-	<!-- 게시글수정시 delete market file tbl -->
+		INSERT INTO market_file_history (market_file_no, market_file_name, market_file_path, market_no)
+		VALUES
+		<foreach collection="list" item="item" separator=",">
+			(#{item.marketFileNo}, #{item.marketFileName}, #{item.marketFilePath}, #{item.marketNo})
+		</foreach>
+	</insert>
+
+	<!-- 수정 시 파일 DB 삭제 -->
 	<delete id="deleteMarketFile">
-		delete from market_file_tbl where market_file_path = #{marketFilePath}
+		DELETE FROM market_file_tbl WHERE market_file_path = #{marketFilePath}
 	</delete>
 
 	<delete id="deleteMarketComment">
-		delete from market_comment_tbl where market_comment_no = #{commentNo}
+		DELETE FROM market_comment_tbl WHERE market_comment_no = #{commentNo}
 	</delete>
 
 	<update id="updateMarketComment">
-		update market_comment_tbl
-		set
+		UPDATE market_comment_tbl SET
 		market_comment_content = #{marketCommentContent},
 		is_secret = #{isSecret},
 		is_edited = 1
-		where market_comment_no = #{marketCommentNo}
+		WHERE market_comment_no = #{marketCommentNo}
 	</update>
 
 	<insert id="insertMarketCommentReport">
-		insert into market_comment_report_tbl values (
-		#{marketCommentNo},
-		#{memberId},
-		#{marketCommentReportReason}
+		INSERT INTO market_comment_report_tbl VALUES (
+		#{marketCommentNo}, #{memberId}, #{marketCommentReportReason}
 		)
 	</insert>
 
-	<!-- 마켓게시글 삭제시 파일이름 확보 -->
+	<!-- 마켓 삭제 시 파일 경로 목록 -->
 	<select id="getFilePath" resultType="string">
-		select market_file_path from market_file_tbl where market_no = #{marketNo}
+		SELECT market_file_path FROM market_file_tbl WHERE market_no = #{marketNo}
 	</select>
 
 	<!-- market_file_tbl 삭제 -->
 	<delete id="deleteFileTbl">
-		delete from market_file_tbl where market_no = #{marketNo}
+		DELETE FROM market_file_tbl WHERE market_no = #{marketNo}
 	</delete>
 
 	<!-- market 삭제 -->
 	<delete id="deleteOneMarket">
-		delete from market_tbl where market_no = #{marketNo}
+		DELETE FROM market_tbl WHERE market_no = #{marketNo}
 	</delete>
 
-	<!-- 거래요청 -->
-	<insert id="tradeRequest">
-		insert into trade_request_tbl values(
-		trade_request_seq.NEXTVAL,
-		#{marketNo},
-		#{buyerId},
-		#{message},
-		1,
-		SYSDATE,
-		NULL
+	<!-- 거래요청 등록 -->
+	<insert id="tradeRequest" useGeneratedKeys="true" keyProperty="tradeRequestNo">
+		INSERT INTO trade_request_tbl (
+			market_no, buyer_id, message, status, request_date, complete_date
+		) VALUES (
+			#{marketNo}, #{buyerId}, #{message}, 1, NOW(), NULL
 		)
 	</insert>
+
 	<!-- 거래요청 취소 -->
 	<delete id="tradeRequestCancel">
-		delete from trade_request_tbl where market_no = #{marketNo} and buyer_id=
-		#{buyerId}
+		DELETE FROM trade_request_tbl
+		WHERE market_no = #{marketNo} AND buyer_id = #{buyerId}
 	</delete>
 
-
-	<!--거래요청 리스트 조회 -->
+	<!-- 거래요청 리스트 -->
 	<select id="selectAllTradeRequest" resultType="tradeRequest">
-		select * from trade_request_tbl where market_no = #{marketNo} and status = 1
-
+		SELECT * FROM trade_request_tbl
+		WHERE market_no = #{marketNo} AND status = 1
 	</select>
 
-	<!-- 거래확정시 -->
+	<!-- 거래 확정 -->
 	<update id="tradeAccepted">
-		update trade_request_tbl set
+		UPDATE trade_request_tbl SET
 		status = 2,
-		complete_date = sysdate
-		where market_no = #{marketNo}
-		and buyer_id = #{buyerId}
+		complete_date = NOW()
+		WHERE market_no = #{marketNo} AND buyer_id = #{buyerId}
 	</update>
 
 	<update id="tradeReject">
-		update trade_request_tbl set
+		UPDATE trade_request_tbl SET
 		status = 3,
-		complete_date = sysdate
-		where market_no = #{marketNo}
-		and buyer_id != #{buyerId}
+		complete_date = NOW()
+		WHERE market_no = #{marketNo} AND buyer_id != #{buyerId}
 	</update>
 
 	<update id="marketCompleted">
-		update market_tbl set
+		UPDATE market_tbl SET
 		completed = 1,
-		completed_date = sysdate
-		where market_no = #{marketNo}
+		completed_date = NOW()
+		WHERE market_no = #{marketNo}
 	</update>
-	<!-- 신고등록 -->
+
+	<!-- 신고 등록 -->
 	<insert id="pushReport">
-		insert into market_report_tbl values(
-		#{marketNo},
-		#{memberId},
-		#{marketReportReason}
+		INSERT INTO market_report_tbl VALUES (
+		#{marketNo}, #{memberId}, #{marketReportReason}
 		)
 	</insert>
 
-	<!-- 신고취소 -->
+	<!-- 신고 취소 -->
 	<delete id="cancelReport">
-		delete from market_report_tbl where market_no= #{marketNo} and member_id =
-		#{memberId}
+		DELETE FROM market_report_tbl
+		WHERE market_no = #{marketNo} AND member_id = #{memberId}
 	</delete>
 
-	<!-- 탘소 기여도 페이지 수 -->
-	<select id="selectOneCarbonContributionCount"
-		resultType="Integer">
-		select count(*) from
-		score_history_tbl
-		where member_id = #{memberId}
-
+	<!-- 탄소 기여도 총 수 -->
+	<select id="selectOneCarbonContributionCount" resultType="Integer">
+		SELECT COUNT(*) FROM score_history_tbl
+		WHERE member_id = #{memberId}
 		<if test="request.view==1">
-			and history_status = 1
+			AND history_status = 1
 		</if>
 		<if test="request.view==2">
-			and history_status = 2
+			AND history_status = 2
 		</if>
 	</select>
 
-	<!-- 탄소 기여도 출력 -->
-	<select id="selectOneCarbonContributionList"
-		resultType="scoreHistory">
-		select
-		score_no,
-		history_status,
-		member_id,
-		market_no,
-		case
-        	when s.market_no is null then '닉네임 변경'
-        	else (
-            	select m.market_title
-            	from market_tbl m
-            	where m.market_no = s.market_no
-        	)
-    		end 
-    	as market_title,
-		changed_score,
-		score_date
-		from score_history_tbl s
-
-		where member_id = #{memberId}
-
+	<!-- 탄소 기여도 목록 -->
+	<select id="selectOneCarbonContributionList" resultType="scoreHistory">
+		SELECT
+			score_no,
+			history_status,
+			member_id,
+			market_no,
+			CASE
+				WHEN s.market_no IS NULL THEN '닉네임 변경'
+				ELSE (SELECT m.market_title FROM market_tbl m WHERE m.market_no = s.market_no)
+			END AS market_title,
+			changed_score,
+			score_date
+		FROM score_history_tbl s
+		WHERE member_id = #{memberId}
 		<if test="request.view==1">
-			and history_status = 1
+			AND history_status = 1
 		</if>
 		<if test="request.view==2">
-			and history_status = 2
+			AND history_status = 2
 		</if>
+		<if test="request.order == 1">ORDER BY score_date DESC</if>
+		<if test="request.order == 2">ORDER BY score_date ASC</if>
+		LIMIT #{request.size} OFFSET ${request.page*request.size}
+	</select>
 
-		<if test="request.order == 1">order by score_date desc</if>
-		<if test="request.order == 2">order by score_date asc</if>
-		
-		offset #{request.page}*#{request.size} rows fetch next #{request.size} rows only
-    </select>
-    
-    <!-- 판매자 아이디 조회 -->
-    <select id="selectSellerId" resultType="market">
-    	select market_no, market_writer from market_tbl where market_no = #{marketNo}
-    </select>
-    
-    <!-- 거래완료후 포인트 추가:판매자 -->
-    <insert id="addPointHistory">
-    	insert into score_history_tbl values(
-    		score_history_seq.nextval,
-    		#{sellerId},
-    		#{marketNo},
-    		1,
-    		100,
-    		sysdate
-    	)
-    </insert>
-    <!-- 거래완료후 포인투 추가:구매자 -->
-    <insert id="addPointHistory2">
-    	insert into score_history_tbl values(
-    		score_history_seq.nextval,
-    		#{buyerId},
-    		#{marketNo},
-    		1,
-    		100,
-    		sysdate
-    	)
-    </insert>
-    
-    
-    <update id="addPointMember">
-    	update member_tbl set
-            member_score = member_score + 100
-        where member_id = #{sellerId}
-    </update>
-    
-    <update id="addPointMember2">
-    	update member_tbl set
-            member_score = member_score + 100
-        where member_id = #{buyerId}
-    </update>
-    
-    <select id="findOneMarketByMarketNo" resultType="market">
-    	SELECT *
-    	FROM market_tbl
-    	WHERE market_no = #{marketNo}
-    </select>
+	<!-- 판매자 아이디 조회 -->
+	<select id="selectSellerId" resultType="market">
+		SELECT market_no, market_writer FROM market_tbl WHERE market_no = #{marketNo}
+	</select>
+
+	<!-- 거래완료 후 포인트 기록: 판매자 -->
+	<insert id="addPointHistory" useGeneratedKeys="true" keyProperty="scoreNo">
+		INSERT INTO score_history_tbl (member_id, market_no, history_status, changed_score, score_date)
+		VALUES (#{sellerId}, #{marketNo}, 1, 100, NOW())
+	</insert>
+
+	<!-- 거래완료 후 포인트 기록: 구매자 -->
+	<insert id="addPointHistory2" useGeneratedKeys="true" keyProperty="scoreNo">
+		INSERT INTO score_history_tbl (member_id, market_no, history_status, changed_score, score_date)
+		VALUES (#{buyerId}, #{marketNo}, 1, 100, NOW())
+	</insert>
+
+	<update id="addPointMember">
+		UPDATE member_tbl SET
+		member_score = member_score + 100
+		WHERE member_id = #{sellerId}
+	</update>
+
+	<update id="addPointMember2">
+		UPDATE member_tbl SET
+		member_score = member_score + 100
+		WHERE member_id = #{buyerId}
+	</update>
+
+	<select id="findOneMarketByMarketNo" resultType="market">
+		SELECT * FROM market_tbl WHERE market_no = #{marketNo}
+	</select>
 </mapper>

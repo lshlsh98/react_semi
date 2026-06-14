@@ -50,10 +50,8 @@ public class ChatService {
 		    throw new NotFoundException("member cannot be found");
 		}
 		
-		// 메시지 저장
-		Long chatMessageId = chatDao.getChatMessageId();
+		// 메시지 저장 — useGeneratedKeys로 id 자동 세팅
 		ChatMessage chatMessage = ChatMessage.builder()
-				.id(chatMessageId)
 				.chatRoomId(chatRoom.getId())
 				.content(chatMessageReqDto.getMessage())
 				.memberId(sender.getMemberId())
@@ -198,9 +196,8 @@ public class ChatService {
 		// 만약 1:1 채팅방이 없을 경우 채팅방 개설
 		Market market = marketDao.findOneMarketByMarketNo(Math.toIntExact(marketNo)); 
 				
-		Long newRoomId = chatDao.getChatRoomId();
+		// useGeneratedKeys로 id 자동 세팅
 		ChatRoom newRoom = ChatRoom.builder()
-				.id(newRoomId)
 				.isGroupChat(1)
 				.name(market.getMarketTitle())
 				.marketNo(marketNo)

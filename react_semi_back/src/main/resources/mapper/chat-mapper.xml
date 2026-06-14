@@ -1,80 +1,68 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
 <mapper namespace="kr.co.iei.chat.model.dao.ChatDao">
-	
+
 	<select id="findChatRoomById" resultType="chatRoom">
-		SELECT * 
+		SELECT *
 		FROM chat_room
 		WHERE id = #{roomId}
 	</select>
-	
+
 	<select id="findMemberById" resultType="member">
-		SELECT * 
+		SELECT *
 		FROM member_tbl
 		WHERE member_id = #{memberId}
 	</select>
-	
-	<insert id="saveChatMessage">
-		INSERT INTO chat_message 
-		VALUES (#{id}, #{chatRoomId}, #{memberId}, #{content}, sysdate)
+
+	<!-- sysdate → NOW(), AUTO_INCREMENT으로 id 자동 생성 -->
+	<insert id="saveChatMessage" useGeneratedKeys="true" keyProperty="id">
+		INSERT INTO chat_message (chat_room_id, member_id, content, created_at)
+		VALUES (#{chatRoomId}, #{memberId}, #{content}, NOW())
 	</insert>
-	
+
 	<select id="findChatParticipantAllById" resultType="chatParticipant">
 		SELECT *
 		FROM chat_participant
 		WHERE chat_room_id = #{id}
 	</select>
-	
-	<insert id="saveReadStatus">
-		INSERT INTO message_read_status 
-		VALUES (message_read_status_seq.NEXTVAL, #{messageId}, #{memberId}, #{chatRoomId}, #{isRead})
+
+	<insert id="saveReadStatus" useGeneratedKeys="true" keyProperty="id">
+		INSERT INTO message_read_status (message_id, member_id, chat_room_id, is_read)
+		VALUES (#{messageId}, #{memberId}, #{chatRoomId}, #{isRead})
 	</insert>
-	
-	<insert id="saveChatRoom">
-		INSERT INTO chat_room 
-		VALUES (#{id}, #{isGroupChat}, #{name}, #{marketNo}, #{myName}, #{otherName}, #{myId}, #{otherId})
+
+	<insert id="saveChatRoom" useGeneratedKeys="true" keyProperty="id">
+		INSERT INTO chat_room (is_group_chat, name, market_no, my_name, other_name, my_id, other_id)
+		VALUES (#{isGroupChat}, #{name}, #{marketNo}, #{myName}, #{otherName}, #{myId}, #{otherId})
 	</insert>
-	
-	<insert id="saveChatParticipant">
-		INSERT INTO chat_participant 
-		VALUES (chat_participant_seq.NEXTVAL, #{chatRoomId}, #{memberId})
+
+	<insert id="saveChatParticipant" useGeneratedKeys="true" keyProperty="id">
+		INSERT INTO chat_participant (chat_room_id, member_id)
+		VALUES (#{chatRoomId}, #{memberId})
 	</insert>
-	
-	<select id="getChatRoomId" resultType="Long">
-		SELECT chat_room_seq.NEXTVAL FROM dual
-	</select>
-	
-	<select id="getChatMessageId" resultType="Long">
-		SELECT chat_message_seq.NEXTVAL FROM dual
-	</select>
-	
+
 	<select id="findByChatRoomId" resultType="chatMessageDto">
-		SELECT 
+		SELECT
 			c.content AS message,
 			m.member_id AS sender_id,
 			m.member_name AS sender_name,
 			m.member_thumb AS sender_thumb,
-			(select hex_code
-			from color_tbl
-			where color_id = m.current_color_id)
-			as hex_code
-			
+			(SELECT hex_code FROM color_tbl WHERE color_id = m.current_color_id) AS hex_code
 		FROM chat_message c
-		INNER JOIN member_tbl m 
-			ON (c.member_id = m.member_id)
+		INNER JOIN member_tbl m ON c.member_id = m.member_id
 		WHERE chat_room_id = #{id}
 		ORDER BY c.created_at ASC
 	</select>
-	
+
 	<update id="updateIsRead">
 		UPDATE message_read_status
 		SET is_read = 1
-		WHERE chat_room_id = #{chatRoomId} 
-			  AND member_id = #{memberId}
+		WHERE chat_room_id = #{chatRoomId}
+		      AND member_id = #{memberId}
 	</update>
-	
+
 	<select id="getMyChatRooms" resultType="myChatListResDto">
-		SELECT 
+		SELECT
 			p.chat_room_id AS room_id,
 			r.name AS room_name,
 			r.is_group_chat,
@@ -83,39 +71,38 @@
 			r.market_no,
 			r.my_id,
 			r.other_id
-			
 		FROM chat_participant p
-		INNER JOIN chat_room r
-			ON (p.chat_room_id = r.id)
-		
+		INNER JOIN chat_room r ON p.chat_room_id = r.id
 		WHERE p.member_id = #{memberId}
-		
 		ORDER BY p.chat_room_id DESC
 	</select>
-	
+
 	<select id="getCountIsReadZero" resultType="Long">
 		SELECT COUNT(*)
 		FROM message_read_status
 		WHERE chat_room_id = #{chatRoomId}
-		        AND member_id = #{memberId}
-		        AND is_read = 0
+		      AND member_id = #{memberId}
+		      AND is_read = 0
 	</select>
-	
+
 	<select id="findExistingPrivateRoom" resultType="chatRoom">
-		SELECT * 
-		FROM chat_room			
-		WHERE id IN (SELECT cp1.chat_room_id
-					FROM chat_participant cp1
-					INNER JOIN chat_participant cp2 
-						ON (cp1.chat_room_id = cp2.chat_room_id)
-					WHERE cp1.member_id = #{memberId} AND cp2.member_id = #{otherMemberId} AND market_no = #{marketNo})
-				AND is_group_chat = 1		
+		SELECT *
+		FROM chat_room
+		WHERE id IN (
+			SELECT cp1.chat_room_id
+			FROM chat_participant cp1
+			INNER JOIN chat_participant cp2
+				ON cp1.chat_room_id = cp2.chat_room_id
+			WHERE cp1.member_id = #{memberId}
+			  AND cp2.member_id = #{otherMemberId}
+			  AND market_no = #{marketNo}
+		)
+		AND is_group_chat = 1
 	</select>
-	
+
 	<delete id="deleteChatRoomByMarketNo">
 		DELETE FROM chat_room
 		WHERE market_no = #{marketNo}
 	</delete>
-	
-</mapper>
 
+</mapper>
