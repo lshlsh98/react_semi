@@ -118,6 +118,18 @@ const Login = () => {
             <Link to="/member/find-pw">비밀번호 찾기</Link>
           </div>
 
+          <div className={styles.test_account_box}>
+            <p className={styles.test_account_title}>테스트 계정 안내</p>
+            <div className={styles.test_account_item}>
+              <span className={styles.test_account_role}>일반</span>
+              <span>ID: qqqq1111 &nbsp;/&nbsp; PW: qqqq1111!</span>
+            </div>
+            <div className={styles.test_account_item}>
+              <span className={styles.test_account_role}>관리자</span>
+              <span>ID: admin1 &nbsp;/&nbsp; PW: admin1111!</span>
+            </div>
+          </div>
+
           <div className={styles.button_row}>
             <Button className="btn primary lg" type="submit">
               로그인

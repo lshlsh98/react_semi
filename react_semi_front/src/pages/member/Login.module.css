@@ -89,6 +89,43 @@
   text-decoration: underline;
 }
 
+.test_account_box {
+  background-color: var(--bg);
+  border: 1px dashed var(--soft);
+  border-radius: 10px;
+  padding: 14px 18px;
+  margin-bottom: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.test_account_title {
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--gray4);
+  letter-spacing: 0.4px;
+  margin-bottom: 2px;
+}
+
+.test_account_item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 13px;
+  color: var(--line);
+}
+
+.test_account_role {
+  font-weight: 700;
+  color: var(--primary);
+  background-color: rgba(84, 152, 73, 0.1);
+  padding: 2px 8px;
+  border-radius: 20px;
+  font-size: 12px;
+  flex-shrink: 0;
+}
+
 .button_row {
   display: flex;
   gap: 20px;
